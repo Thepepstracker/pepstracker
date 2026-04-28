@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Disclaimer — PepsTracker</title>
+  <style>
+    :root {
+      --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
+      --border:#2a3347; --blue:#3b9eff; --green:#4de87a;
+      --text:#e8edf5; --muted:#7a8ba8; --gold:#f5c842;
+      --red:#ff5c5c; --radius:12px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+    .logo-icon{width:42px;height:42px;}
+    .logo-text{font-size:1.5rem;font-weight:800;}
+    .logo-text span:first-child{color:var(--blue);}
+    .logo-text span:last-child{color:var(--green);}
+    nav{display:flex;align-items:center;gap:4px;}
+    nav a{color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:600;padding:6px 12px;border-radius:8px;transition:all .2s;white-space:nowrap;}
+    nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    nav a.active{color:var(--red);}
+    nav a.nav-calc{background:rgba(77,232,122,.1);color:var(--green);border:1px solid rgba(77,232,122,.25);}
+    nav a.nav-apply{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);}
+
+    .hero{text-align:center;padding:52px 24px 36px;background:radial-gradient(ellipse at 50% 0%,rgba(255,92,92,.06) 0%,transparent 65%);}
+    .hero h1{font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:800;letter-spacing:-1px;margin-bottom:10px;}
+    .hero h1 em{font-style:normal;color:var(--red);}
+    .hero p{color:var(--muted);font-size:.95rem;}
+
+    .page{max-width:760px;margin:0 auto;padding:32px 24px 80px;}
+
+    .section{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:28px 32px;margin-bottom:20px;}
+    .section h2{font-size:1.05rem;font-weight:800;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+    .section h2 .icon{font-size:1.1rem;}
+    .section p{font-size:.9rem;color:var(--muted);line-height:1.75;margin-bottom:12px;}
+    .section p:last-child{margin-bottom:0;}
+    .section p strong{color:var(--text);}
+    .section ul{list-style:none;padding:0;margin:0;}
+    .section ul li{font-size:.9rem;color:var(--muted);line-height:1.75;padding:6px 0 6px 20px;position:relative;border-bottom:1px solid rgba(255,255,255,.04);}
+    .section ul li:last-child{border-bottom:none;}
+    .section ul li::before{content:'→';position:absolute;left:0;color:var(--blue);}
+
+    .highlight-box{background:rgba(255,92,92,.07);border:1px solid rgba(255,92,92,.25);border-radius:10px;padding:16px 20px;margin-bottom:20px;}
+    .highlight-box p{font-size:.9rem;color:var(--text);line-height:1.7;margin:0;}
+
+    .effective-date{text-align:center;font-size:.8rem;color:var(--muted);margin-bottom:32px;}
+
+    .back-btn{display:inline-block;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.9rem;padding:12px 24px;border-radius:8px;text-decoration:none;margin-top:8px;transition:opacity .2s;}
+    .back-btn:hover{opacity:.88;}
+
+    footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:.82rem;}
+    footer a{color:var(--blue);text-decoration:none;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <svg class="logo-icon" viewBox="0 0 42 42" fill="none">
+        <circle cx="7"  cy="30" r="4" fill="#3b9eff"/>
+        <circle cx="19" cy="22" r="4" fill="#3bb8ff"/>
+        <circle cx="31" cy="14" r="4" fill="#4de87a"/>
+        <line x1="7" y1="30" x2="19" y2="22" stroke="#3b9eff" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="19" y1="22" x2="31" y2="14" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
+        <polyline points="28,8 35,8 35,15" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <defs><linearGradient id="g1" x1="19" y1="22" x2="31" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3b9eff"/><stop offset="100%" stop-color="#4de87a"/></linearGradient></defs>
+      </svg>
+      <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
+    </a>
+    <nav>
+      <a href="index.html">Price Tracker</a>
+      <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
+      <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
+      <a href="disclaimer.html" class="active">Disclaimer</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>⚠️ <em>Disclaimer</em></h1>
+  <p>Please read this carefully before using PepsTracker.</p>
+</section>
+
+<div class="page">
+
+  <div class="effective-date">Effective Date: January 1, 2025 &nbsp;·&nbsp; Last Updated: April 2025</div>
+
+  <div class="highlight-box">
+    <p><strong>Summary:</strong> PepsTracker is a price comparison tool only. We do not sell, manufacture, or distribute any products. We do not guarantee the quality, safety, legality, or reliability of any vendor or product listed. All products are for research purposes only. Nothing on this site constitutes medical advice.</p>
+  </div>
+
+  <div class="section">
+    <h2><span class="icon">🔍</span> Price Comparison Only</h2>
+    <p>PepsTracker is a <strong>price comparison and information service only</strong>. We aggregate and display publicly available pricing from third-party peptide vendors for the sole purpose of helping visitors compare costs across multiple suppliers.</p>
+    <p>We are <strong>not a retailer, distributor, manufacturer, or reseller</strong> of any peptide, research compound, supplement, or any other product listed on this website. We do not process orders, handle payments, or facilitate transactions of any kind.</p>
+    <p>Clicking "Shop Now" or any affiliate link on this site will take you to a third-party vendor's website. Any purchase you make is a transaction between you and that vendor — PepsTracker is not a party to that transaction.</p>
+  </div>
+
+  <div class="section">
+    <h2><span class="icon">❌</span> No Guarantee of Quality or Service</h2>
+    <p><strong>PepsTracker makes no representation, warranty, or guarantee of any kind</strong> regarding the following:</p>
+    <ul>
+      <li>The quality, purity, potency, or composition of any product listed</li>
+      <li>The accuracy of vendor-provided product descriptions or lab results</li>
+      <li>The reliability, fulfillment speed, or customer service of any listed vendor</li>
+      <li>Whether any product will meet your expectations or requirements</li>
+      <li>The safety of any product for any use — including research use</li>
+      <li>Whether any vendor is currently in business or accepting orders</li>
+      <li>The availability of any listed product at the price shown</li>
+    </ul>
+    <p>Vendor rankings and ordering on PepsTracker reflect <strong>price only</strong> — not quality, trustworthiness, reputation, or any other measure of vendor performance. A vendor appearing first in results means only that their after-discount price is lowest at the time of the last data update.</p>
+  </div>
+
+  <div class="section">
+    <h2><span class="icon">💊</span> Research Purposes Only</h2>
+    <p>All peptides, research compounds, and products listed on PepsTracker are <strong>strictly for research and laboratory purposes only</strong>. They are not intended for human consumption, medical treatment, diagnosis, cure, or prevention of any disease or condition.</p>
+    <p>PepsTracker does not encourage, endorse, or recommend the human use of any research compound. By using this site, you confirm that you understand and agree to this limitation.</p>
+    <p>The calculators on this site (including the Reconstitution, TDEE, and BMI calculators) are provided for <strong>informational and educational purposes only</strong> and do not constitute medical advice, diagnosis, or a treatment plan.</p>
+  </div>
+
+  <div class="section">
+    <h2><span class="icon">⚕️</span> Not Medical Advice</h2>
+    <p>Nothing on PepsTracker — including pricing information, product descriptions, calculator results, or any other content — constitutes or should be construed as <strong>medical advice, medical recommendation, or a substitute for professional medical consultation</strong>.</p>
+    <p>Always consult a <strong>licensed and qualified healthcare professional</strong> before making any decisions related to health, medication, supplementation, or research compound use. PepsTracker is not responsible for any health outcomes or decisions made based on information found on this site.</p>
+  </div>
+
+  <div class="section">
+    <h2><span class="icon">⚖️</span> Legal Compliance</h2>
+    <p>The legality of purchasing, possessing, or using peptides and research compounds <strong>varies significantly by country, state, and jurisdiction</strong>. PepsTracker does not provide legal advice and makes no representation about whether any product is legal in your location.</p>
+    <p>It is <strong>your sole responsibility</strong> to understand and comply with all laws and regulations applicable to you before purchasing or using any product found through this site. PepsTracker accepts no liability for any legal consequences resulting from the purchase or use of any listed product.</p>
+  </div>
+
+  <div class="section">
+    <h2><span class="icon">💰</span> Affiliate Disclosure</h2>
+    <p>PepsTracker participates in affiliate marketing programs. When you click a "Shop Now" button or use a discount code found on this site, we may receive a <strong>commission from the vendor at no additional cost to you</strong>.</p>
+    <p>Affiliate relationships do not influence the order in which vendors appear in price comparison results. Results are sorted by after-discount price only — the lowest price appears first regardless of commission rate.</p>
+    <p>We disclose all affiliate relationships in accordance with FTC guidelines.</p>
+  </div>
+
+  <div class="section">
+    <h2><span class="icon">📊</span> Price Accuracy</h2>
+    <p>Prices displayed on PepsTracker are collected from vendor websites on a <strong>periodic basis</strong> and may not reflect real-time pricing. Prices can change at any time without notice.</p>
+    <ul>
+      <li>Always verify the final price on the vendor's website before purchasing</li>
+      <li>Discount codes may expire or be subject to change at any time</li>
+      <li>Product availability is not guaranteed</li>
+      <li>Prices shown include placeholder data for vendors where live scraping is pending</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2><span class="icon">🛡️</span> Limitation of Liability</h2>
+    <p>To the fullest extent permitted by applicable law, PepsTracker, its owners, operators, employees, and affiliates shall not be liable for any direct, indirect, incidental, special, consequential, or punitive damages arising from:</p>
+    <ul>
+      <li>Your use of or reliance on any information on this website</li>
+      <li>Any purchase made through a vendor found on this site</li>
+      <li>The quality, safety, or legality of any product purchased</li>
+      <li>Any health outcomes related to the use of any research compound</li>
+      <li>Errors, inaccuracies, or outdated pricing information</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2><span class="icon">📬</span> Contact</h2>
+    <p>If you have questions about this disclaimer, believe a listing contains inaccurate information, or wish to report a concern about a vendor, please contact us at:</p>
+    <p><strong style="color:var(--blue);">theamericantourcompany@gmail.com</strong></p>
+    <p>For vendor listing applications, please use our <a href="vendor-apply.html" style="color:var(--blue);">Vendor Application page</a>.</p>
+  </div>
+
+  <a class="back-btn" href="index.html">← Back to Price Tracker</a>
+
+</div>
+
+<footer>
+  <p>PepsTracker — Price comparison only. Not a retailer, not medical advice, not a quality guarantee.</p>
+  <p style="margin-top:8px;">
+    <a href="index.html">Price Tracker</a> &nbsp;|&nbsp;
+    <a href="calculators.html">Calculators</a> &nbsp;|&nbsp;
+    <a href="vendor-apply.html">Vendor Application</a>
+  </p>
+  <p style="margin-top:8px;">© 2025 PepsTracker</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculators — PepsTracker</title>
+  <style>
+    :root {
+      --bg: #0d0f14; --surface: #161b25; --card: #1c2230;
+      --border: #2a3347; --blue: #3b9eff; --green: #4de87a;
+      --text: #e8edf5; --muted: #7a8ba8; --radius: 12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; position: sticky; top: 0; z-index: 100; }
+    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 68px; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon { width: 42px; height: 42px; }
+    .logo-text { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
+    .logo-text span:first-child { color: var(--blue); }
+    .logo-text span:last-child  { color: var(--green); }
+    nav { display: flex; align-items: center; gap: 6px; }
+    nav a { color: var(--muted); text-decoration: none; font-size: 0.92rem; font-weight: 600; padding: 6px 14px; border-radius: 8px; transition: all 0.2s; }
+    nav a:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+    nav a.active { color: var(--green); background: rgba(77,232,122,0.1); border: 1px solid rgba(77,232,122,0.25); }
+    nav a.nav-apply { background: rgba(245,200,66,0.1); color: #f5c842; border: 1px solid rgba(245,200,66,0.25); }
+
+    .hero { text-align: center; padding: 56px 24px 40px; background: radial-gradient(ellipse at 50% 0%, rgba(77,232,122,0.07) 0%, transparent 65%); }
+    .hero h1 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; }
+    .hero h1 em { font-style: normal; color: var(--green); }
+    .hero p { color: var(--muted); font-size: 1rem; }
+
+    .grid { max-width: 900px; margin: 48px auto 80px; padding: 0 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+
+    .calc-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 32px 28px; display: flex; flex-direction: column; gap: 16px; transition: border-color 0.2s, transform 0.15s; text-decoration: none; color: inherit; }
+    .calc-card:hover { border-color: var(--blue); transform: translateY(-3px); }
+    .calc-icon { font-size: 2.4rem; }
+    .calc-title { font-size: 1.15rem; font-weight: 800; }
+    .calc-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.55; flex: 1; }
+    .calc-btn { display: inline-block; background: linear-gradient(135deg, var(--blue), #1e6fcf); color: #fff; font-weight: 700; font-size: 0.9rem; padding: 11px 22px; border-radius: 8px; text-align: center; text-decoration: none; transition: opacity 0.2s; margin-top: 4px; }
+    .calc-btn:hover { opacity: 0.85; }
+
+    footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; color: var(--muted); font-size: 0.82rem; }
+    footer a { color: var(--blue); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <svg class="logo-icon" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="7"  cy="30" r="4" fill="#3b9eff"/>
+        <circle cx="19" cy="22" r="4" fill="#3bb8ff"/>
+        <circle cx="31" cy="14" r="4" fill="#4de87a"/>
+        <line x1="7" y1="30" x2="19" y2="22" stroke="#3b9eff" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="19" y1="22" x2="31" y2="14" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
+        <polyline points="28,8 35,8 35,15" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <defs><linearGradient id="g1" x1="19" y1="22" x2="31" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3b9eff"/><stop offset="100%" stop-color="#4de87a"/></linearGradient></defs>
+      </svg>
+      <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
+    </a>
+    <nav>
+      <a href="index.html">Price Tracker</a>
+      <a href="calculators.html" class="active">🧮 Calculators</a>
+      <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
+      <a href="disclaimer.html">Disclaimer</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Research <em>Calculators</em></h1>
+  <p>Tools to help you dose, track, and plan your peptide protocols with confidence.</p>
+</section>
+
+<div class="grid">
+
+  <div class="calc-card">
+    <div class="calc-icon">💉</div>
+    <div class="calc-title">Peptide Reconstitution</div>
+    <div class="calc-desc">Calculate exactly how many units to draw on your insulin syringe based on your vial size, BAC water volume, and desired dose.</div>
+    <a class="calc-btn" href="reconstitution.html" target="_blank">Open Calculator →</a>
+  </div>
+
+  <div class="calc-card">
+    <div class="calc-icon">🔥</div>
+    <div class="calc-title">TDEE Calculator</div>
+    <div class="calc-desc">Find your Total Daily Energy Expenditure — your BMR adjusted for activity level — to optimize calories and macros for your goals.</div>
+    <a class="calc-btn" href="tdee.html" target="_blank">Open Calculator →</a>
+  </div>
+
+  <div class="calc-card">
+    <div class="calc-icon">⚖️</div>
+    <div class="calc-title">BMI Calculator</div>
+    <div class="calc-desc">Calculate your Body Mass Index in seconds. Supports both imperial (lbs / ft & in) and metric (kg / cm) inputs.</div>
+    <a class="calc-btn" href="bmi.html" target="_blank">Open Calculator →</a>
+  </div>
+
+</div>
+
+<footer>
+  <p>PepsTracker — For research purposes only. &nbsp;|&nbsp; <a href="index.html">← Back to Price Tracker</a></p>
+</footer>
+
+</body>
+</html>

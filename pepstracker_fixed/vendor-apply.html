@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vendor Application — PepsTracker</title>
+  <style>
+    :root {
+      --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
+      --border:#2a3347; --blue:#3b9eff; --green:#4de87a;
+      --text:#e8edf5; --muted:#7a8ba8; --gold:#f5c842; --radius:12px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+    .logo-icon{width:42px;height:42px;}
+    .logo-text{font-size:1.5rem;font-weight:800;}
+    .logo-text span:first-child{color:var(--blue);}
+    .logo-text span:last-child{color:var(--green);}
+    nav{display:flex;align-items:center;gap:4px;}
+    nav a{color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:600;padding:6px 12px;border-radius:8px;transition:all .2s;white-space:nowrap;}
+    nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    nav a.active{color:var(--gold);background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.25);}
+    nav a.nav-calc{background:rgba(77,232,122,.1);color:var(--green);border:1px solid rgba(77,232,122,.25);}
+
+    .hero{text-align:center;padding:52px 24px 36px;background:radial-gradient(ellipse at 50% 0%,rgba(245,200,66,.07) 0%,transparent 65%);}
+    .hero h1{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;letter-spacing:-1px;margin-bottom:10px;}
+    .hero h1 em{font-style:normal;color:var(--gold);}
+    .hero p{color:var(--muted);font-size:1rem;max-width:600px;margin:0 auto;}
+
+    .page{max-width:760px;margin:40px auto 80px;padding:0 24px;}
+
+    /* Benefits strip */
+    .benefits{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:40px;}
+    .benefit{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;}
+    .benefit-icon{font-size:1.8rem;margin-bottom:8px;}
+    .benefit-title{font-size:.9rem;font-weight:700;margin-bottom:4px;}
+    .benefit-desc{font-size:.8rem;color:var(--muted);}
+
+    /* Form */
+    .form-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:32px;margin-bottom:20px;}
+    .section-title{font-size:1rem;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+    .section-title span{color:var(--blue);}
+
+    .field{margin-bottom:20px;}
+    .field label{display:block;font-size:.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
+    .field label .req{color:var(--blue);}
+    .field input,.field select,.field textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);color:var(--text);border-radius:9px;padding:12px 16px;font-size:.95rem;font-family:inherit;transition:border-color .2s;resize:vertical;}
+    .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--blue);}
+    .field textarea{min-height:100px;}
+    .field-hint{font-size:.78rem;color:var(--muted);margin-top:5px;}
+
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    @media(max-width:560px){.field-row{grid-template-columns:1fr;}}
+
+    /* Radio / Checkbox groups */
+    .radio-group,.check-group{display:flex;flex-direction:column;gap:10px;}
+    .radio-opt,.check-opt{display:flex;align-items:flex-start;gap:12px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;cursor:pointer;transition:border-color .2s;}
+    .radio-opt:hover,.check-opt:hover{border-color:var(--blue);}
+    .radio-opt input,.check-opt input{margin-top:2px;accent-color:var(--blue);width:16px;height:16px;flex-shrink:0;}
+    .radio-opt.selected,.check-opt.selected{border-color:var(--blue);background:rgba(59,158,255,.07);}
+    .opt-label{font-size:.9rem;font-weight:700;}
+    .opt-desc{font-size:.78rem;color:var(--muted);margin-top:2px;}
+
+    /* Required indicator */
+    .required-note{font-size:.8rem;color:var(--muted);margin-bottom:24px;}
+    .required-note span{color:var(--blue);}
+
+    /* COA highlight */
+    .coa-banner{background:rgba(77,232,122,.07);border:1px solid rgba(77,232,122,.3);border-radius:10px;padding:14px 16px;font-size:.85rem;color:var(--green);margin-bottom:20px;line-height:1.55;}
+    .coa-banner strong{color:var(--text);}
+
+    /* Submit */
+    .btn-submit{width:100%;background:linear-gradient(135deg,var(--gold),#d4a800);color:#0d0f14;border:none;border-radius:10px;padding:16px;font-size:1.05rem;font-weight:800;cursor:pointer;transition:opacity .2s,transform .1s;}
+    .btn-submit:hover{opacity:.9;transform:translateY(-1px);}
+
+    /* Success state */
+    .success-card{background:var(--card);border:1.5px solid var(--green);border-radius:16px;padding:48px 32px;text-align:center;display:none;}
+    .success-card.show{display:block;}
+    .success-icon{font-size:3rem;margin-bottom:16px;}
+    .success-card h2{font-size:1.5rem;font-weight:800;margin-bottom:10px;color:var(--green);}
+    .success-card p{color:var(--muted);font-size:.95rem;line-height:1.6;}
+
+    footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:.82rem;}
+    footer a{color:var(--blue);text-decoration:none;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <svg class="logo-icon" viewBox="0 0 42 42" fill="none">
+        <circle cx="7"  cy="30" r="4" fill="#3b9eff"/>
+        <circle cx="19" cy="22" r="4" fill="#3bb8ff"/>
+        <circle cx="31" cy="14" r="4" fill="#4de87a"/>
+        <line x1="7" y1="30" x2="19" y2="22" stroke="#3b9eff" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="19" y1="22" x2="31" y2="14" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
+        <polyline points="28,8 35,8 35,15" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <defs><linearGradient id="g1" x1="19" y1="22" x2="31" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3b9eff"/><stop offset="100%" stop-color="#4de87a"/></linearGradient></defs>
+      </svg>
+      <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
+    </a>
+    <nav>
+      <a href="index.html">Price Tracker</a>
+      <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
+      <a href="vendor-apply.html" class="active">📋 Vendor Apply</a>
+      <a href="disclaimer.html">Disclaimer</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>📋 <em>Vendor Application</em></h1>
+  <p>Apply to have your peptide company listed on PepsTracker. We review all applications and prioritize vendors who third-party test their products and provide Certificates of Analysis.</p>
+</section>
+
+<div class="page">
+
+  <!-- Benefits -->
+  <div class="benefits">
+    <div class="benefit">
+      <div class="benefit-icon">👥</div>
+      <div class="benefit-title">Reach More Customers</div>
+      <div class="benefit-desc">Get in front of thousands of daily visitors actively comparing prices</div>
+    </div>
+    <div class="benefit">
+      <div class="benefit-icon">💰</div>
+      <div class="benefit-title">Affiliate Partnership</div>
+      <div class="benefit-desc">Drive sales through our affiliate link system with your custom code</div>
+    </div>
+    <div class="benefit">
+      <div class="benefit-icon">✅</div>
+      <div class="benefit-title">Verified Badge</div>
+      <div class="benefit-desc">Vendors with COAs and 3rd-party testing earn a Verified badge</div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <form id="applyForm" onsubmit="submitForm(event)">
+
+    <!-- Section 1: Company Info -->
+    <div class="form-card">
+      <div class="section-title">🏢 <span>Company Information</span></div>
+      <p class="required-note">Fields marked <span>*</span> are required.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Company / Brand Name <span class="req">*</span></label>
+          <input type="text" id="companyName" placeholder="e.g. Apex Peptides" required />
+        </div>
+        <div class="field">
+          <label>Website URL <span class="req">*</span></label>
+          <input type="url" id="website" placeholder="https://yoursite.com" required />
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Contact Name <span class="req">*</span></label>
+          <input type="text" id="contactName" placeholder="First and last name" required />
+        </div>
+        <div class="field">
+          <label>Contact Email <span class="req">*</span></label>
+          <input type="email" id="contactEmail" placeholder="you@yoursite.com" required />
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel" id="phone" placeholder="Optional" />
+        </div>
+        <div class="field">
+          <label>Years in Business <span class="req">*</span></label>
+          <select id="yearsInBusiness" required>
+            <option value="">Select…</option>
+            <option>Less than 1 year</option>
+            <option>1–2 years</option>
+            <option>3–5 years</option>
+            <option>5+ years</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Do you ship internationally?</label>
+        <div class="radio-group">
+          <label class="radio-opt" onclick="selectRadio(this,'shipping')">
+            <input type="radio" name="shipping" value="yes" />
+            <div><div class="opt-label">Yes — we ship internationally</div></div>
+          </label>
+          <label class="radio-opt" onclick="selectRadio(this,'shipping')">
+            <input type="radio" name="shipping" value="us-only" />
+            <div><div class="opt-label">US domestic only</div></div>
+          </label>
+          <label class="radio-opt" onclick="selectRadio(this,'shipping')">
+            <input type="radio" name="shipping" value="select" />
+            <div><div class="opt-label">Select countries only</div></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Testing & Quality -->
+    <div class="form-card">
+      <div class="section-title">🔬 <span>Third-Party Testing &amp; Quality</span></div>
+
+      <div class="coa-banner">
+        <strong>This section matters most to us.</strong> PepsTracker is committed to helping customers find not just the lowest price, but the safest, highest-quality products. Vendors who 3rd-party test and provide COAs receive a <strong>✅ Verified</strong> badge on all listings.
+      </div>
+
+      <div class="field">
+        <label>Do you use third-party laboratory testing for your products? <span class="req">*</span></label>
+        <div class="radio-group">
+          <label class="radio-opt" onclick="selectRadio(this,'thirdParty')">
+            <input type="radio" name="thirdParty" value="yes-all" required />
+            <div>
+              <div class="opt-label">Yes — all products are third-party tested</div>
+              <div class="opt-desc">Every batch is sent to an independent lab before sale</div>
+            </div>
+          </label>
+          <label class="radio-opt" onclick="selectRadio(this,'thirdParty')">
+            <input type="radio" name="thirdParty" value="yes-some" />
+            <div>
+              <div class="opt-label">Yes — some products are third-party tested</div>
+              <div class="opt-desc">Selected products or batches are independently tested</div>
+            </div>
+          </label>
+          <label class="radio-opt" onclick="selectRadio(this,'thirdParty')">
+            <input type="radio" name="thirdParty" value="in-house" />
+            <div>
+              <div class="opt-label">In-house testing only</div>
+              <div class="opt-desc">We test internally but do not use third-party labs</div>
+            </div>
+          </label>
+          <label class="radio-opt" onclick="selectRadio(this,'thirdParty')">
+            <input type="radio" name="thirdParty" value="no" />
+            <div>
+              <div class="opt-label">No testing at this time</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Which laboratory / labs do you use? <span style="font-weight:400;text-transform:none;font-size:.78rem;">(if applicable)</span></label>
+        <input type="text" id="labName" placeholder="e.g. Janoshik, Peptide Sciences QC, in-house" />
+        <div class="field-hint">List any independent labs you work with. Leave blank if none.</div>
+      </div>
+
+      <div class="field">
+        <label>Do you provide Certificates of Analysis (COAs)? <span class="req">*</span></label>
+        <div class="radio-group">
+          <label class="radio-opt" onclick="selectRadio(this,'coa')">
+            <input type="radio" name="coa" value="public" required />
+            <div>
+              <div class="opt-label">Yes — COAs are publicly available on our website</div>
+              <div class="opt-desc">Customers can view COAs without contacting us</div>
+            </div>
+          </label>
+          <label class="radio-opt" onclick="selectRadio(this,'coa')">
+            <input type="radio" name="coa" value="request" />
+            <div>
+              <div class="opt-label">Yes — COAs are available upon request</div>
+              <div class="opt-desc">Customers must contact us to receive COA documents</div>
+            </div>
+          </label>
+          <label class="radio-opt" onclick="selectRadio(this,'coa')">
+            <input type="radio" name="coa" value="no" />
+            <div>
+              <div class="opt-label">We do not currently provide COAs</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>COA / Lab results URL <span style="font-weight:400;text-transform:none;font-size:.78rem;">(if publicly available)</span></label>
+        <input type="url" id="coaUrl" placeholder="https://yoursite.com/coa" />
+      </div>
+
+      <div class="field">
+        <label>What purity standards do your products meet?</label>
+        <div class="check-group" id="purityGroup">
+          <label class="check-opt" onclick="toggleCheck(this)">
+            <input type="checkbox" name="purity" value="98pct" />
+            <div><div class="opt-label">≥98% purity</div></div>
+          </label>
+          <label class="check-opt" onclick="toggleCheck(this)">
+            <input type="checkbox" name="purity" value="99pct" />
+            <div><div class="opt-label">≥99% purity</div></div>
+          </label>
+          <label class="check-opt" onclick="toggleCheck(this)">
+            <input type="checkbox" name="purity" value="usp" />
+            <div><div class="opt-label">USP-grade</div></div>
+          </label>
+          <label class="check-opt" onclick="toggleCheck(this)">
+            <input type="checkbox" name="purity" value="unknown" />
+            <div><div class="opt-label">Not specified / unknown</div></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Products -->
+    <div class="form-card">
+      <div class="section-title">💊 <span>Products Offered</span></div>
+
+      <div class="field">
+        <label>Primary product categories <span class="req">*</span></label>
+        <div class="check-group">
+          <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox" name="category" value="glp1" /><div><div class="opt-label">GLP-1 / Weight Loss Peptides</div><div class="opt-desc">Semaglutide, Tirzepatide, Retatrutide, etc.</div></div></label>
+          <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox" name="category" value="gh" /><div><div class="opt-label">Growth Hormone Peptides</div><div class="opt-desc">BPC-157, TB-500, CJC-1295, Ipamorelin, etc.</div></div></label>
+          <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox" name="category" value="cognitive" /><div><div class="opt-label">Cognitive &amp; Nootropic</div><div class="opt-desc">Selank, Semax, Dihexa, Cerebrolysin, etc.</div></div></label>
+          <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox" name="category" value="longevity" /><div><div class="opt-label">Longevity &amp; Anti-Aging</div><div class="opt-desc">Epithalon, SS-31, MOTS-c, NAD+, etc.</div></div></label>
+          <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox" name="category" value="immune" /><div><div class="opt-label">Immune &amp; Healing</div><div class="opt-desc">Thymosin Alpha-1, LL-37, KPV, etc.</div></div></label>
+          <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox" name="category" value="skin" /><div><div class="opt-label">Skin &amp; Appearance</div><div class="opt-desc">Melanotan, PT-141, GHK-Cu, etc.</div></div></label>
+          <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox" name="category" value="other" /><div><div class="opt-label">Other / Mixed Catalog</div></div></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Approximate number of unique products in your catalog</label>
+        <select id="productCount">
+          <option value="">Select…</option>
+          <option>1–10 products</option>
+          <option>11–25 products</option>
+          <option>26–50 products</option>
+          <option>51–100 products</option>
+          <option>100+ products</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Section 4: Affiliate Program -->
+    <div class="form-card">
+      <div class="section-title">🤝 <span>Affiliate Program</span></div>
+
+      <div class="field">
+        <label>Do you have an affiliate / referral program? <span class="req">*</span></label>
+        <div class="radio-group">
+          <label class="radio-opt" onclick="selectRadio(this,'affiliate'); toggleAffiliateFields(true)">
+            <input type="radio" name="affiliate" value="yes" required />
+            <div><div class="opt-label">Yes — we have an affiliate program</div></div>
+          </label>
+          <label class="radio-opt" onclick="selectRadio(this,'affiliate'); toggleAffiliateFields(false)">
+            <input type="radio" name="affiliate" value="no" />
+            <div><div class="opt-label">No — but we are open to discussing one</div></div>
+          </label>
+        </div>
+      </div>
+
+      <div id="affiliateFields" style="display:none;">
+        <div class="field-row">
+          <div class="field">
+            <label>Commission Rate (%)</label>
+            <input type="number" id="commissionRate" placeholder="e.g. 15" min="1" max="100" />
+          </div>
+          <div class="field">
+            <label>Customer Discount (%)</label>
+            <input type="number" id="customerDiscount" placeholder="e.g. 10" min="1" max="100" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Affiliate / Referral Link Format</label>
+          <input type="text" id="affiliateLink" placeholder="e.g. https://yoursite.com/?ref=YOURCODE" />
+        </div>
+        <div class="field">
+          <label>Discount Code for Customers</label>
+          <input type="text" id="discountCode" placeholder="e.g. PEPS10" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: Additional Info -->
+    <div class="form-card">
+      <div class="section-title">📝 <span>Additional Information</span></div>
+
+      <div class="field">
+        <label>Tell us about your company and why you should be listed</label>
+        <textarea id="aboutCompany" placeholder="Share any relevant info — sourcing practices, manufacturing process, what makes your products stand out, customer reviews, etc."></textarea>
+      </div>
+
+      <div class="field">
+        <label>How did you hear about PepsTracker?</label>
+        <select id="referralSource">
+          <option value="">Select…</option>
+          <option>Google search</option>
+          <option>Social media</option>
+          <option>Word of mouth</option>
+          <option>Existing vendor referral</option>
+          <option>Forum / community</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:.9rem;">
+          <input type="checkbox" id="agreeTerms" required style="margin-top:2px;accent-color:var(--blue);width:18px;height:18px;flex-shrink:0;" />
+          I confirm that all information submitted is accurate and that my company complies with all applicable laws and regulations. I understand that PepsTracker reserves the right to approve or reject any application, and that listing is not guaranteed.
+        </label>
+      </div>
+
+      <button type="submit" class="btn-submit">Submit Vendor Application →</button>
+    </div>
+
+  </form>
+
+  <!-- Success state -->
+  <div class="success-card" id="successCard">
+    <div class="success-icon">✅</div>
+    <h2>Application Received!</h2>
+    <p>Thank you for applying to be listed on PepsTracker. Our team reviews all applications within <strong>3–5 business days</strong>.</p>
+    <p style="margin-top:12px;">Vendors with third-party testing and publicly available COAs are prioritized for listing and receive our <strong>✅ Verified</strong> badge.</p>
+    <p style="margin-top:12px;">We'll reach out to the email address you provided with next steps. In the meantime, feel free to <a href="index.html" style="color:var(--blue);">browse our price tracker</a>.</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>PepsTracker — Price comparison only. We do not sell or endorse any products.</p>
+  <p style="margin-top:8px;">
+    <a href="index.html">Price Tracker</a> &nbsp;|&nbsp;
+    <a href="calculators.html">Calculators</a> &nbsp;|&nbsp;
+    <a href="disclaimer.html">Full Disclaimer</a>
+  </p>
+</footer>
+
+<script>
+function selectRadio(el, name) {
+  document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+    r.closest('.radio-opt').classList.remove('selected');
+  });
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('selected');
+  el.querySelector('input').checked = el.classList.contains('selected');
+}
+
+function toggleAffiliateFields(show) {
+  document.getElementById('affiliateFields').style.display = show ? 'block' : 'none';
+}
+
+function submitForm(e) {
+  e.preventDefault();
+  // In production this would POST to a backend / Formspree / Netlify Forms
+  document.getElementById('applyForm').style.display = 'none';
+  document.getElementById('successCard').classList.add('show');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PepsTracker — Peptide Price Comparison</title>
+  <style>
+    :root {
+      --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
+      --border:#2a3347; --blue:#3b9eff; --green:#4de87a;
+      --text:#e8edf5; --muted:#7a8ba8; --gold:#f5c842;
+      --red:#ff5c5c; --radius:12px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+    /* ── DISCLAIMER MODAL ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .modal-box{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;max-width:560px;width:100%;padding:32px;}
+    .modal-box h2{font-size:1.2rem;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+    .modal-box h2 span{color:var(--gold);}
+    .modal-box p{font-size:0.88rem;color:var(--muted);line-height:1.65;margin-bottom:12px;}
+    .modal-box p strong{color:var(--text);}
+    .modal-accept{width:100%;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:800;cursor:pointer;margin-top:8px;transition:opacity .2s;}
+    .modal-accept:hover{opacity:.9;}
+
+    /* ── HEADER ── */
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:100;}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px;}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+    .logo-icon{width:42px;height:42px;}
+    .logo-text{font-size:1.5rem;font-weight:800;letter-spacing:-.5px;}
+    .logo-text span:first-child{color:var(--blue);}
+    .logo-text span:last-child{color:var(--green);}
+    nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+    nav a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:600;padding:6px 12px;border-radius:8px;transition:all .2s;white-space:nowrap;}
+    nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    nav a.active{color:var(--blue);}
+    nav a.nav-calc{background:rgba(77,232,122,.1);color:var(--green);border:1px solid rgba(77,232,122,.25);}
+    nav a.nav-calc:hover{background:rgba(77,232,122,.18);}
+    nav a.nav-apply{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);}
+    nav a.nav-apply:hover{background:rgba(245,200,66,.18);}
+
+    /* ── HERO ── */
+    .hero{text-align:center;padding:56px 24px 40px;background:radial-gradient(ellipse at 50% 0%,rgba(59,158,255,.08) 0%,transparent 65%);}
+    .hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-1px;line-height:1.15;margin-bottom:12px;}
+    .hero h1 em{font-style:normal;color:var(--green);}
+    .hero p{color:var(--muted);font-size:1.05rem;margin-bottom:32px;}
+
+    /* ── SEARCH ── */
+    .search-wrap{max-width:720px;margin:0 auto;display:flex;gap:10px;align-items:stretch;}
+    .select-wrap{position:relative;flex:1;}
+    .select-wrap select{width:100%;appearance:none;background:var(--card);border:1.5px solid var(--border);color:var(--text);border-radius:var(--radius);padding:14px 44px 14px 18px;font-size:1rem;cursor:pointer;transition:border-color .2s;}
+    .select-wrap select:focus{outline:none;border-color:var(--blue);}
+    .select-wrap::after{content:'▾';position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+    .btn-search{background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;border:none;border-radius:var(--radius);padding:14px 28px;font-size:1rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .2s,transform .1s;}
+    .btn-search:hover{opacity:.9;transform:translateY(-1px);}
+
+    /* ── GLP BANNER ── */
+    .glp-banner{max-width:1200px;margin:0 auto;padding:0 24px;display:none;}
+    .glp-banner-inner{background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.3);border-radius:var(--radius);padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:.88rem;color:var(--gold);}
+
+    /* ── FILTER ── */
+    .filter-row{max-width:1200px;margin:0 auto;padding:20px 24px 16px;display:none;align-items:center;gap:10px;flex-wrap:wrap;}
+    .filter-label{color:var(--muted);font-size:.9rem;margin-right:4px;}
+    .pill{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.85rem;cursor:pointer;transition:all .2s;}
+    .pill.active{border-color:var(--blue);color:var(--blue);background:rgba(59,158,255,.08);font-weight:700;}
+
+    /* ── RESULTS ── */
+    .results{max-width:1200px;margin:0 auto;padding:0 24px 40px;}
+    .results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+    .results-title{font-size:1.15rem;font-weight:700;}
+    .results-title span{color:var(--blue);}
+    .last-updated{font-size:.8rem;color:var(--muted);}
+    .last-updated em{color:var(--green);font-style:normal;}
+
+    /* ── RESULT CARD ── */
+    .result-list{display:flex;flex-direction:column;gap:10px;}
+    .result-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);display:grid;grid-template-columns:48px 1fr auto auto auto;align-items:center;gap:16px;padding:16px 20px;transition:border-color .2s,transform .15s;}
+    .result-card:hover{border-color:var(--blue);transform:translateY(-1px);}
+    .result-card.best{border-color:var(--green);background:linear-gradient(90deg,rgba(77,232,122,.06) 0%,var(--card) 60%);}
+    .rank{font-size:1.3rem;font-weight:800;text-align:center;color:var(--muted);}
+    .rank.first{color:var(--gold);}
+    .vendor-name{font-weight:700;font-size:1rem;}
+    .best-badge{display:inline-block;font-size:.68rem;font-weight:700;background:rgba(77,232,122,.15);color:var(--green);border:1px solid rgba(77,232,122,.35);border-radius:20px;padding:2px 8px;margin-left:8px;vertical-align:middle;text-transform:uppercase;letter-spacing:.5px;}
+    .vendor-listing{font-size:.75rem;color:var(--muted);margin-top:3px;}
+    .vendor-listing em{color:var(--blue);font-style:normal;font-weight:600;}
+    .price-block{text-align:right;}
+    .price-original{font-size:1.4rem;font-weight:800;white-space:nowrap;}
+    .price-original.best-price{color:var(--green);}
+    .price-reg{font-size:.78rem;color:var(--muted);margin-top:3px;}
+    .price-original-strike{text-decoration:line-through;color:var(--muted);}
+    .price-strength{font-size:.78rem;color:var(--muted);margin-top:1px;}
+    .price-per-mg{font-size:.82rem;color:var(--blue);font-weight:700;margin-top:2px;}
+    .code-block{text-align:center;min-width:110px;}
+    .code-row{display:flex;align-items:center;gap:6px;justify-content:center;}
+    .code-badge{background:rgba(59,158,255,.10);border:1px solid rgba(59,158,255,.3);color:var(--blue);border-radius:7px;padding:5px 10px;font-size:.82rem;font-weight:700;font-family:monospace;letter-spacing:.5px;white-space:nowrap;}
+    .btn-copy{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 8px;font-size:.72rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
+    .btn-copy:hover{border-color:var(--blue);color:var(--blue);}
+    .btn-copy.copied{border-color:var(--green);color:var(--green);}
+    .code-label{font-size:.68rem;color:var(--muted);margin-top:4px;}
+    .discount-pct{font-size:.72rem;color:var(--green);font-weight:700;margin-top:2px;}
+    .btn-shop{display:inline-block;background:linear-gradient(135deg,var(--green),#2bb858);color:#0d0f14;font-weight:800;font-size:.9rem;padding:11px 22px;border-radius:8px;text-decoration:none;white-space:nowrap;transition:opacity .2s,transform .1s;}
+    .btn-shop:hover{opacity:.88;transform:translateY(-1px);}
+    .btn-shop.secondary{background:transparent;border:1.5px solid var(--blue);color:var(--blue);}
+
+    /* ── EMPTY ── */
+    .empty{text-align:center;padding:80px 24px;color:var(--muted);}
+    .empty-icon{font-size:3rem;margin-bottom:16px;}
+    .empty h3{font-size:1.2rem;color:var(--text);margin-bottom:8px;}
+
+    /* ── DISCLAIMER STRIP ── */
+    .disclaimer-strip{max-width:1200px;margin:0 auto 60px;padding:0 24px;}
+    .disclaimer-inner{background:rgba(255,92,92,.05);border:1px solid rgba(255,92,92,.2);border-radius:var(--radius);padding:16px 20px;font-size:.82rem;color:var(--muted);line-height:1.6;}
+    .disclaimer-inner strong{color:var(--text);}
+    .disclaimer-inner a{color:var(--blue);text-decoration:none;}
+
+    /* ── FOOTER ── */
+    footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:.82rem;}
+    footer a{color:var(--blue);text-decoration:none;}
+
+    @media(max-width:700px){
+      .result-card{grid-template-columns:36px 1fr;}.price-block{text-align:left;}
+      .code-block{display:none;}.btn-shop{grid-column:1/-1;text-align:center;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ DISCLAIMER MODAL ═══════════════════════════════ -->
+<div class="modal-overlay" id="disclaimerModal">
+  <div class="modal-box">
+    <h2>⚠️ <span>Important Disclaimer</span></h2>
+    <p><strong>PepsTracker is a price comparison tool only.</strong> We do not manufacture, sell, distribute, or endorse any peptides or research compounds listed on this site.</p>
+    <p>We make <strong>no representation or guarantee</strong> regarding the quality, purity, safety, legality, or effectiveness of any products or vendors listed. Pricing is collected for informational purposes and is subject to change without notice.</p>
+    <p>All products listed are intended <strong>for research purposes only</strong> and are not intended for human consumption. Use of this site does not constitute medical advice. Always consult a licensed healthcare professional before use.</p>
+    <p>Affiliate links on this site may generate a commission for PepsTracker at no additional cost to you.</p>
+    <button class="modal-accept" onclick="acceptDisclaimer()">I Understand — Continue to PepsTracker</button>
+  </div>
+</div>
+
+<!-- ═══ HEADER ══════════════════════════════════════════ -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <svg class="logo-icon" viewBox="0 0 42 42" fill="none">
+        <circle cx="7"  cy="30" r="4" fill="#3b9eff"/>
+        <circle cx="19" cy="22" r="4" fill="#3bb8ff"/>
+        <circle cx="31" cy="14" r="4" fill="#4de87a"/>
+        <line x1="7" y1="30" x2="19" y2="22" stroke="#3b9eff" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="19" y1="22" x2="31" y2="14" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
+        <polyline points="28,8 35,8 35,15" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <defs><linearGradient id="g1" x1="19" y1="22" x2="31" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3b9eff"/><stop offset="100%" stop-color="#4de87a"/></linearGradient></defs>
+      </svg>
+      <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
+    </a>
+    <nav>
+      <a href="index.html" class="active">Price Tracker</a>
+      <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
+      <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
+      <a href="disclaimer.html">Disclaimer</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══ HERO ════════════════════════════════════════════ -->
+<section class="hero">
+  <h1>Find the <em>Best Price</em> on Any Peptide</h1>
+  <p>We compare prices across top vendors daily — normalized by dose so you always see the real value.</p>
+  <div class="search-wrap">
+    <div class="select-wrap">
+      <select id="peptideSelect" onchange="handleSearch()">
+        <option value="">— Select a peptide to compare prices —</option>
+
+        <optgroup label="GLP-1 / Weight Loss">
+          <option>Semaglutide</option>
+          <option>Tirzepatide</option>
+          <option>Retatrutide</option>
+          <option>Liraglutide</option>
+        </optgroup>
+
+        <optgroup label="BPC / TB Healing">
+          <option>BPC-157</option>
+          <option>BPC-157 (Oral)</option>
+          <option>TB-500</option>
+          <option>TB-500 Fragment (17-23)</option>
+          <option>BPC-157 + TB-500 Blend</option>
+        </optgroup>
+
+        <optgroup label="Growth Hormone Peptides">
+          <option>CJC-1295 (with DAC)</option>
+          <option>CJC-1295 (no DAC) / Mod GRF 1-29</option>
+          <option>Ipamorelin</option>
+          <option>Hexarelin</option>
+          <option>GHRP-2</option>
+          <option>GHRP-6</option>
+          <option>Sermorelin</option>
+          <option>Tesamorelin</option>
+          <option>GHRH (1-29)</option>
+          <option>CJC-1295 + Ipamorelin Blend</option>
+        </optgroup>
+
+        <optgroup label="IGF / Growth Factors">
+          <option>IGF-1 LR3</option>
+          <option>IGF-1 DES</option>
+          <option>HGH Fragment 176-191</option>
+          <option>AOD 9604</option>
+          <option>MGF (Mechano Growth Factor)</option>
+          <option>PEG-MGF</option>
+          <option>Follistatin 344</option>
+        </optgroup>
+
+        <optgroup label="GLP-1 / Fat Loss Other">
+          <option>Adipotide (FTPP)</option>
+          <option>5-Amino-1MQ</option>
+        </optgroup>
+
+        <optgroup label="Skin, Tanning &amp; Appearance">
+          <option>Melanotan I (MT-1)</option>
+          <option>Melanotan II</option>
+          <option>PT-141 (Bremelanotide)</option>
+          <option>GHK-Cu</option>
+          <option>SNAP-8</option>
+          <option>Leuphasyl</option>
+        </optgroup>
+
+        <optgroup label="Cognitive &amp; Nootropic">
+          <option>Selank</option>
+          <option>N-Acetyl Selank</option>
+          <option>Semax</option>
+          <option>N-Acetyl Semax</option>
+          <option>Dihexa</option>
+          <option>DSIP (Delta Sleep Inducing Peptide)</option>
+          <option>P21</option>
+          <option>Cerebrolysin</option>
+          <option>Pinealon</option>
+          <option>Cortagen</option>
+        </optgroup>
+
+        <optgroup label="Longevity &amp; Anti-Aging">
+          <option>Epithalon</option>
+          <option>SS-31 (Elamipretide)</option>
+          <option>MOTS-c</option>
+          <option>Humanin</option>
+          <option>NAD+</option>
+          <option>Thymalin</option>
+          <option>Cortagen</option>
+        </optgroup>
+
+        <optgroup label="Immune &amp; Thymus">
+          <option>Thymosin Alpha-1</option>
+          <option>Thymosin Beta-4 (TB-4)</option>
+          <option>Thymogen</option>
+          <option>Thymulin</option>
+          <option>LL-37</option>
+          <option>KPV</option>
+        </optgroup>
+
+        <optgroup label="Hormonal &amp; Sexual Health">
+          <option>Oxytocin</option>
+          <option>Kisspeptin-10</option>
+          <option>Gonadorelin</option>
+          <option>VIP (Vasoactive Intestinal Peptide)</option>
+        </optgroup>
+
+        <optgroup label="Energy &amp; Mitochondrial">
+          <option>SS-31 (Elamipretide)</option>
+          <option>MOTS-c</option>
+          <option>Humanin</option>
+          <option>NAD+</option>
+        </optgroup>
+      </select>
+    </div>
+    <button class="btn-search" onclick="handleSearch()">Compare Prices</button>
+  </div>
+</section>
+
+<!-- GLP-1 BANNER -->
+<div class="glp-banner" id="glpBanner">
+  <div class="glp-banner-inner">
+    ⚖️ <div><strong>Why we show $/mg:</strong> GLP-1 vendors sell different vial sizes — a lower sticker price doesn't always mean a better deal. We normalize every price to cost-per-milligram so you can compare fairly.</div>
+  </div>
+</div>
+
+<!-- FILTER ROW -->
+<div class="filter-row" id="filterRow">
+  <span class="filter-label">Sorted by:</span>
+  <span class="pill active" style="cursor:default;">💰 Lowest Price After Discount</span>
+</div>
+
+<!-- RESULTS -->
+<div class="results">
+  <div class="empty" id="emptyState">
+    <div class="empty-icon">🔬</div>
+    <h3>Select a peptide above to compare prices</h3>
+    <p>We track pricing across 11 vendors — updated every day.<br>Prices normalized by dose for a fair comparison.</p>
+  </div>
+  <div id="resultsContainer" style="display:none;">
+    <div class="results-header">
+      <div class="results-title">Prices for <span id="resultTitle"></span></div>
+      <div class="last-updated">Last updated: <em id="lastUpdated"></em></div>
+    </div>
+    <div class="result-list" id="resultList"></div>
+  </div>
+</div>
+
+<!-- DISCLAIMER STRIP -->
+<div class="disclaimer-strip" id="disclaimerStrip" style="display:none;">
+  <div class="disclaimer-inner">
+    <strong>⚠️ Price Comparison Only — Not a Quality Guarantee.</strong> PepsTracker compares publicly listed prices for informational purposes only. We do not verify, endorse, or guarantee the quality, purity, safety, or legality of any products or vendors listed. All products are for research purposes only. Vendor rankings reflect price only — not quality or reliability. <a href="disclaimer.html">Read our full disclaimer →</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>PepsTracker is a price comparison service only. We do not sell or distribute any products. Affiliate links may earn us a commission at no cost to you.</p>
+  <p style="margin-top:8px;">
+    <a href="index.html">Price Tracker</a> &nbsp;|&nbsp;
+    <a href="calculators.html">Calculators</a> &nbsp;|&nbsp;
+    <a href="vendor-apply.html">Vendor Application</a> &nbsp;|&nbsp;
+    <a href="disclaimer.html">Full Disclaimer</a>
+  </p>
+  <p style="margin-top:8px;">© 2025 PepsTracker — For research purposes only.</p>
+</footer>
+
+<script>
+// ════════════════════════════════════════════
+// DISCLAIMER MODAL
+// ════════════════════════════════════════════
+function acceptDisclaimer() {
+  document.getElementById('disclaimerModal').style.display = 'none';
+  sessionStorage.setItem('disc_accepted', '1');
+}
+if (sessionStorage.getItem('disc_accepted')) {
+  document.getElementById('disclaimerModal').style.display = 'none';
+}
+
+// ════════════════════════════════════════════
+// VENDORS
+// ════════════════════════════════════════════
+const VENDORS = [
+  { id:"ascension",  name:"Ascension Peptides",  url:"https://ascensionpeptides.com/ref/Glowlab/",     code:"Glowlab",   discount:0.50 },
+  { id:"atomik",     name:"AtomiK Labz",          url:"https://affiliatepirate.com/r/IE180L",           code:"Glowlab15", discount:0.15 },
+  { id:"lapeptides", name:"LA Peptides",          url:"https://lapeptides.net/?ref=Glowlab",            code:"Glowlab",   discount:0.10 },
+  { id:"glacier",    name:"Glacier Aminos",       url:"https://glacieraminos.shop/?ref=sidbilvi",       code:"Glowlab",   discount:0.10 },
+  { id:"milehigh",   name:"Mile High Compound",   url:"https://milehighcompounds.is/ref=glowlab10",     code:"Glowlab",   discount:0.10 },
+  { id:"ezpeptides", name:"EZ Peptides",          url:"https://ezpeptides.com/?red=glowlab",            code:"GlowLab",   discount:0.10 },
+  { id:"amp",        name:"AMP Ameano Peptides",  url:"https://ameanopeptides.com/?ref=lcbpndeo",       code:"Glowlab",   discount:0.10 },
+  { id:"labsourced", name:"Labsourced",           url:"https://labsourced.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15 },
+  { id:"ion",        name:"Ion Peptides",         url:"https://ionpeptide.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15 },
+  { id:"retaone",    name:"Reta One Labs",        url:"https://retaonelabs.com/ref/0rgv6",              code:"Glowlab",   discount:0.05 },
+  { id:"nura",       name:"NuraPeptide",          url:"https://nurapeptide.com/?ref=glowlab",           code:"Glowlab15", discount:0.15 },
+];
+const vMap = {};
+VENDORS.forEach(v => vMap[v.id] = v);
+
+const GLP1 = new Set(["Semaglutide","Tirzepatide","Retatrutide","Liraglutide"]);
+
+// ════════════════════════════════════════════
+// PRICE DATA
+// { price, mg, listing } per vendor — null = not carried
+// ════════════════════════════════════════════
+const PRICES = {
+
+  // ── GLP-1 / Weight Loss ──────────────────
+  "Semaglutide": {
+    ascension:{price:65.00,mg:5,listing:"Semaglutide 5mg"},
+    atomik:null,
+    lapeptides:{price:59.00,mg:5,listing:"Sema 5mg"},
+    glacier:{price:34.00,mg:2,listing:"Semaglutide 2mg"},
+    milehigh:{price:55.00,mg:5,listing:"Semaglutide 5mg"},
+    ezpeptides:{price:68.00,mg:5,listing:"Sema Peptide 5mg"},
+    amp:null,
+    labsourced:{price:29.00,mg:2,listing:"Sema 2mg"},
+    ion:{price:70.00,mg:5,listing:"Semaglutide 5mg"},
+    retaone:{price:80.00,mg:5,listing:"Semaglutide 5mg"},
+    nura:{price:58.00,mg:5,listing:"Sema GLP-1 5mg"},
+  },
+  "Tirzepatide": {
+    ascension:{price:85.00,mg:5,listing:"Tirzepatide 5mg"},
+    atomik:null,
+    lapeptides:{price:79.00,mg:5,listing:"Tirz 5mg"},
+    glacier:{price:92.00,mg:5,listing:"Tirzepatide 5mg"},
+    milehigh:{price:45.00,mg:2,listing:"Tirzepatide 2mg"},
+    ezpeptides:{price:88.00,mg:5,listing:"Tirzepatide 5mg"},
+    amp:null,
+    labsourced:{price:82.00,mg:5,listing:"Tirz GIP/GLP-1 5mg"},
+    ion:{price:90.00,mg:5,listing:"Tirzepatide 5mg"},
+    retaone:null,
+    nura:{price:76.00,mg:5,listing:"Tirzepatide 5mg"},
+  },
+  "Retatrutide": {
+    ascension:{price:95.00,mg:5,listing:"Retatrutide 5mg"},
+    atomik:null,
+    lapeptides:{price:89.00,mg:5,listing:"Reta 5mg"},
+    glacier:null,
+    milehigh:{price:85.00,mg:5,listing:"Retatrutide 5mg"},
+    ezpeptides:{price:98.00,mg:5,listing:"Retatrutide Triple Agonist 5mg"},
+    amp:null,
+    labsourced:{price:50.00,mg:2,listing:"Reta 2mg"},
+    ion:{price:100.00,mg:5,listing:"Retatrutide 5mg"},
+    retaone:null,
+    nura:{price:87.00,mg:5,listing:"Reta GLP-1/GIP 5mg"},
+  },
+  "Liraglutide": {
+    ascension:{price:55.00,mg:5,listing:"Liraglutide 5mg"},
+    atomik:null,
+    lapeptides:{price:49.00,mg:5,listing:"Liraglutide 5mg"},
+    glacier:null,
+    milehigh:{price:46.00,mg:5,listing:"Liraglutide 5mg"},
+    ezpeptides:{price:58.00,mg:5,listing:"Liraglutide 5mg"},
+    amp:null,
+    labsourced:{price:44.00,mg:5,listing:"Liraglutide 5mg"},
+    ion:{price:60.00,mg:5,listing:"Liraglutide 5mg"},
+    retaone:null,
+    nura:{price:48.00,mg:5,listing:"Liraglutide 5mg"},
+  },
+
+  // ── BPC / TB Healing ────────────────────
+  "BPC-157": {
+    ascension:{price:29.99,mg:5,listing:"BPC-157 5mg"},
+    atomik:{price:34.50,mg:5,listing:"BPC-157 5mg"},
+    lapeptides:{price:27.00,mg:5,listing:"BPC-157 5mg"},
+    glacier:{price:31.00,mg:5,listing:"BPC-157 5mg"},
+    milehigh:{price:36.00,mg:5,listing:"BPC-157 5mg"},
+    ezpeptides:{price:28.50,mg:5,listing:"BPC-157 5mg"},
+    amp:{price:33.00,mg:5,listing:"BPC-157 5mg"},
+    labsourced:{price:26.50,mg:5,listing:"BPC-157 5mg"},
+    ion:{price:30.00,mg:5,listing:"BPC 157 5mg"},
+    retaone:{price:38.00,mg:5,listing:"BPC-157 5mg"},
+    nura:{price:32.00,mg:5,listing:"BPC-157 5mg"},
+  },
+  "BPC-157 (Oral)": {
+    ascension:{price:38.00,mg:10,listing:"BPC-157 Oral 10mg"},
+    atomik:null,
+    lapeptides:{price:35.00,mg:10,listing:"BPC-157 Oral 10mg"},
+    glacier:{price:40.00,mg:10,listing:"BPC-157 Oral 10mg"},
+    milehigh:{price:34.00,mg:10,listing:"BPC-157 Oral 10mg"},
+    ezpeptides:{price:37.00,mg:10,listing:"Oral BPC-157 10mg"},
+    amp:{price:36.00,mg:10,listing:"BPC-157 Oral 10mg"},
+    labsourced:{price:33.00,mg:10,listing:"BPC-157 Oral 10mg"},
+    ion:{price:39.00,mg:10,listing:"Oral BPC-157 10mg"},
+    retaone:{price:45.00,mg:10,listing:"BPC-157 Oral 10mg"},
+    nura:{price:36.00,mg:10,listing:"BPC-157 Oral 10mg"},
+  },
+  "TB-500": {
+    ascension:{price:42.00,mg:5,listing:"TB-500 5mg"},
+    atomik:{price:38.50,mg:5,listing:"TB-500 5mg"},
+    lapeptides:{price:44.00,mg:5,listing:"TB-500 5mg"},
+    glacier:{price:36.00,mg:5,listing:"TB500 5mg"},
+    milehigh:{price:40.00,mg:5,listing:"TB-500 5mg"},
+    ezpeptides:{price:39.99,mg:5,listing:"TB-500 5mg"},
+    amp:{price:41.00,mg:5,listing:"TB-500 5mg"},
+    labsourced:{price:37.50,mg:5,listing:"TB-500 5mg"},
+    ion:{price:43.00,mg:5,listing:"TB-500 5mg"},
+    retaone:{price:48.00,mg:5,listing:"TB-500 5mg"},
+    nura:{price:35.00,mg:5,listing:"Thymosin Beta-4 5mg"},
+  },
+  "TB-500 Fragment (17-23)": {
+    ascension:{price:32.00,mg:5,listing:"TB-500 Fragment 5mg"},
+    atomik:{price:28.00,mg:5,listing:"TB-4 Frag 5mg"},
+    lapeptides:{price:34.00,mg:5,listing:"TB-500 Frag (17-23) 5mg"},
+    glacier:null,
+    milehigh:{price:30.00,mg:5,listing:"TB-4 Fragment 5mg"},
+    ezpeptides:{price:31.00,mg:5,listing:"TB-500 Fragment 5mg"},
+    amp:null,
+    labsourced:{price:29.00,mg:5,listing:"TB-4 Fragment 5mg"},
+    ion:{price:33.00,mg:5,listing:"TB-500 Fragment 5mg"},
+    retaone:null,
+    nura:{price:30.00,mg:5,listing:"TB-4 Fragment 5mg"},
+  },
+  "BPC-157 + TB-500 Blend": {
+    ascension:{price:55.00,mg:10,listing:"BPC-157 + TB-500 Blend 10mg"},
+    atomik:{price:52.00,mg:10,listing:"BPC/TB Blend 10mg"},
+    lapeptides:{price:58.00,mg:10,listing:"BPC-157 + TB-500 10mg"},
+    glacier:{price:54.00,mg:10,listing:"BPC+TB Blend 10mg"},
+    milehigh:{price:50.00,mg:10,listing:"BPC/TB Blend 10mg"},
+    ezpeptides:{price:56.00,mg:10,listing:"BPC-157 + TB-500 10mg"},
+    amp:{price:53.00,mg:10,listing:"BPC+TB Blend 10mg"},
+    labsourced:{price:48.00,mg:10,listing:"BPC-157 + TB-500 10mg"},
+    ion:{price:57.00,mg:10,listing:"BPC/TB Combo 10mg"},
+    retaone:{price:65.00,mg:10,listing:"BPC-157 + TB-500 10mg"},
+    nura:{price:51.00,mg:10,listing:"BPC + TB Blend 10mg"},
+  },
+
+  // ── Growth Hormone ───────────────────────
+  "CJC-1295 (with DAC)": {
+    ascension:{price:32.00,mg:2,listing:"CJC-1295 w/DAC 2mg"},
+    atomik:{price:28.50,mg:2,listing:"CJC-1295 DAC 2mg"},
+    lapeptides:{price:30.00,mg:2,listing:"CJC-1295 (w/ DAC) 2mg"},
+    glacier:{price:34.00,mg:2,listing:"CJC-1295 w/DAC 2mg"},
+    milehigh:{price:27.00,mg:2,listing:"CJC-1295 DAC 2mg"},
+    ezpeptides:{price:31.00,mg:2,listing:"CJC-1295 w/DAC 2mg"},
+    amp:{price:29.50,mg:2,listing:"CJC-1295 w/DAC 2mg"},
+    labsourced:{price:26.00,mg:2,listing:"CJC-1295 (DAC) 2mg"},
+    ion:{price:33.00,mg:2,listing:"CJC-1295 w/DAC 2mg"},
+    retaone:{price:38.00,mg:2,listing:"CJC-1295 w/DAC 2mg"},
+    nura:{price:28.00,mg:2,listing:"CJC-1295 DAC 2mg"},
+  },
+  "CJC-1295 (no DAC) / Mod GRF 1-29": {
+    ascension:{price:25.00,mg:2,listing:"CJC-1295 no DAC 2mg"},
+    atomik:{price:22.50,mg:2,listing:"Mod GRF 1-29 2mg"},
+    lapeptides:{price:24.00,mg:2,listing:"CJC-1295 w/o DAC 2mg"},
+    glacier:{price:27.00,mg:2,listing:"CJC-1295 no DAC 2mg"},
+    milehigh:{price:21.00,mg:2,listing:"CJC-1295 no DAC 2mg"},
+    ezpeptides:{price:23.50,mg:2,listing:"Mod GRF 1-29 2mg"},
+    amp:{price:26.00,mg:2,listing:"CJC-1295 no DAC 2mg"},
+    labsourced:{price:20.00,mg:2,listing:"CJC-1295 (no DAC) 2mg"},
+    ion:{price:25.50,mg:2,listing:"CJC-1295 no DAC 2mg"},
+    retaone:{price:30.00,mg:2,listing:"CJC no DAC 2mg"},
+    nura:{price:22.00,mg:2,listing:"Mod GRF 1-29 2mg"},
+  },
+  "Ipamorelin": {
+    ascension:{price:28.00,mg:5,listing:"Ipamorelin 5mg"},
+    atomik:{price:24.00,mg:5,listing:"Ipamorelin 5mg"},
+    lapeptides:{price:26.50,mg:5,listing:"Ipamorelin 5mg"},
+    glacier:{price:30.00,mg:5,listing:"Ipamorelin 5mg"},
+    milehigh:{price:23.00,mg:5,listing:"Ipamorelin 5mg"},
+    ezpeptides:{price:27.00,mg:5,listing:"Ipamorelin 5mg"},
+    amp:{price:25.00,mg:5,listing:"Ipamorelin 5mg"},
+    labsourced:{price:22.50,mg:5,listing:"Ipamorelin 5mg"},
+    ion:{price:29.00,mg:5,listing:"Ipamorelin 5mg"},
+    retaone:{price:33.00,mg:5,listing:"Ipamorelin 5mg"},
+    nura:{price:24.50,mg:5,listing:"Ipamorelin 5mg"},
+  },
+  "Hexarelin": {
+    ascension:{price:30.00,mg:5,listing:"Hexarelin 5mg"},
+    atomik:{price:26.00,mg:5,listing:"Hexarelin 5mg"},
+    lapeptides:{price:28.00,mg:5,listing:"Hexarelin 5mg"},
+    glacier:{price:32.00,mg:5,listing:"Hexarelin 5mg"},
+    milehigh:{price:25.00,mg:5,listing:"Hexarelin 5mg"},
+    ezpeptides:{price:29.00,mg:5,listing:"Hexarelin 5mg"},
+    amp:{price:27.00,mg:5,listing:"Hexarelin 5mg"},
+    labsourced:{price:24.50,mg:5,listing:"Hexarelin 5mg"},
+    ion:{price:31.00,mg:5,listing:"Hexarelin 5mg"},
+    retaone:{price:36.00,mg:5,listing:"Hexarelin 5mg"},
+    nura:{price:26.50,mg:5,listing:"Hexarelin 5mg"},
+  },
+  "GHRP-2": {
+    ascension:{price:22.00,mg:5,listing:"GHRP-2 5mg"},
+    atomik:{price:19.50,mg:5,listing:"GHRP-2 5mg"},
+    lapeptides:{price:20.00,mg:5,listing:"GHRP-2 5mg"},
+    glacier:{price:24.00,mg:5,listing:"GHRP-2 5mg"},
+    milehigh:{price:18.00,mg:5,listing:"GHRP-2 5mg"},
+    ezpeptides:{price:21.00,mg:5,listing:"GHRP-2 5mg"},
+    amp:{price:23.00,mg:5,listing:"GHRP2 5mg"},
+    labsourced:{price:17.50,mg:5,listing:"GHRP-2 5mg"},
+    ion:{price:22.50,mg:5,listing:"GHRP-2 5mg"},
+    retaone:{price:27.00,mg:5,listing:"GHRP-2 5mg"},
+    nura:{price:19.00,mg:5,listing:"GHRP-2 5mg"},
+  },
+  "GHRP-6": {
+    ascension:{price:22.00,mg:5,listing:"GHRP-6 5mg"},
+    atomik:{price:19.50,mg:5,listing:"GHRP-6 5mg"},
+    lapeptides:{price:20.00,mg:5,listing:"GHRP-6 5mg"},
+    glacier:{price:24.00,mg:5,listing:"GHRP-6 5mg"},
+    milehigh:{price:18.50,mg:5,listing:"GHRP-6 5mg"},
+    ezpeptides:{price:21.50,mg:5,listing:"GHRP-6 5mg"},
+    amp:{price:23.00,mg:5,listing:"GHRP6 5mg"},
+    labsourced:{price:18.00,mg:5,listing:"GHRP-6 5mg"},
+    ion:{price:22.00,mg:5,listing:"GHRP-6 5mg"},
+    retaone:{price:26.00,mg:5,listing:"GHRP-6 5mg"},
+    nura:{price:19.50,mg:5,listing:"GHRP-6 5mg"},
+  },
+  "Sermorelin": {
+    ascension:{price:34.00,mg:5,listing:"Sermorelin 5mg"},
+    atomik:{price:30.00,mg:5,listing:"Sermorelin 5mg"},
+    lapeptides:{price:36.00,mg:5,listing:"Sermorelin 5mg"},
+    glacier:{price:32.00,mg:5,listing:"Sermorelin 5mg"},
+    milehigh:{price:29.00,mg:5,listing:"Sermorelin 5mg"},
+    ezpeptides:{price:33.00,mg:5,listing:"Sermorelin 5mg"},
+    amp:{price:31.00,mg:5,listing:"Sermorelin 5mg"},
+    labsourced:{price:28.00,mg:5,listing:"Sermorelin 5mg"},
+    ion:{price:35.00,mg:5,listing:"Sermorelin 5mg"},
+    retaone:{price:40.00,mg:5,listing:"Sermorelin 5mg"},
+    nura:{price:30.00,mg:5,listing:"Sermorelin 5mg"},
+  },
+  "Tesamorelin": {
+    ascension:{price:50.00,mg:2,listing:"Tesamorelin 2mg"},
+    atomik:{price:45.00,mg:2,listing:"Tesamorelin 2mg"},
+    lapeptides:{price:54.00,mg:2,listing:"Tesamorelin 2mg"},
+    glacier:null,
+    milehigh:{price:43.00,mg:2,listing:"Tesamorelin 2mg"},
+    ezpeptides:{price:49.00,mg:2,listing:"Tesamorelin 2mg"},
+    amp:null,
+    labsourced:{price:41.00,mg:2,listing:"Tesamorelin 2mg"},
+    ion:{price:52.00,mg:2,listing:"Tesamorelin 2mg"},
+    retaone:{price:62.00,mg:2,listing:"Tesamorelin 2mg"},
+    nura:{price:44.00,mg:2,listing:"Tesamorelin 2mg"},
+  },
+  "GHRH (1-29)": {
+    ascension:{price:36.00,mg:2,listing:"GHRH 1-29 2mg"},
+    atomik:{price:32.00,mg:2,listing:"GHRH (1-29) 2mg"},
+    lapeptides:{price:38.00,mg:2,listing:"GHRH 1-29 2mg"},
+    glacier:null,
+    milehigh:{price:31.00,mg:2,listing:"GHRH 2mg"},
+    ezpeptides:{price:35.00,mg:2,listing:"GHRH 1-29 2mg"},
+    amp:null,
+    labsourced:{price:30.00,mg:2,listing:"GHRH (1-29) 2mg"},
+    ion:{price:37.00,mg:2,listing:"GHRH 1-29 2mg"},
+    retaone:{price:44.00,mg:2,listing:"GHRH 1-29 2mg"},
+    nura:{price:33.00,mg:2,listing:"GHRH 1-29 2mg"},
+  },
+  "CJC-1295 + Ipamorelin Blend": {
+    ascension:{price:45.00,mg:7,listing:"CJC-1295 + Ipamorelin 7mg Blend"},
+    atomik:{price:40.00,mg:7,listing:"CJC/Ipa Blend 7mg"},
+    lapeptides:{price:48.00,mg:7,listing:"CJC-1295 + Ipamorelin 7mg"},
+    glacier:{price:44.00,mg:7,listing:"CJC+Ipa Blend 7mg"},
+    milehigh:{price:38.00,mg:7,listing:"CJC/Ipa Blend 7mg"},
+    ezpeptides:{price:43.00,mg:7,listing:"CJC-1295 + Ipamorelin 7mg"},
+    amp:{price:42.00,mg:7,listing:"CJC+Ipa Blend 7mg"},
+    labsourced:{price:37.00,mg:7,listing:"CJC + Ipamorelin 7mg"},
+    ion:{price:46.00,mg:7,listing:"CJC/Ipa Blend 7mg"},
+    retaone:{price:55.00,mg:7,listing:"CJC-1295 + Ipamorelin 7mg"},
+    nura:{price:41.00,mg:7,listing:"CJC + Ipa 7mg Blend"},
+  },
+
+  // ── IGF / Growth Factors ────────────────
+  "IGF-1 LR3": {
+    ascension:{price:52.00,mg:1,listing:"IGF-1 LR3 1mg"},
+    atomik:{price:48.00,mg:1,listing:"IGF-1 LR3 1mg"},
+    lapeptides:{price:55.00,mg:1,listing:"IGF-1 LR3 1mg"},
+    glacier:null,
+    milehigh:{price:46.00,mg:1,listing:"IGF-1 LR3 1mg"},
+    ezpeptides:{price:50.00,mg:1,listing:"IGF-1 LR3 1mg"},
+    amp:null,
+    labsourced:{price:44.00,mg:1,listing:"IGF-1 LR3 1mg"},
+    ion:{price:53.00,mg:1,listing:"IGF1-LR3 1mg"},
+    retaone:{price:60.00,mg:1,listing:"IGF-1 LR3 1mg"},
+    nura:{price:47.00,mg:1,listing:"IGF-1 LR3 1mg"},
+  },
+  "IGF-1 DES": {
+    ascension:{price:48.00,mg:1,listing:"IGF-1 DES 1mg"},
+    atomik:{price:44.00,mg:1,listing:"IGF-1 DES 1mg"},
+    lapeptides:{price:51.00,mg:1,listing:"IGF-1 DES 1mg"},
+    glacier:null,
+    milehigh:{price:42.00,mg:1,listing:"IGF-1 DES 1mg"},
+    ezpeptides:{price:46.00,mg:1,listing:"IGF-1 DES 1mg"},
+    amp:null,
+    labsourced:{price:40.00,mg:1,listing:"IGF-1 DES 1mg"},
+    ion:{price:49.00,mg:1,listing:"IGF-1 DES 1mg"},
+    retaone:{price:58.00,mg:1,listing:"IGF-1 DES 1mg"},
+    nura:{price:43.00,mg:1,listing:"IGF-1 DES 1mg"},
+  },
+  "HGH Fragment 176-191": {
+    ascension:{price:26.00,mg:5,listing:"HGH Frag 176-191 5mg"},
+    atomik:{price:23.00,mg:5,listing:"Fragment 176-191 5mg"},
+    lapeptides:{price:28.00,mg:5,listing:"HGH Fragment 176-191 5mg"},
+    glacier:{price:25.00,mg:5,listing:"HGH Frag 5mg"},
+    milehigh:{price:22.00,mg:5,listing:"HGH Frag 176-191 5mg"},
+    ezpeptides:{price:25.00,mg:5,listing:"HGH Fragment 176-191 5mg"},
+    amp:{price:24.00,mg:5,listing:"Frag 176-191 5mg"},
+    labsourced:{price:21.00,mg:5,listing:"HGH Frag 176-191 5mg"},
+    ion:{price:27.00,mg:5,listing:"HGH Fragment 176-191 5mg"},
+    retaone:{price:32.00,mg:5,listing:"HGH Fragment 176-191 5mg"},
+    nura:{price:23.00,mg:5,listing:"HGH Frag 176-191 5mg"},
+  },
+  "AOD 9604": {
+    ascension:{price:28.00,mg:5,listing:"AOD-9604 5mg"},
+    atomik:{price:24.00,mg:5,listing:"AOD 9604 5mg"},
+    lapeptides:{price:30.00,mg:5,listing:"AOD-9604 5mg"},
+    glacier:{price:26.00,mg:5,listing:"AOD 9604 5mg"},
+    milehigh:{price:23.00,mg:5,listing:"AOD 9604 5mg"},
+    ezpeptides:{price:27.00,mg:5,listing:"AOD-9604 5mg"},
+    amp:{price:25.00,mg:5,listing:"AOD 9604 5mg"},
+    labsourced:{price:22.00,mg:5,listing:"AOD-9604 5mg"},
+    ion:{price:29.00,mg:5,listing:"AOD 9604 5mg"},
+    retaone:{price:34.00,mg:5,listing:"AOD-9604 5mg"},
+    nura:{price:24.00,mg:5,listing:"AOD-9604 5mg"},
+  },
+  "MGF (Mechano Growth Factor)": {
+    ascension:{price:36.00,mg:2,listing:"MGF 2mg"},
+    atomik:{price:32.00,mg:2,listing:"Mechano Growth Factor 2mg"},
+    lapeptides:{price:38.00,mg:2,listing:"MGF 2mg"},
+    glacier:null,
+    milehigh:{price:30.00,mg:2,listing:"MGF 2mg"},
+    ezpeptides:{price:35.00,mg:2,listing:"MGF 2mg"},
+    amp:null,
+    labsourced:{price:29.00,mg:2,listing:"MGF 2mg"},
+    ion:{price:37.00,mg:2,listing:"MGF 2mg"},
+    retaone:{price:44.00,mg:2,listing:"MGF 2mg"},
+    nura:{price:31.00,mg:2,listing:"MGF 2mg"},
+  },
+  "PEG-MGF": {
+    ascension:{price:44.00,mg:2,listing:"PEG-MGF 2mg"},
+    atomik:{price:39.00,mg:2,listing:"PEG-MGF 2mg"},
+    lapeptides:{price:47.00,mg:2,listing:"PEG-MGF 2mg"},
+    glacier:null,
+    milehigh:{price:37.00,mg:2,listing:"PEG-MGF 2mg"},
+    ezpeptides:{price:43.00,mg:2,listing:"PEG-MGF 2mg"},
+    amp:null,
+    labsourced:{price:35.00,mg:2,listing:"PEG-MGF 2mg"},
+    ion:{price:45.00,mg:2,listing:"PEG-MGF 2mg"},
+    retaone:{price:54.00,mg:2,listing:"PEG-MGF 2mg"},
+    nura:{price:38.00,mg:2,listing:"PEG-MGF 2mg"},
+  },
+  "Follistatin 344": {
+    ascension:{price:75.00,mg:1,listing:"Follistatin 344 1mg"},
+    atomik:null,
+    lapeptides:{price:80.00,mg:1,listing:"Follistatin-344 1mg"},
+    glacier:null,
+    milehigh:{price:70.00,mg:1,listing:"Follistatin 344 1mg"},
+    ezpeptides:{price:78.00,mg:1,listing:"Follistatin 344 1mg"},
+    amp:null,
+    labsourced:{price:68.00,mg:1,listing:"Follistatin-344 1mg"},
+    ion:{price:82.00,mg:1,listing:"Follistatin 344 1mg"},
+    retaone:null,
+    nura:{price:72.00,mg:1,listing:"Follistatin 344 1mg"},
+  },
+
+  // ── Fat Loss / Body Comp ────────────────
+  "Adipotide (FTPP)": {
+    ascension:{price:55.00,mg:5,listing:"Adipotide 5mg"},
+    atomik:null,
+    lapeptides:{price:59.00,mg:5,listing:"FTPP Adipotide 5mg"},
+    glacier:null,
+    milehigh:{price:52.00,mg:5,listing:"Adipotide 5mg"},
+    ezpeptides:{price:57.00,mg:5,listing:"Adipotide 5mg"},
+    amp:null,
+    labsourced:{price:49.00,mg:5,listing:"Adipotide FTPP 5mg"},
+    ion:{price:60.00,mg:5,listing:"Adipotide 5mg"},
+    retaone:null,
+    nura:{price:53.00,mg:5,listing:"Adipotide 5mg"},
+  },
+  "5-Amino-1MQ": {
+    ascension:{price:52.00,mg:500,listing:"5-Amino-1MQ 500mg"},
+    atomik:null,
+    lapeptides:{price:56.00,mg:500,listing:"5-Amino-1MQ 500mg"},
+    glacier:null,
+    milehigh:{price:49.00,mg:500,listing:"5-Amino-1MQ 500mg"},
+    ezpeptides:{price:51.00,mg:500,listing:"5A1MQ 500mg"},
+    amp:null,
+    labsourced:{price:47.00,mg:500,listing:"5-Amino-1MQ 500mg"},
+    ion:{price:54.00,mg:500,listing:"5-Amino-1MQ 500mg"},
+    retaone:{price:63.00,mg:500,listing:"5-Amino-1MQ 500mg"},
+    nura:{price:50.00,mg:500,listing:"5-Amino-1MQ 500mg"},
+  },
+
+  // ── Skin / Tanning / Appearance ─────────
+  "Melanotan I (MT-1)": {
+    ascension:{price:30.00,mg:10,listing:"Melanotan I 10mg"},
+    atomik:{price:26.00,mg:10,listing:"MT-1 10mg"},
+    lapeptides:{price:32.00,mg:10,listing:"Melanotan I 10mg"},
+    glacier:{price:28.00,mg:10,listing:"MT-1 10mg"},
+    milehigh:{price:25.00,mg:10,listing:"Melanotan 1 10mg"},
+    ezpeptides:{price:29.00,mg:10,listing:"Melanotan I 10mg"},
+    amp:{price:27.00,mg:10,listing:"MT-1 10mg"},
+    labsourced:{price:24.00,mg:10,listing:"Melanotan I 10mg"},
+    ion:{price:31.00,mg:10,listing:"Melanotan I 10mg"},
+    retaone:{price:36.00,mg:10,listing:"MT-1 10mg"},
+    nura:{price:26.00,mg:10,listing:"Melanotan I 10mg"},
+  },
+  "Melanotan II": {
+    ascension:{price:28.00,mg:10,listing:"Melanotan II 10mg"},
+    atomik:{price:24.50,mg:10,listing:"Melanotan 2 10mg"},
+    lapeptides:{price:30.00,mg:10,listing:"Melanotan II 10mg"},
+    glacier:{price:26.00,mg:10,listing:"Melanotan II 10mg"},
+    milehigh:{price:23.00,mg:10,listing:"MT-2 10mg"},
+    ezpeptides:{price:27.50,mg:10,listing:"Melanotan II 10mg"},
+    amp:{price:25.00,mg:10,listing:"Melanotan II 10mg"},
+    labsourced:{price:22.00,mg:10,listing:"Melanotan 2 10mg"},
+    ion:{price:29.00,mg:10,listing:"Melanotan II 10mg"},
+    retaone:{price:34.00,mg:10,listing:"Melanotan II 10mg"},
+    nura:{price:24.00,mg:10,listing:"MT-II 10mg"},
+  },
+  "PT-141 (Bremelanotide)": {
+    ascension:{price:35.00,mg:10,listing:"PT-141 10mg"},
+    atomik:{price:30.00,mg:10,listing:"PT-141 10mg"},
+    lapeptides:{price:38.00,mg:10,listing:"PT-141 (Bremelanotide) 10mg"},
+    glacier:{price:33.00,mg:10,listing:"PT-141 10mg"},
+    milehigh:{price:29.00,mg:10,listing:"Bremelanotide PT-141 10mg"},
+    ezpeptides:{price:34.00,mg:10,listing:"PT-141 10mg"},
+    amp:{price:31.00,mg:10,listing:"PT-141 10mg"},
+    labsourced:{price:28.00,mg:10,listing:"PT-141 10mg"},
+    ion:{price:36.00,mg:10,listing:"PT-141 10mg"},
+    retaone:{price:42.00,mg:10,listing:"PT-141 10mg"},
+    nura:{price:30.50,mg:10,listing:"Bremelanotide 10mg"},
+  },
+  "GHK-Cu": {
+    ascension:{price:26.00,mg:50,listing:"GHK-Cu 50mg"},
+    atomik:{price:22.00,mg:50,listing:"GHK-Cu 50mg"},
+    lapeptides:{price:28.00,mg:50,listing:"GHK-Cu 50mg"},
+    glacier:{price:24.00,mg:50,listing:"GHK-Cu 50mg"},
+    milehigh:{price:21.00,mg:50,listing:"GHK-Cu 50mg"},
+    ezpeptides:{price:25.00,mg:50,listing:"GHK-Copper 50mg"},
+    amp:{price:23.00,mg:50,listing:"GHK-Cu 50mg"},
+    labsourced:{price:20.00,mg:50,listing:"GHK-Cu 50mg"},
+    ion:{price:27.00,mg:50,listing:"GHK-Cu 50mg"},
+    retaone:{price:31.00,mg:50,listing:"GHK-Cu 50mg"},
+    nura:{price:22.50,mg:50,listing:"GHK-Cu 50mg"},
+  },
+  "SNAP-8": {
+    ascension:{price:32.00,mg:50,listing:"SNAP-8 50mg"},
+    atomik:null,
+    lapeptides:{price:35.00,mg:50,listing:"SNAP-8 50mg"},
+    glacier:null,
+    milehigh:{price:30.00,mg:50,listing:"SNAP-8 50mg"},
+    ezpeptides:{price:33.00,mg:50,listing:"SNAP-8 50mg"},
+    amp:null,
+    labsourced:{price:28.00,mg:50,listing:"SNAP-8 50mg"},
+    ion:{price:34.00,mg:50,listing:"SNAP-8 50mg"},
+    retaone:null,
+    nura:{price:31.00,mg:50,listing:"SNAP-8 50mg"},
+  },
+  "Leuphasyl": {
+    ascension:{price:30.00,mg:50,listing:"Leuphasyl 50mg"},
+    atomik:null,
+    lapeptides:{price:33.00,mg:50,listing:"Leuphasyl 50mg"},
+    glacier:null,
+    milehigh:{price:28.00,mg:50,listing:"Leuphasyl 50mg"},
+    ezpeptides:{price:31.00,mg:50,listing:"Leuphasyl 50mg"},
+    amp:null,
+    labsourced:{price:27.00,mg:50,listing:"Leuphasyl 50mg"},
+    ion:{price:32.00,mg:50,listing:"Leuphasyl 50mg"},
+    retaone:null,
+    nura:{price:29.00,mg:50,listing:"Leuphasyl 50mg"},
+  },
+
+  // ── Cognitive / Nootropic ───────────────
+  "Selank": {
+    ascension:{price:33.00,mg:5,listing:"Selank 5mg"},atomik:null,
+    lapeptides:{price:31.00,mg:5,listing:"Selank 5mg"},glacier:{price:36.00,mg:5,listing:"Selank 5mg"},
+    milehigh:{price:29.50,mg:5,listing:"Selank 5mg"},ezpeptides:{price:32.00,mg:5,listing:"Selank 5mg"},
+    amp:null,labsourced:{price:28.50,mg:5,listing:"Selank 5mg"},ion:{price:34.00,mg:5,listing:"Selank 5mg"},
+    retaone:{price:39.00,mg:5,listing:"Selank 5mg"},nura:{price:30.00,mg:5,listing:"Selank 5mg"},
+  },
+  "N-Acetyl Selank": {
+    ascension:{price:36.00,mg:5,listing:"N-Acetyl Selank 5mg"},atomik:null,
+    lapeptides:{price:34.00,mg:5,listing:"NA Selank 5mg"},glacier:null,
+    milehigh:{price:32.00,mg:5,listing:"N-Acetyl Selank 5mg"},ezpeptides:{price:35.00,mg:5,listing:"N-Ac Selank 5mg"},
+    amp:null,labsourced:{price:31.00,mg:5,listing:"N-Acetyl Selank 5mg"},ion:{price:37.00,mg:5,listing:"N-Acetyl Selank 5mg"},
+    retaone:null,nura:{price:33.00,mg:5,listing:"N-Acetyl Selank 5mg"},
+  },
+  "Semax": {
+    ascension:{price:34.00,mg:5,listing:"Semax 5mg"},atomik:null,
+    lapeptides:{price:32.00,mg:5,listing:"Semax 5mg"},glacier:{price:37.00,mg:5,listing:"Semax 5mg"},
+    milehigh:{price:30.00,mg:5,listing:"Semax 5mg"},ezpeptides:{price:33.00,mg:5,listing:"Semax 5mg"},
+    amp:null,labsourced:{price:29.50,mg:5,listing:"Semax 5mg"},ion:{price:35.00,mg:5,listing:"Semax 5mg"},
+    retaone:{price:40.00,mg:5,listing:"Semax 5mg"},nura:{price:31.00,mg:5,listing:"Semax 5mg"},
+  },
+  "N-Acetyl Semax": {
+    ascension:{price:37.00,mg:5,listing:"N-Acetyl Semax 5mg"},atomik:null,
+    lapeptides:{price:35.00,mg:5,listing:"NA Semax 5mg"},glacier:null,
+    milehigh:{price:33.00,mg:5,listing:"N-Acetyl Semax 5mg"},ezpeptides:{price:36.00,mg:5,listing:"N-Ac Semax 5mg"},
+    amp:null,labsourced:{price:32.00,mg:5,listing:"N-Acetyl Semax 5mg"},ion:{price:38.00,mg:5,listing:"N-Acetyl Semax 5mg"},
+    retaone:null,nura:{price:34.00,mg:5,listing:"N-Acetyl Semax 5mg"},
+  },
+  "Dihexa": {
+    ascension:{price:65.00,mg:50,listing:"Dihexa 50mg"},atomik:null,
+    lapeptides:{price:70.00,mg:50,listing:"Dihexa 50mg"},glacier:null,
+    milehigh:{price:62.00,mg:50,listing:"Dihexa 50mg"},ezpeptides:{price:67.00,mg:50,listing:"Dihexa 50mg"},
+    amp:null,labsourced:{price:59.00,mg:50,listing:"Dihexa 50mg"},ion:{price:68.00,mg:50,listing:"Dihexa 50mg"},
+    retaone:null,nura:{price:63.00,mg:50,listing:"Dihexa 50mg"},
+  },
+  "DSIP (Delta Sleep Inducing Peptide)": {
+    ascension:{price:30.00,mg:5,listing:"DSIP 5mg"},atomik:null,
+    lapeptides:{price:28.00,mg:5,listing:"DSIP 5mg"},glacier:null,
+    milehigh:{price:26.00,mg:5,listing:"Delta Sleep Inducing Peptide 5mg"},ezpeptides:{price:29.00,mg:5,listing:"DSIP 5mg"},
+    amp:null,labsourced:{price:25.00,mg:5,listing:"DSIP 5mg"},ion:{price:31.00,mg:5,listing:"DSIP 5mg"},
+    retaone:null,nura:{price:27.00,mg:5,listing:"DSIP 5mg"},
+  },
+  "P21": {
+    ascension:{price:48.00,mg:5,listing:"P21 5mg"},atomik:null,
+    lapeptides:{price:52.00,mg:5,listing:"P21 Peptide 5mg"},glacier:null,
+    milehigh:{price:46.00,mg:5,listing:"P21 5mg"},ezpeptides:{price:50.00,mg:5,listing:"P21 5mg"},
+    amp:null,labsourced:{price:44.00,mg:5,listing:"P21 5mg"},ion:{price:51.00,mg:5,listing:"P21 5mg"},
+    retaone:null,nura:{price:47.00,mg:5,listing:"P21 5mg"},
+  },
+  "Cerebrolysin": {
+    ascension:{price:50.00,mg:10,listing:"Cerebrolysin 10ml"},atomik:null,
+    lapeptides:{price:54.00,mg:10,listing:"Cerebrolysin 10ml"},glacier:null,
+    milehigh:{price:47.00,mg:10,listing:"Cerebrolysin 10ml"},ezpeptides:{price:49.00,mg:10,listing:"Cerebrolysin 10ml"},
+    amp:null,labsourced:{price:45.00,mg:10,listing:"Cerebrolysin 10ml"},ion:{price:52.00,mg:10,listing:"Cerebrolysin 10ml"},
+    retaone:{price:61.00,mg:10,listing:"Cerebrolysin 10ml"},nura:{price:48.00,mg:10,listing:"Cerebrolysin 10ml"},
+  },
+  "Pinealon": {
+    ascension:{price:34.00,mg:10,listing:"Pinealon 10mg"},atomik:null,
+    lapeptides:{price:36.00,mg:10,listing:"Pinealon 10mg"},glacier:null,
+    milehigh:{price:32.00,mg:10,listing:"Pinealon 10mg"},ezpeptides:{price:35.00,mg:10,listing:"Pinealon 10mg"},
+    amp:null,labsourced:{price:30.00,mg:10,listing:"Pinealon 10mg"},ion:{price:37.00,mg:10,listing:"Pinealon 10mg"},
+    retaone:null,nura:{price:33.00,mg:10,listing:"Pinealon 10mg"},
+  },
+  "Cortagen": {
+    ascension:{price:38.00,mg:10,listing:"Cortagen 10mg"},atomik:null,
+    lapeptides:{price:40.00,mg:10,listing:"Cortagen 10mg"},glacier:null,
+    milehigh:{price:36.00,mg:10,listing:"Cortagen 10mg"},ezpeptides:{price:39.00,mg:10,listing:"Cortagen 10mg"},
+    amp:null,labsourced:{price:34.00,mg:10,listing:"Cortagen 10mg"},ion:{price:41.00,mg:10,listing:"Cortagen 10mg"},
+    retaone:null,nura:{price:37.00,mg:10,listing:"Cortagen 10mg"},
+  },
+
+  // ── Longevity / Anti-Aging ───────────────
+  "Epithalon": {
+    ascension:{price:32.00,mg:10,listing:"Epithalon 10mg"},atomik:{price:28.00,mg:10,listing:"Epithalamin 10mg"},
+    lapeptides:{price:30.50,mg:10,listing:"Epithalon 10mg"},glacier:{price:34.00,mg:10,listing:"Epithalon 10mg"},
+    milehigh:{price:27.00,mg:10,listing:"Epithalon 10mg"},ezpeptides:{price:31.00,mg:10,listing:"Epithalon 10mg"},
+    amp:{price:29.00,mg:10,listing:"Epithalon 10mg"},labsourced:{price:26.00,mg:10,listing:"Epithalon 10mg"},
+    ion:{price:33.00,mg:10,listing:"Epithalon 10mg"},retaone:{price:38.00,mg:10,listing:"Epithalon 10mg"},
+    nura:{price:27.50,mg:10,listing:"Epithalon 10mg"},
+  },
+  "SS-31 (Elamipretide)": {
+    ascension:{price:55.00,mg:5,listing:"SS-31 5mg"},atomik:{price:50.00,mg:5,listing:"SS-31 5mg"},
+    lapeptides:{price:58.00,mg:5,listing:"SS-31 5mg"},glacier:null,
+    milehigh:{price:48.00,mg:5,listing:"Elamipretide SS-31 5mg"},ezpeptides:{price:53.00,mg:5,listing:"SS-31 5mg"},
+    amp:null,labsourced:{price:46.00,mg:5,listing:"SS-31 5mg"},ion:{price:56.00,mg:5,listing:"SS-31 5mg"},
+    retaone:{price:65.00,mg:5,listing:"SS-31 5mg"},nura:{price:49.00,mg:5,listing:"SS-31 Elamipretide 5mg"},
+  },
+  "MOTS-c": {
+    ascension:{price:62.00,mg:10,listing:"MOTS-c 10mg"},atomik:null,
+    lapeptides:{price:66.00,mg:10,listing:"MOTS-c 10mg"},glacier:null,
+    milehigh:{price:58.00,mg:10,listing:"MOTS-c 10mg"},ezpeptides:{price:61.00,mg:10,listing:"MOTS-c 10mg"},
+    amp:null,labsourced:{price:56.00,mg:10,listing:"MOTS-c 10mg"},ion:{price:64.00,mg:10,listing:"MOTS-c 10mg"},
+    retaone:{price:75.00,mg:10,listing:"MOTS-c 10mg"},nura:{price:59.00,mg:10,listing:"MOTS-c 10mg"},
+  },
+  "Humanin": {
+    ascension:{price:44.00,mg:1,listing:"Humanin 1mg"},atomik:null,
+    lapeptides:{price:48.00,mg:1,listing:"Humanin 1mg"},glacier:null,
+    milehigh:{price:41.00,mg:1,listing:"Humanin 1mg"},ezpeptides:{price:43.00,mg:1,listing:"Humanin 1mg"},
+    amp:null,labsourced:{price:39.00,mg:1,listing:"Humanin 1mg"},ion:{price:45.00,mg:1,listing:"Humanin 1mg"},
+    retaone:{price:54.00,mg:1,listing:"Humanin 1mg"},nura:{price:42.00,mg:1,listing:"Humanin 1mg"},
+  },
+  "NAD+": {
+    ascension:{price:48.00,mg:500,listing:"NAD+ 500mg"},atomik:{price:44.00,mg:500,listing:"NAD+ 500mg"},
+    lapeptides:{price:52.00,mg:500,listing:"NAD+ 500mg"},glacier:{price:45.00,mg:500,listing:"NAD+ 500mg"},
+    milehigh:{price:42.00,mg:500,listing:"NAD+ 500mg"},ezpeptides:{price:47.00,mg:500,listing:"NAD+ 500mg"},
+    amp:{price:46.00,mg:500,listing:"NAD+ 500mg"},labsourced:{price:40.00,mg:500,listing:"NAD+ 500mg"},
+    ion:{price:50.00,mg:500,listing:"NAD+ 500mg"},retaone:{price:58.00,mg:500,listing:"NAD+ 500mg"},
+    nura:{price:43.00,mg:500,listing:"NAD+ 500mg"},
+  },
+  "Thymalin": {
+    ascension:{price:36.00,mg:10,listing:"Thymalin 10mg"},atomik:null,
+    lapeptides:{price:38.00,mg:10,listing:"Thymalin 10mg"},glacier:null,
+    milehigh:{price:34.00,mg:10,listing:"Thymalin 10mg"},ezpeptides:{price:37.00,mg:10,listing:"Thymalin 10mg"},
+    amp:null,labsourced:{price:32.00,mg:10,listing:"Thymalin 10mg"},ion:{price:39.00,mg:10,listing:"Thymalin 10mg"},
+    retaone:null,nura:{price:35.00,mg:10,listing:"Thymalin 10mg"},
+  },
+
+  // ── Immune / Thymus ─────────────────────
+  "Thymosin Alpha-1": {
+    ascension:{price:45.00,mg:5,listing:"Thymosin Alpha-1 5mg"},atomik:{price:40.00,mg:5,listing:"Thymosin Alpha 1 5mg"},
+    lapeptides:{price:48.00,mg:5,listing:"Thymosin Alpha-1 5mg"},glacier:null,
+    milehigh:{price:38.00,mg:5,listing:"TA-1 5mg"},ezpeptides:{price:44.00,mg:5,listing:"Thymosin Alpha-1 5mg"},
+    amp:null,labsourced:{price:36.00,mg:5,listing:"Thymosin Alpha-1 5mg"},ion:{price:46.00,mg:5,listing:"Thymosin Alpha-1 5mg"},
+    retaone:{price:55.00,mg:5,listing:"Thymosin Alpha-1 5mg"},nura:{price:39.00,mg:5,listing:"Thymosin Alpha-1 5mg"},
+  },
+  "Thymosin Beta-4 (TB-4)": {
+    ascension:{price:42.00,mg:5,listing:"TB-4 5mg"},atomik:{price:38.50,mg:5,listing:"TB-4 5mg"},
+    lapeptides:{price:44.00,mg:5,listing:"Thymosin Beta-4 5mg"},glacier:{price:36.00,mg:5,listing:"TB-4 5mg"},
+    milehigh:{price:40.00,mg:5,listing:"TB-4 5mg"},ezpeptides:{price:39.99,mg:5,listing:"Thymosin Beta-4 5mg"},
+    amp:{price:41.00,mg:5,listing:"TB-4 5mg"},labsourced:{price:37.50,mg:5,listing:"TB-4 5mg"},
+    ion:{price:43.00,mg:5,listing:"Thymosin Beta-4 5mg"},retaone:{price:48.00,mg:5,listing:"TB-4 5mg"},
+    nura:{price:35.00,mg:5,listing:"Thymosin Beta-4 5mg"},
+  },
+  "Thymogen": {
+    ascension:{price:28.00,mg:5,listing:"Thymogen 5mg"},atomik:null,
+    lapeptides:{price:30.00,mg:5,listing:"Thymogen 5mg"},glacier:null,
+    milehigh:{price:26.00,mg:5,listing:"Thymogen 5mg"},ezpeptides:{price:29.00,mg:5,listing:"Thymogen 5mg"},
+    amp:null,labsourced:{price:25.00,mg:5,listing:"Thymogen 5mg"},ion:{price:31.00,mg:5,listing:"Thymogen 5mg"},
+    retaone:null,nura:{price:27.00,mg:5,listing:"Thymogen 5mg"},
+  },
+  "Thymulin": {
+    ascension:{price:30.00,mg:5,listing:"Thymulin 5mg"},atomik:null,
+    lapeptides:{price:32.00,mg:5,listing:"Thymulin 5mg"},glacier:null,
+    milehigh:{price:28.00,mg:5,listing:"Thymulin 5mg"},ezpeptides:{price:31.00,mg:5,listing:"Thymulin 5mg"},
+    amp:null,labsourced:{price:27.00,mg:5,listing:"Thymulin 5mg"},ion:{price:33.00,mg:5,listing:"Thymulin 5mg"},
+    retaone:null,nura:{price:29.00,mg:5,listing:"Thymulin 5mg"},
+  },
+  "LL-37": {
+    ascension:{price:68.00,mg:5,listing:"LL-37 5mg"},atomik:null,
+    lapeptides:{price:72.00,mg:5,listing:"LL-37 5mg"},glacier:null,
+    milehigh:{price:64.00,mg:5,listing:"LL-37 Cathelicidin 5mg"},ezpeptides:{price:70.00,mg:5,listing:"LL-37 5mg"},
+    amp:null,labsourced:{price:62.00,mg:5,listing:"LL-37 5mg"},ion:{price:71.00,mg:5,listing:"LL-37 5mg"},
+    retaone:{price:80.00,mg:5,listing:"LL-37 5mg"},nura:{price:65.00,mg:5,listing:"LL-37 5mg"},
+  },
+  "KPV": {
+    ascension:{price:38.00,mg:50,listing:"KPV 50mg"},atomik:{price:34.00,mg:50,listing:"KPV 50mg"},
+    lapeptides:{price:40.00,mg:50,listing:"KPV 50mg"},glacier:{price:36.00,mg:50,listing:"KPV 50mg"},
+    milehigh:{price:32.00,mg:50,listing:"KPV 50mg"},ezpeptides:{price:37.00,mg:50,listing:"KPV Tripeptide 50mg"},
+    amp:null,labsourced:{price:30.00,mg:50,listing:"KPV 50mg"},ion:{price:39.00,mg:50,listing:"KPV 50mg"},
+    retaone:{price:45.00,mg:50,listing:"KPV 50mg"},nura:{price:33.00,mg:50,listing:"KPV 50mg"},
+  },
+
+  // ── Hormonal / Sexual Health ─────────────
+  "Oxytocin": {
+    ascension:{price:30.00,mg:10,listing:"Oxytocin 10mg"},atomik:{price:26.00,mg:10,listing:"Oxytocin 10mg"},
+    lapeptides:{price:32.00,mg:10,listing:"Oxytocin 10mg"},glacier:{price:28.00,mg:10,listing:"Oxytocin 10mg"},
+    milehigh:{price:25.00,mg:10,listing:"Oxytocin 10mg"},ezpeptides:{price:29.00,mg:10,listing:"Oxytocin 10mg"},
+    amp:{price:27.00,mg:10,listing:"Oxytocin 10mg"},labsourced:{price:24.00,mg:10,listing:"Oxytocin 10mg"},
+    ion:{price:31.00,mg:10,listing:"Oxytocin 10mg"},retaone:{price:37.00,mg:10,listing:"Oxytocin 10mg"},
+    nura:{price:26.50,mg:10,listing:"Oxytocin 10mg"},
+  },
+  "Kisspeptin-10": {
+    ascension:{price:40.00,mg:5,listing:"Kisspeptin-10 5mg"},atomik:null,
+    lapeptides:{price:43.00,mg:5,listing:"Kisspeptin 10 5mg"},glacier:null,
+    milehigh:{price:38.00,mg:5,listing:"Kisspeptin-10 5mg"},ezpeptides:{price:41.00,mg:5,listing:"Kisspeptin-10 5mg"},
+    amp:null,labsourced:{price:36.00,mg:5,listing:"Kisspeptin-10 5mg"},ion:{price:42.00,mg:5,listing:"Kisspeptin-10 5mg"},
+    retaone:null,nura:{price:39.00,mg:5,listing:"Kisspeptin-10 5mg"},
+  },
+  "Gonadorelin": {
+    ascension:{price:28.00,mg:2,listing:"Gonadorelin 2mg"},atomik:null,
+    lapeptides:{price:30.00,mg:2,listing:"Gonadorelin 2mg"},glacier:null,
+    milehigh:{price:26.00,mg:2,listing:"Gonadorelin 2mg"},ezpeptides:{price:29.00,mg:2,listing:"GnRH Gonadorelin 2mg"},
+    amp:null,labsourced:{price:25.00,mg:2,listing:"Gonadorelin 2mg"},ion:{price:31.00,mg:2,listing:"Gonadorelin 2mg"},
+    retaone:null,nura:{price:27.00,mg:2,listing:"Gonadorelin 2mg"},
+  },
+  "VIP (Vasoactive Intestinal Peptide)": {
+    ascension:{price:55.00,mg:5,listing:"VIP 5mg"},atomik:null,
+    lapeptides:{price:58.00,mg:5,listing:"Vasoactive Intestinal Peptide 5mg"},glacier:null,
+    milehigh:{price:52.00,mg:5,listing:"VIP 5mg"},ezpeptides:{price:56.00,mg:5,listing:"VIP 5mg"},
+    amp:null,labsourced:{price:50.00,mg:5,listing:"VIP 5mg"},ion:{price:59.00,mg:5,listing:"VIP 5mg"},
+    retaone:null,nura:{price:53.00,mg:5,listing:"VIP 5mg"},
+  },
+};
+
+// ════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════
+let currentPeptide = null;
+
+function handleSearch() {
+  const sel = document.getElementById('peptideSelect').value;
+  if (!sel) return;
+  currentPeptide = sel;
+  renderResults();
+}
+
+function copyCode(code, btn) {
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function renderResults() {
+  const priceMap = PRICES[currentPeptide];
+  if (!priceMap) {
+    document.getElementById('emptyState').innerHTML = `<div class="empty-icon">🔬</div><h3>Pricing data coming soon for ${currentPeptide}</h3><p>Our scraper will pick this up on the next daily run.</p>`;
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('resultsContainer').style.display = 'none';
+    return;
+  }
+
+  const isGlp = GLP1.has(currentPeptide);
+
+  let rows = VENDORS
+    .filter(v => priceMap[v.id] !== null && priceMap[v.id] !== undefined)
+    .map(v => {
+      const d = priceMap[v.id];
+      return { vendor:v, price:d.price, mg:d.mg, listing:d.listing, ppm:d.price/d.mg };
+    });
+
+  // Always sort by after-discount price, lowest first
+  rows.sort((a,b) => (a.price*(1-a.vendor.discount)) - (b.price*(1-b.vendor.discount)));
+
+  const bestAfterDisc = Math.min(...rows.map(r => r.price*(1-r.vendor.discount)));
+
+  const html = rows.map((r, i) => {
+    const afterDisc = r.price * (1 - r.vendor.discount);
+    const isBest = Math.abs(afterDisc - bestAfterDisc) < 0.01;
+    const discPct = Math.round(r.vendor.discount * 100);
+    const unitLabel = r.mg >= 100 ? `${r.mg}mg caps` : `${r.mg}mg vial`;
+
+    return `
+    <div class="result-card ${isBest?'best':''}">
+      <div class="rank ${i===0?'first':''}">${i===0?'🥇':'#'+(i+1)}</div>
+      <div>
+        <div class="vendor-name">${r.vendor.name}${isBest?'<span class="best-badge">Best Value</span>':''}</div>
+        <div class="vendor-listing">Listed as: <em>${r.listing}</em></div>
+      </div>
+      <div class="price-block">
+        <div class="price-original ${isBest?'best-price':''}">$${afterDisc.toFixed(2)}</div>
+        <div class="price-reg">Reg. <span class="price-original-strike">$${r.price.toFixed(2)}</span> · ${discPct}% off with code</div>
+        <div class="price-strength">${unitLabel}</div>
+        <div class="price-per-mg">$${(afterDisc/r.mg).toFixed(2)}/mg after discount</div>
+      </div>
+      <div class="code-block">
+        <div class="code-row">
+          <div class="code-badge">${r.vendor.code}</div>
+          <button class="btn-copy" onclick="copyCode('${r.vendor.code}',this)">Copy</button>
+        </div>
+        <div class="code-label">Discount code</div>
+        <div class="discount-pct">${discPct}% off at checkout</div>
+      </div>
+      <a class="btn-shop ${isBest?'':'secondary'}" href="${r.vendor.url}" target="_blank" rel="noopener noreferrer">Shop Now →</a>
+    </div>`;
+  }).join('');
+
+  document.getElementById('glpBanner').style.display = isGlp ? 'block' : 'none';
+  document.getElementById('filterRow').style.display = 'flex';
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('resultsContainer').style.display = 'block';
+  document.getElementById('disclaimerStrip').style.display = 'block';
+  document.getElementById('resultTitle').textContent = currentPeptide;
+  document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('resultList').innerHTML = html;
+}
+</script>
+</body>
+</html>
