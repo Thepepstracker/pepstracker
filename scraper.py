@@ -1,7 +1,6 @@
 """
-PepsTracker Price Scraper — API Edition
-Hits Shopify /products.json and WooCommerce REST endpoints directly.
-No headless browser needed — fast, reliable, free.
+PepsTracker Price Scraper — ScraperAPI Edition
+Routes all requests through ScraperAPI to bypass Cloudflare/bot detection.
 """
 
 import os, re, json, time, base64, logging
@@ -11,16 +10,21 @@ import requests
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger(__name__)
 
-GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
-GITHUB_REPO  = "Thepepstracker/pepstracker"
-GITHUB_FILE  = "pepstracker_fixed/index.html"
-GITHUB_API   = "https://api.github.com"
+GITHUB_TOKEN   = os.environ["GITHUB_TOKEN"]
+SCRAPERAPI_KEY = os.environ["SCRAPERAPI_KEY"]
+GITHUB_REPO    = "Thepepstracker/pepstracker"
+GITHUB_FILE    = "pepstracker_fixed/index.html"
+GITHUB_API     = "https://api.github.com"
 
-SESSION = requests.Session()
-SESSION.headers.update({
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36",
-    "Accept": "application/json, text/html, */*",
-})
+def scraper_get(url, render_js=False, timeout=30):
+    """Route any request through ScraperAPI — bypasses Cloudflare automatically."""
+    params = {
+        "api_key": SCRAPERAPI_KEY,
+        "url": url,
+        "render": "true" if render_js else "false",
+        "keep_headers": "true",
+    }
+    return requests.get("https://api.scraperapi.com/", params=params, timeout=timeout)
 
 VENDORS = {
     "ascension":  {"base": "https://ascensionpeptides.com",  "type": "woocommerce"},
@@ -42,7 +46,8 @@ SEARCH_ALIASES = {
     "BPC-157": "bpc-157", "BPC-157 (Oral)": "bpc oral",
     "TB-500": "tb-500", "TB-500 Fragment (17-23)": "tb-500 fragment",
     "BPC-157 + TB-500 Blend": "bpc tb blend",
-    "CJC-1295 (with DAC)": "cjc dac", "CJC-1295 (no DAC) / Mod GRF 1-29": "cjc mod grf",
+    "CJC-1295 (with DAC)": "cjc dac",
+    "CJC-1295 (no DAC) / Mod GRF 1-29": "cjc mod grf",
     "Ipamorelin": "ipamorelin", "Hexarelin": "hexarelin",
     "GHRP-2": "ghrp-2", "GHRP-6": "ghrp-6", "Sermorelin": "sermorelin",
     "Tesamorelin": "tesamorelin", "GHRH (1-29)": "ghrh",
@@ -64,7 +69,8 @@ SEARCH_ALIASES = {
     "Thymosin Beta-4 (TB-4)": "thymosin beta-4", "Thymogen": "thymogen",
     "Thymulin": "thymulin", "LL-37": "ll-37", "KPV": "kpv",
     "Oxytocin": "oxytocin", "Kisspeptin-10": "kisspeptin",
-    "Gonadorelin": "gonadorelin", "VIP (Vasoactive Intestinal Peptide)": "vip",
+    "Gonadorelin": "gonadorelin",
+    "VIP (Vasoactive Intestinal Peptide)": "vip vasoactive",
 }
 
 def parse_price(val):
@@ -92,19 +98,18 @@ def best_match(products, keyword):
 def scrape_shopify(base, keyword):
     url = f"{base}/products.json?q={requests.utils.quote(keyword)}&limit=10"
     try:
-        resp = SESSION.get(url, timeout=12)
+        resp = scraper_get(url)
         if resp.status_code == 200:
-            data = resp.json()
-            return best_match(data.get("products", []), keyword)
+            return best_match(resp.json().get("products", []), keyword)
     except Exception:
         pass
     return None
 
 def scrape_woocommerce(base, keyword):
-    # Try REST API first
+    # Try WooCommerce REST API
     try:
         url = f"{base}/wp-json/wc/v3/products?search={requests.utils.quote(keyword)}&per_page=5"
-        resp = SESSION.get(url, timeout=12)
+        resp = scraper_get(url)
         if resp.status_code == 200:
             products = resp.json()
             if isinstance(products, list) and products:
@@ -113,13 +118,16 @@ def scrape_woocommerce(base, keyword):
                     return price
     except Exception:
         pass
-    # Fallback: search page + JSON-LD
+
+    # Fallback: search page with JS rendering
     try:
         url = f"{base}/?s={requests.utils.quote(keyword)}&post_type=product"
-        resp = SESSION.get(url, timeout=12)
+        resp = scraper_get(url, render_js=True)
         if resp.status_code != 200:
             return None
         html = resp.text
+
+        # JSON-LD schema
         for m in re.finditer(r'<script[^>]+type="application/ld\+json"[^>]*>(.*?)</script>', html, re.DOTALL):
             try:
                 data = json.loads(m.group(1))
@@ -132,10 +140,12 @@ def scrape_woocommerce(base, keyword):
                         if p: return p
             except Exception:
                 pass
-        prices = re.findall(r'class="[^"]*amount[^"]*"[^>]*>\s*\$?([\d,]+\.?\d*)', html)
-        for raw in prices:
+
+        # Price spans
+        for raw in re.findall(r'class="[^"]*amount[^"]*"[^>]*>\s*\$?([\d,]+\.?\d*)', html):
             p = parse_price(raw)
             if p: return p
+
     except Exception:
         pass
     return None
@@ -161,7 +171,8 @@ def github_get_file():
 
 def github_push_file(content, sha, message):
     url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{GITHUB_FILE}"
-    requests.put(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}", "Content-Type": "application/json"},
+    requests.put(url,
+        headers={"Authorization": f"Bearer {GITHUB_TOKEN}", "Content-Type": "application/json"},
         json={"message": message, "content": base64.b64encode(content.encode()).decode(), "sha": sha, "branch": "main"}
     ).raise_for_status()
     log.info(f"Pushed: {message}")
@@ -181,7 +192,7 @@ def patch_prices(html, updates):
     return html
 
 def main():
-    log.info("=== PepsTracker Scraper Starting ===")
+    log.info("=== PepsTracker Scraper (ScraperAPI) Starting ===")
     html, sha = github_get_file()
 
     existing = {}
@@ -194,13 +205,14 @@ def main():
 
     priority = ["Semaglutide","Tirzepatide","Retatrutide","Liraglutide",
                 "BPC-157","TB-500","BPC-157 + TB-500 Blend",
-                "CJC-1295 (with DAC)","Ipamorelin","Epithalon","Melanotan II","PT-141 (Bremelanotide)"]
+                "CJC-1295 (with DAC)","Ipamorelin","Epithalon",
+                "Melanotan II","PT-141 (Bremelanotide)","GHK-Cu"]
     all_p = priority + [p for p in existing if p not in priority]
     hour = datetime.now(timezone.utc).hour
-    size = 15
+    size = 12
     start = (hour * size) % len(all_p)
     batch = (all_p * 2)[start:start + size]
-    log.info(f"Scraping {len(batch)} peptides this run")
+    log.info(f"Scraping batch of {len(batch)} peptides")
 
     updates = {}
     for peptide in batch:
@@ -208,14 +220,14 @@ def main():
             if vendor_id not in VENDORS: continue
             price = fetch_vendor_price(vendor_id, peptide)
             if price: updates.setdefault(peptide, {})[vendor_id] = price
-            time.sleep(1.0)
+            time.sleep(2.0)  # ScraperAPI handles rate limiting but be polite
 
     if not updates:
-        log.info("No updates found"); return
+        log.info("No price updates found"); return
 
     new_html = patch_prices(html, updates)
     if new_html == html:
-        log.info("No changes to HTML"); return
+        log.info("No HTML changes"); return
 
     count = sum(len(v) for v in updates.values())
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
