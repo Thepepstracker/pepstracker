@@ -1,5 +1,3 @@
-name: 🤖 PepsTracker Price Scraper
-
 on:
   schedule:
     - cron: "0 * * * *"   # Every hour at :00
@@ -20,7 +18,9 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4 lxml
+        run: |
+          pip install requests playwright
+          playwright install chromium --with-deps
 
       - name: Run scraper
         env:
