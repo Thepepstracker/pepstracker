@@ -1,7 +1,9 @@
+name: PepsTracker Price Scraper
+
 on:
   schedule:
-    - cron: "0 * * * *"   # Every hour at :00
-  workflow_dispatch:        # Allow manual trigger from GitHub UI
+    - cron: "0 * * * *"
+  workflow_dispatch:
 
 jobs:
   scrape:
@@ -18,11 +20,10 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: |
-          pip install requests playwright
-          playwright install chromium --with-deps
+        run: pip install requests
 
       - name: Run scraper
         env:
           GITHUB_TOKEN: ${{ secrets.SCRAPER_GITHUB_TOKEN }}
+          SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
         run: python scraper.py
