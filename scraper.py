@@ -1,6 +1,6 @@
 """
-PepsTracker Price Scraper — ScraperAPI Edition (v2)
-Fixes: matches specific mg/size variants instead of grabbing first price found.
+PepsTracker Price Scraper — ScraperAPI Edition v3
+Correctly parses mg:5 format from index.html and matches exact mg size.
 """
 
 import os, re, json, time, base64, logging
@@ -16,7 +16,6 @@ GITHUB_REPO    = "Thepepstracker/pepstracker"
 GITHUB_FILE    = "pepstracker_fixed/index.html"
 GITHUB_API     = "https://api.github.com"
 
-# ── ScraperAPI request ─────────────────────────────────────────
 def scraper_get(url, render_js=False, timeout=45):
     params = {
         "api_key": SCRAPERAPI_KEY,
@@ -26,7 +25,6 @@ def scraper_get(url, render_js=False, timeout=45):
     }
     return requests.get("https://api.scraperapi.com/", params=params, timeout=timeout)
 
-# ── Vendor config ──────────────────────────────────────────────
 VENDORS = {
     "ascension":  {"base": "https://ascensionpeptides.com",  "type": "woocommerce"},
     "lapeptides": {"base": "https://lapeptides.net",          "type": "woocommerce"},
@@ -41,7 +39,6 @@ VENDORS = {
     "atomik":     {"base": "https://atomiklabz.com",          "type": "woocommerce"},
 }
 
-# ── Search keywords per peptide ───────────────────────────────
 SEARCH_ALIASES = {
     "Semaglutide": "semaglutide", "Tirzepatide": "tirzepatide",
     "Retatrutide": "retatrutide", "Liraglutide": "liraglutide",
@@ -70,28 +67,9 @@ SEARCH_ALIASES = {
     "LL-37": "ll-37", "KPV": "kpv", "Oxytocin": "oxytocin",
     "Kisspeptin-10": "kisspeptin", "Gonadorelin": "gonadorelin",
     "VIP (Vasoactive Intestinal Peptide)": "vip vasoactive",
-    "Cortagen": "cortagen",
+    "Cortagen": "cortagen", "DSIP (Delta Sleep Inducing Peptide)": "dsip",
+    "P21": "p21", "Thymogen": "thymogen",
 }
-
-# ── Size extraction helpers ────────────────────────────────────
-def extract_mg(text):
-    """Pull the first mg/mcg/iu size from a string. Returns e.g. '5mg', '10mg'."""
-    text = str(text).lower()
-    m = re.search(r'(\d+(?:\.\d+)?)\s*(mg|mcg|iu)', text)
-    if m:
-        return f"{m.group(1)}{m.group(2)}"
-    return None
-
-def sizes_match(size_a, size_b):
-    """Compare two size strings — '5mg' == '5 mg' == '5MG'."""
-    if not size_a or not size_b:
-        return False
-    def norm(s):
-        s = str(s).lower().replace(" ", "")
-        # normalise decimal: 5.0mg -> 5mg
-        s = re.sub(r'(\d+)\.0+(mg|mcg|iu)', r'\1\2', s)
-        return s
-    return norm(size_a) == norm(size_b)
 
 def parse_price(val):
     try:
@@ -100,66 +78,53 @@ def parse_price(val):
     except Exception:
         return None
 
-# ── Price extraction from product data ────────────────────────
-def price_from_product(product, target_size=None):
-    """
-    Given a product dict (Shopify or WooCommerce format) and an optional
-    target size string, return the best matching price.
-    Priority: exact variant size match > sale_price > regular_price > price
-    """
-    # --- Shopify: variants list ---
+def mg_matches(text, target_mg):
+    """Check if a product title/option contains the target mg amount."""
+    if target_mg is None:
+        return False
+    text = str(text).lower().replace(" ", "")
+    # Build patterns: 5mg, 5.0mg, 500mg etc
+    target = float(target_mg)
+    patterns = [
+        f"{int(target)}mg",
+        f"{target}mg",
+        f"{int(target)}mcg",
+        f"{target}mcg",
+    ]
+    return any(p in text for p in patterns)
+
+def price_from_product(product, target_mg=None):
+    """Extract price from a product, preferring the variant that matches target_mg."""
+    # Shopify variants
     variants = product.get("variants") or []
-    if variants and target_size:
-        for v in variants:
-            option_vals = [
-                str(v.get("option1") or ""),
-                str(v.get("option2") or ""),
-                str(v.get("option3") or ""),
-                str(v.get("title") or ""),
-            ]
-            for opt in option_vals:
-                if sizes_match(extract_mg(opt), target_size):
+    if variants:
+        if target_mg is not None:
+            for v in variants:
+                opts = " ".join([
+                    str(v.get("option1") or ""),
+                    str(v.get("option2") or ""),
+                    str(v.get("option3") or ""),
+                    str(v.get("title") or ""),
+                ])
+                if mg_matches(opts, target_mg):
                     p = parse_price(v.get("price"))
                     if p:
-                        log.info(f"    Size match on variant '{opt}' → ${p}")
+                        log.info(f"    Variant match '{v.get('title')}' → ${p}")
                         return p
-        # No exact match — take the variant whose size is closest to target
-        best_p = None
-        for v in variants:
-            p = parse_price(v.get("price"))
-            if p and (best_p is None or p < best_p):
-                best_p = p
-        return best_p
-
-    # Shopify: no target size, just return cheapest variant
-    if variants:
+        # No match or no target — return cheapest variant
         prices = [parse_price(v.get("price")) for v in variants]
         prices = [p for p in prices if p]
         return min(prices) if prices else None
 
-    # --- WooCommerce: check variations ---
-    wc_variations = product.get("variations") or []
-    if wc_variations and target_size:
-        for var in wc_variations:
-            attrs = var.get("attributes") or []
-            for attr in attrs:
-                if sizes_match(extract_mg(attr.get("option", "")), target_size):
-                    p = parse_price(var.get("price") or var.get("sale_price") or var.get("regular_price"))
-                    if p:
-                        log.info(f"    Size match on WC variation '{attr.get('option')}' → ${p}")
-                        return p
-
-    # WooCommerce: simple fields
+    # WooCommerce simple
     for field in ("sale_price", "price", "regular_price"):
         p = parse_price(product.get(field))
         if p:
             return p
-
     return None
 
-# ── Best product match from a list ────────────────────────────
-def best_product_match(products, keyword, target_size=None):
-    """Score products by keyword match, return price from best match."""
+def best_product_match(products, keyword, target_mg=None):
+    """Score products by keyword relevance, return price from best match."""
     kw_words = keyword.lower().split()
     scored = []
     for p in products:
@@ -169,46 +134,46 @@ def best_product_match(products, keyword, target_size=None):
             scored.append((score, p))
     if not scored:
         return None
-    # Sort by score desc; for ties, prefer products whose title contains target_size
     scored.sort(key=lambda x: x[0], reverse=True)
     top_score = scored[0][0]
     candidates = [p for s, p in scored if s == top_score]
-    if target_size and len(candidates) > 1:
+
+    # Among equally-scored candidates, prefer one whose title contains target_mg
+    if target_mg is not None and len(candidates) > 1:
         for c in candidates:
             title = (c.get("title") or c.get("name") or "").lower()
-            if target_size.lower() in title:
-                return price_from_product(c, target_size)
-    return price_from_product(candidates[0], target_size)
+            if mg_matches(title, target_mg):
+                return price_from_product(c, target_mg)
 
-# ── Shopify scraper ────────────────────────────────────────────
-def scrape_shopify(base, keyword, target_size=None):
+    return price_from_product(candidates[0], target_mg)
+
+def scrape_shopify(base, keyword, target_mg=None):
     url = f"{base}/products.json?q={requests.utils.quote(keyword)}&limit=10"
     try:
         resp = scraper_get(url)
         if resp.status_code == 200:
             products = resp.json().get("products", [])
             if products:
-                return best_product_match(products, keyword, target_size)
+                return best_product_match(products, keyword, target_mg)
     except Exception as e:
         log.warning(f"    Shopify error: {e}")
     return None
 
-# ── WooCommerce scraper ────────────────────────────────────────
-def scrape_woocommerce(base, keyword, target_size=None):
-    # Try WooCommerce REST API first
+def scrape_woocommerce(base, keyword, target_mg=None):
+    # WooCommerce REST API
     try:
         url = f"{base}/wp-json/wc/v3/products?search={requests.utils.quote(keyword)}&per_page=5&status=publish"
         resp = scraper_get(url)
         if resp.status_code == 200:
             products = resp.json()
             if isinstance(products, list) and products:
-                price = best_product_match(products, keyword, target_size)
+                price = best_product_match(products, keyword, target_mg)
                 if price:
                     return price
     except Exception:
         pass
 
-    # Fallback: rendered search page HTML
+    # Rendered search page fallback
     try:
         url = f"{base}/?s={requests.utils.quote(keyword)}&post_type=product"
         resp = scraper_get(url, render_js=True)
@@ -216,7 +181,7 @@ def scrape_woocommerce(base, keyword, target_size=None):
             return None
         html = resp.text
 
-        # Try JSON-LD schema markup
+        # JSON-LD schema
         for m in re.finditer(r'<script[^>]+type="application/ld\+json"[^>]*>(.*?)</script>', html, re.DOTALL):
             try:
                 data = json.loads(m.group(1))
@@ -225,13 +190,12 @@ def scrape_woocommerce(base, keyword, target_size=None):
                     if item.get("@type") == "Product":
                         offers = item.get("offers", {})
                         if isinstance(offers, list):
-                            # If multiple offers, find one matching target_size
-                            for offer in offers:
-                                if target_size and sizes_match(extract_mg(offer.get("name", "")), target_size):
-                                    p = parse_price(offer.get("price") or offer.get("lowPrice"))
-                                    if p:
-                                        return p
-                            # No size match — take lowest price
+                            if target_mg:
+                                for offer in offers:
+                                    if mg_matches(offer.get("name", ""), target_mg):
+                                        p = parse_price(offer.get("price") or offer.get("lowPrice"))
+                                        if p:
+                                            return p
                             prices = [parse_price(o.get("price") or o.get("lowPrice")) for o in offers]
                             prices = [p for p in prices if p]
                             if prices:
@@ -243,35 +207,33 @@ def scrape_woocommerce(base, keyword, target_size=None):
             except Exception:
                 pass
 
-        # Last resort: grab first price-looking span on page
+        # Price span fallback
         for raw in re.findall(r'class="[^"]*(?:price|amount)[^"]*"[^>]*>\s*\$?([\d,]+\.?\d*)', html):
             p = parse_price(raw)
             if p:
                 return p
     except Exception as e:
-        log.warning(f"    WooCommerce HTML fallback error: {e}")
+        log.warning(f"    WooCommerce fallback error: {e}")
     return None
 
-# ── Main fetch per vendor+peptide ─────────────────────────────
-def fetch_vendor_price(vendor_id, peptide, target_size=None):
+def fetch_vendor_price(vendor_id, peptide, target_mg=None):
     cfg = VENDORS.get(vendor_id)
     if not cfg:
         return None
     keyword = SEARCH_ALIASES.get(peptide, peptide.lower())
-    log.info(f"  Fetching {vendor_id}/{peptide} (want: {target_size or 'any'})")
+    mg_str = f"{int(target_mg)}mg" if target_mg else "any"
+    log.info(f"  Fetching {vendor_id}/{peptide} (want: {mg_str})")
     try:
         if cfg["type"] == "shopify":
-            price = scrape_shopify(cfg["base"], keyword, target_size)
+            price = scrape_shopify(cfg["base"], keyword, target_mg)
         else:
-            price = scrape_woocommerce(cfg["base"], keyword, target_size)
-        status = f"${price:.2f}" if price else "not found"
-        log.info(f"  {'OK' if price else '--'} {vendor_id}/{peptide}: {status}")
+            price = scrape_woocommerce(cfg["base"], keyword, target_mg)
+        log.info(f"  {'OK' if price else '--'} {vendor_id}/{peptide}: {'${:.2f}'.format(price) if price else 'not found'}")
         return price
     except Exception as e:
         log.warning(f"  ERR {vendor_id}/{peptide}: {e}")
         return None
 
-# ── GitHub helpers ─────────────────────────────────────────────
 def github_get_file():
     url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{GITHUB_FILE}"
     resp = requests.get(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"})
@@ -289,94 +251,91 @@ def github_push_file(content, sha, message):
     ).raise_for_status()
     log.info(f"Pushed: {message}")
 
-# ── Parse existing PRICES structure from index.html ───────────
 def parse_prices_block(html):
     """
-    Returns dict: { peptide: { vendor_id: { price: float, size: str } } }
-    Reads from the JS PRICES const in index.html.
+    Parse PRICES const from index.html.
+    Format: "Peptide": { vendor: {price:65.00, mg:5, listing:"..."}, ... }
+    Returns: { peptide: { vendor_id: {"price": float, "mg": float} } }
     """
     result = {}
-    # Match each top-level peptide entry
-    pep_pattern = re.compile(
-        r'"([^"]+)":\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}',
+    # Find each peptide block
+    pep_re = re.compile(r'"([^"]+)":\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}', re.DOTALL)
+    # Match vendor entries: vendorid:{price:65.00,mg:5,listing:"..."}  OR  vendorid:null
+    vendor_re = re.compile(
+        r'(\w+):\s*(?:null|\{[^}]*price\s*:\s*([\d.]+)[^}]*mg\s*:\s*([\d.]+)[^}]*\})',
         re.DOTALL
     )
-    vendor_pattern = re.compile(
-        r'(\w+):\s*\{\s*price:\s*([\d.]+)\s*,\s*size:\s*"([^"]+)"\s*\}',
-        re.DOTALL
-    )
-    for m in pep_pattern.finditer(html):
+    for m in pep_re.finditer(html):
         peptide = m.group(1)
         block = m.group(2)
         vendors = {}
-        for vm in vendor_pattern.finditer(block):
-            vid, price, size = vm.group(1), float(vm.group(2)), vm.group(3)
-            vendors[vid] = {"price": price, "size": size}
+        for vm in vendor_re.finditer(block):
+            vid = vm.group(1)
+            if vm.group(2) is None:
+                continue  # null entry, skip
+            price = float(vm.group(2))
+            mg = float(vm.group(3))
+            vendors[vid] = {"price": price, "mg": mg}
         if vendors:
             result[peptide] = vendors
     return result
 
-# ── Patch prices back into HTML ────────────────────────────────
 def patch_prices(html, updates):
     """
     updates: { peptide: { vendor_id: new_price_float } }
-    Replaces price values in-place inside the JS PRICES const.
+    Patches price values in the JS PRICES const.
     """
     patched = 0
     for peptide, vendor_prices in updates.items():
-        # Find the peptide block
         pep_re = re.compile(
-            rf'("{re.escape(peptide)}":\s*\{{)([^{{}}]*(?:\{{[^{{}}]*\}}[^{{}}]*)*?)(\}})',
+            rf'("{re.escape(peptide)}":\s*\{{)(.*?)(\n  \}},?\n)',
             re.DOTALL
         )
         m = pep_re.search(html)
         if not m:
-            log.warning(f"  Could not find block for {peptide}")
+            log.warning(f"  Block not found for: {peptide}")
             continue
         block = m.group(2)
         new_block = block
         for vid, price in vendor_prices.items():
             new_block, n = re.subn(
-                rf'({re.escape(vid)}:\s*\{{\s*price:\s*)[\d.]+(\s*,)',
-                rf'\g<1>{price:.2f}\2',
+                rf'({re.escape(vid)}:\{{price:)([\d.]+)(,mg:)',
+                rf'\g<1>{price:.2f}\3',
                 new_block
             )
             if n:
                 patched += 1
             else:
-                log.warning(f"  Could not patch {vid} in {peptide} block")
+                log.warning(f"  Could not patch {vid}/{peptide}")
         html = html[:m.start(2)] + new_block + html[m.end(2):]
-    log.info(f"Patched {patched} prices in HTML")
+    log.info(f"Patched {patched} prices")
     return html, patched
 
-# ── Main ───────────────────────────────────────────────────────
 def main():
-    log.info("=== PepsTracker Scraper v2 (size-aware) Starting ===")
+    log.info("=== PepsTracker Scraper v3 (mg-aware) Starting ===")
     html, sha = github_get_file()
 
     existing = parse_prices_block(html)
     if not existing:
         log.error("Could not parse PRICES block — aborting")
         return
-    log.info(f"Found {len(existing)} peptides in PRICES block")
+    log.info(f"Parsed {len(existing)} peptides from PRICES block")
 
-    # Priority peptides scraped every run; rest rotated hourly
     priority = [
         "Semaglutide", "Tirzepatide", "Retatrutide",
         "BPC-157", "TB-500", "Ipamorelin",
         "Epithalon", "Melanotan II", "PT-141 (Bremelanotide)",
-        "GHK-Cu", "CJC-1295 (with DAC)",
+        "GHK-Cu", "CJC-1295 (with DAC)", "Liraglutide",
     ]
     all_p = priority + [p for p in existing if p not in priority]
     hour = datetime.now(timezone.utc).hour
     batch_size = 12
     start = (hour * batch_size) % max(len(all_p), 1)
     batch = (all_p * 2)[start:start + batch_size]
-    # Always include priority peptides
     for p in priority:
         if p not in batch and p in existing:
             batch.append(p)
-    batch = list(dict.fromkeys(batch))  # deduplicate preserving order
+    batch = list(dict.fromkeys(batch))
     log.info(f"Scraping {len(batch)} peptides this run")
 
     updates = {}
@@ -385,19 +344,18 @@ def main():
         for vid, info in vendor_map.items():
             if vid not in VENDORS:
                 continue
-            target_size = info.get("size")  # e.g. "5mg" — THIS is the fix
-            price = fetch_vendor_price(vid, peptide, target_size)
+            target_mg = info.get("mg")  # e.g. 5 (a number)
+            price = fetch_vendor_price(vid, peptide, target_mg)
             if price:
-                # Only update if price actually changed (avoid noisy commits)
                 if abs(price - info["price"]) > 0.01:
                     updates.setdefault(peptide, {})[vid] = price
                     log.info(f"  CHANGE {peptide}/{vid}: ${info['price']:.2f} → ${price:.2f}")
                 else:
-                    log.info(f"  SAME   {peptide}/{vid}: ${price:.2f} (no change)")
+                    log.info(f"  SAME   {peptide}/{vid}: ${price:.2f}")
             time.sleep(2.0)
 
     if not updates:
-        log.info("No price changes detected — skipping commit")
+        log.info("No price changes — skipping commit")
         return
 
     new_html, count = patch_prices(html, updates)
