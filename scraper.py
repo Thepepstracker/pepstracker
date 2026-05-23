@@ -1,6 +1,6 @@
 """
-PepsTracker Price Scraper — Direct URL Edition (v4)
-Uses exact product page URLs instead of searching — bypasses bot detection.
+PepsTracker Price Scraper — Direct URL Edition (v5)
+Fixes: ignores related product prices, detects out of stock.
 """
 
 import os, re, json, time, base64, logging
@@ -16,8 +16,6 @@ GITHUB_REPO    = "Thepepstracker/pepstracker"
 GITHUB_FILE    = "pepstracker_fixed/index.html"
 GITHUB_API     = "https://api.github.com"
 
-# ── Direct product URLs ────────────────────────────────────────
-# { vendor_id: { peptide_name: { url, mg } } }
 PRODUCT_URLS = {
   "ascension": {
     "Semaglutide":            {"url": "https://ascensionpeptides.com/product/s-5/",               "mg": 5},
@@ -46,125 +44,109 @@ PRODUCT_URLS = {
     "GHK-Cu":                 {"url": "https://lapeptides.net/product/ghk-cu/",          "mg": 100},
   },
   "glacier": {
-    "Semaglutide":            {"url": "https://glacieraminos.shop/product/gla1-s/",                   "mg": 15},
-    "Tirzepatide":            {"url": "https://glacieraminos.shop/product/gla2-trz/",                 "mg": 10},
-    "Retatrutide":            {"url": "https://glacieraminos.shop/product/gla3-rt/",                  "mg": 10},
-    "BPC-157":                {"url": "https://glacieraminos.shop/product/bpc-157/",                  "mg": 10},
-    "TB-500":                 {"url": "https://glacieraminos.shop/product/tb500/",                    "mg": 10},
-    "BPC-157 + TB-500 Blend": {"url": "https://glacieraminos.shop/product/bpc-tb-500-wolverine/",    "mg": 10},
-    "Ipamorelin":             {"url": "https://glacieraminos.shop/product/ipamorelin-10mg/",          "mg": 10},
-    "CJC-1295 (with DAC)":    {"url": "https://glacieraminos.shop/product/cjc-1295-w-dac-5mg/",      "mg": 5},
-    "Epithalon":              {"url": "https://glacieraminos.shop/product/epi10/",                    "mg": 10},
-    "Melanotan II":           {"url": "https://glacieraminos.shop/product/mt-2/",                     "mg": 10},
-    "PT-141 (Bremelanotide)": {"url": "https://glacieraminos.shop/product/pt-141/",                  "mg": 10},
-    "GHK-Cu":                 {"url": "https://glacieraminos.shop/product/ghk-cu/",                  "mg": 50},
+    "Semaglutide":            {"url": "https://glacieraminos.shop/product/gla1-s/",                "mg": 15},
+    "Tirzepatide":            {"url": "https://glacieraminos.shop/product/gla2-trz/",              "mg": 10},
+    "Retatrutide":            {"url": "https://glacieraminos.shop/product/gla3-rt/",               "mg": 10},
+    "BPC-157":                {"url": "https://glacieraminos.shop/product/bpc-157/",               "mg": 10},
+    "TB-500":                 {"url": "https://glacieraminos.shop/product/tb500/",                 "mg": 10},
+    "BPC-157 + TB-500 Blend": {"url": "https://glacieraminos.shop/product/bpc-tb-500-wolverine/", "mg": 10},
+    "Ipamorelin":             {"url": "https://glacieraminos.shop/product/ipamorelin-10mg/",       "mg": 10},
+    "CJC-1295 (with DAC)":    {"url": "https://glacieraminos.shop/product/cjc-1295-w-dac-5mg/",   "mg": 5},
+    "Epithalon":              {"url": "https://glacieraminos.shop/product/epi10/",                 "mg": 10},
+    "Melanotan II":           {"url": "https://glacieraminos.shop/product/mt-2/",                  "mg": 10},
+    "PT-141 (Bremelanotide)": {"url": "https://glacieraminos.shop/product/pt-141/",               "mg": 10},
+    "GHK-Cu":                 {"url": "https://glacieraminos.shop/product/ghk-cu/",               "mg": 50},
   },
   "milehigh": {
-    "Semaglutide":            {"url": "https://milehighcompounds.is/product/mhc-1-sm/",                   "mg": 10},
-    "Tirzepatide":            {"url": "https://milehighcompounds.is/product/mhc-2-trz/",                  "mg": 10},
-    "Retatrutide":            {"url": "https://milehighcompounds.is/product/mhc-3-rt/",                   "mg": 10},
-    "BPC-157":                {"url": "https://milehighcompounds.is/product/bpc-157/",                    "mg": 10},
-    "TB-500":                 {"url": "https://milehighcompounds.is/product/tb-500/",                     "mg": 10},
-    "BPC-157 + TB-500 Blend": {"url": "https://milehighcompounds.is/product/bpc-157-tb-500-blend/",      "mg": 20},
-    "Ipamorelin":             {"url": "https://milehighcompounds.is/product/ipamorelin/",                 "mg": 10},
-    "CJC-1295 (with DAC)":    {"url": "https://milehighcompounds.is/product/cjc-1295-w-dac/",            "mg": 5},
-    "Epithalon":              {"url": "https://milehighcompounds.is/product/epithalon/",                  "mg": 50},
-    "Melanotan II":           {"url": "https://milehighcompounds.is/product/mt-2/",                      "mg": 10},
-    "PT-141 (Bremelanotide)": {"url": "https://milehighcompounds.is/product/pt-141/",                    "mg": 10},
-    "GHK-Cu":                 {"url": "https://milehighcompounds.is/product/ghk-cu/",                    "mg": 50},
+    "Semaglutide":            {"url": "https://milehighcompounds.is/product/mhc-1-sm/",                "mg": 10},
+    "Tirzepatide":            {"url": "https://milehighcompounds.is/product/mhc-2-trz/",               "mg": 10},
+    "Retatrutide":            {"url": "https://milehighcompounds.is/product/mhc-3-rt/",                "mg": 10},
+    "BPC-157":                {"url": "https://milehighcompounds.is/product/bpc-157/",                 "mg": 10},
+    "TB-500":                 {"url": "https://milehighcompounds.is/product/tb-500/",                  "mg": 10},
+    "BPC-157 + TB-500 Blend": {"url": "https://milehighcompounds.is/product/bpc-157-tb-500-blend/",   "mg": 20},
+    "Ipamorelin":             {"url": "https://milehighcompounds.is/product/ipamorelin/",              "mg": 10},
+    "CJC-1295 (with DAC)":    {"url": "https://milehighcompounds.is/product/cjc-1295-w-dac/",         "mg": 5},
+    "Epithalon":              {"url": "https://milehighcompounds.is/product/epithalon/",               "mg": 50},
+    "Melanotan II":           {"url": "https://milehighcompounds.is/product/mt-2/",                    "mg": 10},
+    "PT-141 (Bremelanotide)": {"url": "https://milehighcompounds.is/product/pt-141/",                 "mg": 10},
+    "GHK-Cu":                 {"url": "https://milehighcompounds.is/product/ghk-cu/",                 "mg": 50},
   },
   "ezpeptides": {
-    "Semaglutide":            {"url": "https://ezpeptides.com/product/ezp-1p-10mg/",                     "mg": 10},
-    "Tirzepatide":            {"url": "https://ezpeptides.com/product/ezp-2p-10mg/",                     "mg": 10},
-    "Retatrutide":            {"url": "https://ezpeptides.com/product/ezp-3p-10mg-glp-3rt/",             "mg": 10},
-    "BPC-157":                {"url": "https://ezpeptides.com/product/bpc-157-10mg/",                    "mg": 10},
-    "TB-500":                 {"url": "https://ezpeptides.com/product/tb4-10mg/",                        "mg": 10},
-    "BPC-157 + TB-500 Blend": {"url": "https://ezpeptides.com/product/bpc-157-tb4-blend-10mg-10mg/",    "mg": 10},
-    "Ipamorelin":             {"url": "https://ezpeptides.com/product/ipamorelin-10mg/",                 "mg": 10},
-    "Epithalon":              {"url": "https://ezpeptides.com/product/epitalon-10mg/",                   "mg": 10},
-    "Melanotan II":           {"url": "https://ezpeptides.com/product/melanotan-ii-10mg/",               "mg": 10},
-    "PT-141 (Bremelanotide)": {"url": "https://ezpeptides.com/product/pt-141-10mg/",                    "mg": 10},
-    "GHK-Cu":                 {"url": "https://ezpeptides.com/product/ghk-cu-50mg/",                    "mg": 50},
+    "Semaglutide":            {"url": "https://ezpeptides.com/product/ezp-1p-10mg/",                  "mg": 10},
+    "Tirzepatide":            {"url": "https://ezpeptides.com/product/ezp-2p-10mg/",                  "mg": 10},
+    "Retatrutide":            {"url": "https://ezpeptides.com/product/ezp-3p-10mg-glp-3rt/",          "mg": 10},
+    "BPC-157":                {"url": "https://ezpeptides.com/product/bpc-157-10mg/",                 "mg": 10},
+    "TB-500":                 {"url": "https://ezpeptides.com/product/tb4-10mg/",                     "mg": 10},
+    "BPC-157 + TB-500 Blend": {"url": "https://ezpeptides.com/product/bpc-157-tb4-blend-10mg-10mg/", "mg": 10},
+    "Ipamorelin":             {"url": "https://ezpeptides.com/product/ipamorelin-10mg/",              "mg": 10},
+    "Epithalon":              {"url": "https://ezpeptides.com/product/epitalon-10mg/",                "mg": 10},
+    "Melanotan II":           {"url": "https://ezpeptides.com/product/melanotan-ii-10mg/",            "mg": 10},
+    "PT-141 (Bremelanotide)": {"url": "https://ezpeptides.com/product/pt-141-10mg/",                 "mg": 10},
+    "GHK-Cu":                 {"url": "https://ezpeptides.com/product/ghk-cu-50mg/",                 "mg": 50},
   },
   "amp": {
-    "Semaglutide":            {"url": "https://ameanopeptides.com/product/amp-1p-5mg/",                      "mg": 5},
-    "Tirzepatide":            {"url": "https://ameanopeptides.com/product/amp-2p-10mg/",                     "mg": 10},
-    "Retatrutide":            {"url": "https://ameanopeptides.com/product/amp-3p-10mg/",                     "mg": 10},
-    "BPC-157":                {"url": "https://ameanopeptides.com/product/bpc-157-10mg/",                    "mg": 10},
-    "TB-500":                 {"url": "https://ameanopeptides.com/product/tb4-10mg-research-peptide/",       "mg": 10},
-    "BPC-157 + TB-500 Blend": {"url": "https://ameanopeptides.com/product/bpc-157-tb4-blend-10mg-10mg/",    "mg": 10},
-    "Ipamorelin":             {"url": "https://ameanopeptides.com/product/ipamorelin-10mg/",                 "mg": 10},
-    "Epithalon":              {"url": "https://ameanopeptides.com/product/epitalon-10mg/",                   "mg": 10},
-    "Melanotan II":           {"url": "https://ameanopeptides.com/product/melanotan-ii-10mg/",               "mg": 10},
-    "PT-141 (Bremelanotide)": {"url": "https://ameanopeptides.com/product/pt-141-10mg-research-peptide/",   "mg": 10},
-    "GHK-Cu":                 {"url": "https://ameanopeptides.com/product/ghk-cu-100mg/",                   "mg": 100},
+    "Semaglutide":            {"url": "https://ameanopeptides.com/product/amp-1p-5mg/",                   "mg": 5},
+    "Tirzepatide":            {"url": "https://ameanopeptides.com/product/amp-2p-10mg/",                  "mg": 10},
+    "Retatrutide":            {"url": "https://ameanopeptides.com/product/amp-3p-10mg/",                  "mg": 10},
+    "BPC-157":                {"url": "https://ameanopeptides.com/product/bpc-157-10mg/",                 "mg": 10},
+    "TB-500":                 {"url": "https://ameanopeptides.com/product/tb4-10mg-research-peptide/",    "mg": 10},
+    "BPC-157 + TB-500 Blend": {"url": "https://ameanopeptides.com/product/bpc-157-tb4-blend-10mg-10mg/", "mg": 10},
+    "Ipamorelin":             {"url": "https://ameanopeptides.com/product/ipamorelin-10mg/",              "mg": 10},
+    "Epithalon":              {"url": "https://ameanopeptides.com/product/epitalon-10mg/",                "mg": 10},
+    "Melanotan II":           {"url": "https://ameanopeptides.com/product/melanotan-ii-10mg/",            "mg": 10},
+    "PT-141 (Bremelanotide)": {"url": "https://ameanopeptides.com/product/pt-141-10mg-research-peptide/","mg": 10},
+    "GHK-Cu":                 {"url": "https://ameanopeptides.com/product/ghk-cu-100mg/",                "mg": 100},
   },
   "labsourced": {
-    "Tirzepatide":            {"url": "https://www.labsourced.com/products/tirzepatide-30mg",    "mg": 30},
-    "Retatrutide":            {"url": "https://www.labsourced.com/products/peptide-r-5mg",       "mg": 5},
-    "BPC-157":                {"url": "https://www.labsourced.com/products/bpc-157-10mg",        "mg": 10},
-    "TB-500":                 {"url": "https://www.labsourced.com/products/tb-500-10mg",         "mg": 10},
-    "BPC-157 + TB-500 Blend": {"url": "https://www.labsourced.com/products/wolverine-10-10mg",  "mg": 10},
-    "Ipamorelin":             {"url": "https://www.labsourced.com/products/ipamorelin-10mg",     "mg": 10},
-    "Epithalon":              {"url": "https://www.labsourced.com/products/epithalon-10mg",      "mg": 10},
-    "Melanotan II":           {"url": "https://www.labsourced.com/products/mt2-10mg",            "mg": 10},
-    "PT-141 (Bremelanotide)": {"url": "https://www.labsourced.com/products/pt-141-10mg",        "mg": 10},
-    "GHK-Cu":                 {"url": "https://www.labsourced.com/products/ghk-cu-50mg",        "mg": 50},
+    "Tirzepatide":            {"url": "https://www.labsourced.com/products/tirzepatide-30mg",   "mg": 30},
+    "Retatrutide":            {"url": "https://www.labsourced.com/products/peptide-r-5mg",      "mg": 5},
+    "BPC-157":                {"url": "https://www.labsourced.com/products/bpc-157-10mg",       "mg": 10},
+    "TB-500":                 {"url": "https://www.labsourced.com/products/tb-500-10mg",        "mg": 10},
+    "BPC-157 + TB-500 Blend": {"url": "https://www.labsourced.com/products/wolverine-10-10mg", "mg": 10},
+    "Ipamorelin":             {"url": "https://www.labsourced.com/products/ipamorelin-10mg",    "mg": 10},
+    "Epithalon":              {"url": "https://www.labsourced.com/products/epithalon-10mg",     "mg": 10},
+    "Melanotan II":           {"url": "https://www.labsourced.com/products/mt2-10mg",           "mg": 10},
+    "PT-141 (Bremelanotide)": {"url": "https://www.labsourced.com/products/pt-141-10mg",       "mg": 10},
+    "GHK-Cu":                 {"url": "https://www.labsourced.com/products/ghk-cu-50mg",       "mg": 50},
   },
   "ion": {
-    "Semaglutide":            {"url": "https://ionpeptide.com/product/glp-1s/",             "mg": 5},
-    "Tirzepatide":            {"url": "https://ionpeptide.com/product/glp-2t/",             "mg": 10},
-    "Retatrutide":            {"url": "https://ionpeptide.com/product/glp-3r/",             "mg": 5},
-    "BPC-157":                {"url": "https://ionpeptide.com/product/bpc-157-2/",          "mg": 5},
-    "TB-500":                 {"url": "https://ionpeptide.com/product/tb-500/",             "mg": 5},
-    "BPC-157 + TB-500 Blend": {"url": "https://ionpeptide.com/product/bpc157tb500/",       "mg": 10},
-    "Ipamorelin":             {"url": "https://ionpeptide.com/product/ipamorelin/",         "mg": 5},
-    "CJC-1295 (with DAC)":    {"url": "https://ionpeptide.com/product/cjc-1295-with-dac-5mg/", "mg": 5},
-    "Epithalon":              {"url": "https://ionpeptide.com/product/epithalon/",          "mg": 10},
-    "Melanotan II":           {"url": "https://ionpeptide.com/product/melanotan-ii/",       "mg": 10},
-    "PT-141 (Bremelanotide)": {"url": "https://ionpeptide.com/product/pt-141/",            "mg": 10},
-    "GHK-Cu":                 {"url": "https://ionpeptide.com/product/ghk-cu-2/",          "mg": 50},
+    "Semaglutide":            {"url": "https://ionpeptide.com/product/glp-1s/",                "mg": 5},
+    "Tirzepatide":            {"url": "https://ionpeptide.com/product/glp-2t/",                "mg": 10},
+    "Retatrutide":            {"url": "https://ionpeptide.com/product/glp-3r/",                "mg": 5},
+    "BPC-157":                {"url": "https://ionpeptide.com/product/bpc-157-2/",             "mg": 5},
+    "TB-500":                 {"url": "https://ionpeptide.com/product/tb-500/",                "mg": 5},
+    "BPC-157 + TB-500 Blend": {"url": "https://ionpeptide.com/product/bpc157tb500/",          "mg": 10},
+    "Ipamorelin":             {"url": "https://ionpeptide.com/product/ipamorelin/",            "mg": 5},
+    "CJC-1295 (with DAC)":    {"url": "https://ionpeptide.com/product/cjc-1295-with-dac-5mg/","mg": 5},
+    "Epithalon":              {"url": "https://ionpeptide.com/product/epithalon/",             "mg": 10},
+    "Melanotan II":           {"url": "https://ionpeptide.com/product/melanotan-ii/",          "mg": 10},
+    "PT-141 (Bremelanotide)": {"url": "https://ionpeptide.com/product/pt-141/",               "mg": 10},
+    "GHK-Cu":                 {"url": "https://ionpeptide.com/product/ghk-cu-2/",             "mg": 50},
   },
   "retaone": {
-    "Semaglutide":            {"url": "https://retaonelabs.com/product/ro-1s-10mg/",                          "mg": 10},
-    "Tirzepatide":            {"url": "https://retaonelabs.com/product/ro-2t-10mg/",                         "mg": 10},
-    "Retatrutide":            {"url": "https://retaonelabs.com/product/ro-3r-10mg/",                         "mg": 10},
-    "BPC-157":                {"url": "https://retaonelabs.com/product/bpc-157-10mg/",                       "mg": 10},
-    "BPC-157 + TB-500 Blend": {"url": "https://retaonelabs.com/product/bpc-157-tb-500-blend-10mg-10mg/",    "mg": 10},
-    "PT-141 (Bremelanotide)": {"url": "https://retaonelabs.com/product/pt-141-10mg/",                       "mg": 10},
-    "GHK-Cu":                 {"url": "https://retaonelabs.com/product/ghk-cu-50mg/",                       "mg": 50},
+    "Semaglutide":            {"url": "https://retaonelabs.com/product/ro-1s-10mg/",                       "mg": 10},
+    "Tirzepatide":            {"url": "https://retaonelabs.com/product/ro-2t-10mg/",                       "mg": 10},
+    "Retatrutide":            {"url": "https://retaonelabs.com/product/ro-3r-10mg/",                       "mg": 10},
+    "BPC-157":                {"url": "https://retaonelabs.com/product/bpc-157-10mg/",                     "mg": 10},
+    "BPC-157 + TB-500 Blend": {"url": "https://retaonelabs.com/product/bpc-157-tb-500-blend-10mg-10mg/",  "mg": 10},
+    "PT-141 (Bremelanotide)": {"url": "https://retaonelabs.com/product/pt-141-10mg/",                     "mg": 10},
+    "GHK-Cu":                 {"url": "https://retaonelabs.com/product/ghk-cu-50mg/",                     "mg": 50},
   },
   "nura": {
-    "Semaglutide":            {"url": "https://nurapeptide.com/product/glp-1sg-10mg/",                "mg": 10},
-    "Tirzepatide":            {"url": "https://nurapeptide.com/product/glp-2t-10mg/",                 "mg": 10},
-    "Retatrutide":            {"url": "https://nurapeptide.com/product/glp-3rt-12mg/",                "mg": 12},
-    "BPC-157":                {"url": "https://nurapeptide.com/product/bpc-157-10mg/",                "mg": 10},
-    "TB-500":                 {"url": "https://nurapeptide.com/product/tb-500-10mg/",                 "mg": 10},
-    "BPC-157 + TB-500 Blend": {"url": "https://nurapeptide.com/product/bpc-157-tb-500-5-5mg/",       "mg": 5},
-    "Ipamorelin":             {"url": "https://nurapeptide.com/product/ipamorelin-10mg/",             "mg": 10},
-    "CJC-1295 (with DAC)":    {"url": "https://nurapeptide.com/product/cjc-1295-with-dac-5mg/",      "mg": 5},
-    "Epithalon":              {"url": "https://nurapeptide.com/product/epitalon-10mg/",               "mg": 10},
-    "Melanotan II":           {"url": "https://nurapeptide.com/product/melanotan-ii-10mg/",           "mg": 10},
-    "PT-141 (Bremelanotide)": {"url": "https://nurapeptide.com/product/pt-141-peptide-10mg/",        "mg": 10},
-    "GHK-Cu":                 {"url": "https://nurapeptide.com/product/ghk-cu-100mg/",               "mg": 100},
+    "Semaglutide":            {"url": "https://nurapeptide.com/product/glp-1sg-10mg/",               "mg": 10},
+    "Tirzepatide":            {"url": "https://nurapeptide.com/product/glp-2t-10mg/",                "mg": 10},
+    "Retatrutide":            {"url": "https://nurapeptide.com/product/glp-3rt-12mg/",               "mg": 12},
+    "BPC-157":                {"url": "https://nurapeptide.com/product/bpc-157-10mg/",               "mg": 10},
+    "TB-500":                 {"url": "https://nurapeptide.com/product/tb-500-10mg/",                "mg": 10},
+    "BPC-157 + TB-500 Blend": {"url": "https://nurapeptide.com/product/bpc-157-tb-500-5-5mg/",      "mg": 5},
+    "Ipamorelin":             {"url": "https://nurapeptide.com/product/ipamorelin-10mg/",            "mg": 10},
+    "CJC-1295 (with DAC)":    {"url": "https://nurapeptide.com/product/cjc-1295-with-dac-5mg/",     "mg": 5},
+    "Epithalon":              {"url": "https://nurapeptide.com/product/epitalon-10mg/",              "mg": 10},
+    "Melanotan II":           {"url": "https://nurapeptide.com/product/melanotan-ii-10mg/",          "mg": 10},
+    "PT-141 (Bremelanotide)": {"url": "https://nurapeptide.com/product/pt-141-peptide-10mg/",       "mg": 10},
+    "GHK-Cu":                 {"url": "https://nurapeptide.com/product/ghk-cu-100mg/",              "mg": 100},
   },
-  # atomik — to be added once URLs are collected
   "atomik": {},
-}
-
-# Vendor platform types (for price extraction strategy)
-VENDOR_TYPES = {
-    "ascension":  "woocommerce",
-    "lapeptides": "woocommerce",
-    "glacier":    "shopify",
-    "milehigh":   "woocommerce",
-    "ezpeptides": "woocommerce",
-    "amp":        "woocommerce",
-    "labsourced": "shopify",
-    "ion":        "woocommerce",
-    "retaone":    "shopify",
-    "nura":       "woocommerce",
-    "atomik":     "woocommerce",
 }
 
 def scraper_get(url, render_js=False, timeout=45):
@@ -183,11 +165,50 @@ def parse_price(val):
     except Exception:
         return None
 
-def extract_price_from_html(html):
-    """Extract price from a product page HTML using multiple strategies."""
+def is_out_of_stock(html):
+    """Check if page indicates product is out of stock."""
+    oos_signals = [
+        'class="out-of-stock"',
+        'stock_status":"outofstock"',
+        '"availability":"http://schema.org/OutOfStock"',
+        'availability":"OutOfStock"',
+        '>Out of stock<',
+        '>Currently unavailable<',
+        '>Sold out<',
+        'sold_out":true',
+        '"sold_out": true',
+    ]
+    html_lower = html.lower()
+    for signal in oos_signals:
+        if signal.lower() in html_lower:
+            return True
+    return False
 
-    # Strategy 1: JSON-LD schema markup
-    for m in re.finditer(r'<script[^>]+type="application/ld\+json"[^>]*>(.*?)</script>', html, re.DOTALL):
+def extract_main_product_price(html):
+    """
+    Extract ONLY the main product price — ignoring related products,
+    upsells, cross-sells, and bundle sections.
+    """
+
+    # Step 1: Strip related/upsell sections before parsing
+    # Remove everything after these sections appear
+    cutoff_patterns = [
+        r'<section[^>]*class="[^"]*related[^"]*"',
+        r'<div[^>]*class="[^"]*related[^"]*"',
+        r'<section[^>]*class="[^"]*upsell[^"]*"',
+        r'<div[^>]*class="[^"]*upsell[^"]*"',
+        r'<div[^>]*class="[^"]*cross-sell[^"]*"',
+        r'id="related[^"]*"',
+        r'class="[^"]*product-recommendations[^"]*"',
+    ]
+    trimmed_html = html
+    for pattern in cutoff_patterns:
+        m = re.search(pattern, trimmed_html, re.IGNORECASE)
+        if m:
+            trimmed_html = trimmed_html[:m.start()]
+
+    # Step 2: Try JSON-LD on trimmed HTML first
+    for m in re.finditer(r'<script[^>]+type="application/ld\+json"[^>]*>(.*?)</script>', trimmed_html, re.DOTALL):
         try:
             data = json.loads(m.group(1))
             items = data if isinstance(data, list) else [data]
@@ -198,7 +219,7 @@ def extract_price_from_html(html):
                         prices = [parse_price(o.get("price") or o.get("lowPrice")) for o in offers]
                         prices = [p for p in prices if p]
                         if prices:
-                            return min(prices)
+                            return min(prices)  # return lowest (base) price
                     else:
                         p = parse_price(offers.get("price") or offers.get("lowPrice"))
                         if p:
@@ -206,54 +227,82 @@ def extract_price_from_html(html):
         except Exception:
             pass
 
-    # Strategy 2: WooCommerce price span
-    for pattern in [
-        r'<p[^>]*class="[^"]*price[^"]*"[^>]*>.*?\$\s*([\d,]+\.?\d*)',
-        r'class="woocommerce-Price-amount[^"]*"[^>]*>.*?\$\s*([\d,]+\.?\d*)',
+    # Step 3: WooCommerce price — look for the FIRST price only
+    # Target the summary/main product div specifically
+    summary_match = re.search(
+        r'<div[^>]*class="[^"]*(?:summary|product-summary|entry-summary)[^"]*"[^>]*>(.*?)</div>\s*</div>',
+        trimmed_html, re.DOTALL | re.IGNORECASE
+    )
+    search_area = summary_match.group(1) if summary_match else trimmed_html
+
+    # Find first price in the summary area
+    price_patterns = [
+        r'class="woocommerce-Price-amount[^"]*"[^>]*>.*?<bdi>.*?\$\s*([\d,]+\.?\d*)',
+        r'<ins>.*?<bdi>.*?\$\s*([\d,]+\.?\d*)',  # sale price
         r'"price"\s*:\s*"([\d.]+)"',
-        r'class="[^"]*(?:price|amount)[^"]*"[^>]*>\s*\$?\s*([\d,]+\.?\d*)',
-    ]:
-        matches = re.findall(pattern, html, re.DOTALL)
+        r'<p[^>]*class="[^"]*price[^"]*"[^>]*>.*?\$\s*([\d,]+\.?\d*)',
+    ]
+    for pattern in price_patterns:
+        matches = re.findall(pattern, search_area, re.DOTALL)
         for raw in matches:
             p = parse_price(raw)
             if p:
                 return p
 
-    # Strategy 3: Shopify product JSON
-    m = re.search(r'window\.__st\s*=\s*(\{.*?\});', html, re.DOTALL)
-    if m:
-        try:
-            data = json.loads(m.group(1))
-            price = data.get("p") or data.get("price")
-            if price:
-                p = parse_price(float(price) / 100)
-                if p:
-                    return p
-        except Exception:
-            pass
+    # Step 4: Shopify — product JSON in page
+    for pattern in [
+        r'"price"\s*:\s*(\d+)',           # price in cents
+        r'"price":\s*"([\d.]+)"',         # price as string
+        r'window\.ShopifyAnalytics.*?"price":"([\d.]+)"',
+    ]:
+        m = re.search(pattern, trimmed_html)
+        if m:
+            val = float(m.group(1))
+            # Shopify stores price in cents
+            if val > 1000:
+                val = val / 100
+            p = parse_price(val)
+            if p:
+                return p
 
     return None
 
-def fetch_price_from_url(vendor_id, peptide, product_url, render_js=False):
+def fetch_price_from_url(vendor_id, peptide, product_url):
     """Fetch price directly from a known product URL."""
     log.info(f"  Fetching {vendor_id}/{peptide} → {product_url}")
     try:
-        resp = scraper_get(product_url, render_js=render_js)
+        # Try without JS first (faster)
+        resp = scraper_get(product_url, render_js=False)
         if resp.status_code != 200:
-            log.warning(f"  HTTP {resp.status_code} for {product_url}")
-            return None
-        price = extract_price_from_html(resp.text)
-        if not price and not render_js:
-            # Retry with JS rendering
+            log.warning(f"  HTTP {resp.status_code}")
+            return None, False
+
+        html = resp.text
+
+        # Check out of stock
+        if is_out_of_stock(html):
+            log.info(f"  OUT OF STOCK: {vendor_id}/{peptide}")
+            return None, True  # (price, is_out_of_stock)
+
+        price = extract_main_product_price(html)
+
+        # Retry with JS if no price found
+        if not price:
             log.info(f"  Retrying with JS render...")
             resp2 = scraper_get(product_url, render_js=True)
             if resp2.status_code == 200:
-                price = extract_price_from_html(resp2.text)
+                html2 = resp2.text
+                if is_out_of_stock(html2):
+                    log.info(f"  OUT OF STOCK (JS): {vendor_id}/{peptide}")
+                    return None, True
+                price = extract_main_product_price(html2)
+
         log.info(f"  {'OK' if price else '--'} {vendor_id}/{peptide}: {'${:.2f}'.format(price) if price else 'not found'}")
-        return price
+        return price, False
+
     except Exception as e:
         log.warning(f"  ERR {vendor_id}/{peptide}: {e}")
-        return None
+        return None, False
 
 def github_get_file():
     url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{GITHUB_FILE}"
@@ -322,7 +371,7 @@ def patch_prices(html, updates):
     return html, patched
 
 def main():
-    log.info("=== PepsTracker Scraper v4 (direct URLs) Starting ===")
+    log.info("=== PepsTracker Scraper v5 (out-of-stock aware) Starting ===")
     html, sha = github_get_file()
 
     existing = parse_prices_block(html)
@@ -331,41 +380,45 @@ def main():
         return
     log.info(f"Parsed {len(existing)} peptides from PRICES block")
 
-    # Priority peptides — always scraped
     priority = [
         "Semaglutide", "Tirzepatide", "Retatrutide",
         "BPC-157", "TB-500", "Ipamorelin",
         "Epithalon", "Melanotan II", "PT-141 (Bremelanotide)",
         "GHK-Cu", "CJC-1295 (with DAC)", "BPC-157 + TB-500 Blend",
     ]
-
-    # Rotate remaining peptides hourly
     all_p = priority + [p for p in existing if p not in priority]
     hour = datetime.now(timezone.utc).hour
-    batch_size = 6  # smaller batch since direct URLs are faster
+    batch_size = 6
     start = (hour * batch_size) % max(len(all_p) - len(priority), 1)
     extra = [p for p in all_p if p not in priority][start:start + batch_size]
-    batch = priority + extra
-    batch = list(dict.fromkeys(batch))
+    batch = list(dict.fromkeys(priority + extra))
     log.info(f"Scraping {len(batch)} peptides this run")
 
     updates = {}
+    out_of_stock = []
+
     for peptide in batch:
         vendor_map = existing.get(peptide, {})
         for vid, info in vendor_map.items():
-            # Check if we have a direct URL for this vendor+peptide
             url_info = PRODUCT_URLS.get(vid, {}).get(peptide)
             if not url_info:
-                continue  # Skip — no direct URL yet
+                continue
 
-            price = fetch_price_from_url(vid, peptide, url_info["url"])
-            if price:
+            price, oos = fetch_price_from_url(vid, peptide, url_info["url"])
+
+            if oos:
+                out_of_stock.append(f"{vendor_id}/{peptide}")
+                # Don't update price — leave existing price unchanged
+            elif price:
                 if abs(price - info["price"]) > 0.01:
                     updates.setdefault(peptide, {})[vid] = price
                     log.info(f"  CHANGE {peptide}/{vid}: ${info['price']:.2f} → ${price:.2f}")
                 else:
                     log.info(f"  SAME   {peptide}/{vid}: ${price:.2f}")
             time.sleep(1.5)
+
+    if out_of_stock:
+        log.info(f"Out of stock items ({len(out_of_stock)}): {', '.join(out_of_stock)}")
 
     if not updates:
         log.info("No price changes — skipping commit")
