@@ -164,42 +164,60 @@
 </header>
 
 <!-- ═══ HERO ════════════════════════════════════════════ -->
+<!-- ═══ HERO ════════════════════════════════════════════ -->
+<div style="height:3px;background:linear-gradient(90deg,#B22234,#3C3B6E 50%,#4de87a);"></div>
 <section class="hero">
-  <h1>Find the <em>Best Price</em> on Any Peptide</h1>
-  <p>We compare prices across top vendors daily — normalized by dose so you always see the real value.</p>
+  <div class="badge-wrap" style="margin-bottom:20px;">
+    <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:5px 16px;font-size:12px;font-weight:500;">🇺🇸 Memorial Day Weekend &nbsp;·&nbsp; Updated Hourly</span>
+  </div>
+  <h1 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-1.5px;line-height:1.12;margin-bottom:14px;color:#e8edf5;"><span style="color:#3b9eff;">Pin</span> the Best Peptide Prices<br><em style="font-style:normal;color:#4de87a;">in Just a Click.</em></h1>
+  <p style="color:#7a8ba8;font-size:1.05rem;margin-bottom:28px;">We compare prices across 11 trusted vendors — with discount codes already applied. No math, no guesswork.</p>
+  <div style="display:flex;justify-content:center;gap:48px;margin-bottom:28px;">
+    <div style="text-align:center;"><div style="font-size:22px;font-weight:800;color:#e8edf5;">11</div><div style="font-size:11px;color:#7a8ba8;text-transform:uppercase;letter-spacing:.6px;margin-top:3px;">Vendors</div></div>
+    <div style="width:1px;background:#2a3347;"></div>
+    <div style="text-align:center;"><div style="font-size:22px;font-weight:800;color:#e8edf5;">13</div><div style="font-size:11px;color:#7a8ba8;text-transform:uppercase;letter-spacing:.6px;margin-top:3px;">Peptides</div></div>
+    <div style="width:1px;background:#2a3347;"></div>
+    <div style="text-align:center;"><div style="font-size:22px;font-weight:800;color:#e8edf5;">Hourly</div><div style="font-size:11px;color:#7a8ba8;text-transform:uppercase;letter-spacing:.6px;margin-top:3px;">Updates</div></div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:28px;">
+    <span onclick="document.getElementById('peptideSelect').value='Semaglutide';handleSearch();" style="background:rgba(77,232,122,0.07);border:1px solid rgba(77,232,122,0.2);color:#4de87a;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer;">🔥 Semaglutide</span>
+    <span onclick="document.getElementById('peptideSelect').value='Tirzepatide';handleSearch();" style="background:rgba(77,232,122,0.07);border:1px solid rgba(77,232,122,0.2);color:#4de87a;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer;">🔥 Tirzepatide</span>
+    <span onclick="document.getElementById('peptideSelect').value='BPC-157';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">BPC-157</span>
+    <span onclick="document.getElementById('peptideSelect').value='TB-500';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">TB-500</span>
+    <span onclick="document.getElementById('peptideSelect').value='PT-141 (Bremelanotide)';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">PT-141</span>
+    <span onclick="document.getElementById('peptideSelect').value='GHK-Cu';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">GHK-Cu</span>
+  </div>
   <div class="search-wrap">
     <div class="select-wrap">
       <select id="peptideSelect" onchange="handleSearch()">
-  <option value="">— Select a peptide to compare prices —</option>
-
-  <optgroup label="GLP-1 / Weight Loss">
-    <option>Semaglutide</option>
-    <option>Tirzepatide</option>
-    <option>Retatrutide</option>
-  </optgroup>
-
-  <optgroup label="BPC / TB Healing">
-    <option>BPC-157</option>
-    <option>TB-500</option>
-    <option>BPC-157 + TB-500 Blend</option>
-  </optgroup>
-
-  <optgroup label="Growth Hormone">
-    <option>Ipamorelin</option>
-    <option>CJC-1295 (with DAC)</option>
-  </optgroup>
-
-  <optgroup label="Skin, Tanning &amp; Appearance">
-    <option>Melanotan II</option>
-    <option>PT-141 (Bremelanotide)</option>
-    <option>GHK-Cu</option>
-  </optgroup>
-
-  <optgroup label="Longevity &amp; Anti-Aging">
-    <option>Epithalon</option>
-  </optgroup>
-
-</select>
+        <option value="">— Select a peptide to compare prices —</option>
+        <optgroup label="GLP-1 / Weight Loss">
+          <option>Semaglutide</option>
+          <option>Tirzepatide</option>
+          <option>Retatrutide</option>
+        </optgroup>
+        <optgroup label="BPC / TB Healing">
+          <option>BPC-157</option>
+          <option>TB-500</option>
+          <option>BPC-157 + TB-500 Blend</option>
+        </optgroup>
+        <optgroup label="Growth Hormone">
+          <option>Ipamorelin</option>
+          <option>CJC-1295 (with DAC)</option>
+        </optgroup>
+        <optgroup label="Skin, Tanning &amp; Appearance">
+          <option>Melanotan II</option>
+          <option>PT-141 (Bremelanotide)</option>
+          <option>GHK-Cu</option>
+        </optgroup>
+        <optgroup label="Longevity &amp; Anti-Aging">
+          <option>Epithalon</option>
+        </optgroup>
+      </select>
+    </div>
+    <button class="btn-search" onclick="handleSearch()">Compare Prices</button>
+  </div>
+</section>
 
 <!-- GLP-1 BANNER -->
 <div class="glp-banner" id="glpBanner">
