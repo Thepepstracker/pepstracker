@@ -407,7 +407,7 @@ def main():
             price, oos = fetch_price_from_url(vid, peptide, url_info["url"])
 
             if oos:
-                out_of_stock.append(f"{vendor_id}/{peptide}")
+                out_of_stock.append(f"{vid}/{peptide}")
                 # Don't update price — leave existing price unchanged
             elif price:
                 if abs(price - info["price"]) > 0.01:
