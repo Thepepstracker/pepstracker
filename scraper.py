@@ -190,8 +190,25 @@ def extract_main_product_price(html):
     upsells, cross-sells, and bundle sections.
     """
 
-    # Step 1: Strip related/upsell sections before parsing
-    # Remove everything after these sections appear
+    # Step 1: Strip banners, notices, shipping promo text, related sections
+    trimmed_html = html
+
+    # Remove free shipping banners (e.g. "Free shipping on orders over $200")
+    trimmed_html = re.sub(
+        r'[^<]{0,80}free\s*ship[^<]{0,150}\$\s*[\d,]+\.?\d*[^<]{0,80}',
+        '', trimmed_html, flags=re.IGNORECASE
+    )
+    trimmed_html = re.sub(
+        r'\$\s*[\d,]+\.?\d*[^<]{0,80}free\s*ship[^<]{0,150}',
+        '', trimmed_html, flags=re.IGNORECASE
+    )
+    # Remove promo/notice bar elements
+    trimmed_html = re.sub(
+        r'<[^>]+class="[^"]*(?:store-notice|announcement|promo-bar|free-ship)[^"]*"[^>]*>.*?</[a-z]+>',
+        '', trimmed_html, flags=re.DOTALL | re.IGNORECASE
+    )
+
+    # Cut off at related/upsell sections
     cutoff_patterns = [
         r'<section[^>]*class="[^"]*related[^"]*"',
         r'<div[^>]*class="[^"]*related[^"]*"',
@@ -201,7 +218,6 @@ def extract_main_product_price(html):
         r'id="related[^"]*"',
         r'class="[^"]*product-recommendations[^"]*"',
     ]
-    trimmed_html = html
     for pattern in cutoff_patterns:
         m = re.search(pattern, trimmed_html, re.IGNORECASE)
         if m:
