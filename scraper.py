@@ -327,6 +327,15 @@ def is_out_of_stock(html):
     return any(s.lower() in html_lower for s in oos_signals)
 
 def extract_main_product_price(html):
+    # Strip <del> tags (old/strikethrough prices) so we never grab them
+    html = re.sub(r'<del[^>]*>.*?</del>', '', html, flags=re.DOTALL|re.IGNORECASE)
+
+    # Check for <ins> sale price first (WooCommerce sale format)
+    ins_match = re.search(r'<ins[^>]*>.*?(\d+\.\d{2}).*?</ins>', html, re.DOTALL|re.IGNORECASE)
+    if ins_match:
+        p = parse_price(ins_match.group(1))
+        if p: return p
+
     # Strip shipping banners
     html = re.sub(r'[^<]{0,80}free\s*ship[^<]{0,150}\$\s*[\d,]+\.?\d*[^<]{0,80}', '', html, flags=re.IGNORECASE)
     html = re.sub(r'\$\s*[\d,]+\.?\d*[^<]{0,80}free\s*ship[^<]{0,150}', '', html, flags=re.IGNORECASE)
