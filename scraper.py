@@ -371,26 +371,55 @@ def playwright_get(url, vendor_id="unknown"):
                 pass
 
             # Handle size dropdowns — select the correct mg size if dropdown exists
-            # This is needed for vendors like MileHigh that have size variants
             try:
-                # Look for a select dropdown with size options
                 selects = page.query_selector_all("select")
                 for sel in selects:
                     options = sel.query_selector_all("option")
                     option_texts = [o.inner_text().strip() for o in options]
-                    # Find the option that matches our target mg from the URL
-                    # Check for 10mg, 5mg etc options
                     for opt_text in option_texts:
                         if any(x in opt_text.lower() for x in ["10mg", "10 mg"]):
                             sel.select_option(label=opt_text)
-                            page.wait_for_load_state("domcontentloaded", timeout=5000)
+                            # Wait for price to update after selection
+                            page.wait_for_timeout(2000)
                             log.info(f"  Selected size option: {opt_text}")
                             break
+            except Exception:
+                pass
+
+            # Try to read the visible sale price directly from the DOM first
+            # This is more reliable than parsing HTML for sale prices
+            visible_price = None
+            try:
+                # Try ins tag (WooCommerce sale price) first
+                ins_el = page.query_selector("ins .woocommerce-Price-amount bdi")
+                if ins_el:
+                    txt = ins_el.inner_text().strip().replace("$","").replace(",","")
+                    visible_price = float(txt)
+                    log.info(f"  Got sale price from ins tag: ${visible_price}")
+
+                if not visible_price:
+                    # Try the first visible price amount on the page
+                    price_els = page.query_selector_all(".woocommerce-Price-amount bdi")
+                    for el in price_els:
+                        txt = el.inner_text().strip().replace("$","").replace(",","")
+                        try:
+                            p = float(txt)
+                            if p > 1:
+                                visible_price = p
+                                log.info(f"  Got price from DOM: ${visible_price}")
+                                break
+                        except Exception:
+                            pass
             except Exception as e:
-                pass  # No dropdown or selection failed, use current price
+                log.warning(f"  DOM price read error: {e}")
 
             html = page.content()
             log.info(f"  Playwright loaded: {page.title()}")
+
+            # If we got a price directly from DOM, inject it so extract_main_product_price finds it
+            if visible_price:
+                html = f'<div class="woocommerce-Price-amount amount"><bdi>${visible_price:.2f}</bdi></div>' + html
+
             browser.close()
             return html
     except Exception as e:
