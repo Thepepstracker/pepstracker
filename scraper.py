@@ -472,7 +472,7 @@ def patch_prices(html, updates, out_of_stock_items):
             continue
         block = m.group(2)
         new_block = re.sub(
-            rf'({re.escape(vid)}:\{{price:[\d.]+,mg:[\d.]+)(,listing:"[^"]*")(\})',
+            rf'({re.escape(vid)}:\{{price:[\d.]+,mg:[\d.]+)(,listing:"[^"]*")(\}})',
             rf'\1\2,oos:true\3',
             block
         )
