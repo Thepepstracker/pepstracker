@@ -434,16 +434,38 @@ def parse_price(val):
         return None
 
 def is_out_of_stock(html):
-    oos_signals = [
-        'class="out-of-stock"', 'stock_status":"outofstock"',
+    # STRONG signals — these are definitive OOS indicators
+    strong_signals = [
         '"availability":"http://schema.org/OutOfStock"',
-        'availability":"OutOfStock"', '>Out of stock<',
-        '>Currently unavailable<', '>Sold out<',
-        'sold_out":true', '"sold_out": true',
-        'outofstock', 'out-of-stock',
+        'availability":"OutOfStock"',
+        '"stock_status":"outofstock"',
+        'stock_status":"outofstock"',
+        '>Out of stock<',
+        '>Currently unavailable<',
+        '>Sold out<',
+        'sold_out":true',
+        '"sold_out": true',
+        # WooCommerce specific — only on the main add-to-cart button
+        'class="stock out-of-stock"',
+        'class="out-of-stock"',
     ]
+    # Check strong signals first
     html_lower = html.lower()
-    return any(s.lower() in html_lower for s in oos_signals)
+    for s in strong_signals:
+        if s.lower() in html_lower:
+            return True
+
+    # WEAK signals — only count if no add-to-cart button is present
+    # This prevents false positives from related products sections
+    has_add_to_cart = any(x in html_lower for x in [
+        'add to cart', 'add-to-cart', 'name="add-to-cart"', 'value="add-to-cart"'
+    ])
+    if has_add_to_cart:
+        return False  # If there's an add to cart button, it's in stock
+
+    # Only now check weaker signals
+    weak_signals = ['outofstock', 'out-of-stock']
+    return any(s in html_lower for s in weak_signals)
 
 def extract_main_product_price(html):
     # Strip <del> tags (old/strikethrough prices) so we never grab them
@@ -466,7 +488,7 @@ def extract_main_product_price(html):
         if m:
             html = html[:m.start()]
 
-    # JSON-LD — always grab lowPrice or minimum price (handles sale prices correctly)
+    # JSON-LD — always grab lowPrice or minimum price (handles sale prices + bundle variants)
     for m in re.finditer(r'<script[^>]+type="application/ld\+json"[^>]*>(.*?)</script>', html, re.DOTALL):
         try:
             data = json.loads(m.group(1))
@@ -475,13 +497,27 @@ def extract_main_product_price(html):
                 if item.get("@type") == "Product":
                     offers = item.get("offers", {})
                     if isinstance(offers, list):
-                        prices = [parse_price(o.get("price") or o.get("lowPrice")) for o in offers]
-                        prices = [p for p in prices if p]
+                        # Always use minimum price — handles bundles (1 bottle = cheapest)
+                        # and sale prices (sale price < original price)
+                        prices = []
+                        for o in offers:
+                            p = parse_price(o.get("price") or o.get("lowPrice"))
+                            if p: prices.append(p)
                         if prices: return min(prices)
                     else:
-                        # Prefer lowPrice over price (lowPrice = sale price)
+                        # Prefer lowPrice (sale price) over price (original)
                         p = parse_price(offers.get("lowPrice") or offers.get("price"))
                         if p: return p
+        except Exception:
+            pass
+
+    # Shopify — check for variants JSON (labsourced uses this)
+    shopify_match = re.search(r'"variants"\s*:\s*\[(.*?)\]', html, re.DOTALL)
+    if shopify_match:
+        try:
+            prices = [parse_price(p) for p in re.findall(r'"price"\s*:\s*"?(\d+\.?\d*)"?', shopify_match.group(1))]
+            prices = [p for p in prices if p]
+            if prices: return min(prices)
         except Exception:
             pass
 
