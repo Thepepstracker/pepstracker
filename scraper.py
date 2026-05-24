@@ -292,7 +292,7 @@ PRODUCT_URLS = {
   },
 }
 
-# Vendors that block standard ScraperAPI — use premium residential proxies
+# Vendors that need real browser (Cloudflare protected)
 CLOUDFLARE_VENDORS = {"glacier", "milehigh"}
 
 def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
@@ -306,8 +306,38 @@ def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
         params["premium"] = "true"
         params["country_code"] = "us"
     if render_js and wait_ms:
-        params["wait"] = str(wait_ms)  # wait for JS to execute before returning HTML
+        params["wait"] = str(wait_ms)
     return requests.get("https://api.scraperapi.com/", params=params, timeout=timeout)
+
+def playwright_get(url):
+    """Use real headless Chrome via Playwright — bypasses Cloudflare completely."""
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            browser = p.chromium.launch(
+                headless=True,
+                args=["--no-sandbox","--disable-setuid-sandbox","--disable-dev-shm-usage"]
+            )
+            context = browser.new_context(
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                viewport={"width": 1280, "height": 800},
+                locale="en-US",
+            )
+            page = context.new_page()
+            # Block images/fonts to speed up load
+            page.route("**/*.{png,jpg,jpeg,gif,webp,svg,woff,woff2,ttf,otf}", lambda r: r.abort())
+            page.goto(url, wait_until="domcontentloaded", timeout=30000)
+            # Wait for price element to appear
+            try:
+                page.wait_for_selector(".woocommerce-Price-amount, .price, [class*=price]", timeout=8000)
+            except Exception:
+                pass
+            html = page.content()
+            browser.close()
+            return html
+    except Exception as e:
+        log.warning(f"  Playwright error: {e}")
+        return None
 
 def parse_price(val):
     try:
@@ -389,39 +419,41 @@ def extract_main_product_price(html):
 
 def fetch_price_from_url(vendor_id, product, product_url):
     log.info(f"  Fetching {vendor_id}/{product} → {product_url}")
-    use_premium = vendor_id in CLOUDFLARE_VENDORS
-    if use_premium:
-        log.info(f"  Using premium proxy for {vendor_id} (Cloudflare)")
     try:
-        resp = scraper_get(product_url, render_js=False, premium=use_premium)
-        if resp.status_code != 200:
-            log.warning(f"  HTTP {resp.status_code}")
-            return None, False
-        html = resp.text
-        if is_out_of_stock(html):
-            log.info(f"  OUT OF STOCK: {vendor_id}/{product}")
-            return None, True
-        price = extract_main_product_price(html)
-        if not price:
-            wait = 5000 if use_premium else 0  # give Cloudflare sites 5s to fully render JS
-            log.info(f"  Retrying with JS + premium (wait={wait}ms)...")
-            resp2 = scraper_get(product_url, render_js=True, premium=use_premium, wait_ms=wait)
-            if resp2.status_code == 200:
-                html2 = resp2.text
-                if is_out_of_stock(html2):
-                    return None, True
-                price = extract_main_product_price(html2)
-        if not price and vendor_id in CLOUDFLARE_VENDORS:
-            import re as _re
-            # Find the section of HTML around the price
-            price_area = ""
-            for m in _re.finditer(r'.{0,200}(?:price|bdi|woocommerce|74\.99|107|product-summary).{0,200}', html, _re.IGNORECASE|_re.DOTALL):
-                price_area += m.group(0)[:300] + "|||"
-                if len(price_area) > 1500:
-                    break
-            log.warning(f"  DEBUG {vendor_id} price area: {repr(price_area[:2000])}")
-        log.info(f"  {'OK' if price else '--'} {vendor_id}/{product}: {'${:.2f}'.format(price) if price else 'not found'}")
-        return price, False
+        if vendor_id in CLOUDFLARE_VENDORS:
+            # Use real headless Chrome for Cloudflare-protected vendors
+            log.info(f"  Using Playwright (real browser) for {vendor_id}")
+            html = playwright_get(product_url)
+            if not html:
+                log.warning(f"  Playwright returned no HTML for {vendor_id}/{product}")
+                return None, False
+            if is_out_of_stock(html):
+                log.info(f"  OUT OF STOCK: {vendor_id}/{product}")
+                return None, True
+            price = extract_main_product_price(html)
+            log.info(f"  {'OK' if price else '--'} {vendor_id}/{product}: {'${:.2f}'.format(price) if price else 'not found (Playwright)'}")
+            return price, False
+        else:
+            # Standard ScraperAPI for all other vendors
+            resp = scraper_get(product_url, render_js=False)
+            if resp.status_code != 200:
+                log.warning(f"  HTTP {resp.status_code}")
+                return None, False
+            html = resp.text
+            if is_out_of_stock(html):
+                log.info(f"  OUT OF STOCK: {vendor_id}/{product}")
+                return None, True
+            price = extract_main_product_price(html)
+            if not price:
+                log.info(f"  Retrying with JS...")
+                resp2 = scraper_get(product_url, render_js=True)
+                if resp2.status_code == 200:
+                    html2 = resp2.text
+                    if is_out_of_stock(html2):
+                        return None, True
+                    price = extract_main_product_price(html2)
+            log.info(f"  {'OK' if price else '--'} {vendor_id}/{product}: {'${:.2f}'.format(price) if price else 'not found'}")
+            return price, False
     except Exception as e:
         log.warning(f"  ERR {vendor_id}/{product}: {e}")
         return None, False
