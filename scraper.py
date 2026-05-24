@@ -371,6 +371,11 @@ def playwright_get(url, vendor_id="unknown"):
                 pass
             html = page.content()
             log.info(f"  Playwright loaded: {page.title()}")
+            # Log all prices found to debug wrong price extraction
+            import re as _re
+            all_prices = _re.findall(r"\d+\.\d{2}", html)
+            unique = list(dict.fromkeys(all_prices))[:15]
+            log.info(f"  Playwright prices on page: {unique}")
             browser.close()
             return html
     except Exception as e:
