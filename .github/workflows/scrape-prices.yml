@@ -23,4 +23,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.SCRAPER_GITHUB_TOKEN }}
           SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
+          GLACIER_EMAIL: ${{ secrets.GLACIER_EMAIL }}
+          GLACIER_PASSWORD: ${{ secrets.GLACIER_PASSWORD }}
+          MILEHIGH_EMAIL: ${{ secrets.MILEHIGH_EMAIL }}
+          MILEHIGH_PASSWORD: ${{ secrets.MILEHIGH_PASSWORD }}
         run: python scraper.py
