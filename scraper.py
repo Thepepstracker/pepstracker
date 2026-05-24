@@ -369,13 +369,28 @@ def playwright_get(url, vendor_id="unknown"):
                 page.wait_for_selector(".woocommerce-Price-amount, .price, [class*=price]", timeout=8000)
             except Exception:
                 pass
+
+            # Handle size dropdowns — select the correct mg size if dropdown exists
+            # This is needed for vendors like MileHigh that have size variants
+            try:
+                # Look for a select dropdown with size options
+                selects = page.query_selector_all("select")
+                for sel in selects:
+                    options = sel.query_selector_all("option")
+                    option_texts = [o.inner_text().strip() for o in options]
+                    # Find the option that matches our target mg from the URL
+                    # Check for 10mg, 5mg etc options
+                    for opt_text in option_texts:
+                        if any(x in opt_text.lower() for x in ["10mg", "10 mg"]):
+                            sel.select_option(label=opt_text)
+                            page.wait_for_load_state("domcontentloaded", timeout=5000)
+                            log.info(f"  Selected size option: {opt_text}")
+                            break
+            except Exception as e:
+                pass  # No dropdown or selection failed, use current price
+
             html = page.content()
             log.info(f"  Playwright loaded: {page.title()}")
-            # Log all prices found to debug wrong price extraction
-            import re as _re
-            all_prices = _re.findall(r"\d+\.\d{2}", html)
-            unique = list(dict.fromkeys(all_prices))[:15]
-            log.info(f"  Playwright prices on page: {unique}")
             browser.close()
             return html
     except Exception as e:
