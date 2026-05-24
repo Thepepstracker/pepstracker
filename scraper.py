@@ -436,52 +436,74 @@ def parse_prices_block(html):
     return result
 
 def patch_prices(html, updates, out_of_stock_items):
+    """
+    Bulletproof line-by-line price patcher.
+    Finds vendor lines like:
+        ascension:{price:65.00,mg:5,listing:"Semaglutide 5mg"},
+    and replaces just the price value. Never touches mg or listing.
+    Also handles oos flag adding/removing.
+    """
     patched = 0
-    for peptide, vendor_prices in updates.items():
-        pep_re = re.compile(
-            rf'("{re.escape(peptide)}":\s*\{{)(.*?)(\n  \}},?\n)',
-            re.DOTALL
-        )
-        m = pep_re.search(html)
-        if not m:
-            continue
-        block = m.group(2)
-        new_block = block
-        for vid, price in vendor_prices.items():
-            # Update price and clear any oos flag
-            new_block, n = re.subn(
-                rf'({re.escape(vid)}:\{{price:)([\d.]+)(,mg:)',
-                rf'\g<1>{price:.2f}\3',
-                new_block
-            )
-            if n:
-                patched += 1
-                # Remove oos flag if it exists
-                new_block = re.sub(rf'{re.escape(vid)}:\{{[^}}]*oos:true[^}}]*\}}',
-                    lambda x: x.group(0).replace(',oos:true', ''), new_block)
-        html = html[:m.start(2)] + new_block + html[m.end(2):]
+    lines = html.split('\n')
 
-    # Mark out of stock items
-    for peptide, vid in out_of_stock_items:
-        pep_re = re.compile(
-            rf'("{re.escape(peptide)}":\s*\{{)(.*?)(\n  \}},?\n)',
-            re.DOTALL
-        )
-        m = pep_re.search(html)
-        if not m:
+    # Build a fast lookup: {peptide: {vid: new_price}}
+    # and a set of oos items: {(peptide, vid)}
+    oos_set = set(out_of_stock_items)
+
+    # We track which peptide block we're currently inside
+    current_peptide = None
+    peptide_detect = re.compile(r'^\s*"([^"]+)":\s*\{')
+    # Matches a vendor price line: vid:{price:XX.XX,mg:YY,...}
+    vendor_line = re.compile(
+        r'^(\s*)(\w+):((?:\{price:)([\d.]+)(,mg:[\d.]+,listing:"[^"]*")((?:,oos:true)?)\})(,?)(\s*)$'
+    )
+
+    new_lines = []
+    for line in lines:
+        # Detect peptide block start
+        pm = peptide_detect.match(line)
+        if pm:
+            current_peptide = pm.group(1)
+
+        if current_peptide is None:
+            new_lines.append(line)
             continue
-        block = m.group(2)
-        new_block = re.sub(
-            rf'({re.escape(vid)}:\{{price:[\d.]+,mg:[\d.]+)(,listing:"[^"]*")(\}})',
-            rf'\1\2,oos:true\3',
-            block
-        )
-        if new_block != block:
-            html = html[:m.start(2)] + new_block + html[m.end(2):]
-            log.info(f"  Marked OOS: {peptide}/{vid}")
+
+        vm = vendor_line.match(line)
+        if vm:
+            indent    = vm.group(1)
+            vid       = vm.group(2)
+            price_val = vm.group(4)
+            mg_list   = vm.group(5)   # e.g. ,mg:10,listing:"BPC-157 10mg"
+            trailing  = vm.group(7)   # comma after }
+            is_oos    = (current_peptide, vid) in oos_set
+
+            # Check if we have a price update for this vendor
+            new_price = updates.get(current_peptide, {}).get(vid)
+
+            if new_price is not None:
+                price_str = f"{new_price:.2f}"
+                oos_flag = ",oos:true" if is_oos else ""
+                new_line = f'{indent}{vid}:{{price:{price_str}{mg_list}{oos_flag}}}{trailing}'
+                new_lines.append(new_line)
+                patched += 1
+                log.info(f"  PATCHED {current_peptide}/{vid}: ${price_val} → ${price_str}{' [OOS]' if is_oos else ''}")
+            elif is_oos:
+                # No price update but mark OOS
+                oos_flag = ",oos:true"
+                new_line = f'{indent}{vid}:{{price:{price_val}{mg_list}{oos_flag}}}{trailing}'
+                if new_line.rstrip() != line.rstrip():
+                    log.info(f"  Marked OOS: {current_peptide}/{vid}")
+                new_lines.append(new_line)
+            else:
+                # Remove oos flag if no longer OOS
+                clean = line.replace(',oos:true', '')
+                new_lines.append(clean)
+        else:
+            new_lines.append(line)
 
     log.info(f"Patched {patched} prices")
-    return html, patched
+    return '\n'.join(new_lines), patched
 
 def main():
     log.info("=== PepsTracker Scraper v6 (daily + OOS) Starting ===")
