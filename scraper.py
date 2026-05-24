@@ -333,6 +333,12 @@ def playwright_get(url):
             except Exception:
                 pass
             html = page.content()
+            # Debug: show page title and any price amounts found
+            title = page.title()
+            import re as _re
+            amounts = _re.findall(r'\d+\.\d{2}', html)
+            unique_amounts = list(dict.fromkeys(amounts))[:10]
+            log.warning(f"  PLAYWRIGHT DEBUG: title={title} prices_found={unique_amounts} html_len={len(html)}")
             browser.close()
             return html
     except Exception as e:
