@@ -295,7 +295,7 @@ PRODUCT_URLS = {
 # Vendors that block standard ScraperAPI — use premium residential proxies
 CLOUDFLARE_VENDORS = {"glacier", "milehigh"}
 
-def scraper_get(url, render_js=False, timeout=45, premium=False):
+def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
     params = {
         "api_key": SCRAPERAPI_KEY,
         "url": url,
@@ -305,6 +305,8 @@ def scraper_get(url, render_js=False, timeout=45, premium=False):
     if premium:
         params["premium"] = "true"
         params["country_code"] = "us"
+    if render_js and wait_ms:
+        params["wait"] = str(wait_ms)  # wait for JS to execute before returning HTML
     return requests.get("https://api.scraperapi.com/", params=params, timeout=timeout)
 
 def parse_price(val):
@@ -401,8 +403,9 @@ def fetch_price_from_url(vendor_id, product, product_url):
             return None, True
         price = extract_main_product_price(html)
         if not price:
-            log.info(f"  Retrying with JS + premium...")
-            resp2 = scraper_get(product_url, render_js=True, premium=use_premium)
+            wait = 5000 if use_premium else 0  # give Cloudflare sites 5s to fully render JS
+            log.info(f"  Retrying with JS + premium (wait={wait}ms)...")
+            resp2 = scraper_get(product_url, render_js=True, premium=use_premium, wait_ms=wait)
             if resp2.status_code == 200:
                 html2 = resp2.text
                 if is_out_of_stock(html2):
