@@ -14,6 +14,10 @@ log = logging.getLogger(__name__)
 
 GITHUB_TOKEN   = os.environ["GITHUB_TOKEN"]
 SCRAPERAPI_KEY = os.environ["SCRAPERAPI_KEY"]
+GLACIER_EMAIL    = os.environ.get("GLACIER_EMAIL", "")
+GLACIER_PASSWORD = os.environ.get("GLACIER_PASSWORD", "")
+MILEHIGH_EMAIL    = os.environ.get("MILEHIGH_EMAIL", "")
+MILEHIGH_PASSWORD = os.environ.get("MILEHIGH_PASSWORD", "")
 GITHUB_REPO    = "Thepepstracker/pepstracker"
 GITHUB_FILE    = "pepstracker_fixed/index.html"
 GITHUB_API     = "https://api.github.com"
@@ -309,36 +313,69 @@ def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
         params["wait"] = str(wait_ms)
     return requests.get("https://api.scraperapi.com/", params=params, timeout=timeout)
 
-def playwright_get(url):
-    """Use real headless Chrome via Playwright — bypasses Cloudflare completely."""
+# Shared Playwright browser contexts (logged-in sessions)
+_playwright_contexts = {}
+
+def get_logged_in_context(p, vendor_id):
+    """Get or create a logged-in browser context for a vendor."""
+    if vendor_id in _playwright_contexts:
+        return _playwright_contexts[vendor_id]
+
+    browser = p.chromium.launch(
+        headless=True,
+        args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+    )
+    context = browser.new_context(
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        viewport={"width": 1280, "height": 800},
+        locale="en-US",
+    )
+    page = context.new_page()
+    page.route("**/*.{png,jpg,jpeg,gif,webp,svg,woff,woff2,ttf,otf}", lambda r: r.abort())
+
+    try:
+        if vendor_id == "glacier":
+            log.info("  Logging in to Glacier Aminos...")
+            page.goto("https://glacieraminos.shop/my-account/", wait_until="domcontentloaded", timeout=30000)
+            page.fill("#username", GLACIER_EMAIL)
+            page.fill("#password", GLACIER_PASSWORD)
+            page.click("button[name='login']")
+            page.wait_for_load_state("domcontentloaded", timeout=15000)
+            log.info(f"  Glacier login done, title={page.title()}")
+
+        elif vendor_id == "milehigh":
+            log.info("  Logging in to Mile High Compounds...")
+            page.goto("https://milehighcompounds.is/my-account/", wait_until="domcontentloaded", timeout=30000)
+            page.fill("#username", MILEHIGH_EMAIL)
+            page.fill("#password", MILEHIGH_PASSWORD)
+            page.click("button[name='login']")
+            page.wait_for_load_state("domcontentloaded", timeout=15000)
+            log.info(f"  MileHigh login done, title={page.title()}")
+
+    except Exception as e:
+        log.warning(f"  Login error for {vendor_id}: {e}")
+
+    _playwright_contexts[vendor_id] = (browser, context)
+    return browser, context
+
+
+def playwright_get(url, vendor_id="unknown"):
+    """Use real headless Chrome — logs in to gated vendors first."""
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
-            browser = p.chromium.launch(
-                headless=True,
-                args=["--no-sandbox","--disable-setuid-sandbox","--disable-dev-shm-usage"]
-            )
-            context = browser.new_context(
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-                viewport={"width": 1280, "height": 800},
-                locale="en-US",
-            )
+            browser, context = get_logged_in_context(p, vendor_id)
             page = context.new_page()
-            # Block images/fonts to speed up load
             page.route("**/*.{png,jpg,jpeg,gif,webp,svg,woff,woff2,ttf,otf}", lambda r: r.abort())
             page.goto(url, wait_until="domcontentloaded", timeout=30000)
-            # Wait for price element to appear
             try:
                 page.wait_for_selector(".woocommerce-Price-amount, .price, [class*=price]", timeout=8000)
             except Exception:
                 pass
             html = page.content()
-            # Debug: show page title and any price amounts found
             title = page.title()
-            import re as _re
-            amounts = _re.findall(r'\d+\.\d{2}', html)
-            unique_amounts = list(dict.fromkeys(amounts))[:10]
-            log.warning(f"  PLAYWRIGHT DEBUG: title={title} prices_found={unique_amounts} html_len={len(html)}")
+            log.info(f"  Playwright loaded: {title}")
+            page.close()
             browser.close()
             return html
     except Exception as e:
@@ -429,7 +466,7 @@ def fetch_price_from_url(vendor_id, product, product_url):
         if vendor_id in CLOUDFLARE_VENDORS:
             # Use real headless Chrome for Cloudflare-protected vendors
             log.info(f"  Using Playwright (real browser) for {vendor_id}")
-            html = playwright_get(product_url)
+            html = playwright_get(product_url, vendor_id=vendor_id)
             if not html:
                 log.warning(f"  Playwright returned no HTML for {vendor_id}/{product}")
                 return None, False
