@@ -313,58 +313,55 @@ def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
         params["wait"] = str(wait_ms)
     return requests.get("https://api.scraperapi.com/", params=params, timeout=timeout)
 
-# Shared Playwright browser contexts (logged-in sessions)
-_playwright_contexts = {}
-
-def get_logged_in_context(p, vendor_id):
-    """Get or create a logged-in browser context for a vendor."""
-    if vendor_id in _playwright_contexts:
-        return _playwright_contexts[vendor_id]
-
-    browser = p.chromium.launch(
-        headless=True,
-        args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
-    )
-    context = browser.new_context(
-        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        viewport={"width": 1280, "height": 800},
-        locale="en-US",
-    )
-    page = context.new_page()
-    page.route("**/*.{png,jpg,jpeg,gif,webp,svg,woff,woff2,ttf,otf}", lambda r: r.abort())
-
-    try:
-        if vendor_id == "glacier":
-            log.info("  Logging in to Glacier Aminos...")
-            page.goto("https://glacieraminos.shop/my-account/", wait_until="domcontentloaded", timeout=30000)
-            page.fill("#username", GLACIER_EMAIL)
-            page.fill("#password", GLACIER_PASSWORD)
-            page.click("button[name='login']")
-            page.wait_for_load_state("domcontentloaded", timeout=15000)
-            log.info(f"  Glacier login done, title={page.title()}")
-
-        elif vendor_id == "milehigh":
-            log.info("  Logging in to Mile High Compounds...")
-            page.goto("https://milehighcompounds.is/my-account/", wait_until="domcontentloaded", timeout=30000)
-            page.fill("#username", MILEHIGH_EMAIL)
-            page.fill("#password", MILEHIGH_PASSWORD)
-            page.click("button[name='login']")
-            page.wait_for_load_state("domcontentloaded", timeout=15000)
-            log.info(f"  MileHigh login done, title={page.title()}")
-
-    except Exception as e:
-        log.warning(f"  Login error for {vendor_id}: {e}")
-
-    _playwright_contexts[vendor_id] = (browser, context)
-    return browser, context
-
+# Login state cache — stores cookies per vendor so we only log in once per session
+_login_cookies = {}
 
 def playwright_get(url, vendor_id="unknown"):
-    """Use real headless Chrome — logs in to gated vendors first."""
+    """Use real headless Chrome — logs in to gated vendors first, caches cookies."""
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
-            browser, context = get_logged_in_context(p, vendor_id)
+            browser = p.chromium.launch(
+                headless=True,
+                args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+            )
+            context = browser.new_context(
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                viewport={"width": 1280, "height": 800},
+                locale="en-US",
+            )
+
+            # Restore cached cookies if we have them
+            if vendor_id in _login_cookies:
+                context.add_cookies(_login_cookies[vendor_id])
+            else:
+                # First time — need to log in
+                page = context.new_page()
+                try:
+                    if vendor_id == "glacier":
+                        log.info("  Logging in to Glacier Aminos...")
+                        page.goto("https://glacieraminos.shop/my-account/", wait_until="domcontentloaded", timeout=30000)
+                        page.fill("#username", GLACIER_EMAIL)
+                        page.fill("#password", GLACIER_PASSWORD)
+                        page.click("button[name='login']")
+                        page.wait_for_load_state("domcontentloaded", timeout=15000)
+                        log.info(f"  Glacier login done, title={page.title()}")
+                    elif vendor_id == "milehigh":
+                        log.info("  Logging in to Mile High Compounds...")
+                        page.goto("https://milehighcompounds.is/my-account/", wait_until="domcontentloaded", timeout=30000)
+                        page.fill("#username", MILEHIGH_EMAIL)
+                        page.fill("#password", MILEHIGH_PASSWORD)
+                        page.click("button[name='login']")
+                        page.wait_for_load_state("domcontentloaded", timeout=15000)
+                        log.info(f"  MileHigh login done, title={page.title()}")
+                    # Cache the cookies for subsequent requests
+                    _login_cookies[vendor_id] = context.cookies()
+                except Exception as e:
+                    log.warning(f"  Login error for {vendor_id}: {e}")
+                finally:
+                    page.close()
+
+            # Now fetch the actual product page
             page = context.new_page()
             page.route("**/*.{png,jpg,jpeg,gif,webp,svg,woff,woff2,ttf,otf}", lambda r: r.abort())
             page.goto(url, wait_until="domcontentloaded", timeout=30000)
@@ -373,9 +370,7 @@ def playwright_get(url, vendor_id="unknown"):
             except Exception:
                 pass
             html = page.content()
-            title = page.title()
-            log.info(f"  Playwright loaded: {title}")
-            page.close()
+            log.info(f"  Playwright loaded: {page.title()}")
             browser.close()
             return html
     except Exception as e:
