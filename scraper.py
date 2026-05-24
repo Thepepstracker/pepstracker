@@ -507,6 +507,29 @@ def patch_prices(html, updates, out_of_stock_items):
 
 def main():
     log.info("=== PepsTracker Scraper v6 (daily + OOS) Starting ===")
+
+    # Only scrape the 13 peptides shown in the dropdown — not the full 60-peptide catalog
+    # Glacier and MileHigh block ScraperAPI (always timeout) — skip them to save time + credits
+    ACTIVE_PEPTIDES = [
+        # GLP-1
+        "Semaglutide", "Tirzepatide", "Retatrutide",
+        # BPC / TB
+        "BPC-157", "TB-500", "BPC-157 + TB-500 Blend",
+        # Growth Hormone
+        "Ipamorelin", "CJC-1295 (with DAC)", "Sermorelin", "Tesamorelin",
+        # Skin / Tanning
+        "Melanotan II", "PT-141 (Bremelanotide)", "GHK-Cu",
+        # Longevity
+        "Epithalon", "MOTS-c", "NAD+",
+        # Cognitive
+        "Semax", "Selank", "DSIP",
+        # Immune
+        "KPV", "ARA-290",
+        # Fat Loss
+        "AOD-9604",
+    ]
+    SKIP_VENDORS = {"glacier", "milehigh"}  # Always timeout via ScraperAPI/Cloudflare
+
     html, sha = github_get_file()
 
     existing = parse_prices_block(html)
@@ -514,12 +537,20 @@ def main():
         log.error("Could not parse PRICES block — aborting")
         return
     log.info(f"Parsed {len(existing)} peptides from PRICES block")
+    log.info(f"Scraping {len(ACTIVE_PEPTIDES)} active peptides, skipping: {SKIP_VENDORS}")
 
     updates = {}
     oos_items = []
 
-    for peptide, vendor_map in existing.items():
+    for peptide in ACTIVE_PEPTIDES:
+        vendor_map = existing.get(peptide)
+        if not vendor_map:
+            log.warning(f"  {peptide} not found in PRICES block — skipping")
+            continue
         for vid, info in vendor_map.items():
+            if vid in SKIP_VENDORS:
+                log.info(f"  Skipping {vid}/{peptide} (Cloudflare blocked)")
+                continue
             url_info = PRODUCT_URLS.get(vid, {}).get(peptide)
             if not url_info:
                 continue
@@ -529,7 +560,7 @@ def main():
             elif price and abs(price - info["price"]) > 0.01:
                 updates.setdefault(peptide, {})[vid] = price
                 log.info(f"  CHANGE {peptide}/{vid}: ${info['price']:.2f} → ${price:.2f}")
-            time.sleep(1.5)
+            time.sleep(1.0)
 
     if not updates and not oos_items:
         log.info("No changes — skipping commit")
