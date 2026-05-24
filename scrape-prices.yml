@@ -1,27 +1,21 @@
 name: PepsTracker Price Scraper
-
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 8 * * *"  # Run daily at 8 AM UTC
   workflow_dispatch:
-
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
+    timeout-minutes: 60
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
       - name: Install dependencies
         run: pip install requests
-
       - name: Run scraper
         env:
           GITHUB_TOKEN: ${{ secrets.SCRAPER_GITHUB_TOKEN }}
