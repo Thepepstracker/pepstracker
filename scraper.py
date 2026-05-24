@@ -408,6 +408,10 @@ def fetch_price_from_url(vendor_id, product, product_url):
                 if is_out_of_stock(html2):
                     return None, True
                 price = extract_main_product_price(html2)
+        if not price and vendor_id in CLOUDFLARE_VENDORS:
+            # Dump a snippet of HTML so we can debug the price extraction
+            snippet = html[:3000] if 'html' in dir() else "no html"
+            log.warning(f"  DEBUG {vendor_id} HTML snippet: {repr(snippet[500:1500])}")
         log.info(f"  {'OK' if price else '--'} {vendor_id}/{product}: {'${:.2f}'.format(price) if price else 'not found'}")
         return price, False
     except Exception as e:
