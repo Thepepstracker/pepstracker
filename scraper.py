@@ -292,13 +292,19 @@ PRODUCT_URLS = {
   },
 }
 
-def scraper_get(url, render_js=False, timeout=45):
+# Vendors that block standard ScraperAPI — use premium residential proxies
+CLOUDFLARE_VENDORS = {"glacier", "milehigh"}
+
+def scraper_get(url, render_js=False, timeout=45, premium=False):
     params = {
         "api_key": SCRAPERAPI_KEY,
         "url": url,
         "render": "true" if render_js else "false",
         "keep_headers": "true",
     }
+    if premium:
+        params["premium"] = "true"
+        params["country_code"] = "us"
     return requests.get("https://api.scraperapi.com/", params=params, timeout=timeout)
 
 def parse_price(val):
@@ -372,8 +378,11 @@ def extract_main_product_price(html):
 
 def fetch_price_from_url(vendor_id, product, product_url):
     log.info(f"  Fetching {vendor_id}/{product} → {product_url}")
+    use_premium = vendor_id in CLOUDFLARE_VENDORS
+    if use_premium:
+        log.info(f"  Using premium proxy for {vendor_id} (Cloudflare)")
     try:
-        resp = scraper_get(product_url, render_js=False)
+        resp = scraper_get(product_url, render_js=False, premium=use_premium)
         if resp.status_code != 200:
             log.warning(f"  HTTP {resp.status_code}")
             return None, False
@@ -383,8 +392,8 @@ def fetch_price_from_url(vendor_id, product, product_url):
             return None, True
         price = extract_main_product_price(html)
         if not price:
-            log.info(f"  Retrying with JS...")
-            resp2 = scraper_get(product_url, render_js=True)
+            log.info(f"  Retrying with JS + premium...")
+            resp2 = scraper_get(product_url, render_js=True, premium=use_premium)
             if resp2.status_code == 200:
                 html2 = resp2.text
                 if is_out_of_stock(html2):
@@ -528,7 +537,7 @@ def main():
         # Fat Loss
         "AOD-9604",
     ]
-    SKIP_VENDORS = {"glacier", "milehigh"}  # Always timeout via ScraperAPI/Cloudflare
+    SKIP_VENDORS = set()  # glacier + milehigh now handled via premium proxies
 
     html, sha = github_get_file()
 
