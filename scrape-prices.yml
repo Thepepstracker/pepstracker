@@ -15,7 +15,10 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install dependencies
-        run: pip install requests
+        run: |
+          pip install requests playwright
+          playwright install chromium
+          playwright install-deps chromium
       - name: Run scraper
         env:
           GITHUB_TOKEN: ${{ secrets.SCRAPER_GITHUB_TOKEN }}
