@@ -1007,7 +1007,6 @@ function renderResults() {
       return { vendor:v, price:d.price, mg:d.mg, listing:d.listing, ppm:d.price/d.mg };
     });
 
-  // Always sort by after-discount price, lowest first
   rows.sort((a,b) => (a.price*(1-a.vendor.discount)) - (b.price*(1-b.vendor.discount)));
 
   const bestAfterDisc = Math.min(...rows.map(r => r.price*(1-r.vendor.discount)));
@@ -1017,6 +1016,27 @@ function renderResults() {
     const isBest = Math.abs(afterDisc - bestAfterDisc) < 0.01;
     const discPct = Math.round(r.vendor.discount * 100);
     const unitLabel = r.mg >= 100 ? `${r.mg}mg caps` : `${r.mg}mg vial`;
+    const isOos = priceMap[r.vendor.id] && priceMap[r.vendor.id].oos === true;
+
+    if (isOos) {
+      return `
+      <div class="result-card" style="opacity:0.6;border-color:var(--red);">
+        <div class="rank" style="color:var(--red);">—</div>
+        <div>
+          <div class="vendor-name">${r.vendor.name}</div>
+          <div class="vendor-listing" style="color:var(--red);font-weight:700;">⚠ Out of Stock</div>
+        </div>
+        <div class="price-block">
+          <div style="font-size:1rem;font-weight:700;color:var(--red);">Out of Stock</div>
+          <div class="price-reg">${unitLabel}</div>
+        </div>
+        <div class="code-block">
+          <div class="code-row"><div class="code-badge">${r.vendor.code}</div></div>
+          <div class="code-label">Discount code</div>
+        </div>
+        <a class="btn-shop secondary" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Check Site →</a>
+      </div>`;
+    }
 
     return `
     <div class="result-card ${isBest?'best':''}">
@@ -1039,7 +1059,7 @@ function renderResults() {
         <div class="code-label">Discount code</div>
         <div class="discount-pct">${discPct}% off at checkout</div>
       </div>
-    <a class="btn-shop ${isBest?'':'secondary'}" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Shop Now →</a>
+      <a class="btn-shop ${isBest?'':'secondary'}" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Shop Now →</a>
     </div>`;
   }).join('');
 
@@ -1051,7 +1071,7 @@ function renderResults() {
   document.getElementById('resultTitle').textContent = currentPeptide;
   document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   document.getElementById('resultList').innerHTML = html;
-}
+} 
 </script>
 </body>
 </html>
