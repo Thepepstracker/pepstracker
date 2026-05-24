@@ -409,9 +409,14 @@ def fetch_price_from_url(vendor_id, product, product_url):
                     return None, True
                 price = extract_main_product_price(html2)
         if not price and vendor_id in CLOUDFLARE_VENDORS:
-            # Dump a snippet of HTML so we can debug the price extraction
-            snippet = html[:3000] if 'html' in dir() else "no html"
-            log.warning(f"  DEBUG {vendor_id} HTML snippet: {repr(snippet[500:1500])}")
+            import re as _re
+            # Find the section of HTML around the price
+            price_area = ""
+            for m in _re.finditer(r'.{0,200}(?:price|bdi|woocommerce|74\.99|107|product-summary).{0,200}', html, _re.IGNORECASE|_re.DOTALL):
+                price_area += m.group(0)[:300] + "|||"
+                if len(price_area) > 1500:
+                    break
+            log.warning(f"  DEBUG {vendor_id} price area: {repr(price_area[:2000])}")
         log.info(f"  {'OK' if price else '--'} {vendor_id}/{product}: {'${:.2f}'.format(price) if price else 'not found'}")
         return price, False
     except Exception as e:
