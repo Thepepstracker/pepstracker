@@ -422,7 +422,7 @@ def extract_main_product_price(html):
         if m:
             html = html[:m.start()]
 
-    # JSON-LD
+    # JSON-LD — always grab lowPrice or minimum price (handles sale prices correctly)
     for m in re.finditer(r'<script[^>]+type="application/ld\+json"[^>]*>(.*?)</script>', html, re.DOTALL):
         try:
             data = json.loads(m.group(1))
@@ -435,15 +435,15 @@ def extract_main_product_price(html):
                         prices = [p for p in prices if p]
                         if prices: return min(prices)
                     else:
-                        p = parse_price(offers.get("price") or offers.get("lowPrice"))
+                        # Prefer lowPrice over price (lowPrice = sale price)
+                        p = parse_price(offers.get("lowPrice") or offers.get("price"))
                         if p: return p
         except Exception:
             pass
 
-    # WooCommerce price spans
+    # WooCommerce price spans — after del removal, first price found is always current/sale price
     for pattern in [
         r'class="woocommerce-Price-amount[^"]*"[^>]*>.*?<bdi>.*?\$\s*([\d,]+\.?\d*)',
-        r'"price"\s*:\s*"([\d.]+)"',
         r'<p[^>]*class="[^"]*price[^"]*"[^>]*>.*?\$\s*([\d,]+\.?\d*)',
     ]:
         for raw in re.findall(pattern, html, re.DOTALL):
