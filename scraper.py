@@ -712,6 +712,9 @@ def main():
         "KPV", "ARA-290",
         # Fat Loss
         "AOD-9604",
+        # Blends
+        "Klow Blend",
+        "Tesamorelin/Ipamorelin Blend",
     ]
     SKIP_VENDORS = set()  # glacier + milehigh now handled via premium proxies
 
