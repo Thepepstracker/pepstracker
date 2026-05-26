@@ -297,7 +297,7 @@ PRODUCT_URLS = {
 }
 
 # Vendors that need real browser (Cloudflare protected)
-CLOUDFLARE_VENDORS = {"glacier", "milehigh"}
+CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "atomik"}
 
 def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
     params = {
@@ -621,22 +621,27 @@ def fetch_price_from_url(vendor_id, product, product_url):
       - (None, True)   = confirmed out of stock
       - (None, False)  = couldn't reach site (timeout/error) — do NOT update anything
     """
+    import time as _time
+    t_start = _time.time()
     log.info(f"  Fetching {vendor_id}/{product} → {product_url}")
     try:
         if vendor_id in CLOUDFLARE_VENDORS:
             log.info(f"  Using Playwright (real browser) for {vendor_id}")
             html = playwright_get(product_url, vendor_id=vendor_id)
+            elapsed = _time.time() - t_start
             if not html:
-                log.warning(f"  Playwright returned no HTML — skipping {vendor_id}/{product}")
-                return None, False  # unreachable, don't touch existing data
+                log.warning(f"  Playwright returned no HTML — skipping {vendor_id}/{product} [{elapsed:.1f}s]")
+                return None, False
             if is_out_of_stock(html):
-                log.info(f"  OUT OF STOCK: {vendor_id}/{product}")
+                log.info(f"  OUT OF STOCK: {vendor_id}/{product} [{elapsed:.1f}s]")
                 return None, True
             price = extract_main_product_price(html)
             if price:
-                log.info(f"  OK {vendor_id}/{product}: ${price:.2f}")
+                log.info(f"  OK {vendor_id}/{product}: ${price:.2f} [{elapsed:.1f}s]")
+                run_stats["successes"].append((vendor_id, product, price, elapsed))
             else:
-                log.info(f"  -- {vendor_id}/{product}: price not found")
+                log.warning(f"  -- {vendor_id}/{product}: price not found [{elapsed:.1f}s] — check URL or page structure")
+                run_stats["not_found"].append((vendor_id, product, elapsed))
             return price, False
 
         else:
@@ -648,7 +653,22 @@ def fetch_price_from_url(vendor_id, product, product_url):
                         log.info(f"  Retrying with JS...")
                     resp = scraper_get(product_url, render_js=use_js)
                     if resp.status_code != 200:
-                        log.warning(f"  HTTP {resp.status_code} on attempt {attempt+1}")
+                        reason = {
+                            403: "🚫 403 Forbidden — likely Cloudflare block, add to CLOUDFLARE_VENDORS",
+                            404: "❌ 404 Not Found — URL may be wrong or product removed",
+                            429: "🔒 429 Rate Limited — too many requests",
+                            500: "💥 500 Server Error — vendor site issue",
+                            502: "💥 502 Bad Gateway — vendor site down",
+                            503: "💥 503 Service Unavailable — vendor site overloaded",
+                        }.get(resp.status_code, f"HTTP {resp.status_code}")
+                        log.warning(f"  {reason} for {vendor_id}/{product} on attempt {attempt+1}")
+                        if resp.status_code == 403:
+                            log.warning(f"  💡 FIX: Add '{vendor_id}' to CLOUDFLARE_VENDORS to use Playwright")
+                            run_stats["blocked_403"].append((vendor_id, product))
+                            break
+                        if resp.status_code == 404:
+                            run_stats["url_404"].append((vendor_id, product))
+                            break
                         continue
                     html = resp.text
                     if is_out_of_stock(html):
@@ -656,22 +676,35 @@ def fetch_price_from_url(vendor_id, product, product_url):
                         return None, True
                     price = extract_main_product_price(html)
                     if price:
-                        log.info(f"  OK {vendor_id}/{product}: ${price:.2f}")
+                        elapsed = _time.time() - t_start
+                        log.info(f"  OK {vendor_id}/{product}: ${price:.2f} [{elapsed:.1f}s]")
+                        run_stats["successes"].append((vendor_id, product, price, elapsed))
                         return price, False
                 except requests.exceptions.Timeout:
-                    log.warning(f"  Timeout on attempt {attempt+1} for {vendor_id}/{product}")
+                    elapsed = _time.time() - t_start
+                    log.warning(f"  ⏱ TIMEOUT attempt {attempt+1} for {vendor_id}/{product} [{elapsed:.1f}s] — ScraperAPI may be blocked or site is slow")
+                    if attempt == 1:  # Only log on final timeout
+                        run_stats["timeouts"].append((vendor_id, product, elapsed))
                     time.sleep(2)
                     continue
                 except Exception as e:
-                    log.warning(f"  ERR attempt {attempt+1} {vendor_id}/{product}: {e}")
+                    elapsed = _time.time() - t_start
+                    log.warning(f"  ERR attempt {attempt+1} {vendor_id}/{product} [{elapsed:.1f}s]: {e}")
                     continue
 
-            log.info(f"  -- {vendor_id}/{product}: price not found after retries")
-            return None, False  # couldn't get price but NOT marking OOS
+            elapsed = _time.time() - t_start
+            if elapsed > 60:
+                log.warning(f"  🐢 SLOW: {vendor_id}/{product} took {elapsed:.1f}s — consider adding to Playwright vendors or skipping")
+            elif elapsed > 30:
+                log.warning(f"  ⚠️ SLOW: {vendor_id}/{product} took {elapsed:.1f}s — retries needed")
+            log.info(f"  -- {vendor_id}/{product}: price not found after retries [{elapsed:.1f}s]")
+            run_stats["not_found"].append((vendor_id, product, elapsed))
+            return None, False
 
     except Exception as e:
-        log.warning(f"  ERR {vendor_id}/{product}: {e}")
-        return None, False  # error = don't touch existing data
+        elapsed = _time.time() - t_start
+        log.warning(f"  ERR {vendor_id}/{product} [{elapsed:.1f}s]: {e}")
+        return None, False
 
 def github_get_file():
     url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{GITHUB_FILE}"
@@ -782,6 +815,19 @@ def patch_prices(html, updates, out_of_stock_items):
     log.info(f"Patched {patched} prices")
     return '\n'.join(new_lines), patched
 
+# ── Run Statistics Tracker ──────────────────────────────────
+run_stats = {
+    "successes": [],      # (vendor, peptide, price, elapsed)
+    "timeouts": [],       # (vendor, peptide, elapsed)
+    "blocked_403": [],    # (vendor, peptide)
+    "not_found": [],      # (vendor, peptide, elapsed)
+    "oos": [],            # (vendor, peptide)
+    "price_capped": [],   # (vendor, peptide, price, cap)
+    "sanity_failed": [],  # (vendor, peptide, prev, new)
+    "url_404": [],        # (vendor, peptide)
+}
+
+
 def main():
     log.info("=== PepsTracker Scraper v6 (daily + OOS) Starting ===")
 
@@ -837,6 +883,7 @@ def main():
             price, oos = fetch_price_from_url(vid, peptide, url_info["url"])
             if oos:
                 oos_items.append((peptide, vid))
+                run_stats["oos"].append((vid, peptide))
             elif price and abs(price - info["price"]) > 0.01:
                 # Sanity check 1: hard price caps per peptide type
                 # Prevents bundle/page errors from corrupting prices
@@ -853,6 +900,7 @@ def main():
                 cap = PRICE_CAPS.get(peptide, 300)
                 if price > cap:
                     log.warning(f"  PRICE CAP FAIL {peptide}/{vid}: ${price:.2f} exceeds max ${cap:.2f} — skipping")
+                    run_stats["price_capped"].append((vid, peptide, price, cap))
                     continue
 
                 # Sanity check 2: reject prices > 4x or < 0.25x previous
@@ -860,6 +908,7 @@ def main():
                 ratio = price / prev if prev > 0 else 999
                 if ratio > 4.0 or ratio < 0.25:
                     log.warning(f"  SANITY FAIL {peptide}/{vid}: ${prev:.2f} → ${price:.2f} (ratio {ratio:.2f}x) — skipping")
+                    run_stats["sanity_failed"].append((vid, peptide, prev, price))
                 else:
                     updates.setdefault(peptide, {})[vid] = price
                     log.info(f"  CHANGE {peptide}/{vid}: ${prev:.2f} → ${price:.2f}")
@@ -881,6 +930,107 @@ def main():
     now_str = now.strftime("%Y-%m-%d %H:%M UTC")
     github_push_file(new_html, sha, f"🤖 Daily price update: {count} changes, {len(oos_items)} OOS ({now_str})")
     log.info(f"=== Done: {count} prices updated, {len(oos_items)} marked OOS ===")
+
+    # ── Generate diagnostics report ──────────────────────────
+    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    report_lines = [
+        f"# PepsTracker Scraper Diagnostics",
+        f"**Run:** {now_str}",
+        f"**Result:** {count} prices updated, {len(oos_items)} OOS",
+        "",
+        "## ✅ Successful Fetches",
+        f"Total: {len(run_stats['successes'])}",
+    ]
+    for vid, pep, price, elapsed in sorted(run_stats["successes"], key=lambda x: x[3], reverse=True)[:10]:
+        report_lines.append(f"- {vid}/{pep}: ${price:.2f} ({elapsed:.1f}s)")
+
+    if run_stats["blocked_403"]:
+        report_lines += ["", "## 🚫 Cloudflare Blocked (403)"]
+        report_lines.append("**FIX: Add these to CLOUDFLARE_VENDORS in scraper.py**")
+        vendors_403 = {}
+        for vid, pep in run_stats["blocked_403"]:
+            vendors_403.setdefault(vid, []).append(pep)
+        for vid, peps in vendors_403.items():
+            report_lines.append(f"- **{vid}** ({len(peps)} products blocked): {', '.join(peps[:5])}")
+
+    if run_stats["timeouts"]:
+        report_lines += ["", "## ⏱ Timeouts"]
+        vendors_to = {}
+        for vid, pep, elapsed in run_stats["timeouts"]:
+            vendors_to.setdefault(vid, []).append(f"{pep} ({elapsed:.0f}s)")
+        for vid, items in vendors_to.items():
+            report_lines.append(f"- **{vid}**: {', '.join(items[:5])}")
+        slow_vendors = set(v for v, p, e in run_stats["timeouts"] if e > 45)
+        if slow_vendors:
+            report_lines.append(f"\n**Consistently slow vendors:** {', '.join(slow_vendors)}")
+
+    if run_stats["url_404"]:
+        report_lines += ["", "## ❌ 404 Not Found (URL needs updating)"]
+        for vid, pep in run_stats["url_404"]:
+            report_lines.append(f"- {vid}/{pep} — check URL in PRODUCT_URLS")
+
+    if run_stats["price_capped"]:
+        report_lines += ["", "## 🔒 Price Cap Failures"]
+        report_lines.append("These prices were blocked by caps — may need cap adjustment:")
+        for vid, pep, price, cap in run_stats["price_capped"]:
+            report_lines.append(f"- {vid}/{pep}: got ${price:.2f}, cap is ${cap:.2f}")
+
+    if run_stats["sanity_failed"]:
+        report_lines += ["", "## ⚠️ Sanity Check Failures"]
+        report_lines.append("Price changed too dramatically — investigate:")
+        for vid, pep, prev, new_p in run_stats["sanity_failed"]:
+            pct = ((new_p/prev)-1)*100 if prev else 0
+            report_lines.append(f"- {vid}/{pep}: ${prev:.2f} → ${new_p:.2f} ({pct:+.0f}%)")
+
+    if run_stats["not_found"]:
+        report_lines += ["", "## 🔍 Price Not Found"]
+        vendors_nf = {}
+        for item in run_stats["not_found"]:
+            vid, pep = item[0], item[1]
+            vendors_nf.setdefault(vid, []).append(pep)
+        for vid, peps in vendors_nf.items():
+            report_lines.append(f"- **{vid}** ({len(peps)}): {', '.join(peps[:8])}")
+
+    report_lines += [
+        "",
+        "## 📊 Summary",
+        f"| Metric | Count |",
+        f"|--------|-------|",
+        f"| ✅ Prices fetched | {len(run_stats['successes'])} |",
+        f"| 💰 Prices updated | {count} |",
+        f"| 🚫 Cloudflare 403 | {len(run_stats['blocked_403'])} |",
+        f"| ⏱ Timeouts | {len(run_stats['timeouts'])} |",
+        f"| ❌ 404 URLs | {len(run_stats['url_404'])} |",
+        f"| 🔒 Price capped | {len(run_stats['price_capped'])} |",
+        f"| ⚠️ Sanity failed | {len(run_stats['sanity_failed'])} |",
+        f"| 📦 OOS | {len(run_stats['oos'])} |",
+    ]
+
+    report = "\n".join(report_lines)
+    log.info("\n" + "="*60)
+    log.info("DIAGNOSTICS REPORT:")
+    log.info(report)
+    log.info("="*60)
+
+    # Push report to GitHub as SCRAPER_REPORT.md
+    try:
+        report_file = "SCRAPER_REPORT.md"
+        url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{report_file}"
+        resp = requests.get(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"})
+        report_sha = resp.json().get("sha") if resp.status_code == 200 else None
+        payload = {
+            "message": f"📊 Scraper report {now_str}",
+            "content": base64.b64encode(report.encode()).decode(),
+            "branch": "main"
+        }
+        if report_sha:
+            payload["sha"] = report_sha
+        requests.put(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}", "Content-Type": "application/json"}, json=payload)
+        log.info("Pushed diagnostics report to SCRAPER_REPORT.md")
+    except Exception as e:
+        log.warning(f"Could not push report: {e}")
+
+    log.info(f"=== Run complete. Check SCRAPER_REPORT.md in GitHub for full diagnostics ===")
 
 # ── Vendor Discovery System ─────────────────────────────────
 # To add a new vendor, add it to this list and run the scraper once.
