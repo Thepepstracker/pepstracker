@@ -325,24 +325,57 @@ def playwright_get(url, vendor_id="unknown"):
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
+            # Atomik needs extra stealth to bypass Cloudflare "Just a moment" page
+            stealth_args = [
+                "--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage",
+                "--disable-blink-features=AutomationControlled",
+                "--disable-features=IsolateOrigins,site-per-process",
+                "--flag-switches-begin", "--disable-site-isolation-trials",
+                "--flag-switches-end",
+            ]
             browser = p.chromium.launch(
                 headless=True,
-                args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+                args=stealth_args
             )
+            # Use a realistic user agent and extra headers to look like a real browser
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
                 viewport={"width": 1280, "height": 800},
                 locale="en-US",
+                extra_http_headers={
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                    "sec-ch-ua": '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+                    "sec-ch-ua-mobile": "?0",
+                    "sec-ch-ua-platform": '"Windows"',
+                }
             )
+            # Remove webdriver flag that Cloudflare detects
+            context.add_init_script("""
+                Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+                Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3] });
+                Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });
+            """)
 
             # Restore cached cookies if we have them
             if vendor_id in _login_cookies:
                 context.add_cookies(_login_cookies[vendor_id])
             else:
-                # First time — need to log in
+                # First time — need to log in or handle challenges
                 page = context.new_page()
                 try:
-                    if vendor_id == "glacier":
+                    if vendor_id == "atomik":
+                        # Atomik has strong Cloudflare — visit homepage first to get cookies
+                        log.info("  Warming up Atomik (Cloudflare bypass)...")
+                        page.goto("https://atomiklabz.com/", wait_until="domcontentloaded", timeout=30000)
+                        page.wait_for_timeout(3000)  # Wait for CF challenge
+                        # Check if we're past the challenge
+                        if "just a moment" not in page.title().lower():
+                            _login_cookies["atomik"] = context.cookies()
+                            log.info(f"  Atomik warmed up, title={page.title()}")
+                        else:
+                            log.warning("  Atomik Cloudflare challenge not cleared")
+                    elif vendor_id == "glacier":
                         log.info("  Logging in to Glacier Aminos...")
                         page.goto("https://glacieraminos.shop/my-account/", wait_until="domcontentloaded", timeout=30000)
                         page.fill("#username", GLACIER_EMAIL)
@@ -369,10 +402,17 @@ def playwright_get(url, vendor_id="unknown"):
             page = context.new_page()
             page.route("**/*.{png,jpg,jpeg,gif,webp,svg,woff,woff2,ttf,otf}", lambda r: r.abort())
             page.goto(url, wait_until="domcontentloaded", timeout=30000)
+
+            # Wait longer for JS-heavy sites like Nura (Elementor) to render prices
+            wait_time = 5000 if vendor_id in {"nura", "atomik"} else 8000
             try:
-                page.wait_for_selector(".woocommerce-Price-amount, .price, [class*=price]", timeout=8000)
+                page.wait_for_selector(".woocommerce-Price-amount, .price, [class*=price]", timeout=wait_time)
             except Exception:
                 pass
+
+            # For Nura specifically, wait extra time for Elementor to finish rendering
+            if vendor_id == "nura":
+                page.wait_for_timeout(2000)
 
             # Step 1: Select single unit if bundle selector exists
             # Handles sites like Labsourced with 1/3/5 bottle options
@@ -416,18 +456,31 @@ def playwright_get(url, vendor_id="unknown"):
                     log.info(f"  Got sale price from ins tag: ${visible_price}")
 
                 if not visible_price:
-                    # Try the first visible price amount on the page
-                    price_els = page.query_selector_all(".woocommerce-Price-amount bdi")
-                    for el in price_els:
-                        txt = el.inner_text().strip().replace("$","").replace(",","")
-                        try:
-                            p = float(txt)
-                            if p > 1:
-                                visible_price = p
-                                log.info(f"  Got price from DOM: ${visible_price}")
-                                break
-                        except Exception:
-                            pass
+                    # Try multiple price selectors — Nura uses Elementor which has different structure
+                    price_selectors = [
+                        ".woocommerce-Price-amount bdi",
+                        ".price .amount",
+                        "[class*='price'] .amount",
+                        ".elementor-widget-woocommerce-product-price .amount",
+                        ".summary .price bdi",
+                        ".woocommerce-variation-price .woocommerce-Price-amount bdi",
+                        "p.price bdi",
+                        "span.price bdi",
+                    ]
+                    for selector in price_selectors:
+                        els = page.query_selector_all(selector)
+                        for el in els:
+                            try:
+                                txt = el.inner_text().strip().replace("$","").replace(",","")
+                                p = float(txt)
+                                if p > 1:
+                                    visible_price = p
+                                    log.info(f"  Got price from DOM: ${visible_price}")
+                                    break
+                            except Exception:
+                                pass
+                        if visible_price:
+                            break
             except Exception as e:
                 log.warning(f"  DOM price read error: {e}")
 
