@@ -297,7 +297,11 @@ PRODUCT_URLS = {
 }
 
 # Vendors that need real browser (Cloudflare protected)
-CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "atomik"}
+CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "atomik", "nura"}
+
+# Vendors that are frequently unreliable (502s, robots.txt, etc)
+# Only try once, no JS retry — saves time
+UNRELIABLE_VENDORS = {"retaone", "labsourced"}
 
 def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
     params = {
@@ -645,11 +649,14 @@ def fetch_price_from_url(vendor_id, product, product_url):
             return price, False
 
         else:
-            # Try without JS first (faster)
-            for attempt in range(2):
+            # Ion Peptides needs JS rendering - use it on first attempt
+            ion_needs_js = vendor_id in {"ion"}
+            max_attempts = 1 if vendor_id in UNRELIABLE_VENDORS else 2
+            # Try without JS first (faster), except for known JS-heavy sites
+            for attempt in range(max_attempts):
                 try:
-                    use_js = (attempt == 1)
-                    if use_js:
+                    use_js = ion_needs_js or (attempt == 1)
+                    if attempt == 1 and not ion_needs_js:
                         log.info(f"  Retrying with JS...")
                     resp = scraper_get(product_url, render_js=use_js)
                     if resp.status_code != 200:
@@ -906,8 +913,14 @@ def main():
                 # Sanity check 2: reject prices > 4x or < 0.25x previous
                 prev = info["price"]
                 ratio = price / prev if prev > 0 else 999
-                if ratio > 4.0 or ratio < 0.25:
-                    log.warning(f"  SANITY FAIL {peptide}/{vid}: ${prev:.2f} → ${price:.2f} (ratio {ratio:.2f}x) — skipping")
+                # Allow larger swings for peptides sold in different mg sizes
+                # e.g. Epithalon: 10mg ($27) vs 50mg ($119) = 4.4x but both valid
+                max_ratio = 6.0 if peptide in {
+                    "Epithalon", "GHK-Cu", "NAD+", "Klow Blend",
+                    "Tesamorelin/Ipamorelin Blend", "BPC-157 + TB-500 Blend"
+                } else 4.0
+                if ratio > max_ratio or ratio < 0.20:
+                    log.warning(f"  SANITY FAIL {peptide}/{vid}: ${prev:.2f} → ${price:.2f} (ratio {ratio:.2f}x, max {max_ratio}x) — skipping")
                     run_stats["sanity_failed"].append((vid, peptide, prev, price))
                 else:
                     updates.setdefault(peptide, {})[vid] = price
