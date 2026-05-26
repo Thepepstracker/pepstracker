@@ -27,4 +27,6 @@ jobs:
           GLACIER_PASSWORD: ${{ secrets.GLACIER_PASSWORD }}
           MILEHIGH_EMAIL: ${{ secrets.MILEHIGH_EMAIL }}
           MILEHIGH_PASSWORD: ${{ secrets.MILEHIGH_PASSWORD }}
+          ATOMIK_EMAIL: ${{ secrets.ATOMIK_EMAIL }}
+          ATOMIK_PASSWORD: ${{ secrets.ATOMIK_PASSWORD }}
         run: python scraper.py
