@@ -370,7 +370,22 @@ def playwright_get(url, vendor_id="unknown"):
             except Exception:
                 pass
 
-            # Handle size dropdowns — select the correct mg size if dropdown exists
+            # Step 1: Select single unit if bundle selector exists
+            # Handles sites like Labsourced with 1/3/5 bottle options
+            try:
+                # Look for bundle/quantity selector buttons (common in Shopify)
+                bundle_btns = page.query_selector_all("[class*='bundle'] button, [class*='quantity-break'] button, [class*='multipacks'] button, [data-quantity='1']")
+                for btn in bundle_btns:
+                    txt = btn.inner_text().strip().lower()
+                    if txt in ["1", "1 bottle", "single", "1x"]:
+                        btn.click()
+                        page.wait_for_timeout(1000)
+                        log.info(f"  Selected single unit bundle option")
+                        break
+            except Exception:
+                pass
+
+            # Step 2: Select correct mg size if dropdown exists
             try:
                 selects = page.query_selector_all("select")
                 for sel in selects:
@@ -379,7 +394,6 @@ def playwright_get(url, vendor_id="unknown"):
                     for opt_text in option_texts:
                         if any(x in opt_text.lower() for x in ["10mg", "10 mg"]):
                             sel.select_option(label=opt_text)
-                            # Wait for price to update after selection
                             page.wait_for_timeout(2000)
                             log.info(f"  Selected size option: {opt_text}")
                             break
@@ -489,9 +503,17 @@ def extract_main_product_price(html):
     html = re.sub(r'[^<]{0,80}free\s*ship[^<]{0,150}\$\s*[\d,]+\.?\d*[^<]{0,80}', '', html, flags=re.IGNORECASE)
     html = re.sub(r'\$\s*[\d,]+\.?\d*[^<]{0,80}free\s*ship[^<]{0,150}', '', html, flags=re.IGNORECASE)
 
-    # Cut off related sections
-    for pattern in [r'<section[^>]*class="[^"]*related', r'<div[^>]*class="[^"]*related',
-                    r'<section[^>]*class="[^"]*upsell', r'id="related']:
+    # Cut off related/upsell/bundle sections to avoid grabbing multi-pack prices
+    for pattern in [
+        r'<section[^>]*class="[^"]*related',
+        r'<div[^>]*class="[^"]*related',
+        r'<section[^>]*class="[^"]*upsell',
+        r'id="related"',
+        r'<[^>]*class="[^"]*bundle[^"]*"',
+        r'<[^>]*class="[^"]*multipacks[^"]*"',
+        r'<[^>]*class="[^"]*quantity.break[^"]*"',
+        r'buy\s+\d+.*?save',  # "Buy 3, save X%" sections
+    ]:
         m = re.search(pattern, html, re.IGNORECASE)
         if m:
             html = html[:m.start()]
@@ -793,8 +815,24 @@ def main():
             if oos:
                 oos_items.append((peptide, vid))
             elif price and abs(price - info["price"]) > 0.01:
-                # Sanity check: reject prices that are wildly different from previous
-                # This catches scraper errors like grabbing bundle prices or page errors
+                # Sanity check 1: hard price caps per peptide type
+                # Prevents bundle/page errors from corrupting prices
+                PRICE_CAPS = {
+                    "Semaglutide": 150, "Tirzepatide": 200, "Retatrutide": 250,
+                    "BPC-157": 80, "TB-500": 100, "BPC-157 + TB-500 Blend": 150,
+                    "Ipamorelin": 80, "CJC-1295 (with DAC)": 80, "Sermorelin": 100,
+                    "Tesamorelin": 120, "Melanotan II": 60, "PT-141 (Bremelanotide)": 80,
+                    "GHK-Cu": 200, "Epithalon": 80, "MOTS-c": 120, "NAD+": 120,
+                    "Semax": 80, "Selank": 80, "DSIP": 60, "KPV": 60,
+                    "ARA-290": 100, "AOD-9604": 60, "Klow Blend": 120,
+                    "Tesamorelin/Ipamorelin Blend": 150,
+                }
+                cap = PRICE_CAPS.get(peptide, 300)
+                if price > cap:
+                    log.warning(f"  PRICE CAP FAIL {peptide}/{vid}: ${price:.2f} exceeds max ${cap:.2f} — skipping")
+                    continue
+
+                # Sanity check 2: reject prices > 4x or < 0.25x previous
                 prev = info["price"]
                 ratio = price / prev if prev > 0 else 999
                 if ratio > 4.0 or ratio < 0.25:
@@ -813,5 +851,230 @@ def main():
     github_push_file(new_html, sha, f"🤖 Daily price update: {count} changes, {len(oos_items)} OOS ({now})")
     log.info(f"=== Done: {count} prices updated, {len(oos_items)} marked OOS ===")
 
+# ── Vendor Discovery System ─────────────────────────────────
+# To add a new vendor, add it to this list and run the scraper once.
+# It will auto-discover all product URLs and add them to PRODUCT_URLS.
+# Leave empty for normal daily runs.
+
+NEW_VENDORS_TO_DISCOVER = [
+    # Example:
+    # {
+    #   "id": "newvendor",
+    #   "name": "New Vendor Name",
+    #   "base_url": "https://newvendor.com",
+    #   "code": "GLOWLAB",
+    #   "discount": 0.10,
+    #   "platform": "auto",      # "woocommerce", "shopify", or "auto"
+    #   "needs_login": False,
+    #   "login_url": "",
+    #   "email_secret": "",      # GitHub secret name e.g. "NEWVENDOR_EMAIL"
+    #   "password_secret": "",   # GitHub secret name e.g. "NEWVENDOR_PASSWORD"
+    # }
+]
+
+PEPTIDE_SEARCH_TERMS = {
+    "Semaglutide":                  ["semaglutide", "glp-1s", "sem"],
+    "Tirzepatide":                  ["tirzepatide", "glp-2t", "tirz"],
+    "Retatrutide":                  ["retatrutide", "glp-3", "reta"],
+    "BPC-157":                      ["bpc-157", "bpc157"],
+    "TB-500":                       ["tb-500", "tb500", "thymosin beta"],
+    "BPC-157 + TB-500 Blend":       ["bpc tb", "wolverine", "bpc-157 tb-500"],
+    "Ipamorelin":                   ["ipamorelin"],
+    "CJC-1295 (with DAC)":          ["cjc-1295 dac", "cjc 1295 dac"],
+    "Sermorelin":                   ["sermorelin"],
+    "Tesamorelin":                  ["tesamorelin"],
+    "Melanotan II":                 ["melanotan ii", "melanotan-ii", "mt-2"],
+    "PT-141 (Bremelanotide)":       ["pt-141", "pt141", "bremelanotide"],
+    "GHK-Cu":                       ["ghk-cu", "ghk cu"],
+    "Epithalon":                    ["epithalon", "epitalon"],
+    "MOTS-c":                       ["mots-c", "motsc"],
+    "NAD+":                         ["nad+", "nad 500"],
+    "Semax":                        ["semax"],
+    "Selank":                       ["selank"],
+    "DSIP":                         ["dsip", "delta sleep"],
+    "KPV":                          ["kpv"],
+    "ARA-290":                      ["ara-290", "ara290"],
+    "AOD-9604":                     ["aod-9604", "aod 9604"],
+    "Klow Blend":                   ["klow"],
+    "Tesamorelin/Ipamorelin Blend": ["tesamorelin ipamorelin", "tesa ipa"],
+}
+
+
+def detect_platform(html, base_url):
+    html_lower = html.lower()
+    if "cdn.shopify.com" in html_lower or "/collections/" in html_lower:
+        return "shopify"
+    if "woocommerce" in html_lower or "wc-ajax" in html_lower:
+        return "woocommerce"
+    return "unknown"
+
+
+def build_search_urls(base_url, platform, search_term):
+    base = base_url.rstrip("/")
+    term = search_term.replace(" ", "+")
+    urls = []
+    if platform in ("woocommerce", "unknown", "auto"):
+        urls.append(f"{base}/?s={term}&post_type=product")
+    if platform in ("shopify", "unknown", "auto"):
+        urls.append(f"{base}/search?q={term}&type=product")
+    return urls
+
+
+def extract_product_links(html, base_url, search_term):
+    base = base_url.rstrip("/")
+    found = []
+    for pattern in [
+        r'href=["\']((?:' + re.escape(base) + r')?/product(?:s)?/[^"\'\s>?#]+)',
+    ]:
+        for m in re.finditer(pattern, html, re.IGNORECASE):
+            url = m.group(1)
+            if not url.startswith("http"):
+                url = base + url
+            if url not in found:
+                found.append(url)
+    # Score by relevance to search term
+    term_words = search_term.lower().replace("-", " ").split()
+    scored = []
+    for url in found:
+        url_lower = url.lower().replace("-", " ")
+        score = sum(1 for w in term_words if w in url_lower)
+        if score > 0:
+            scored.append((score, url))
+    scored.sort(reverse=True)
+    return [url for _, url in scored]
+
+
+def extract_mg_from_page(html, url):
+    url_mg = re.search(r'-(\d+)mg', url, re.IGNORECASE)
+    if url_mg:
+        val = int(url_mg.group(1))
+        if 1 <= val <= 1000:
+            return val
+    for pattern in [
+        r'<h1[^>]*>[^<]*(\d+)\s*mg[^<]*</h1>',
+        r'"name"\s*:\s*"[^"]*(\d+)mg[^"]*"',
+    ]:
+        m = re.search(pattern, html, re.IGNORECASE)
+        if m:
+            val = int(m.group(1))
+            if 1 <= val <= 1000:
+                return val
+    return None
+
+
+def discover_vendor_urls(vendor_info):
+    """Auto-discover product URLs for a new vendor."""
+    base_url = vendor_info["base_url"]
+    vendor_id = vendor_info["id"]
+    platform = vendor_info.get("platform", "auto")
+    needs_login = vendor_info.get("needs_login", False)
+    discovered = {}
+
+    log.info(f"=== Discovering {vendor_info['name']} ({base_url}) ===")
+
+    # Detect platform
+    if platform == "auto":
+        try:
+            use_playwright = needs_login or vendor_id in CLOUDFLARE_VENDORS
+            html = playwright_get(base_url, vendor_id=vendor_id) if use_playwright else scraper_get(base_url).text
+            platform = detect_platform(html, base_url)
+            log.info(f"  Platform: {platform}")
+        except Exception:
+            platform = "unknown"
+
+    use_playwright = needs_login or vendor_id in CLOUDFLARE_VENDORS
+
+    for peptide, search_terms in PEPTIDE_SEARCH_TERMS.items():
+        found_url = found_mg = found_price = None
+
+        for term in search_terms:
+            for search_url in build_search_urls(base_url, platform, term):
+                try:
+                    if use_playwright:
+                        html = playwright_get(search_url, vendor_id=vendor_id)
+                    else:
+                        resp = scraper_get(search_url, render_js=False)
+                        html = resp.text if resp.status_code == 200 else None
+                    if not html:
+                        continue
+
+                    links = extract_product_links(html, base_url, term)
+                    if not links:
+                        continue
+
+                    product_url = links[0]
+                    log.info(f"  Checking {peptide}: {product_url}")
+
+                    if use_playwright:
+                        product_html = playwright_get(product_url, vendor_id=vendor_id)
+                    else:
+                        r2 = scraper_get(product_url, render_js=False)
+                        product_html = r2.text if r2.status_code == 200 else None
+                    if not product_html:
+                        continue
+
+                    price = extract_main_product_price(product_html)
+                    mg = extract_mg_from_page(product_html, product_url)
+                    oos = is_out_of_stock(product_html)
+
+                    found_url = product_url
+                    found_mg = mg or 5
+                    found_price = price
+                    status = "OOS" if oos else f"${price:.2f}" if price else "no price"
+                    log.info(f"  FOUND {peptide}: {status} / {found_mg}mg")
+                    break
+                except Exception as e:
+                    log.warning(f"  Error: {e}")
+                time.sleep(0.5)
+            if found_url:
+                break
+            time.sleep(0.5)
+
+        if found_url:
+            discovered[peptide] = {"url": found_url, "mg": found_mg or 5, "price": found_price}
+        else:
+            log.info(f"  NOT FOUND: {peptide}")
+        time.sleep(1.0)
+
+    log.info(f"=== Done: {len(discovered)}/{len(PEPTIDE_SEARCH_TERMS)} found ===")
+    return discovered
+
+
+def run_discovery():
+    """Run vendor discovery for any new vendors in NEW_VENDORS_TO_DISCOVER."""
+    if not NEW_VENDORS_TO_DISCOVER:
+        return
+
+    log.info(f"Running discovery for {len(NEW_VENDORS_TO_DISCOVER)} new vendor(s)...")
+    for vendor_info in NEW_VENDORS_TO_DISCOVER:
+        vid = vendor_info["id"]
+
+        # Load login credentials from env if needed
+        if vendor_info.get("needs_login"):
+            email_key = vendor_info.get("email_secret", "")
+            pass_key = vendor_info.get("password_secret", "")
+            if email_key:
+                os.environ[f"{vid.upper()}_EMAIL"] = os.environ.get(email_key, "")
+            if pass_key:
+                os.environ[f"{vid.upper()}_PASSWORD"] = os.environ.get(pass_key, "")
+
+        results = discover_vendor_urls(vendor_info)
+
+        # Print summary for manual review
+        log.info(f"\n=== DISCOVERY RESULTS FOR {vendor_info['name']} ===")
+        log.info(f"Add to VENDORS list:")
+        log.info(f"  {{ id:\"{vid}\", name:\"{vendor_info['name']}\", url:\"{vendor_info['base_url']}\", code:\"{vendor_info['code']}\", discount:{vendor_info['discount']} }},")
+        log.info(f"\nAdd to PRODUCT_URLS:")
+        log.info(f"  \"{vid}\": {{")
+        for peptide, info in results.items():
+            log.info(f"    \"{peptide}\": {{\"url\":\"{info['url']}\",\"mg\":{info['mg']}}},")
+        log.info(f"  }},")
+        log.info(f"\nAdd to PRICES block:")
+        for peptide, info in results.items():
+            if info.get("price"):
+                log.info(f"  {vid}:{{price:{info['price']:.2f},mg:{info['mg']},listing:\"{peptide} {info['mg']}mg\"}},")
+
+
 if __name__ == "__main__":
+    run_discovery()
     main()
