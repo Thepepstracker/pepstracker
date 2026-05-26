@@ -434,38 +434,46 @@ def parse_price(val):
         return None
 
 def is_out_of_stock(html):
-    # STRONG signals — these are definitive OOS indicators
-    strong_signals = [
+    # Step 1: Strip related/upsell/cross-sell sections to avoid false positives
+    # These sections often contain OOS products that aren't the main product
+    main_html = html
+    for pattern in [
+        r'<section[^>]*class="[^"]*related[^"]*".*',
+        r'<div[^>]*class="[^"]*related[^"]*".*',
+        r'<section[^>]*class="[^"]*upsell[^"]*".*',
+        r'<section[^>]*class="[^"]*cross-sell[^"]*".*',
+        r'id="related".*',
+        r'class="related".*',
+    ]:
+        m = re.search(pattern, main_html, re.IGNORECASE | re.DOTALL)
+        if m:
+            main_html = main_html[:m.start()]
+
+    html_lower = main_html.lower()
+
+    # Step 2: If there's an Add to Cart button, it's definitely in stock
+    has_add_to_cart = any(x in html_lower for x in [
+        'add to cart', 'name="add-to-cart"', 'value="add-to-cart"',
+        '"add_to_cart"', 'addtocart', 'add-to-cart-button'
+    ])
+    if has_add_to_cart:
+        return False
+
+    # Step 3: Check definitive OOS signals in main product area only
+    oos_signals = [
         '"availability":"http://schema.org/OutOfStock"',
         'availability":"OutOfStock"',
         '"stock_status":"outofstock"',
         'stock_status":"outofstock"',
-        '>Out of stock<',
-        '>Currently unavailable<',
-        '>Sold out<',
+        '>out of stock<',
+        '>currently unavailable<',
+        '>sold out<',
         'sold_out":true',
         '"sold_out": true',
-        # WooCommerce specific — only on the main add-to-cart button
         'class="stock out-of-stock"',
-        'class="out-of-stock"',
+        '"availability": "OutOfStock"',
     ]
-    # Check strong signals first
-    html_lower = html.lower()
-    for s in strong_signals:
-        if s.lower() in html_lower:
-            return True
-
-    # WEAK signals — only count if no add-to-cart button is present
-    # This prevents false positives from related products sections
-    has_add_to_cart = any(x in html_lower for x in [
-        'add to cart', 'add-to-cart', 'name="add-to-cart"', 'value="add-to-cart"'
-    ])
-    if has_add_to_cart:
-        return False  # If there's an add to cart button, it's in stock
-
-    # Only now check weaker signals
-    weak_signals = ['outofstock', 'out-of-stock']
-    return any(s in html_lower for s in weak_signals)
+    return any(s.lower() in html_lower for s in oos_signals)
 
 def extract_main_product_price(html):
     # Strip <del> tags (old/strikethrough prices) so we never grab them
@@ -512,12 +520,33 @@ def extract_main_product_price(html):
             pass
 
     # Shopify — check for variants JSON (labsourced uses this)
+    # Labsourced stores prices in cents e.g. 4165 = $41.65
     shopify_match = re.search(r'"variants"\s*:\s*\[(.*?)\]', html, re.DOTALL)
     if shopify_match:
         try:
-            prices = [parse_price(p) for p in re.findall(r'"price"\s*:\s*"?(\d+\.?\d*)"?', shopify_match.group(1))]
-            prices = [p for p in prices if p]
-            if prices: return min(prices)
+            raw_prices = re.findall(r'"price"\s*:\s*"?(\d+)"?', shopify_match.group(1))
+            prices = []
+            for rp in raw_prices:
+                val = float(rp)
+                # Shopify stores in cents if value > 1000
+                if val > 1000:
+                    val = val / 100
+                p = parse_price(val)
+                if p:
+                    prices.append(p)
+            if prices:
+                return min(prices)  # Always grab cheapest = single bottle
+        except Exception:
+            pass
+
+    # Shopify meta price tag (another common pattern)
+    meta_match = re.search(r'"price":\s*"(\d+)"', html)
+    if meta_match:
+        try:
+            val = float(meta_match.group(1))
+            if val > 1000: val = val / 100
+            p = parse_price(val)
+            if p: return p
         except Exception:
             pass
 
