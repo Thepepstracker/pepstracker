@@ -570,45 +570,63 @@ def extract_main_product_price(html):
     return None
 
 def fetch_price_from_url(vendor_id, product, product_url):
+    """
+    Returns (price, oos) where:
+      - (float, False) = got a price, in stock
+      - (None, True)   = confirmed out of stock
+      - (None, False)  = couldn't reach site (timeout/error) — do NOT update anything
+    """
     log.info(f"  Fetching {vendor_id}/{product} → {product_url}")
     try:
         if vendor_id in CLOUDFLARE_VENDORS:
-            # Use real headless Chrome for Cloudflare-protected vendors
             log.info(f"  Using Playwright (real browser) for {vendor_id}")
             html = playwright_get(product_url, vendor_id=vendor_id)
             if not html:
-                log.warning(f"  Playwright returned no HTML for {vendor_id}/{product}")
-                return None, False
+                log.warning(f"  Playwright returned no HTML — skipping {vendor_id}/{product}")
+                return None, False  # unreachable, don't touch existing data
             if is_out_of_stock(html):
                 log.info(f"  OUT OF STOCK: {vendor_id}/{product}")
                 return None, True
             price = extract_main_product_price(html)
-            log.info(f"  {'OK' if price else '--'} {vendor_id}/{product}: {'${:.2f}'.format(price) if price else 'not found (Playwright)'}")
+            if price:
+                log.info(f"  OK {vendor_id}/{product}: ${price:.2f}")
+            else:
+                log.info(f"  -- {vendor_id}/{product}: price not found")
             return price, False
+
         else:
-            # Standard ScraperAPI for all other vendors
-            resp = scraper_get(product_url, render_js=False)
-            if resp.status_code != 200:
-                log.warning(f"  HTTP {resp.status_code}")
-                return None, False
-            html = resp.text
-            if is_out_of_stock(html):
-                log.info(f"  OUT OF STOCK: {vendor_id}/{product}")
-                return None, True
-            price = extract_main_product_price(html)
-            if not price:
-                log.info(f"  Retrying with JS...")
-                resp2 = scraper_get(product_url, render_js=True)
-                if resp2.status_code == 200:
-                    html2 = resp2.text
-                    if is_out_of_stock(html2):
+            # Try without JS first (faster)
+            for attempt in range(2):
+                try:
+                    use_js = (attempt == 1)
+                    if use_js:
+                        log.info(f"  Retrying with JS...")
+                    resp = scraper_get(product_url, render_js=use_js)
+                    if resp.status_code != 200:
+                        log.warning(f"  HTTP {resp.status_code} on attempt {attempt+1}")
+                        continue
+                    html = resp.text
+                    if is_out_of_stock(html):
+                        log.info(f"  OUT OF STOCK: {vendor_id}/{product}")
                         return None, True
-                    price = extract_main_product_price(html2)
-            log.info(f"  {'OK' if price else '--'} {vendor_id}/{product}: {'${:.2f}'.format(price) if price else 'not found'}")
-            return price, False
+                    price = extract_main_product_price(html)
+                    if price:
+                        log.info(f"  OK {vendor_id}/{product}: ${price:.2f}")
+                        return price, False
+                except requests.exceptions.Timeout:
+                    log.warning(f"  Timeout on attempt {attempt+1} for {vendor_id}/{product}")
+                    time.sleep(2)
+                    continue
+                except Exception as e:
+                    log.warning(f"  ERR attempt {attempt+1} {vendor_id}/{product}: {e}")
+                    continue
+
+            log.info(f"  -- {vendor_id}/{product}: price not found after retries")
+            return None, False  # couldn't get price but NOT marking OOS
+
     except Exception as e:
         log.warning(f"  ERR {vendor_id}/{product}: {e}")
-        return None, False
+        return None, False  # error = don't touch existing data
 
 def github_get_file():
     url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{GITHUB_FILE}"
@@ -775,8 +793,15 @@ def main():
             if oos:
                 oos_items.append((peptide, vid))
             elif price and abs(price - info["price"]) > 0.01:
-                updates.setdefault(peptide, {})[vid] = price
-                log.info(f"  CHANGE {peptide}/{vid}: ${info['price']:.2f} → ${price:.2f}")
+                # Sanity check: reject prices that are wildly different from previous
+                # This catches scraper errors like grabbing bundle prices or page errors
+                prev = info["price"]
+                ratio = price / prev if prev > 0 else 999
+                if ratio > 4.0 or ratio < 0.25:
+                    log.warning(f"  SANITY FAIL {peptide}/{vid}: ${prev:.2f} → ${price:.2f} (ratio {ratio:.2f}x) — skipping")
+                else:
+                    updates.setdefault(peptide, {})[vid] = price
+                    log.info(f"  CHANGE {peptide}/{vid}: ${prev:.2f} → ${price:.2f}")
             time.sleep(1.0)
 
     if not updates and not oos_items:
