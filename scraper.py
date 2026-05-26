@@ -486,6 +486,11 @@ def is_out_of_stock(html):
         '"sold_out": true',
         'class="stock out-of-stock"',
         '"availability": "OutOfStock"',
+        # Ascension-specific: uses email notification form instead of standard OOS
+        'email me when this item is back in stock',
+        'notify me when available',
+        'email me when available',
+        'back in stock notification',
     ]
     return any(s.lower() in html_lower for s in oos_signals)
 
@@ -512,9 +517,12 @@ def extract_main_product_price(html):
         r'<[^>]*class="[^"]*bundle[^"]*"',
         r'<[^>]*class="[^"]*multipacks[^"]*"',
         r'<[^>]*class="[^"]*quantity.break[^"]*"',
-        r'buy\s+\d+.*?save',  # "Buy 3, save X%" sections
+        r'buy\s+\d+.*?save',
+        # Ascension-specific: strip kit/multi-vial options table
+        r'<table[^>]*>.*?1 Kit.*?</table>',
+        r'Package.*?1 Kit',
     ]:
-        m = re.search(pattern, html, re.IGNORECASE)
+        m = re.search(pattern, html, re.IGNORECASE | re.DOTALL)
         if m:
             html = html[:m.start()]
 
