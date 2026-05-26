@@ -189,35 +189,53 @@
   </div>
   <div class="search-wrap">
     <div class="select-wrap">
-      <select id="peptideSelect" onchange="handleSearch()">
-        <option value="">— Select a peptide to compare prices —</option>
-        <optgroup label="GLP-1 / Weight Loss">
-          <option>Semaglutide</option>
-          <option>Tirzepatide</option>
-          <option>Retatrutide</option>
-        </optgroup>
-        <optgroup label="BPC / TB Healing">
-          <option>BPC-157</option>
-          <option>TB-500</option>
-          <option>BPC-157 + TB-500 Blend</option>
-        </optgroup>
-        <optgroup label="Growth Hormone">
-          <option>Ipamorelin</option>
-          <option>CJC-1295 (with DAC)</option>
-        </optgroup>
-        <optgroup label="Skin, Tanning &amp; Appearance">
-          <option>Melanotan II</option>
-          <option>PT-141 (Bremelanotide)</option>
-          <option>GHK-Cu</option>
-        </optgroup>
-        <optgroup label="Longevity &amp; Anti-Aging">
-          <option>Epithalon</option>
-        </optgroup>
-      </select>
-    </div>
-    <button class="btn-search" onclick="handleSearch()">Compare Prices</button>
-  </div>
-</section>
+      <!-- REPLACE your existing <select id="peptideSelect"> block with this -->
+<select id="peptideSelect" onchange="handleSearch()">
+  <option value="">— Select a peptide to compare prices —</option>
+  <optgroup label="GLP-1 / Weight Loss">
+    <option>Semaglutide</option>
+    <option>Tirzepatide</option>
+    <option>Retatrutide</option>
+  </optgroup>
+  <optgroup label="BPC / TB Healing">
+    <option>BPC-157</option>
+    <option>TB-500</option>
+    <option>BPC-157 + TB-500 Blend</option>
+  </optgroup>
+  <optgroup label="Growth Hormone">
+    <option>Ipamorelin</option>
+    <option>CJC-1295 (with DAC)</option>
+    <option>Sermorelin</option>
+    <option>Tesamorelin</option>
+    <option>Tesamorelin/Ipamorelin Blend</option>
+  </optgroup>
+  <optgroup label="Skin, Tanning &amp; Appearance">
+    <option>Melanotan II</option>
+    <option>PT-141 (Bremelanotide)</option>
+    <option>GHK-Cu</option>
+  </optgroup>
+  <optgroup label="Longevity &amp; Anti-Aging">
+    <option>Epithalon</option>
+    <option>MOTS-c</option>
+    <option>NAD+</option>
+  </optgroup>
+  <optgroup label="Cognitive / Nootropic">
+    <option>Semax</option>
+    <option>Selank</option>
+    <option>DSIP</option>
+  </optgroup>
+  <optgroup label="Immune / Peptide Therapy">
+    <option>KPV</option>
+    <option>ARA-290</option>
+  </optgroup>
+  <optgroup label="Fat Loss / Body Comp">
+    <option>AOD-9604</option>
+  </optgroup>
+  <optgroup label="Blends">
+    <option>Klow Blend</option>
+    <option>Tesamorelin/Ipamorelin Blend</option>
+  </optgroup>
+</select>
 
 <!-- GLP-1 BANNER -->
 <div class="glp-banner" id="glpBanner">
