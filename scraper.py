@@ -299,17 +299,21 @@ PRODUCT_URLS = {
 }
 
 # Vendors that need real browser (Cloudflare protected)
-CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "atomik", "nura"}
+CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "nura"}
 
 # Vendors that are frequently unreliable (502s, robots.txt, etc)
 # Only try once, no JS retry — saves time
 UNRELIABLE_VENDORS = {"retaone", "labsourced"}
 
+# Vendors that need ScraperAPI premium tier to bypass Cloudflare
+# Premium uses residential proxies which are much harder to block
+PREMIUM_VENDORS = {"atomik"}
+
 def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
     params = {
         "api_key": SCRAPERAPI_KEY,
         "url": url,
-        "render": "true" if render_js else "false",
+        "render": "true" if (render_js or premium) else "false",
         "keep_headers": "true",
     }
     if premium:
@@ -525,15 +529,7 @@ def playwright_get(url, vendor_id="unknown"):
                     pass
                 page_title = page.title()
                 log.info(f"  Reloaded: {page_title}")
-                # Re-read visible price after reload
-                try:
-                    ins_el = page.query_selector("ins .woocommerce-Price-amount bdi")
-                    if ins_el:
-                        txt = ins_el.inner_text().strip().replace("$","").replace(",","")
-                        visible_price = float(txt)
-                        log.info(f"  Got sale price from ins tag: ${visible_price}")
-                except Exception:
-                    pass
+                visible_price = None  # Reset price so we re-read after size selection below
 
             html = page.content()
             log.info(f"  Playwright loaded: {page_title}")
@@ -762,7 +758,11 @@ def fetch_price_from_url(vendor_id, product, product_url):
                     use_js = ion_needs_js or (attempt == 1)
                     if attempt == 1 and not ion_needs_js:
                         log.info(f"  Retrying with JS...")
-                    resp = scraper_get(product_url, render_js=use_js)
+                    # Use premium ScraperAPI for Cloudflare-heavy vendors
+                    use_premium = vendor_id in PREMIUM_VENDORS
+                    if use_premium and attempt == 0:
+                        log.info(f"  Using ScraperAPI premium for {vendor_id}...")
+                    resp = scraper_get(product_url, render_js=use_js or use_premium, premium=use_premium)
                     if resp.status_code != 200:
                         reason = {
                             403: "🚫 403 Forbidden — likely Cloudflare block, add to CLOUDFLARE_VENDORS",
