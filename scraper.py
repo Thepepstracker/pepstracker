@@ -18,6 +18,8 @@ GLACIER_EMAIL    = os.environ.get("GLACIER_EMAIL", "")
 GLACIER_PASSWORD = os.environ.get("GLACIER_PASSWORD", "")
 MILEHIGH_EMAIL    = os.environ.get("MILEHIGH_EMAIL", "")
 MILEHIGH_PASSWORD = os.environ.get("MILEHIGH_PASSWORD", "")
+ATOMIK_EMAIL     = os.environ.get("ATOMIK_EMAIL", "")
+ATOMIK_PASSWORD  = os.environ.get("ATOMIK_PASSWORD", "")
 GITHUB_REPO    = "Thepepstracker/pepstracker"
 GITHUB_FILE    = "pepstracker_fixed/index.html"
 GITHUB_API     = "https://api.github.com"
@@ -365,16 +367,24 @@ def playwright_get(url, vendor_id="unknown"):
                 page = context.new_page()
                 try:
                     if vendor_id == "atomik":
-                        # Atomik has strong Cloudflare — visit homepage first to get cookies
-                        log.info("  Warming up Atomik (Cloudflare bypass)...")
-                        page.goto("https://atomiklabz.com/", wait_until="domcontentloaded", timeout=30000)
-                        page.wait_for_timeout(3000)  # Wait for CF challenge
-                        # Check if we're past the challenge
+                        log.info("  Logging in to Atomik Labz...")
+                        page.goto("https://atomiklabz.com/my-account/", wait_until="domcontentloaded", timeout=30000)
+                        page.wait_for_timeout(3000)  # Wait for CF challenge to clear
+                        if "just a moment" in page.title().lower():
+                            log.warning("  Atomik Cloudflare challenge not cleared — waiting longer...")
+                            page.wait_for_timeout(5000)
                         if "just a moment" not in page.title().lower():
-                            _login_cookies["atomik"] = context.cookies()
-                            log.info(f"  Atomik warmed up, title={page.title()}")
+                            try:
+                                page.fill("#username", ATOMIK_EMAIL)
+                                page.fill("#password", ATOMIK_PASSWORD)
+                                page.click("button[name='login']")
+                                page.wait_for_load_state("domcontentloaded", timeout=15000)
+                                _login_cookies["atomik"] = context.cookies()
+                                log.info(f"  Atomik login done, title={page.title()}")
+                            except Exception as e:
+                                log.warning(f"  Atomik login error: {e}")
                         else:
-                            log.warning("  Atomik Cloudflare challenge not cleared")
+                            log.warning("  Atomik Cloudflare still blocking after wait")
                     elif vendor_id == "glacier":
                         log.info("  Logging in to Glacier Aminos...")
                         page.goto("https://glacieraminos.shop/my-account/", wait_until="domcontentloaded", timeout=30000)
@@ -430,17 +440,36 @@ def playwright_get(url, vendor_id="unknown"):
                 pass
 
             # Step 2: Select correct mg size if dropdown exists
+            # Priority: 10mg > 5mg > 2mg > skip (never grab 20mg, 50mg etc)
             try:
                 selects = page.query_selector_all("select")
                 for sel in selects:
                     options = sel.query_selector_all("option")
                     option_texts = [o.inner_text().strip() for o in options]
-                    for opt_text in option_texts:
-                        if any(x in opt_text.lower() for x in ["10mg", "10 mg"]):
-                            sel.select_option(label=opt_text)
-                            page.wait_for_timeout(2000)
-                            log.info(f"  Selected size option: {opt_text}")
+
+                    # Only process size dropdowns
+                    has_mg_options = any('mg' in t.lower() for t in option_texts)
+                    if not has_mg_options:
+                        continue
+
+                    # Try preferred sizes in strict order: 10mg, 5mg, 2mg
+                    target = None
+                    for preferred_mg in ["10", "5", "2"]:
+                        for opt_text in option_texts:
+                            # Match "10mg", "10 mg", "10MG" etc — but not "100mg"
+                            if opt_text.lower().strip().startswith(preferred_mg + "mg") or                                opt_text.lower().strip().startswith(preferred_mg + " mg") or                                f" {preferred_mg}mg" in opt_text.lower() or                                f" {preferred_mg} mg" in opt_text.lower():
+                                target = opt_text
+                                break
+                        if target:
                             break
+
+                    if target:
+                        sel.select_option(label=target)
+                        page.wait_for_timeout(2000)
+                        log.info(f"  Selected size option: {target}")
+                    else:
+                        log.warning(f"  No 10mg/5mg/2mg option found in {option_texts[:5]} — skipping price to avoid wrong size")
+                    break
             except Exception:
                 pass
 
@@ -484,8 +513,30 @@ def playwright_get(url, vendor_id="unknown"):
             except Exception as e:
                 log.warning(f"  DOM price read error: {e}")
 
+            # Glacier sometimes redirects to inbox/notifications after cookie restore
+            # Detect wrong page and navigate directly to the product URL
+            page_title = page.title()
+            if any(x in page_title.lower() for x in ["new message", "inbox", "notification", "just a moment", "attention required"]):
+                log.warning(f"  Wrong page loaded ({page_title}), navigating directly to product URL...")
+                page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                try:
+                    page.wait_for_selector(".woocommerce-Price-amount, .price, [class*=price]", timeout=8000)
+                except Exception:
+                    pass
+                page_title = page.title()
+                log.info(f"  Reloaded: {page_title}")
+                # Re-read visible price after reload
+                try:
+                    ins_el = page.query_selector("ins .woocommerce-Price-amount bdi")
+                    if ins_el:
+                        txt = ins_el.inner_text().strip().replace("$","").replace(",","")
+                        visible_price = float(txt)
+                        log.info(f"  Got sale price from ins tag: ${visible_price}")
+                except Exception:
+                    pass
+
             html = page.content()
-            log.info(f"  Playwright loaded: {page.title()}")
+            log.info(f"  Playwright loaded: {page_title}")
 
             # If we got a price directly from DOM, inject it so extract_main_product_price finds it
             if visible_price:
