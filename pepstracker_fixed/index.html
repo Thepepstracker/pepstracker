@@ -128,6 +128,7 @@
     </a>
     <nav>
       <a href="index.html" class="active">Price Tracker</a>
+      <a href="dictionary.html" style="color:var(--blue);">📖 Dictionary</a>
       <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
       <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
@@ -155,7 +156,7 @@
     <span onclick="document.getElementById('peptideSelect').value='BPC-157';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">BPC-157</span>
     <span onclick="document.getElementById('peptideSelect').value='TB-500';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">TB-500</span>
     <span onclick="document.getElementById('peptideSelect').value='PT-141 (Bremelanotide)';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">PT-141</span>
-    <span onclick="document.getElementById('peptideSelect').value='Klow Blend';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">Klow Blend</span>
+    <span onclick="document.getElementById('peptideSelect').value='Klow Blend';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">🔥 Klow Blend</span>
   </div>
   <div class="search-wrap">
     <div class="select-wrap">
@@ -249,7 +250,7 @@
     <a href="vendor-apply.html">Vendor Application</a> &nbsp;|&nbsp;
     <a href="disclaimer.html">Full Disclaimer</a>
   </p>
-  <p style="margin-top:8px;">© 2025 PepsTracker — For research purposes only.</p>
+  <p style="margin-top:8px;">© 2026 PepsTracker — For research purposes only.</p>
 </footer>
 
 <script>
@@ -297,6 +298,7 @@ function getShopUrl(vid, peptide) {
 const GLP1 = new Set(["Semaglutide","Tirzepatide","Retatrutide","Liraglutide"]);
 
 // PRICES BLOCK — updated by scraper daily
+const SCRAPE_DATE = "May 26, 2026"; // updated by scraper
 const PRICES = {
   "Semaglutide": {
     ascension:{price:65.00,mg:5,listing:"Semaglutide 5mg",oos:true},
@@ -308,45 +310,45 @@ const PRICES = {
     amp:null,
     labsourced:null,
     ion:{price:39.00,mg:5,listing:"Semaglutide 5mg"},
-    retaone:{price:80.00,mg:10,listing:"Semaglutide 10mg"},
+    retaone:{price:80.00,mg:10,listing:"Semaglutide 10mg",oos:true},
     nura:{price:69.00,mg:10,listing:"Sema GLP-1 10mg"},
   },
   "Tirzepatide": {
     ascension:{price:85.00,mg:10,listing:"Tirzepatide 10mg",oos:true},
     atomik:null,
     lapeptides:{price:99.99,mg:15,listing:"Tirz 15mg"},
-    glacier:{price:39.99,mg:10,listing:"Tirzepatide 10mg"},
+    glacier:{price:68.99,mg:10,listing:"Tirzepatide 10mg"},
     milehigh:{price:89.99,mg:10,listing:"Tirzepatide 10mg"},
     ezpeptides:{price:53.00,mg:10,listing:"Tirzepatide 10mg"},
     amp:null,
-    labsourced:{price:82.00,mg:30,listing:"Tirz GIP/GLP-1 30mg"},
+    labsourced:{price:82.00,mg:30,listing:"Tirz 30mg",oos:true},
     ion:{price:49.00,mg:10,listing:"Tirzepatide 10mg"},
     retaone:null,
     nura:{price:69.00,mg:10,listing:"Tirzepatide 10mg"},
   },
   "Retatrutide": {
-    ascension:{price:250.00,mg:10,listing:"Retatrutide 10mg",oos:true},
+    ascension:{price:95.00,mg:10,listing:"Retatrutide 10mg",oos:true},
     atomik:null,
     lapeptides:{price:94.99,mg:10,listing:"Reta 10mg"},
     glacier:null,
     milehigh:{price:99.99,mg:10,listing:"Retatrutide 10mg"},
-    ezpeptides:{price:78.00,mg:10,listing:"Retatrutide Triple Agonist 10mg"},
+    ezpeptides:{price:78.00,mg:10,listing:"Retatrutide 10mg"},
     amp:null,
-    labsourced:{price:50.00,mg:5,listing:"Reta 5mg"},
-    ion:{price:39.00,mg:5,listing:"Retatrutide 5mg"},
+    labsourced:{price:50.00,mg:5,listing:"Reta 5mg",oos:true},
+    ion:{price:45.00,mg:5,listing:"Retatrutide 5mg"},
     retaone:null,
     nura:{price:83.00,mg:12,listing:"Reta GLP-1/GIP 12mg"},
   },
   "BPC-157": {
     ascension:{price:29.99,mg:5,listing:"BPC-157 5mg",oos:true},
-    atomik:{price:34.50,mg:5,listing:"BPC-157 5mg"},
+    atomik:{price:40.00,mg:5,listing:"BPC-157 5mg"},
     lapeptides:{price:59.99,mg:10,listing:"BPC-157 10mg"},
-    glacier:{price:39.99,mg:10,listing:"BPC-157 10mg"},
+    glacier:{price:45.99,mg:10,listing:"BPC-157 10mg"},
     milehigh:{price:49.99,mg:10,listing:"BPC-157 10mg"},
     ezpeptides:{price:44.00,mg:10,listing:"BPC-157 10mg"},
     amp:{price:44.00,mg:10,listing:"BPC-157 10mg"},
     labsourced:{price:41.65,mg:10,listing:"BPC-157 10mg"},
-    ion:{price:29.00,mg:5,listing:"BPC 157 5mg"},
+    ion:{price:48.00,mg:10,listing:"BPC 157 10mg"},
     retaone:{price:39.00,mg:10,listing:"BPC-157 10mg"},
     nura:{price:65.00,mg:10,listing:"BPC-157 10mg"},
   },
@@ -358,20 +360,20 @@ const PRICES = {
     milehigh:{price:59.99,mg:10,listing:"TB-500 10mg"},
     ezpeptides:{price:68.00,mg:10,listing:"TB-500 10mg"},
     amp:{price:75.00,mg:10,listing:"TB-500 10mg"},
-    labsourced:{price:37.50,mg:10,listing:"TB-500 10mg"},
-    ion:{price:29.00,mg:5,listing:"TB-500 5mg"},
+    labsourced:{price:37.50,mg:10,listing:"TB-500 10mg",oos:true},
+    ion:{price:29.00,mg:10,listing:"TB-500 10mg"},
     retaone:{price:48.00,mg:5,listing:"TB-500 5mg"},
     nura:{price:63.00,mg:10,listing:"TB-500 10mg"},
   },
   "BPC-157 + TB-500 Blend": {
-    ascension:{price:55.00,mg:20,listing:"BPC-157 + TB-500 Blend 20mg",oos:true},
+    ascension:{price:55.00,mg:20,listing:"BPC+TB Blend 20mg",oos:true},
     atomik:{price:52.00,mg:10,listing:"BPC/TB Blend 10mg"},
     lapeptides:{price:69.99,mg:10,listing:"BPC-157 + TB-500 10mg"},
-    glacier:{price:39.99,mg:10,listing:"BPC+TB Blend 10mg"},
+    glacier:{price:62.99,mg:10,listing:"BPC+TB Blend 10mg"},
     milehigh:{price:119.99,mg:20,listing:"BPC/TB Blend 20mg"},
     ezpeptides:{price:88.00,mg:10,listing:"BPC-157 + TB-500 10mg"},
     amp:{price:88.00,mg:10,listing:"BPC+TB Blend 10mg"},
-    labsourced:{price:48.00,mg:10,listing:"BPC-157 + TB-500 10mg"},
+    labsourced:{price:48.00,mg:10,listing:"BPC-157 + TB-500 10mg",oos:true},
     ion:{price:48.00,mg:10,listing:"BPC/TB Combo 10mg"},
     retaone:{price:60.00,mg:10,listing:"BPC-157 + TB-500 10mg"},
     nura:{price:53.00,mg:5,listing:"BPC + TB Blend 5mg"},
@@ -384,7 +386,7 @@ const PRICES = {
     milehigh:{price:59.99,mg:10,listing:"Ipamorelin 10mg"},
     ezpeptides:{price:44.00,mg:10,listing:"Ipamorelin 10mg"},
     amp:{price:44.00,mg:10,listing:"Ipamorelin 10mg"},
-    labsourced:{price:22.50,mg:10,listing:"Ipamorelin 10mg"},
+    labsourced:{price:22.50,mg:10,listing:"Ipamorelin 10mg",oos:true},
     ion:{price:35.00,mg:5,listing:"Ipamorelin 5mg"},
     retaone:{price:33.00,mg:5,listing:"Ipamorelin 5mg"},
     nura:{price:63.00,mg:10,listing:"Ipamorelin 10mg"},
@@ -394,7 +396,7 @@ const PRICES = {
     atomik:{price:28.50,mg:5,listing:"CJC-1295 DAC 5mg"},
     lapeptides:{price:30.00,mg:2,listing:"CJC-1295 (w/ DAC) 2mg"},
     glacier:{price:51.99,mg:5,listing:"CJC-1295 w/DAC 5mg"},
-    milehigh:{price:27.00,mg:5,listing:"CJC-1295 DAC 5mg",oos:true},
+    milehigh:{price:59.99,mg:5,listing:"CJC-1295 DAC 5mg",oos:true},
     ezpeptides:{price:31.00,mg:2,listing:"CJC-1295 w/DAC 2mg"},
     amp:{price:29.50,mg:2,listing:"CJC-1295 w/DAC 2mg"},
     labsourced:{price:26.00,mg:2,listing:"CJC-1295 (DAC) 2mg"},
@@ -410,7 +412,7 @@ const PRICES = {
     milehigh:{price:69.99,mg:10,listing:"Sermorelin 10mg"},
     ezpeptides:{price:44.00,mg:5,listing:"Sermorelin 5mg"},
     amp:{price:44.00,mg:5,listing:"Sermorelin 5mg"},
-    labsourced:{price:28.00,mg:10,listing:"Sermorelin 10mg"},
+    labsourced:{price:28.00,mg:10,listing:"Sermorelin 10mg",oos:true},
     ion:{price:39.00,mg:5,listing:"Sermorelin 5mg"},
     retaone:{price:40.00,mg:5,listing:"Sermorelin 5mg"},
     nura:{price:45.00,mg:5,listing:"Sermorelin 5mg"},
@@ -422,10 +424,10 @@ const PRICES = {
     glacier:null,
     milehigh:{price:79.99,mg:10,listing:"Tesamorelin 10mg"},
     ezpeptides:{price:68.00,mg:10,listing:"Tesamorelin 10mg"},
-    amp:{price:68.00,mg:10,listing:"Tesamorelin 10mg",oos:true},
-    labsourced:{price:41.00,mg:10,listing:"Tesamorelin 10mg"},
+    amp:{price:68.00,mg:10,listing:"Tesamorelin 10mg"},
+    labsourced:{price:41.00,mg:10,listing:"Tesamorelin 10mg",oos:true},
     ion:{price:69.95,mg:5,listing:"Tesamorelin 5mg"},
-    retaone:{price:49.00,mg:10,listing:"Tesamorelin 10mg"},
+    retaone:{price:49.00,mg:10,listing:"Tesamorelin 10mg",oos:true},
     nura:{price:70.00,mg:10,listing:"Tesamorelin 10mg"},
   },
   "Melanotan II": {
@@ -436,7 +438,7 @@ const PRICES = {
     milehigh:{price:39.99,mg:10,listing:"MT-2 10mg"},
     ezpeptides:{price:44.00,mg:10,listing:"Melanotan II 10mg"},
     amp:{price:44.00,mg:10,listing:"Melanotan II 10mg"},
-    labsourced:{price:22.00,mg:10,listing:"Melanotan 2 10mg"},
+    labsourced:{price:22.00,mg:10,listing:"Melanotan 2 10mg",oos:true},
     ion:{price:35.00,mg:10,listing:"Melanotan II 10mg"},
     retaone:{price:34.00,mg:10,listing:"Melanotan II 10mg"},
     nura:{price:30.00,mg:10,listing:"MT-II 10mg"},
@@ -444,25 +446,25 @@ const PRICES = {
   "PT-141 (Bremelanotide)": {
     ascension:{price:48.00,mg:10,listing:"PT-141 10mg",oos:true},
     atomik:{price:30.00,mg:10,listing:"PT-141 10mg"},
-    lapeptides:{price:69.99,mg:10,listing:"PT-141 (Bremelanotide) 10mg"},
+    lapeptides:{price:69.99,mg:10,listing:"PT-141 10mg"},
     glacier:{price:40.99,mg:10,listing:"PT-141 10mg"},
-    milehigh:{price:39.99,mg:10,listing:"Bremelanotide PT-141 10mg"},
-    ezpeptides:{price:44.00,mg:10,listing:"PT-141 10mg"},
+    milehigh:{price:39.99,mg:10,listing:"PT-141 10mg"},
+    ezpeptides:{price:34.00,mg:10,listing:"PT-141 10mg"},
     amp:{price:44.00,mg:10,listing:"PT-141 10mg"},
-    labsourced:{price:28.00,mg:10,listing:"PT-141 10mg"},
+    labsourced:{price:28.00,mg:10,listing:"PT-141 10mg",oos:true},
     ion:{price:37.00,mg:10,listing:"PT-141 10mg"},
-    retaone:{price:42.00,mg:10,listing:"PT-141 10mg"},
+    retaone:{price:42.00,mg:10,listing:"PT-141 10mg",oos:true},
     nura:{price:40.00,mg:10,listing:"Bremelanotide 10mg"},
   },
   "GHK-Cu": {
     ascension:{price:160.00,mg:100,listing:"GHK-Cu 100mg",oos:true},
     atomik:{price:22.00,mg:100,listing:"GHK-Cu 100mg"},
     lapeptides:{price:39.99,mg:100,listing:"GHK-Cu 100mg"},
-    glacier:{price:39.99,mg:50,listing:"GHK-Cu 50mg"},
+    glacier:{price:41.99,mg:50,listing:"GHK-Cu 50mg"},
     milehigh:{price:49.99,mg:50,listing:"GHK-Cu 50mg"},
     ezpeptides:{price:35.00,mg:50,listing:"GHK-Copper 50mg"},
-    amp:{price:53.00,mg:100,listing:"GHK-Cu 100mg",oos:true},
-    labsourced:{price:20.00,mg:50,listing:"GHK-Cu 50mg"},
+    amp:{price:53.00,mg:100,listing:"GHK-Cu 100mg"},
+    labsourced:{price:20.00,mg:50,listing:"GHK-Cu 50mg",oos:true},
     ion:{price:29.00,mg:50,listing:"GHK-Cu 50mg"},
     retaone:{price:31.00,mg:50,listing:"GHK-Cu 50mg",oos:true},
     nura:{price:55.00,mg:100,listing:"GHK-Cu 100mg"},
@@ -472,10 +474,10 @@ const PRICES = {
     atomik:{price:28.00,mg:10,listing:"Epithalamin 10mg"},
     lapeptides:{price:79.99,mg:50,listing:"Epithalon 50mg"},
     glacier:{price:45.99,mg:10,listing:"Epithalon 10mg"},
-    milehigh:{price:27.00,mg:50,listing:"Epithalon 50mg"},
-    ezpeptides:{price:38.00,mg:10,listing:"Epithalon 10mg"},
+    milehigh:{price:119.99,mg:50,listing:"Epithalon 50mg"},
+    ezpeptides:{price:31.00,mg:10,listing:"Epithalon 10mg"},
     amp:{price:38.00,mg:10,listing:"Epithalon 10mg"},
-    labsourced:{price:26.00,mg:10,listing:"Epithalon 10mg"},
+    labsourced:{price:26.00,mg:10,listing:"Epithalon 10mg",oos:true},
     ion:{price:35.00,mg:10,listing:"Epithalon 10mg"},
     retaone:{price:38.00,mg:10,listing:"Epithalon 10mg"},
     nura:{price:49.00,mg:10,listing:"Epithalon 10mg"},
@@ -484,11 +486,11 @@ const PRICES = {
     ascension:{price:62.00,mg:10,listing:"MOTS-c 10mg",oos:true},
     atomik:{price:55.00,mg:10,listing:"MOTS-c 10mg"},
     lapeptides:{price:69.99,mg:10,listing:"MOTS-c 10mg"},
-    glacier:{price:39.99,mg:10,listing:"MOTS-c 10mg"},
+    glacier:{price:45.99,mg:10,listing:"MOTS-c 10mg"},
     milehigh:{price:49.99,mg:10,listing:"MOTS-c 10mg"},
-    ezpeptides:{price:54.00,mg:10,listing:"MOTS-c 10mg"},
+    ezpeptides:{price:61.00,mg:10,listing:"MOTS-c 10mg"},
     amp:{price:54.00,mg:10,listing:"MOTS-c 10mg"},
-    labsourced:{price:56.00,mg:10,listing:"MOTS-c 10mg"},
+    labsourced:{price:56.00,mg:10,listing:"MOTS-c 10mg",oos:true},
     ion:{price:42.00,mg:10,listing:"MOTS-c 10mg"},
     retaone:{price:75.00,mg:10,listing:"MOTS-c 10mg",oos:true},
     nura:{price:45.00,mg:10,listing:"MOTS-c 10mg"},
@@ -501,7 +503,7 @@ const PRICES = {
     milehigh:{price:59.99,mg:500,listing:"NAD+ 500mg"},
     ezpeptides:null,
     amp:null,
-    labsourced:{price:40.00,mg:500,listing:"NAD+ 500mg"},
+    labsourced:{price:40.00,mg:500,listing:"NAD+ 500mg",oos:true},
     ion:{price:44.00,mg:500,listing:"NAD+ 500mg"},
     retaone:{price:58.00,mg:500,listing:"NAD+ 500mg"},
     nura:{price:65.00,mg:500,listing:"NAD+ 500mg"},
@@ -512,10 +514,10 @@ const PRICES = {
     lapeptides:{price:39.99,mg:10,listing:"Semax 10mg"},
     glacier:{price:40.99,mg:10,listing:"Semax 10mg"},
     milehigh:{price:39.99,mg:10,listing:"Semax 10mg"},
-    ezpeptides:{price:44.00,mg:10,listing:"Semax 10mg"},
+    ezpeptides:{price:33.00,mg:10,listing:"Semax 10mg"},
     amp:null,
     labsourced:{price:29.50,mg:10,listing:"Semax 10mg"},
-    ion:{price:32.90,mg:10,listing:"Semax 10mg"},
+    ion:{price:35.00,mg:10,listing:"Semax 10mg"},
     retaone:null,
     nura:{price:45.00,mg:10,listing:"Semax 10mg"},
   },
@@ -525,10 +527,10 @@ const PRICES = {
     lapeptides:{price:39.99,mg:10,listing:"Selank 10mg"},
     glacier:{price:40.99,mg:10,listing:"Selank 10mg"},
     milehigh:{price:39.99,mg:10,listing:"Selank 10mg"},
-    ezpeptides:{price:44.00,mg:10,listing:"Selank 10mg"},
+    ezpeptides:{price:32.00,mg:10,listing:"Selank 10mg"},
     amp:{price:44.00,mg:10,listing:"Selank 10mg"},
     labsourced:null,
-    ion:{price:34.65,mg:5,listing:"Selank 5mg"},
+    ion:{price:25.00,mg:5,listing:"Selank 5mg"},
     retaone:null,
     nura:{price:45.00,mg:10,listing:"Selank 10mg"},
   },
@@ -538,7 +540,7 @@ const PRICES = {
     lapeptides:{price:29.99,mg:5,listing:"DSIP 5mg"},
     glacier:{price:33.99,mg:5,listing:"DSIP 5mg"},
     milehigh:{price:49.99,mg:10,listing:"DSIP 10mg"},
-    ezpeptides:{price:58.00,mg:10,listing:"DSIP 10mg"},
+    ezpeptides:{price:29.00,mg:10,listing:"DSIP 10mg"},
     amp:{price:58.00,mg:10,listing:"DSIP 10mg"},
     labsourced:{price:25.00,mg:5,listing:"DSIP 5mg"},
     ion:{price:45.00,mg:5,listing:"DSIP 5mg"},
@@ -551,7 +553,7 @@ const PRICES = {
     lapeptides:{price:59.99,mg:10,listing:"KPV 10mg"},
     glacier:{price:51.99,mg:10,listing:"KPV 10mg"},
     milehigh:{price:49.99,mg:10,listing:"KPV 10mg"},
-    ezpeptides:{price:44.00,mg:10,listing:"KPV Tripeptide 10mg"},
+    ezpeptides:{price:37.00,mg:10,listing:"KPV Tripeptide 10mg"},
     amp:{price:44.00,mg:10,listing:"KPV 10mg"},
     labsourced:{price:30.00,mg:10,listing:"KPV 10mg"},
     ion:{price:49.00,mg:10,listing:"KPV 10mg"},
@@ -564,7 +566,7 @@ const PRICES = {
     lapeptides:{price:69.99,mg:16,listing:"ARA-290 16mg"},
     glacier:{price:54.99,mg:10,listing:"ARA-290 10mg"},
     milehigh:{price:49.99,mg:10,listing:"ARA-290 10mg"},
-    ezpeptides:{price:48.00,mg:10,listing:"ARA-290 10mg"},
+    ezpeptides:{price:53.00,mg:10,listing:"ARA-290 10mg"},
     amp:null,
     labsourced:null,
     ion:{price:59.00,mg:10,listing:"ARA-290 10mg"},
@@ -572,30 +574,30 @@ const PRICES = {
     nura:null,
   },
   "AOD-9604": {
-    ascension:{price:28.00,mg:5,listing:"AOD-9604 5mg",oos:true},
+    ascension:{price:28.00,mg:5,listing:"AOD-9604 5mg"},
     atomik:{price:24.00,mg:5,listing:"AOD 9604 5mg"},
     lapeptides:{price:49.99,mg:10,listing:"AOD-9604 10mg"},
     glacier:null,
     milehigh:{price:59.99,mg:5,listing:"AOD 9604 5mg"},
     ezpeptides:{price:27.00,mg:5,listing:"AOD-9604 5mg",oos:true},
-    amp:{price:58.00,mg:5,listing:"AOD 9604 5mg",oos:true},
+    amp:{price:58.00,mg:5,listing:"AOD 9604 5mg"},
     labsourced:{price:22.00,mg:5,listing:"AOD-9604 5mg"},
-    ion:{price:49.00,mg:5,listing:"AOD 9604 5mg"},
+    ion:{price:29.00,mg:5,listing:"AOD 9604 5mg"},
     retaone:null,
     nura:{price:40.00,mg:5,listing:"AOD-9604 5mg"},
   },
   "Klow Blend": {
-    ascension:{price:55.00,mg:80,listing:"Klow Blend 80mg",oos:true},
-    atomik:{price:58.00,mg:92,listing:"Klow Blend 92mg"},
-    lapeptides:{price:129.99,mg:80,listing:"Klow Blend 80mg"},
+    ascension:{price:55.00,mg:80,listing:"Klow Blend 80mg"},
+    atomik:{price:58.00,mg:91,listing:"Klow Blend 91mg"},
+    lapeptides:{price:52.00,mg:80,listing:"Klow Blend 80mg"},
     glacier:{price:118.99,mg:80,listing:"Klow Blend 80mg"},
-    milehigh:{price:149.99,mg:80,listing:"Klow Blend 80mg"},
-    ezpeptides:{price:98.00,mg:80,listing:"Klow Blend 80mg"},
+    milehigh:{price:49.00,mg:80,listing:"Klow Blend 80mg"},
+    ezpeptides:{price:51.00,mg:80,listing:"Klow Blend 80mg"},
     amp:{price:98.00,mg:80,listing:"Klow Blend 80mg"},
     labsourced:{price:48.00,mg:80,listing:"Klow Blend 80mg"},
     ion:{price:109.00,mg:80,listing:"Klow Blend 80mg"},
     retaone:null,
-    nura:{price:47.00,mg:10,listing:"Klow Blend 10mg"},
+    nura:{price:135.00,mg:80,listing:"Klow Blend 80mg"},
   },
   "Tesamorelin/Ipamorelin Blend": {
     ascension:null,
@@ -611,6 +613,7 @@ const PRICES = {
     nura:{price:109.00,mg:13,listing:"Tesamorelin/Ipamorelin 13mg/3mg"},
   },
 };
+
 
 let currentPeptide = null;
 
@@ -712,7 +715,9 @@ function renderResults() {
   document.getElementById('resultsContainer').style.display = 'block';
   document.getElementById('disclaimerStrip').style.display = 'block';
   document.getElementById('resultTitle').textContent = currentPeptide;
-  document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  // Use SCRAPE_DATE if available, otherwise fall back to today
+  const scrapeDate = typeof SCRAPE_DATE !== "undefined" ? SCRAPE_DATE : null;
+  document.getElementById('lastUpdated').textContent = scrapeDate || new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   document.getElementById('resultList').innerHTML = html;
 }
 </script>
