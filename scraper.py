@@ -465,34 +465,43 @@ def is_out_of_stock(html):
 
     html_lower = main_html.lower()
 
-    # Step 2: If there's an Add to Cart button, it's definitely in stock
-    has_add_to_cart = any(x in html_lower for x in [
-        'add to cart', 'name="add-to-cart"', 'value="add-to-cart"',
-        '"add_to_cart"', 'addtocart', 'add-to-cart-button'
-    ])
-    if has_add_to_cart:
-        return False
-
-    # Step 3: Check definitive OOS signals in main product area only
-    oos_signals = [
+    # Step 2: Check STRONG definitive OOS signals first — these always mean OOS
+    # regardless of any add-to-cart buttons in related products
+    strong_oos = [
         '"availability":"http://schema.org/OutOfStock"',
         'availability":"OutOfStock"',
         '"stock_status":"outofstock"',
         'stock_status":"outofstock"',
-        '>out of stock<',
-        '>currently unavailable<',
-        '>sold out<',
+        '"availability": "OutOfStock"',
         'sold_out":true',
         '"sold_out": true',
-        'class="stock out-of-stock"',
-        '"availability": "OutOfStock"',
         # Ascension-specific: uses email notification form instead of standard OOS
         'email me when this item is back in stock',
         'notify me when available',
         'email me when available',
         'back in stock notification',
     ]
-    return any(s.lower() in html_lower for s in oos_signals)
+    if any(s.lower() in html_lower for s in strong_oos):
+        return True
+
+    # Step 3: If there's a main product add-to-cart button, it's in stock
+    # But only count it if it's clearly the MAIN product button (not related)
+    has_main_atc = any(x in html_lower for x in [
+        'name="add-to-cart"', 'value="add-to-cart"',
+        '"add_to_cart"', 'add-to-cart-button',
+        'single_add_to_cart_button',
+    ])
+    if has_main_atc:
+        return False
+
+    # Step 4: Weaker OOS signals - only if no main add-to-cart found
+    weak_oos = [
+        '>out of stock<',
+        '>currently unavailable<',
+        '>sold out<',
+        'class="stock out-of-stock"',
+    ]
+    return any(s.lower() in html_lower for s in weak_oos)
 
 def extract_main_product_price(html):
     # Strip <del> tags (old/strikethrough prices) so we never grab them
@@ -517,10 +526,12 @@ def extract_main_product_price(html):
         r'<[^>]*class="[^"]*bundle[^"]*"',
         r'<[^>]*class="[^"]*multipacks[^"]*"',
         r'<[^>]*class="[^"]*quantity.break[^"]*"',
-        r'buy\s+\d+.*?save',
-        # Ascension-specific: strip kit/multi-vial options table
-        r'<table[^>]*>.*?1 Kit.*?</table>',
-        r'Package.*?1 Kit',
+        # Ascension kit pricing - strip everything after first price variation table
+        r'<tr[^>]*>.*?Kit.*?</tr>',
+        r'Kit\s*\(',
+        r'Buy more',
+        r'Bundle\s*&amp;\s*Save',
+        r'bundle.*?save',
     ]:
         m = re.search(pattern, html, re.IGNORECASE | re.DOTALL)
         if m:
@@ -544,8 +555,12 @@ def extract_main_product_price(html):
                         if prices: return min(prices)
                     else:
                         # Prefer lowPrice (sale price) over price (original)
-                        p = parse_price(offers.get("lowPrice") or offers.get("price"))
-                        if p: return p
+                        # Never grab highPrice - that's the kit/bundle price
+                        for key in ["lowPrice", "price"]:
+                            val = offers.get(key)
+                            if val:
+                                p = parse_price(val)
+                                if p: return p
         except Exception:
             pass
 
@@ -717,7 +732,7 @@ def patch_prices(html, updates, out_of_stock_items):
     peptide_detect = re.compile(r'^\s*"([^"]+)":\s*\{')
     # Matches a vendor price line: vid:{price:XX.XX,mg:YY,...}
     vendor_line = re.compile(
-        r'^(\s*)(\w+):((?:\{price:)([\d.]+)(,mg:[\d.]+,listing:"[^"]*")((?:,oos:true)?)\})(,?)(\s*)$'
+        r'^(\s*)(\w+):\{price:([\d.]+)(,mg:[\d.]+,listing:"[^"]*")((?:,oos:true)?)\}(,?)\s*$'
     )
 
     new_lines = []
@@ -735,9 +750,9 @@ def patch_prices(html, updates, out_of_stock_items):
         if vm:
             indent    = vm.group(1)
             vid       = vm.group(2)
-            price_val = vm.group(4)
-            mg_list   = vm.group(5)   # e.g. ,mg:10,listing:"BPC-157 10mg"
-            trailing  = vm.group(7)   # comma after }
+            price_val = vm.group(3)
+            mg_list   = vm.group(4)   # e.g. ,mg:10,listing:"BPC-157 10mg"
+            trailing  = vm.group(6)   # comma after }
             is_oos    = (current_peptide, vid) in oos_set
 
             # Check if we have a price update for this vendor
@@ -827,13 +842,13 @@ def main():
                 # Prevents bundle/page errors from corrupting prices
                 PRICE_CAPS = {
                     "Semaglutide": 150, "Tirzepatide": 200, "Retatrutide": 250,
-                    "BPC-157": 80, "TB-500": 100, "BPC-157 + TB-500 Blend": 150,
-                    "Ipamorelin": 80, "CJC-1295 (with DAC)": 80, "Sermorelin": 100,
-                    "Tesamorelin": 120, "Melanotan II": 60, "PT-141 (Bremelanotide)": 80,
-                    "GHK-Cu": 200, "Epithalon": 80, "MOTS-c": 120, "NAD+": 120,
-                    "Semax": 80, "Selank": 80, "DSIP": 60, "KPV": 60,
-                    "ARA-290": 100, "AOD-9604": 60, "Klow Blend": 120,
-                    "Tesamorelin/Ipamorelin Blend": 150,
+                    "BPC-157": 100, "TB-500": 120, "BPC-157 + TB-500 Blend": 180,
+                    "Ipamorelin": 100, "CJC-1295 (with DAC)": 100, "Sermorelin": 120,
+                    "Tesamorelin": 150, "Melanotan II": 80, "PT-141 (Bremelanotide)": 100,
+                    "GHK-Cu": 250, "Epithalon": 200, "MOTS-c": 150, "NAD+": 150,
+                    "Semax": 100, "Selank": 100, "DSIP": 80, "KPV": 100,
+                    "ARA-290": 120, "AOD-9604": 80, "Klow Blend": 200,
+                    "Tesamorelin/Ipamorelin Blend": 200,
                 }
                 cap = PRICE_CAPS.get(peptide, 300)
                 if price > cap:
@@ -855,8 +870,16 @@ def main():
         return
 
     new_html, count = patch_prices(html, updates, oos_items)
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    github_push_file(new_html, sha, f"🤖 Daily price update: {count} changes, {len(oos_items)} OOS ({now})")
+    now = datetime.now(timezone.utc)
+    # Update SCRAPE_DATE in the HTML so the site shows the real last-updated date
+    scrape_date_str = now.strftime("%B %-d, %Y")  # e.g. "May 26, 2026"
+    new_html = re.sub(
+        r'const SCRAPE_DATE = "[^"]*";',
+        f'const SCRAPE_DATE = "{scrape_date_str}";',
+        new_html
+    )
+    now_str = now.strftime("%Y-%m-%d %H:%M UTC")
+    github_push_file(new_html, sha, f"🤖 Daily price update: {count} changes, {len(oos_items)} OOS ({now_str})")
     log.info(f"=== Done: {count} prices updated, {len(oos_items)} marked OOS ===")
 
 # ── Vendor Discovery System ─────────────────────────────────
