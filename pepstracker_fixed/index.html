@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PepsTracker — Peptide Price Comparison</title>
+  <title>PepsTracker â Peptide Price Comparison</title>
   <style>
     :root {
       --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
@@ -41,7 +41,7 @@
     .select-wrap{position:relative;flex:1;}
     .select-wrap select{width:100%;appearance:none;background:var(--card);border:1.5px solid var(--border);color:var(--text);border-radius:var(--radius);padding:14px 44px 14px 18px;font-size:1rem;cursor:pointer;transition:border-color .2s;}
     .select-wrap select:focus{outline:none;border-color:var(--blue);}
-    .select-wrap::after{content:'▾';position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+    .select-wrap::after{content:'â¾';position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
     .btn-search{background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;border:none;border-radius:var(--radius);padding:14px 28px;font-size:1rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .2s,transform .1s;}
     .btn-search:hover{opacity:.9;transform:translateY(-1px);}
     .glp-banner{max-width:1200px;margin:0 auto;padding:0 24px;display:none;}
@@ -103,12 +103,12 @@
 
 <div class="modal-overlay" id="disclaimerModal">
   <div class="modal-box">
-    <h2>⚠️ <span>Important Disclaimer</span></h2>
+    <h2>â ï¸ <span>Important Disclaimer</span></h2>
     <p><strong>PepsTracker is a price comparison tool only.</strong> We do not manufacture, sell, distribute, or endorse any peptides or research compounds listed on this site.</p>
     <p>We make <strong>no representation or guarantee</strong> regarding the quality, purity, safety, legality, or effectiveness of any products or vendors listed. Pricing is collected for informational purposes and is subject to change without notice.</p>
     <p>All products listed are intended <strong>for research purposes only</strong> and are not intended for human consumption. Use of this site does not constitute medical advice. Always consult a licensed healthcare professional before use.</p>
     <p>Affiliate links on this site may generate a commission for PepsTracker at no additional cost to you.</p>
-    <button class="modal-accept" onclick="acceptDisclaimer()">I Understand — Continue to PepsTracker</button>
+    <button class="modal-accept" onclick="acceptDisclaimer()">I Understand â Continue to PepsTracker</button>
   </div>
 </div>
 
@@ -128,9 +128,9 @@
     </a>
     <nav>
       <a href="index.html" class="active">Price Tracker</a>
-      <a href="dictionary.html" style="color:var(--blue);">📖 Dictionary</a>
-      <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
-      <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
+      <a href="dictionary.html" style="color:var(--blue);">ð Dictionary</a>
+      <a href="calculators.html" class="nav-calc">ð§® Calculators</a>
+      <a href="vendor-apply.html" class="nav-apply">ð Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
     </nav>
   </div>
@@ -139,10 +139,10 @@
 <div style="height:3px;background:linear-gradient(90deg,#B22234,#3C3B6E 50%,#4de87a);"></div>
 <section class="hero">
   <div class="badge-wrap" style="margin-bottom:20px;">
-    <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:5px 16px;font-size:12px;font-weight:500;">💊 Daily Price Updates</span>
+    <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:5px 16px;font-size:12px;font-weight:500;">ð Daily Price Updates</span>
   </div>
   <h1 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-1.5px;line-height:1.12;margin-bottom:14px;color:#e8edf5;"><span style="color:#3b9eff;">Pin</span> the Best Peptide Prices<br><em style="font-style:normal;color:#4de87a;">in Just a Click.</em></h1>
-  <p style="color:#7a8ba8;font-size:1.05rem;margin-bottom:28px;">We compare prices across 11 trusted vendors — with discount codes already applied. No math, no guesswork.</p>
+  <p style="color:#7a8ba8;font-size:1.05rem;margin-bottom:28px;">We compare prices across 11 trusted vendors â with discount codes already applied. No math, no guesswork.</p>
   <div style="display:flex;justify-content:center;gap:48px;margin-bottom:28px;">
     <div style="text-align:center;"><div style="font-size:22px;font-weight:800;color:#e8edf5;">11</div><div style="font-size:11px;color:#7a8ba8;text-transform:uppercase;letter-spacing:.6px;margin-top:3px;">Vendors</div></div>
     <div style="width:1px;background:#2a3347;"></div>
@@ -151,17 +151,17 @@
     <div style="text-align:center;"><div style="font-size:22px;font-weight:800;color:#e8edf5;">Daily</div><div style="font-size:11px;color:#7a8ba8;text-transform:uppercase;letter-spacing:.6px;margin-top:3px;">Updates</div></div>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:28px;">
-    <span onclick="document.getElementById('peptideSelect').value='Semaglutide';handleSearch();" style="background:rgba(77,232,122,0.07);border:1px solid rgba(77,232,122,0.2);color:#4de87a;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer;">🔥 Semaglutide</span>
-    <span onclick="document.getElementById('peptideSelect').value='Tirzepatide';handleSearch();" style="background:rgba(77,232,122,0.07);border:1px solid rgba(77,232,122,0.2);color:#4de87a;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer;">🔥 Tirzepatide</span>
+    <span onclick="document.getElementById('peptideSelect').value='Semaglutide';handleSearch();" style="background:rgba(77,232,122,0.07);border:1px solid rgba(77,232,122,0.2);color:#4de87a;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer;">ð¥ Semaglutide</span>
+    <span onclick="document.getElementById('peptideSelect').value='Tirzepatide';handleSearch();" style="background:rgba(77,232,122,0.07);border:1px solid rgba(77,232,122,0.2);color:#4de87a;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer;">ð¥ Tirzepatide</span>
     <span onclick="document.getElementById('peptideSelect').value='BPC-157';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">BPC-157</span>
     <span onclick="document.getElementById('peptideSelect').value='TB-500';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">TB-500</span>
     <span onclick="document.getElementById('peptideSelect').value='PT-141 (Bremelanotide)';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">PT-141</span>
-    <span onclick="document.getElementById('peptideSelect').value='Klow Blend';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">🔥 Klow Blend</span>
+    <span onclick="document.getElementById('peptideSelect').value='Klow Blend';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">ð¥ Klow Blend</span>
   </div>
   <div class="search-wrap">
     <div class="select-wrap">
       <select id="peptideSelect" onchange="handleSearch()">
-        <option value="">— Select a peptide to compare prices —</option>
+        <option value="">â Select a peptide to compare prices â</option>
         <optgroup label="GLP-1 / Weight Loss">
           <option>Semaglutide</option>
           <option>Tirzepatide</option>
@@ -212,20 +212,20 @@
 
 <div class="glp-banner" id="glpBanner">
   <div class="glp-banner-inner">
-    ⚖️ <div><strong>Why we show $/mg:</strong> GLP-1 vendors sell different vial sizes — a lower sticker price doesn't always mean a better deal. We normalize every price to cost-per-milligram so you can compare fairly.</div>
+    âï¸ <div><strong>Why we show $/mg:</strong> GLP-1 vendors sell different vial sizes â a lower sticker price doesn't always mean a better deal. We normalize every price to cost-per-milligram so you can compare fairly.</div>
   </div>
 </div>
 
 <div class="filter-row" id="filterRow">
   <span class="filter-label">Sorted by:</span>
-  <span class="pill active" style="cursor:default;">💰 Lowest Price After Discount</span>
+  <span class="pill active" style="cursor:default;">ð° Lowest Price After Discount</span>
 </div>
 
 <div class="results">
   <div class="empty" id="emptyState">
-    <div class="empty-icon">🔬</div>
+    <div class="empty-icon">ð¬</div>
     <h3>Select a peptide above to compare prices</h3>
-    <p>We track pricing across 11 vendors — updated every day.<br>Prices normalized by dose for a fair comparison.</p>
+    <p>We track pricing across 11 vendors â updated every day.<br>Prices normalized by dose for a fair comparison.</p>
   </div>
   <div id="resultsContainer" style="display:none;">
     <div class="results-header">
@@ -238,7 +238,7 @@
 
 <div class="disclaimer-strip" id="disclaimerStrip" style="display:none;">
   <div class="disclaimer-inner">
-    <strong>⚠️ Price Comparison Only — Not a Quality Guarantee.</strong> PepsTracker compares publicly listed prices for informational purposes only. We do not verify, endorse, or guarantee the quality, purity, safety, or legality of any products or vendors listed. All products are for research purposes only. <a href="disclaimer.html">Read our full disclaimer →</a>
+    <strong>â ï¸ Price Comparison Only â Not a Quality Guarantee.</strong> PepsTracker compares publicly listed prices for informational purposes only. We do not verify, endorse, or guarantee the quality, purity, safety, or legality of any products or vendors listed. All products are for research purposes only. <a href="disclaimer.html">Read our full disclaimer â</a>
   </div>
 </div>
 
@@ -250,7 +250,7 @@
     <a href="vendor-apply.html">Vendor Application</a> &nbsp;|&nbsp;
     <a href="disclaimer.html">Full Disclaimer</a>
   </p>
-  <p style="margin-top:8px;">© 2026 PepsTracker — For research purposes only.</p>
+  <p style="margin-top:8px;">Â© 2026 PepsTracker â For research purposes only.</p>
 </footer>
 
 <script>
@@ -297,7 +297,7 @@ function getShopUrl(vid, peptide) {
 
 const GLP1 = new Set(["Semaglutide","Tirzepatide","Retatrutide","Liraglutide"]);
 
-// PRICES BLOCK — updated by scraper daily
+// PRICES BLOCK â updated by scraper daily
 const SCRAPE_DATE = "May 26, 2026"; // updated by scraper
 const PRICES = {
   "Semaglutide": {
@@ -341,7 +341,7 @@ const PRICES = {
   },
   "BPC-157": {
     ascension:{price:29.99,mg:5,listing:"BPC-157 5mg",oos:true},
-    atomik:{price:40.00,mg:5,listing:"BPC-157 5mg"},
+    atomik:{price:65.00,mg:10,listing:"BPC-157"},
     lapeptides:{price:59.99,mg:10,listing:"BPC-157 10mg"},
     glacier:{price:45.99,mg:10,listing:"BPC-157 10mg"},
     milehigh:{price:49.99,mg:10,listing:"BPC-157 10mg"},
@@ -354,7 +354,7 @@ const PRICES = {
   },
   "TB-500": {
     ascension:{price:42.00,mg:5,listing:"TB-500 5mg",oos:true},
-    atomik:{price:38.50,mg:10,listing:"TB-500 10mg"},
+    atomik:{price:65.00,mg:10,listing:"TB-500"},
     lapeptides:{price:79.99,mg:10,listing:"TB-500 10mg"},
     glacier:{price:58.99,mg:10,listing:"TB500 10mg"},
     milehigh:{price:59.99,mg:10,listing:"TB-500 10mg"},
@@ -367,7 +367,7 @@ const PRICES = {
   },
   "BPC-157 + TB-500 Blend": {
     ascension:{price:55.00,mg:20,listing:"BPC+TB Blend 20mg",oos:true},
-    atomik:{price:52.00,mg:10,listing:"BPC/TB Blend 10mg"},
+    atomik:{price:90.00,mg:10,listing:"BPC-157/TB-500"},
     lapeptides:{price:69.99,mg:10,listing:"BPC-157 + TB-500 10mg"},
     glacier:{price:62.99,mg:10,listing:"BPC+TB Blend 10mg"},
     milehigh:{price:119.99,mg:20,listing:"BPC/TB Blend 20mg"},
@@ -380,7 +380,7 @@ const PRICES = {
   },
   "Ipamorelin": {
     ascension:{price:28.00,mg:5,listing:"Ipamorelin 5mg",oos:true},
-    atomik:{price:24.00,mg:10,listing:"Ipamorelin 10mg"},
+    atomik:{price:56.00,mg:10,listing:"Ipamorelin"},
     lapeptides:{price:49.99,mg:10,listing:"Ipamorelin 10mg"},
     glacier:{price:51.99,mg:10,listing:"Ipamorelin 10mg"},
     milehigh:{price:59.99,mg:10,listing:"Ipamorelin 10mg"},
@@ -393,7 +393,7 @@ const PRICES = {
   },
   "CJC-1295 (with DAC)": {
     ascension:{price:32.00,mg:2,listing:"CJC-1295 w/DAC 2mg"},
-    atomik:{price:28.50,mg:5,listing:"CJC-1295 DAC 5mg"},
+    atomik:{price:45.00,mg:5,listing:"CJC-1295 WITH DAC"},
     lapeptides:{price:30.00,mg:2,listing:"CJC-1295 (w/ DAC) 2mg"},
     glacier:{price:51.99,mg:5,listing:"CJC-1295 w/DAC 5mg"},
     milehigh:{price:59.99,mg:5,listing:"CJC-1295 DAC 5mg",oos:true},
@@ -406,7 +406,7 @@ const PRICES = {
   },
   "Sermorelin": {
     ascension:{price:34.00,mg:10,listing:"Sermorelin 10mg",oos:true},
-    atomik:{price:30.00,mg:10,listing:"Sermorelin 10mg"},
+    atomik:{price:64.00,mg:10,listing:"Sermorelin"},
     lapeptides:{price:69.99,mg:10,listing:"Sermorelin 10mg"},
     glacier:{price:62.99,mg:10,listing:"Sermorelin 10mg"},
     milehigh:{price:69.99,mg:10,listing:"Sermorelin 10mg"},
@@ -419,7 +419,7 @@ const PRICES = {
   },
   "Tesamorelin": {
     ascension:{price:50.00,mg:5,listing:"Tesamorelin 5mg",oos:true},
-    atomik:{price:45.00,mg:5,listing:"Tesamorelin 5mg"},
+    atomik:{price:55.00,mg:10,listing:"Tesamorelin"},
     lapeptides:{price:74.99,mg:10,listing:"Tesamorelin 10mg"},
     glacier:null,
     milehigh:{price:79.99,mg:10,listing:"Tesamorelin 10mg"},
@@ -432,7 +432,7 @@ const PRICES = {
   },
   "Melanotan II": {
     ascension:{price:40.00,mg:10,listing:"Melanotan II 10mg",oos:true},
-    atomik:{price:24.50,mg:10,listing:"Melanotan 2 10mg"},
+    atomik:{price:29.00,mg:10,listing:"MT2"},
     lapeptides:{price:44.99,mg:10,listing:"Melanotan II 10mg"},
     glacier:{price:33.99,mg:10,listing:"Melanotan II 10mg"},
     milehigh:{price:39.99,mg:10,listing:"MT-2 10mg"},
@@ -445,7 +445,7 @@ const PRICES = {
   },
   "PT-141 (Bremelanotide)": {
     ascension:{price:48.00,mg:10,listing:"PT-141 10mg",oos:true},
-    atomik:{price:30.00,mg:10,listing:"PT-141 10mg"},
+    atomik:{price:37.00,mg:10,listing:"PT-141"},
     lapeptides:{price:69.99,mg:10,listing:"PT-141 10mg"},
     glacier:{price:40.99,mg:10,listing:"PT-141 10mg"},
     milehigh:{price:39.99,mg:10,listing:"PT-141 10mg"},
@@ -458,7 +458,7 @@ const PRICES = {
   },
   "GHK-Cu": {
     ascension:{price:160.00,mg:100,listing:"GHK-Cu 100mg",oos:true},
-    atomik:{price:22.00,mg:100,listing:"GHK-Cu 100mg"},
+    atomik:{price:55.00,mg:100,listing:"GHK-Cu"},
     lapeptides:{price:39.99,mg:100,listing:"GHK-Cu 100mg"},
     glacier:{price:41.99,mg:50,listing:"GHK-Cu 50mg"},
     milehigh:{price:49.99,mg:50,listing:"GHK-Cu 50mg"},
@@ -471,7 +471,7 @@ const PRICES = {
   },
   "Epithalon": {
     ascension:{price:50.00,mg:10,listing:"Epithalon 10mg",oos:true},
-    atomik:{price:28.00,mg:10,listing:"Epithalamin 10mg"},
+    atomik:{price:35.00,mg:10,listing:"Epithalon"},
     lapeptides:{price:79.99,mg:50,listing:"Epithalon 50mg"},
     glacier:{price:45.99,mg:10,listing:"Epithalon 10mg"},
     milehigh:{price:119.99,mg:50,listing:"Epithalon 50mg"},
@@ -484,7 +484,7 @@ const PRICES = {
   },
   "MOTS-c": {
     ascension:{price:62.00,mg:10,listing:"MOTS-c 10mg",oos:true},
-    atomik:{price:55.00,mg:10,listing:"MOTS-c 10mg"},
+    atomik:{price:39.00,mg:10,listing:"MOTS-C"},
     lapeptides:{price:69.99,mg:10,listing:"MOTS-c 10mg"},
     glacier:{price:45.99,mg:10,listing:"MOTS-c 10mg"},
     milehigh:{price:49.99,mg:10,listing:"MOTS-c 10mg"},
@@ -497,7 +497,7 @@ const PRICES = {
   },
   "NAD+": {
     ascension:{price:58.00,mg:500,listing:"NAD+ 500mg",oos:true},
-    atomik:{price:44.00,mg:700,listing:"NAD+ 700mg"},
+    atomik:{price:110.00,mg:1000,listing:"NAD+"},
     lapeptides:{price:74.99,mg:500,listing:"NAD+ 500mg"},
     glacier:{price:45.00,mg:500,listing:"NAD+ 500mg"},
     milehigh:{price:59.99,mg:500,listing:"NAD+ 500mg"},
@@ -523,7 +523,7 @@ const PRICES = {
   },
   "Selank": {
     ascension:{price:48.00,mg:10,listing:"Selank 10mg",oos:true},
-    atomik:{price:42.00,mg:12,listing:"Selank 12mg"},
+    atomik:{price:35.00,mg:10,listing:"Selank"},
     lapeptides:{price:39.99,mg:10,listing:"Selank 10mg"},
     glacier:{price:40.99,mg:10,listing:"Selank 10mg"},
     milehigh:{price:39.99,mg:10,listing:"Selank 10mg"},
@@ -536,7 +536,7 @@ const PRICES = {
   },
   "DSIP": {
     ascension:{price:42.00,mg:10,listing:"DSIP 10mg",oos:true},
-    atomik:{price:38.00,mg:5,listing:"DSIP 5mg"},
+    atomik:{price:35.00,mg:5,listing:"DSIP"},
     lapeptides:{price:29.99,mg:5,listing:"DSIP 5mg"},
     glacier:{price:33.99,mg:5,listing:"DSIP 5mg"},
     milehigh:{price:49.99,mg:10,listing:"DSIP 10mg"},
@@ -549,7 +549,7 @@ const PRICES = {
   },
   "KPV": {
     ascension:{price:38.00,mg:10,listing:"KPV 10mg",oos:true},
-    atomik:{price:34.00,mg:10,listing:"KPV 10mg"},
+    atomik:{price:55.00,mg:10,listing:"KPV"},
     lapeptides:{price:59.99,mg:10,listing:"KPV 10mg"},
     glacier:{price:51.99,mg:10,listing:"KPV 10mg"},
     milehigh:{price:49.99,mg:10,listing:"KPV 10mg"},
@@ -562,7 +562,7 @@ const PRICES = {
   },
   "ARA-290": {
     ascension:{price:55.00,mg:10,listing:"ARA-290 10mg",oos:true},
-    atomik:{price:52.00,mg:16,listing:"ARA-290 16mg"},
+    atomik:{price:79.00,mg:16,listing:"ARA-290"},
     lapeptides:{price:69.99,mg:16,listing:"ARA-290 16mg"},
     glacier:{price:54.99,mg:10,listing:"ARA-290 10mg"},
     milehigh:{price:49.99,mg:10,listing:"ARA-290 10mg"},
@@ -575,7 +575,7 @@ const PRICES = {
   },
   "AOD-9604": {
     ascension:{price:28.00,mg:5,listing:"AOD-9604 5mg"},
-    atomik:{price:24.00,mg:5,listing:"AOD 9604 5mg"},
+    atomik:{price:39.00,mg:5,listing:"AOD-9604"},
     lapeptides:{price:49.99,mg:10,listing:"AOD-9604 10mg"},
     glacier:null,
     milehigh:{price:59.99,mg:5,listing:"AOD 9604 5mg"},
@@ -588,7 +588,7 @@ const PRICES = {
   },
   "Klow Blend": {
     ascension:{price:55.00,mg:80,listing:"Klow Blend 80mg"},
-    atomik:{price:58.00,mg:91,listing:"Klow Blend 91mg"},
+    atomik:{price:139.00,mg:91,listing:"KLOW-CU"},
     lapeptides:{price:52.00,mg:80,listing:"Klow Blend 80mg"},
     glacier:{price:118.99,mg:80,listing:"Klow Blend 80mg"},
     milehigh:{price:49.00,mg:80,listing:"Klow Blend 80mg"},
@@ -601,7 +601,7 @@ const PRICES = {
   },
   "Tesamorelin/Ipamorelin Blend": {
     ascension:null,
-    atomik:{price:65.00,mg:12,listing:"Tesamorelin/Ipamorelin 12mg/3mg"},
+    atomik:{price:85.00,mg:15,listing:"Tesamorelin/Ipamorelin"},
     lapeptides:null,
     glacier:{price:101.99,mg:10,listing:"Tesa/Ipa Blend 10mg/3mg"},
     milehigh:{price:109.99,mg:10,listing:"Tesa/Ipa Blend 10mg/3mg"},
@@ -626,7 +626,7 @@ function handleSearch() {
 
 function copyCode(code, btn) {
   navigator.clipboard.writeText(code).then(() => {
-    btn.textContent = '✓ Copied!';
+    btn.textContent = 'â Copied!';
     btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
   });
@@ -635,7 +635,7 @@ function copyCode(code, btn) {
 function renderResults() {
   const priceMap = PRICES[currentPeptide];
   if (!priceMap) {
-    document.getElementById('emptyState').innerHTML = `<div class="empty-icon">🔬</div><h3>Pricing data coming soon for ${currentPeptide}</h3><p>Our scraper will pick this up on the next daily run.</p>`;
+    document.getElementById('emptyState').innerHTML = `<div class="empty-icon">ð¬</div><h3>Pricing data coming soon for ${currentPeptide}</h3><p>Our scraper will pick this up on the next daily run.</p>`;
     document.getElementById('emptyState').style.display = 'block';
     document.getElementById('resultsContainer').style.display = 'none';
     return;
@@ -666,10 +666,10 @@ function renderResults() {
     if (r.oos) {
       return `
       <div class="result-card" style="opacity:0.55;border-color:var(--red);">
-        <div class="rank" style="color:var(--red);">—</div>
+        <div class="rank" style="color:var(--red);">â</div>
         <div>
           <div class="vendor-name">${r.vendor.name}</div>
-          <div class="vendor-listing" style="color:var(--red);font-weight:700;">⚠ Out of Stock</div>
+          <div class="vendor-listing" style="color:var(--red);font-weight:700;">â  Out of Stock</div>
         </div>
         <div class="price-block">
           <div style="font-size:1rem;font-weight:700;color:var(--red);">Out of Stock</div>
@@ -679,21 +679,21 @@ function renderResults() {
           <div class="code-row"><div class="code-badge">${r.vendor.code}</div></div>
           <div class="code-label">Discount code</div>
         </div>
-        <a class="btn-shop secondary" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Check Site →</a>
+        <a class="btn-shop secondary" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Check Site â</a>
       </div>`;
     }
 
     const rank = inStock.indexOf(r);
     return `
     <div class="result-card ${isBest?'best':''}">
-      <div class="rank ${rank===0?'first':''}">${rank===0?'🥇':'#'+(rank+1)}</div>
+      <div class="rank ${rank===0?'first':''}">${rank===0?'ð¥':'#'+(rank+1)}</div>
       <div>
         <div class="vendor-name">${r.vendor.name}${isBest?'<span class="best-badge">Best Value</span>':''}</div>
         <div class="vendor-listing">Listed as: <em>${r.listing}</em></div>
       </div>
       <div class="price-block">
         <div class="price-original ${isBest?'best-price':''}">$${afterDisc.toFixed(2)}</div>
-        <div class="price-reg">Reg. <span class="price-original-strike">$${r.price.toFixed(2)}</span> · ${discPct}% off with code</div>
+        <div class="price-reg">Reg. <span class="price-original-strike">$${r.price.toFixed(2)}</span> Â· ${discPct}% off with code</div>
         <div class="price-strength">${unitLabel}</div>
         <div class="price-per-mg">$${(afterDisc/r.mg).toFixed(2)}/mg after discount</div>
       </div>
@@ -705,7 +705,7 @@ function renderResults() {
         <div class="code-label">Discount code</div>
         <div class="discount-pct">${discPct}% off at checkout</div>
       </div>
-      <a class="btn-shop ${isBest?'':'secondary'}" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Shop Now →</a>
+      <a class="btn-shop ${isBest?'':'secondary'}" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Shop Now â</a>
     </div>`;
   }).join('');
 
