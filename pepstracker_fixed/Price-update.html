@@ -195,8 +195,42 @@
       </div>
       <div class="field">
         <label>mg size</label>
-        <input type="number" id="mgSize" placeholder="10" min="1" />
-        <p class="hint">Leave blank to keep current</p>
+        <select id="mgSize">
+          <option value="">— Keep current —</option>
+          <optgroup label="mg — Standard">
+            <option value="2">2mg</option>
+            <option value="5">5mg</option>
+            <option value="10">10mg</option>
+            <option value="12">12mg</option>
+            <option value="15">15mg</option>
+            <option value="16">16mg</option>
+            <option value="20">20mg</option>
+          </optgroup>
+          <optgroup label="mg — Large">
+            <option value="50">50mg</option>
+            <option value="80">80mg</option>
+            <option value="91">91mg</option>
+            <option value="100">100mg</option>
+            <option value="500">500mg</option>
+            <option value="700">700mg</option>
+            <option value="1000">1000mg</option>
+          </optgroup>
+          <optgroup label="mg — Blends">
+            <option value="13">13mg (Tesa/Ipa)</option>
+            <option value="30">30mg (Tirz)</option>
+          </optgroup>
+          <optgroup label="mL">
+            <option value="1">1mL</option>
+            <option value="2">2mL</option>
+            <option value="5">5mL</option>
+            <option value="10">10mL</option>
+            <option value="15">15mL</option>
+            <option value="20">20mL</option>
+            <option value="30">30mL</option>
+            <option value="50">50mL</option>
+          </optgroup>
+        </select>
+        <p class="hint">Leave blank to keep current mg size</p>
       </div>
       <div class="field">
         <label>Listing name</label>
