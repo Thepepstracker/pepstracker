@@ -304,7 +304,8 @@ const VENDORS = {
   retaone:"Reta One Labs", nura:"NuraPeptide"
 };
 
-let queue = [];
+// Load saved queue from localStorage
+let queue = JSON.parse(localStorage.getItem('pt_queue') || '[]');
 let config = {
   token: localStorage.getItem('gh_token') || '',
   repo: localStorage.getItem('gh_repo') || 'Thepepstracker/pepstracker',
@@ -372,6 +373,8 @@ function removeFromQueue(idx) {
 }
 
 function renderQueue() {
+  // Persist queue to localStorage so it survives page refresh
+  localStorage.setItem('pt_queue', JSON.stringify(queue));
   const list = document.getElementById('queueList');
   const count = document.getElementById('queueCount');
   const btn = document.getElementById('commitBtn');
@@ -467,12 +470,17 @@ async function commitAll() {
         `([ \\t]*${escVendor}:\\{price:[\\d.]+,mg:[\\d.]+,listing:"[^"]*"(?:,oos:true)?\\},?)`
       ));
 
-      if (!vendorMatch) {
+      // Also check for null entry e.g. labsourced:null,
+      const nullMatch = !vendorMatch ? peptideSection.match(new RegExp(
+        String.raw`([ \t]*${escVendor}:null,?)`
+      )) : null;
+
+      if (!vendorMatch && !nullMatch) {
         errors.push(`${vendor}/${peptide} line not found in PRICES block`);
         continue;
       }
 
-      const oldLine = vendorMatch[0];
+      const oldLine = (vendorMatch || nullMatch)[0];
 
       // Extract current mg and listing if not provided
       const currentMgMatch = oldLine.match(/mg:([\d.]+)/);
@@ -525,10 +533,11 @@ async function commitAll() {
       throw new Error(`Push failed: ${errData.message}`);
     }
 
-    // Success!
+    // Success! Clear queue
     const failedMsg = errors.length > 0 ? ` (${errors.length} failed: ${errors.join(', ')})` : '';
     showStatus(`✓ Successfully committed ${applied} price updates to GitHub!${failedMsg} Site will update in ~1 minute.`, 'success');
     queue = [];
+    localStorage.removeItem('pt_queue');
     renderQueue();
 
   } catch (err) {
