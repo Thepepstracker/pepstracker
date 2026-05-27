@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peptide Dictionary — PepsTracker</title>
+  <meta name="description" content="Complete guide to 24 research peptides — what they are, how they work, typical protocols, half-life, and storage." />
+  <style>
+    :root {
+      --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
+      --border:#2a3347; --blue:#3b9eff; --green:#4de87a;
+      --text:#e8edf5; --muted:#7a8ba8; --gold:#f5c842;
+      --red:#ff5c5c; --radius:12px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:100;}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px;}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+    .logo-icon{width:42px;height:42px;}
+    .logo-text{font-size:1.5rem;font-weight:800;letter-spacing:-.5px;}
+    .logo-text span:first-child{color:var(--blue);}
+    .logo-text span:last-child{color:var(--green);}
+    nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+    nav a{color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:600;padding:6px 12px;border-radius:8px;transition:all .2s;white-space:nowrap;}
+    nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    nav a.active{color:var(--blue);}
+    nav a.nav-calc{background:rgba(77,232,122,.1);color:var(--green);border:1px solid rgba(77,232,122,.25);}
+    nav a.nav-apply{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);}
+
+    .hero{text-align:center;padding:56px 24px 40px;background:radial-gradient(ellipse at 50% 0%,rgba(59,158,255,.08) 0%,transparent 65%);}
+    .hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-1px;margin-bottom:12px;}
+    .hero h1 span{color:var(--blue);}
+    .hero p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto 0;}
+
+    .controls{max-width:1200px;margin:0 auto;padding:28px 24px 24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+    .search-box{flex:1;min-width:200px;position:relative;}
+    .search-box input{width:100%;background:var(--card);border:1.5px solid var(--border);color:var(--text);border-radius:var(--radius);padding:12px 16px 12px 44px;font-size:.95rem;transition:border-color .2s;}
+    .search-box input:focus{outline:none;border-color:var(--blue);}
+    .search-box input::placeholder{color:var(--muted);}
+    .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);}
+    .filter-pills{display:flex;gap:8px;flex-wrap:wrap;}
+    .fpill{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.82rem;cursor:pointer;transition:all .2s;font-weight:600;}
+    .fpill:hover{border-color:var(--blue);color:var(--blue);}
+    .fpill.active{border-color:var(--blue);color:var(--blue);background:rgba(59,158,255,.08);}
+
+    .grid{max-width:1200px;margin:0 auto;padding:0 24px 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+    .card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;cursor:pointer;transition:border-color .2s,transform .15s;text-decoration:none;display:block;color:inherit;}
+    .card:hover{border-color:var(--blue);transform:translateY(-2px);}
+    .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;}
+    .card-name{font-size:1.05rem;font-weight:800;}
+    .cat-badge{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;}
+    .cat-glp1{background:rgba(77,232,122,.12);color:var(--green);border:1px solid rgba(77,232,122,.3);}
+    .cat-healing{background:rgba(59,158,255,.12);color:var(--blue);border:1px solid rgba(59,158,255,.3);}
+    .cat-gh{background:rgba(245,200,66,.12);color:var(--gold);border:1px solid rgba(245,200,66,.3);}
+    .cat-skin{background:rgba(255,92,178,.12);color:#ff5cb2;border:1px solid rgba(255,92,178,.3);}
+    .cat-longevity{background:rgba(168,92,255,.12);color:#a85cff;border:1px solid rgba(168,92,255,.3);}
+    .cat-cognitive{background:rgba(92,255,214,.12);color:#5cffd6;border:1px solid rgba(92,255,214,.3);}
+    .cat-immune{background:rgba(255,165,92,.12);color:#ffa55c;border:1px solid rgba(255,165,92,.3);}
+    .cat-fatloss{background:rgba(255,92,92,.12);color:#ff5c5c;border:1px solid rgba(255,92,92,.3);}
+    .cat-blend{background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.1);}
+    .card-tagline{font-size:.85rem;color:var(--muted);line-height:1.55;margin-bottom:14px;}
+    .card-stats{display:flex;gap:8px;margin-bottom:14px;}
+    .stat{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:.73rem;}
+    .stat span{color:var(--muted);display:block;margin-bottom:1px;}
+    .stat strong{color:var(--text);font-weight:700;}
+    .card-cta{display:flex;align-items:center;justify-content:space-between;font-size:.82rem;}
+    .card-cta-left{color:var(--blue);font-weight:600;}
+    .card-arrow{color:var(--muted);font-size:1rem;transition:transform .2s;}
+    .card:hover .card-arrow{transform:translateX(4px);color:var(--blue);}
+
+    .no-results{text-align:center;padding:60px 24px;color:var(--muted);display:none;}
+    .no-results h3{color:var(--text);margin-bottom:8px;}
+
+    footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:.82rem;}
+    footer a{color:var(--blue);text-decoration:none;}
+    @media(max-width:600px){.grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <svg class="logo-icon" viewBox="0 0 42 42" fill="none">
+        <circle cx="7" cy="30" r="4" fill="#3b9eff"/><circle cx="19" cy="22" r="4" fill="#3bb8ff"/><circle cx="31" cy="14" r="4" fill="#4de87a"/>
+        <line x1="7" y1="30" x2="19" y2="22" stroke="#3b9eff" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="19" y1="22" x2="31" y2="14" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
+        <polyline points="28,8 35,8 35,15" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <defs><linearGradient id="g1" x1="19" y1="22" x2="31" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3b9eff"/><stop offset="100%" stop-color="#4de87a"/></linearGradient></defs>
+      </svg>
+      <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
+    </a>
+    <nav>
+      <a href="index.html">Price Tracker</a>
+      <a href="dictionary.html" class="active">📖 Dictionary</a>
+      <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
+      <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
+      <a href="disclaimer.html">Disclaimer</a>
+    </nav>
+  </div>
+</header>
+
+<div style="height:3px;background:linear-gradient(90deg,#3b9eff,#4de87a 50%,#f5c842);"></div>
+
+<section class="hero">
+  <h1>Peptide <span>Dictionary</span></h1>
+  <p>Plain-English guides to all 24 peptides we track — what they are, how they work, and what the research says.</p>
+</section>
+
+<div class="controls">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search peptides..." oninput="filterCards()">
+  </div>
+  <div class="filter-pills">
+    <button class="fpill active" onclick="filterCat('all',this)">All</button>
+    <button class="fpill" onclick="filterCat('glp1',this)">GLP-1</button>
+    <button class="fpill" onclick="filterCat('healing',this)">Healing</button>
+    <button class="fpill" onclick="filterCat('gh',this)">Growth Hormone</button>
+    <button class="fpill" onclick="filterCat('skin',this)">Skin &amp; Tanning</button>
+    <button class="fpill" onclick="filterCat('longevity',this)">Longevity</button>
+    <button class="fpill" onclick="filterCat('cognitive',this)">Cognitive</button>
+    <button class="fpill" onclick="filterCat('immune',this)">Immune</button>
+    <button class="fpill" onclick="filterCat('fatloss',this)">Fat Loss</button>
+    <button class="fpill" onclick="filterCat('blend',this)">Blends</button>
+  </div>
+</div>
+
+<div class="grid" id="grid"></div>
+<div class="no-results" id="noResults"><h3>No peptides found</h3><p>Try a different search or category.</p></div>
+
+<footer>
+  <p>PepsTracker is a price comparison service only. All content is for informational and research purposes only.</p>
+  <p style="margin-top:8px;"><a href="index.html">Price Tracker</a> &nbsp;|&nbsp; <a href="dictionary.html">Dictionary</a> &nbsp;|&nbsp; <a href="calculators.html">Calculators</a> &nbsp;|&nbsp; <a href="disclaimer.html">Disclaimer</a></p>
+  <p style="margin-top:8px;">© 2026 PepsTracker — For research purposes only.</p>
+</footer>
+
+<script>
+const PEPTIDES = [
+  {slug:"semaglutide",name:"Semaglutide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"A GLP-1 receptor agonist studied for appetite regulation and glucose metabolism.",halfLife:"~7 days",dose:"0.25–2.4mg/wk"},
+  {slug:"tirzepatide",name:"Tirzepatide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"Dual GIP/GLP-1 agonist with superior weight reduction outcomes vs semaglutide alone.",halfLife:"~5 days",dose:"2.5–15mg/wk"},
+  {slug:"retatrutide",name:"Retatrutide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"Triple agonist targeting GLP-1, GIP, and glucagon — the most potent metabolic peptide class.",halfLife:"~6 days",dose:"1–12mg/wk"},
+  {slug:"bpc157",name:"BPC-157",cat:"healing",catLabel:"Healing",catClass:"cat-healing",tagline:"Body Protection Compound — a stable gastric peptide with broad tissue repair activity.",halfLife:"~4 hrs",dose:"200–500mcg/day"},
+  {slug:"tb500",name:"TB-500",cat:"healing",catLabel:"Healing",catClass:"cat-healing",tagline:"Synthetic Thymosin Beta-4 fragment — promotes cell migration and systemic tissue regeneration.",halfLife:"~3 hrs",dose:"2–5mg 2x/wk"},
+  {slug:"bpctb500blend",name:"BPC-157 + TB-500 Blend",cat:"healing",catLabel:"Healing",catClass:"cat-healing",tagline:"The Wolverine Stack — combining both peptides for comprehensive tissue repair research.",halfLife:"Varies",dose:"250mcg+2mg 2x/wk"},
+  {slug:"ipamorelin",name:"Ipamorelin",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Selective GH secretagogue — stimulates pulsatile GH release with minimal side effects.",halfLife:"~2 hrs",dose:"200–300mcg 1–3x/day"},
+  {slug:"cjc1295",name:"CJC-1295 (with DAC)",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Long-acting GHRH analogue that sustains elevated GH levels for days per injection.",halfLife:"6–8 days",dose:"1–2mg/wk"},
+  {slug:"sermorelin",name:"Sermorelin",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"First 29 amino acids of natural GHRH — stimulates the pituitary to produce its own GH.",halfLife:"~15 min",dose:"200–500mcg/day"},
+  {slug:"tesamorelin",name:"Tesamorelin",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Stabilized GHRH analogue — FDA-approved for visceral fat reduction in HIV lipodystrophy.",halfLife:"~26 min",dose:"1–2mg/day"},
+  {slug:"melanotan2",name:"Melanotan II",cat:"skin",catLabel:"Skin & Tanning",catClass:"cat-skin",tagline:"Cyclic alpha-MSH analogue that stimulates UV-independent tanning via melanocyte activation.",halfLife:"~33 min",dose:"0.5–1mg/day"},
+  {slug:"pt141",name:"PT-141 (Bremelanotide)",cat:"skin",catLabel:"Skin & Tanning",catClass:"cat-skin",tagline:"Melanocortin agonist derived from Melanotan II, researched for sexual dysfunction.",halfLife:"~2.7 hrs",dose:"0.75–2mg as needed"},
+  {slug:"ghkcu",name:"GHK-Cu",cat:"skin",catLabel:"Skin & Tanning",catClass:"cat-skin",tagline:"Copper peptide naturally found in human plasma — one of the most researched skin and wound healing peptides.",halfLife:"~30 min",dose:"1–2mg/dose"},
+  {slug:"epithalon",name:"Epithalon",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Synthetic tetrapeptide from the pineal gland that activates telomerase and may extend cellular lifespan.",halfLife:"~1 hr",dose:"5–10mg/day x10–20 days"},
+  {slug:"motsc",name:"MOTS-c",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Mitochondrial-derived peptide that regulates metabolic homeostasis and improves insulin sensitivity.",halfLife:"~5 hrs",dose:"5–10mg 2–3x/wk"},
+  {slug:"nad",name:"NAD+",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Essential coenzyme critical for energy metabolism, DNA repair, and sirtuin activation.",halfLife:"~1–2 hrs",dose:"100–500mg/session"},
+  {slug:"adamax",name:"Adamax",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Next-gen Semax analogue with adamantane modification — superior BBB penetration and stronger BDNF activation.",halfLife:"~30–60 min",dose:"200–600mcg/day"},
+  {slug:"semax",name:"Semax",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Synthetic ACTH analogue developed in Russia — nootropic with BDNF-stimulating and neuroprotective properties.",halfLife:"~20 min",dose:"200–600mcg/day"},
+  {slug:"selank",name:"Selank",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Synthetic anxiolytic peptide derived from tuftsin — modulates the immune system and reduces anxiety.",halfLife:"~2 min",dose:"250–500mcg 2x/day"},
+  {slug:"dsip",name:"DSIP",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Delta Sleep Inducing Peptide — a naturally occurring nonapeptide that regulates sleep architecture.",halfLife:"~30 min",dose:"100–500mcg before sleep"},
+  {slug:"kpv",name:"KPV",cat:"immune",catLabel:"Immune",catClass:"cat-immune",tagline:"C-terminal tripeptide of alpha-MSH with potent anti-inflammatory properties, especially for gut health.",halfLife:"~2 hrs",dose:"0.5–1mg/day"},
+  {slug:"ara290",name:"ARA-290",cat:"immune",catLabel:"Immune",catClass:"cat-immune",tagline:"Non-erythropoietic EPO analogue that activates innate repair receptors and reduces neuropathic pain.",halfLife:"~3 hrs",dose:"4–8mg 3x/wk"},
+  {slug:"aod9604",name:"AOD-9604",cat:"fatloss",catLabel:"Fat Loss",catClass:"cat-fatloss",tagline:"C-terminal HGH fragment that mimics GH's fat-burning effects without growth-promoting activity.",halfLife:"~30 min",dose:"250–500mcg/day"},
+  {slug:"klowblend",name:"Klow Blend",cat:"blend",catLabel:"Blend",catClass:"cat-blend",tagline:"Multi-peptide blend of GHK-Cu, BPC-157, TB-500, and KPV for comprehensive skin and healing research.",halfLife:"Varies",dose:"Varies by blend"},
+  {slug:"tesaipamorelin",name:"Tesamorelin/Ipamorelin Blend",cat:"blend",catLabel:"Blend",catClass:"cat-blend",tagline:"GHRH + GHRP combination that amplifies natural GH pulses through complementary receptor activation.",halfLife:"Varies",dose:"1mg Tesa + 300mcg Ipa/day"},
+];
+
+let activeCat = 'all';
+
+function render(list) {
+  const grid = document.getElementById('grid');
+  const noRes = document.getElementById('noResults');
+  if (!list.length) { grid.innerHTML=''; noRes.style.display='block'; return; }
+  noRes.style.display='none';
+  grid.innerHTML = list.map(p => `
+    <a class="card" href="peptides/${p.slug}.html">
+      <div class="card-top">
+        <div class="card-name">${p.name}</div>
+        <span class="cat-badge ${p.catClass}">${p.catLabel}</span>
+      </div>
+      <div class="card-tagline">${p.tagline}</div>
+      <div class="card-stats">
+        <div class="stat"><span>Half-life</span><strong>${p.halfLife}</strong></div>
+        <div class="stat"><span>Research dose</span><strong>${p.dose}</strong></div>
+      </div>
+      <div class="card-cta">
+        <span class="card-cta-left">Read more</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+  `).join('');
+}
+
+function filterCat(cat, btn) {
+  activeCat = cat;
+  document.querySelectorAll('.fpill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  filterCards();
+}
+
+function filterCards() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  render(PEPTIDES.filter(p =>
+    (activeCat === 'all' || p.cat === activeCat) &&
+    (!q || p.name.toLowerCase().includes(q) || p.tagline.toLowerCase().includes(q))
+  ));
+}
+
+render(PEPTIDES);
+</script>
+</body>
+</html>
