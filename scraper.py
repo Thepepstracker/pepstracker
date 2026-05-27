@@ -18,6 +18,8 @@ GLACIER_EMAIL    = os.environ.get("GLACIER_EMAIL", "")
 GLACIER_PASSWORD = os.environ.get("GLACIER_PASSWORD", "")
 MILEHIGH_EMAIL    = os.environ.get("MILEHIGH_EMAIL", "")
 MILEHIGH_PASSWORD = os.environ.get("MILEHIGH_PASSWORD", "")
+ATOMIK_EMAIL     = os.environ.get("ATOMIK_EMAIL", "")
+ATOMIK_PASSWORD  = os.environ.get("ATOMIK_PASSWORD", "")
 GITHUB_REPO    = "Thepepstracker/pepstracker"
 GITHUB_FILE    = "pepstracker_fixed/index.html"
 GITHUB_API     = "https://api.github.com"
@@ -47,6 +49,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://ascensionpeptides.com/product/selank-10mg/","mg":10},
     "Sermorelin":                     {"url":"https://ascensionpeptides.com/product/sermorelin-10mg/","mg":10},
     "DSIP":                           {"url":"https://ascensionpeptides.com/product/dsip-10mg/","mg":10},
+    "Adamax":                         {"url":"https://ascensionpeptides.com/product/adamax-10mg/","mg":10},
   },
   "atomik": {
     "Semaglutide":                    {"url":"https://atomiklabz.com/product/peptide-1-s-10mg/","mg":10},
@@ -98,6 +101,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://lapeptides.net/product/selank/","mg":10},
     "Sermorelin":                     {"url":"https://lapeptides.net/product/sermorelin/","mg":10},
     "DSIP":                           {"url":"https://lapeptides.net/product/dsip/","mg":5},
+    "Adamax":                         {"url":"https://lapeptides.net/product/adamax/","mg":10},
   },
   "glacier": {
     "Semaglutide":                    {"url":"https://glacieraminos.shop/product/gla1-s/","mg":15},
@@ -125,6 +129,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://glacieraminos.shop/product/selank-10/","mg":10},
     "Sermorelin":                     {"url":"https://glacieraminos.shop/product/sermorelin/","mg":10},
     "DSIP":                           {"url":"https://glacieraminos.shop/product/dsip/","mg":5},
+    "Adamax":                         {"url":"https://glacieraminos.shop/product/adamax-10mg/","mg":10},
   },
   "milehigh": {
     "Semaglutide":                    {"url":"https://milehighcompounds.is/product/mhc-1-sm/","mg":10},
@@ -151,6 +156,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://milehighcompounds.is/product/selank/","mg":10},
     "Sermorelin":                     {"url":"https://milehighcompounds.is/product/sermorelin/","mg":10},
     "DSIP":                           {"url":"https://milehighcompounds.is/product/dsip/","mg":10},
+    "Adamax":                         {"url":"https://milehighcompounds.is/product/adamax/","mg":10},
   },
   "ezpeptides": {
     "Semaglutide":                    {"url":"https://ezpeptides.com/product/ezp-1p-10mg/","mg":10},
@@ -180,6 +186,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://ezpeptides.com/product/selank-10mg/","mg":10},
     "Sermorelin":                     {"url":"https://ezpeptides.com/product/sermorelin-5mg/","mg":5},
     "DSIP":                           {"url":"https://ezpeptides.com/product/dsip-10mg/","mg":10},
+    "Adamax":                         {"url":"https://ezpeptides.com/product/adamax-10mg/","mg":10},
   },
   "amp": {
     "Semaglutide":                    {"url":"https://ameanopeptides.com/product/amp-1p-5mg/","mg":5},
@@ -205,6 +212,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://ameanopeptides.com/product/n-acetyl-selank-amidate-10mg-research-peptide/","mg":10},
     "Sermorelin":                     {"url":"https://ameanopeptides.com/product/sermorelin-5mg/","mg":5},
     "DSIP":                           {"url":"https://ameanopeptides.com/product/dsip-10mg/","mg":10},
+    "Adamax":                         {"url":"https://ameanopeptides.com/product/adamax-10mg/","mg":10},
   },
   "labsourced": {
     "Tirzepatide":                    {"url":"https://www.labsourced.com/products/tirzepatide-30mg","mg":30},
@@ -253,6 +261,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://ionpeptide.com/product/selank-2/","mg":5},
     "Sermorelin":                     {"url":"https://ionpeptide.com/product/sermorelin/","mg":5},
     "DSIP":                           {"url":"https://ionpeptide.com/product/dsip/","mg":5},
+    "Adamax":                         {"url":"https://ionpeptide.com/product/adamax-10mg/","mg":10},
   },
   "retaone": {
     "Semaglutide":                    {"url":"https://retaonelabs.com/product/ro-1s-10mg/","mg":10},
@@ -293,17 +302,27 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://nurapeptide.com/product/selank-peptide-10mg/","mg":10},
     "Sermorelin":                     {"url":"https://nurapeptide.com/product/sermorelin-5mg/","mg":5},
     "DSIP":                           {"url":"https://nurapeptide.com/product/dsip-5mg/","mg":5},
+    "Adamax":                         {"url":"https://nurapeptide.com/product/adamax-10mg/","mg":10},
   },
 }
 
 # Vendors that need real browser (Cloudflare protected)
-CLOUDFLARE_VENDORS = {"glacier", "milehigh"}
+CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "nura"}
+
+# Vendors excluded from auto-scraping:
+# - atomik: Cloudflare Turnstile (human verification) — unbypassable
+# - labsourced: robots.txt blocks all scrapers
+# - retaone: 502 server constantly unreliable
+# Update these manually via price-update.html
+SKIP_VENDORS = {"atomik", "labsourced", "retaone"}
+
+PREMIUM_VENDORS = set()
 
 def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
     params = {
         "api_key": SCRAPERAPI_KEY,
         "url": url,
-        "render": "true" if render_js else "false",
+        "render": "true" if (render_js or premium) else "false",
         "keep_headers": "true",
     }
     if premium:
@@ -321,24 +340,65 @@ def playwright_get(url, vendor_id="unknown"):
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
+            # Atomik needs extra stealth to bypass Cloudflare "Just a moment" page
+            stealth_args = [
+                "--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage",
+                "--disable-blink-features=AutomationControlled",
+                "--disable-features=IsolateOrigins,site-per-process",
+                "--flag-switches-begin", "--disable-site-isolation-trials",
+                "--flag-switches-end",
+            ]
             browser = p.chromium.launch(
                 headless=True,
-                args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+                args=stealth_args
             )
+            # Use a realistic user agent and extra headers to look like a real browser
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
                 viewport={"width": 1280, "height": 800},
                 locale="en-US",
+                extra_http_headers={
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                    "sec-ch-ua": '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+                    "sec-ch-ua-mobile": "?0",
+                    "sec-ch-ua-platform": '"Windows"',
+                }
             )
+            # Remove webdriver flag that Cloudflare detects
+            context.add_init_script("""
+                Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+                Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3] });
+                Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });
+            """)
 
             # Restore cached cookies if we have them
             if vendor_id in _login_cookies:
                 context.add_cookies(_login_cookies[vendor_id])
             else:
-                # First time — need to log in
+                # First time — need to log in or handle challenges
                 page = context.new_page()
                 try:
-                    if vendor_id == "glacier":
+                    if vendor_id == "atomik":
+                        log.info("  Logging in to Atomik Labz...")
+                        page.goto("https://atomiklabz.com/my-account/", wait_until="domcontentloaded", timeout=30000)
+                        page.wait_for_timeout(3000)  # Wait for CF challenge to clear
+                        if "just a moment" in page.title().lower():
+                            log.warning("  Atomik Cloudflare challenge not cleared — waiting longer...")
+                            page.wait_for_timeout(5000)
+                        if "just a moment" not in page.title().lower():
+                            try:
+                                page.fill("#username", ATOMIK_EMAIL)
+                                page.fill("#password", ATOMIK_PASSWORD)
+                                page.click("button[name='login']")
+                                page.wait_for_load_state("domcontentloaded", timeout=15000)
+                                _login_cookies["atomik"] = context.cookies()
+                                log.info(f"  Atomik login done, title={page.title()}")
+                            except Exception as e:
+                                log.warning(f"  Atomik login error: {e}")
+                        else:
+                            log.warning("  Atomik Cloudflare still blocking after wait")
+                    elif vendor_id == "glacier":
                         log.info("  Logging in to Glacier Aminos...")
                         page.goto("https://glacieraminos.shop/my-account/", wait_until="domcontentloaded", timeout=30000)
                         page.fill("#username", GLACIER_EMAIL)
@@ -365,10 +425,17 @@ def playwright_get(url, vendor_id="unknown"):
             page = context.new_page()
             page.route("**/*.{png,jpg,jpeg,gif,webp,svg,woff,woff2,ttf,otf}", lambda r: r.abort())
             page.goto(url, wait_until="domcontentloaded", timeout=30000)
+
+            # Wait longer for JS-heavy sites like Nura (Elementor) to render prices
+            wait_time = 5000 if vendor_id in {"nura", "atomik"} else 8000
             try:
-                page.wait_for_selector(".woocommerce-Price-amount, .price, [class*=price]", timeout=8000)
+                page.wait_for_selector(".woocommerce-Price-amount, .price, [class*=price]", timeout=wait_time)
             except Exception:
                 pass
+
+            # For Nura specifically, wait extra time for Elementor to finish rendering
+            if vendor_id == "nura":
+                page.wait_for_timeout(2000)
 
             # Step 1: Select single unit if bundle selector exists
             # Handles sites like Labsourced with 1/3/5 bottle options
@@ -386,17 +453,36 @@ def playwright_get(url, vendor_id="unknown"):
                 pass
 
             # Step 2: Select correct mg size if dropdown exists
+            # Priority: 10mg > 5mg > 2mg > skip (never grab 20mg, 50mg etc)
             try:
                 selects = page.query_selector_all("select")
                 for sel in selects:
                     options = sel.query_selector_all("option")
                     option_texts = [o.inner_text().strip() for o in options]
-                    for opt_text in option_texts:
-                        if any(x in opt_text.lower() for x in ["10mg", "10 mg"]):
-                            sel.select_option(label=opt_text)
-                            page.wait_for_timeout(2000)
-                            log.info(f"  Selected size option: {opt_text}")
+
+                    # Only process size dropdowns
+                    has_mg_options = any('mg' in t.lower() for t in option_texts)
+                    if not has_mg_options:
+                        continue
+
+                    # Try preferred sizes in strict order: 10mg, 5mg, 2mg
+                    target = None
+                    for preferred_mg in ["10", "5", "2"]:
+                        for opt_text in option_texts:
+                            # Match "10mg", "10 mg", "10MG" etc — but not "100mg"
+                            if opt_text.lower().strip().startswith(preferred_mg + "mg") or                                opt_text.lower().strip().startswith(preferred_mg + " mg") or                                f" {preferred_mg}mg" in opt_text.lower() or                                f" {preferred_mg} mg" in opt_text.lower():
+                                target = opt_text
+                                break
+                        if target:
                             break
+
+                    if target:
+                        sel.select_option(label=target)
+                        page.wait_for_timeout(2000)
+                        log.info(f"  Selected size option: {target}")
+                    else:
+                        log.warning(f"  No 10mg/5mg/2mg option found in {option_texts[:5]} — skipping price to avoid wrong size")
+                    break
             except Exception:
                 pass
 
@@ -412,23 +498,50 @@ def playwright_get(url, vendor_id="unknown"):
                     log.info(f"  Got sale price from ins tag: ${visible_price}")
 
                 if not visible_price:
-                    # Try the first visible price amount on the page
-                    price_els = page.query_selector_all(".woocommerce-Price-amount bdi")
-                    for el in price_els:
-                        txt = el.inner_text().strip().replace("$","").replace(",","")
-                        try:
-                            p = float(txt)
-                            if p > 1:
-                                visible_price = p
-                                log.info(f"  Got price from DOM: ${visible_price}")
-                                break
-                        except Exception:
-                            pass
+                    # Try multiple price selectors — Nura uses Elementor which has different structure
+                    price_selectors = [
+                        ".woocommerce-Price-amount bdi",
+                        ".price .amount",
+                        "[class*='price'] .amount",
+                        ".elementor-widget-woocommerce-product-price .amount",
+                        ".summary .price bdi",
+                        ".woocommerce-variation-price .woocommerce-Price-amount bdi",
+                        "p.price bdi",
+                        "span.price bdi",
+                    ]
+                    for selector in price_selectors:
+                        els = page.query_selector_all(selector)
+                        for el in els:
+                            try:
+                                txt = el.inner_text().strip().replace("$","").replace(",","")
+                                p = float(txt)
+                                if p > 1:
+                                    visible_price = p
+                                    log.info(f"  Got price from DOM: ${visible_price}")
+                                    break
+                            except Exception:
+                                pass
+                        if visible_price:
+                            break
             except Exception as e:
                 log.warning(f"  DOM price read error: {e}")
 
+            # Glacier sometimes redirects to inbox/notifications after cookie restore
+            # Detect wrong page and navigate directly to the product URL
+            page_title = page.title()
+            if any(x in page_title.lower() for x in ["new message", "inbox", "notification", "just a moment", "attention required"]):
+                log.warning(f"  Wrong page loaded ({page_title}), navigating directly to product URL...")
+                page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                try:
+                    page.wait_for_selector(".woocommerce-Price-amount, .price, [class*=price]", timeout=8000)
+                except Exception:
+                    pass
+                page_title = page.title()
+                log.info(f"  Reloaded: {page_title}")
+                visible_price = None  # Reset price so we re-read after size selection below
+
             html = page.content()
-            log.info(f"  Playwright loaded: {page.title()}")
+            log.info(f"  Playwright loaded: {page_title}")
 
             # If we got a price directly from DOM, inject it so extract_main_product_price finds it
             if visible_price:
@@ -465,34 +578,43 @@ def is_out_of_stock(html):
 
     html_lower = main_html.lower()
 
-    # Step 2: If there's an Add to Cart button, it's definitely in stock
-    has_add_to_cart = any(x in html_lower for x in [
-        'add to cart', 'name="add-to-cart"', 'value="add-to-cart"',
-        '"add_to_cart"', 'addtocart', 'add-to-cart-button'
-    ])
-    if has_add_to_cart:
-        return False
-
-    # Step 3: Check definitive OOS signals in main product area only
-    oos_signals = [
+    # Step 2: Check STRONG definitive OOS signals first — these always mean OOS
+    # regardless of any add-to-cart buttons in related products
+    strong_oos = [
         '"availability":"http://schema.org/OutOfStock"',
         'availability":"OutOfStock"',
         '"stock_status":"outofstock"',
         'stock_status":"outofstock"',
-        '>out of stock<',
-        '>currently unavailable<',
-        '>sold out<',
+        '"availability": "OutOfStock"',
         'sold_out":true',
         '"sold_out": true',
-        'class="stock out-of-stock"',
-        '"availability": "OutOfStock"',
         # Ascension-specific: uses email notification form instead of standard OOS
         'email me when this item is back in stock',
         'notify me when available',
         'email me when available',
         'back in stock notification',
     ]
-    return any(s.lower() in html_lower for s in oos_signals)
+    if any(s.lower() in html_lower for s in strong_oos):
+        return True
+
+    # Step 3: If there's a main product add-to-cart button, it's in stock
+    # But only count it if it's clearly the MAIN product button (not related)
+    has_main_atc = any(x in html_lower for x in [
+        'name="add-to-cart"', 'value="add-to-cart"',
+        '"add_to_cart"', 'add-to-cart-button',
+        'single_add_to_cart_button',
+    ])
+    if has_main_atc:
+        return False
+
+    # Step 4: Weaker OOS signals - only if no main add-to-cart found
+    weak_oos = [
+        '>out of stock<',
+        '>currently unavailable<',
+        '>sold out<',
+        'class="stock out-of-stock"',
+    ]
+    return any(s.lower() in html_lower for s in weak_oos)
 
 def extract_main_product_price(html):
     # Strip <del> tags (old/strikethrough prices) so we never grab them
@@ -517,10 +639,12 @@ def extract_main_product_price(html):
         r'<[^>]*class="[^"]*bundle[^"]*"',
         r'<[^>]*class="[^"]*multipacks[^"]*"',
         r'<[^>]*class="[^"]*quantity.break[^"]*"',
-        r'buy\s+\d+.*?save',
-        # Ascension-specific: strip kit/multi-vial options table
-        r'<table[^>]*>.*?1 Kit.*?</table>',
-        r'Package.*?1 Kit',
+        # Ascension kit pricing - strip everything after first price variation table
+        r'<tr[^>]*>.*?Kit.*?</tr>',
+        r'Kit\s*\(',
+        r'Buy more',
+        r'Bundle\s*&amp;\s*Save',
+        r'bundle.*?save',
     ]:
         m = re.search(pattern, html, re.IGNORECASE | re.DOTALL)
         if m:
@@ -544,8 +668,12 @@ def extract_main_product_price(html):
                         if prices: return min(prices)
                     else:
                         # Prefer lowPrice (sale price) over price (original)
-                        p = parse_price(offers.get("lowPrice") or offers.get("price"))
-                        if p: return p
+                        # Never grab highPrice - that's the kit/bundle price
+                        for key in ["lowPrice", "price"]:
+                            val = offers.get(key)
+                            if val:
+                                p = parse_price(val)
+                                if p: return p
         except Exception:
             pass
 
@@ -606,34 +734,63 @@ def fetch_price_from_url(vendor_id, product, product_url):
       - (None, True)   = confirmed out of stock
       - (None, False)  = couldn't reach site (timeout/error) — do NOT update anything
     """
+    import time as _time
+    t_start = _time.time()
     log.info(f"  Fetching {vendor_id}/{product} → {product_url}")
     try:
         if vendor_id in CLOUDFLARE_VENDORS:
             log.info(f"  Using Playwright (real browser) for {vendor_id}")
             html = playwright_get(product_url, vendor_id=vendor_id)
+            elapsed = _time.time() - t_start
             if not html:
-                log.warning(f"  Playwright returned no HTML — skipping {vendor_id}/{product}")
-                return None, False  # unreachable, don't touch existing data
+                log.warning(f"  Playwright returned no HTML — skipping {vendor_id}/{product} [{elapsed:.1f}s]")
+                return None, False
             if is_out_of_stock(html):
-                log.info(f"  OUT OF STOCK: {vendor_id}/{product}")
+                log.info(f"  OUT OF STOCK: {vendor_id}/{product} [{elapsed:.1f}s]")
                 return None, True
             price = extract_main_product_price(html)
             if price:
-                log.info(f"  OK {vendor_id}/{product}: ${price:.2f}")
+                log.info(f"  OK {vendor_id}/{product}: ${price:.2f} [{elapsed:.1f}s]")
+                run_stats["successes"].append((vendor_id, product, price, elapsed))
             else:
-                log.info(f"  -- {vendor_id}/{product}: price not found")
+                log.warning(f"  -- {vendor_id}/{product}: price not found [{elapsed:.1f}s] — check URL or page structure")
+                run_stats["not_found"].append((vendor_id, product, elapsed))
             return price, False
 
         else:
-            # Try without JS first (faster)
-            for attempt in range(2):
+            # Ion Peptides needs JS rendering - use it on first attempt
+            ion_needs_js = vendor_id in {"ion"}
+            max_attempts = 2  # All remaining vendors get 2 attempts
+            # Try without JS first (faster), except for known JS-heavy sites
+            for attempt in range(max_attempts):
                 try:
-                    use_js = (attempt == 1)
-                    if use_js:
+                    use_js = ion_needs_js or (attempt == 1)
+                    if attempt == 1 and not ion_needs_js:
                         log.info(f"  Retrying with JS...")
-                    resp = scraper_get(product_url, render_js=use_js)
+                    # Use premium ScraperAPI for Cloudflare-heavy vendors
+                    use_premium = vendor_id in PREMIUM_VENDORS
+                    if use_premium and attempt == 0:
+                        log.info(f"  Using ScraperAPI premium for {vendor_id}...")
+                    resp = scraper_get(product_url, render_js=use_js or use_premium, premium=use_premium)
                     if resp.status_code != 200:
-                        log.warning(f"  HTTP {resp.status_code} on attempt {attempt+1}")
+                        reason = {
+                            403: "🚫 403 Forbidden — likely Cloudflare block, add to CLOUDFLARE_VENDORS",
+                            404: "❌ 404 Not Found — URL may be wrong or product removed",
+                            429: "🔒 429 Rate Limited — too many requests",
+                            500: "💥 500 Server Error — vendor site issue",
+                            502: "💥 502 Bad Gateway — vendor site down",
+                            503: "💥 503 Service Unavailable — vendor site overloaded",
+                        }.get(resp.status_code, f"HTTP {resp.status_code}")
+                        log.warning(f"  {reason} for {vendor_id}/{product} on attempt {attempt+1}")
+                        if resp.status_code == 403:
+                            log.warning(f"  💡 FIX: Add '{vendor_id}' to CLOUDFLARE_VENDORS to use Playwright")
+                            run_stats["blocked_403"].append((vendor_id, product))
+                            break  # CF won't change its mind
+                        if resp.status_code == 404:
+                            run_stats["url_404"].append((vendor_id, product))
+                            break  # URL is wrong, retry won't help
+                        if resp.status_code in {500, 502, 503}:
+                            break  # Server error — skip fast, retry won't help
                         continue
                     html = resp.text
                     if is_out_of_stock(html):
@@ -641,22 +798,35 @@ def fetch_price_from_url(vendor_id, product, product_url):
                         return None, True
                     price = extract_main_product_price(html)
                     if price:
-                        log.info(f"  OK {vendor_id}/{product}: ${price:.2f}")
+                        elapsed = _time.time() - t_start
+                        log.info(f"  OK {vendor_id}/{product}: ${price:.2f} [{elapsed:.1f}s]")
+                        run_stats["successes"].append((vendor_id, product, price, elapsed))
                         return price, False
                 except requests.exceptions.Timeout:
-                    log.warning(f"  Timeout on attempt {attempt+1} for {vendor_id}/{product}")
+                    elapsed = _time.time() - t_start
+                    log.warning(f"  ⏱ TIMEOUT attempt {attempt+1} for {vendor_id}/{product} [{elapsed:.1f}s] — ScraperAPI may be blocked or site is slow")
+                    if attempt == 1:  # Only log on final timeout
+                        run_stats["timeouts"].append((vendor_id, product, elapsed))
                     time.sleep(2)
                     continue
                 except Exception as e:
-                    log.warning(f"  ERR attempt {attempt+1} {vendor_id}/{product}: {e}")
+                    elapsed = _time.time() - t_start
+                    log.warning(f"  ERR attempt {attempt+1} {vendor_id}/{product} [{elapsed:.1f}s]: {e}")
                     continue
 
-            log.info(f"  -- {vendor_id}/{product}: price not found after retries")
-            return None, False  # couldn't get price but NOT marking OOS
+            elapsed = _time.time() - t_start
+            if elapsed > 60:
+                log.warning(f"  🐢 SLOW: {vendor_id}/{product} took {elapsed:.1f}s — consider adding to Playwright vendors or skipping")
+            elif elapsed > 30:
+                log.warning(f"  ⚠️ SLOW: {vendor_id}/{product} took {elapsed:.1f}s — retries needed")
+            log.info(f"  -- {vendor_id}/{product}: price not found after retries [{elapsed:.1f}s]")
+            run_stats["not_found"].append((vendor_id, product, elapsed))
+            return None, False
 
     except Exception as e:
-        log.warning(f"  ERR {vendor_id}/{product}: {e}")
-        return None, False  # error = don't touch existing data
+        elapsed = _time.time() - t_start
+        log.warning(f"  ERR {vendor_id}/{product} [{elapsed:.1f}s]: {e}")
+        return None, False
 
 def github_get_file():
     url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{GITHUB_FILE}"
@@ -717,7 +887,7 @@ def patch_prices(html, updates, out_of_stock_items):
     peptide_detect = re.compile(r'^\s*"([^"]+)":\s*\{')
     # Matches a vendor price line: vid:{price:XX.XX,mg:YY,...}
     vendor_line = re.compile(
-        r'^(\s*)(\w+):((?:\{price:)([\d.]+)(,mg:[\d.]+,listing:"[^"]*")((?:,oos:true)?)\})(,?)(\s*)$'
+        r'^(\s*)(\w+):\{price:([\d.]+)(,mg:[\d.]+,listing:"[^"]*")((?:,oos:true)?)\}(,?)\s*$'
     )
 
     new_lines = []
@@ -735,9 +905,9 @@ def patch_prices(html, updates, out_of_stock_items):
         if vm:
             indent    = vm.group(1)
             vid       = vm.group(2)
-            price_val = vm.group(4)
-            mg_list   = vm.group(5)   # e.g. ,mg:10,listing:"BPC-157 10mg"
-            trailing  = vm.group(7)   # comma after }
+            price_val = vm.group(3)
+            mg_list   = vm.group(4)   # e.g. ,mg:10,listing:"BPC-157 10mg"
+            trailing  = vm.group(6)   # comma after }
             is_oos    = (current_peptide, vid) in oos_set
 
             # Check if we have a price update for this vendor
@@ -767,6 +937,19 @@ def patch_prices(html, updates, out_of_stock_items):
     log.info(f"Patched {patched} prices")
     return '\n'.join(new_lines), patched
 
+# ── Run Statistics Tracker ──────────────────────────────────
+run_stats = {
+    "successes": [],      # (vendor, peptide, price, elapsed)
+    "timeouts": [],       # (vendor, peptide, elapsed)
+    "blocked_403": [],    # (vendor, peptide)
+    "not_found": [],      # (vendor, peptide, elapsed)
+    "oos": [],            # (vendor, peptide)
+    "price_capped": [],   # (vendor, peptide, price, cap)
+    "sanity_failed": [],  # (vendor, peptide, prev, new)
+    "url_404": [],        # (vendor, peptide)
+}
+
+
 def main():
     log.info("=== PepsTracker Scraper v6 (daily + OOS) Starting ===")
 
@@ -784,7 +967,7 @@ def main():
         # Longevity
         "Epithalon", "MOTS-c", "NAD+",
         # Cognitive
-        "Semax", "Selank", "DSIP",
+        "Semax", "Selank", "DSIP", "Adamax",
         # Immune
         "KPV", "ARA-290",
         # Fat Loss
@@ -793,7 +976,7 @@ def main():
         "Klow Blend",
         "Tesamorelin/Ipamorelin Blend",
     ]
-    SKIP_VENDORS = set()  # glacier + milehigh now handled via premium proxies
+    # SKIP_VENDORS defined at module level — atomik, labsourced, retaone
 
     html, sha = github_get_file()
 
@@ -802,7 +985,8 @@ def main():
         log.error("Could not parse PRICES block — aborting")
         return
     log.info(f"Parsed {len(existing)} peptides from PRICES block")
-    log.info(f"Scraping {len(ACTIVE_PEPTIDES)} active peptides, skipping: {SKIP_VENDORS}")
+    log.info(f"Scraping {len(ACTIVE_PEPTIDES)} active peptides")
+    log.info(f"⏭ Skipping manual vendors (update via price-update.html): {', '.join(sorted(SKIP_VENDORS))}")
 
     updates = {}
     oos_items = []
@@ -822,29 +1006,38 @@ def main():
             price, oos = fetch_price_from_url(vid, peptide, url_info["url"])
             if oos:
                 oos_items.append((peptide, vid))
+                run_stats["oos"].append((vid, peptide))
             elif price and abs(price - info["price"]) > 0.01:
                 # Sanity check 1: hard price caps per peptide type
                 # Prevents bundle/page errors from corrupting prices
                 PRICE_CAPS = {
                     "Semaglutide": 150, "Tirzepatide": 200, "Retatrutide": 250,
-                    "BPC-157": 80, "TB-500": 100, "BPC-157 + TB-500 Blend": 150,
-                    "Ipamorelin": 80, "CJC-1295 (with DAC)": 80, "Sermorelin": 100,
-                    "Tesamorelin": 120, "Melanotan II": 60, "PT-141 (Bremelanotide)": 80,
-                    "GHK-Cu": 200, "Epithalon": 80, "MOTS-c": 120, "NAD+": 120,
-                    "Semax": 80, "Selank": 80, "DSIP": 60, "KPV": 60,
-                    "ARA-290": 100, "AOD-9604": 60, "Klow Blend": 120,
-                    "Tesamorelin/Ipamorelin Blend": 150,
+                    "BPC-157": 100, "TB-500": 120, "BPC-157 + TB-500 Blend": 180,
+                    "Ipamorelin": 100, "CJC-1295 (with DAC)": 100, "Sermorelin": 120,
+                    "Tesamorelin": 150, "Melanotan II": 80, "PT-141 (Bremelanotide)": 100,
+                    "GHK-Cu": 250, "Epithalon": 200, "MOTS-c": 150, "NAD+": 150,
+                    "Semax": 100, "Selank": 100, "DSIP": 80, "Adamax": 100, "KPV": 100,
+                    "ARA-290": 120, "AOD-9604": 80, "Klow Blend": 200,
+                    "Tesamorelin/Ipamorelin Blend": 200,
                 }
                 cap = PRICE_CAPS.get(peptide, 300)
                 if price > cap:
                     log.warning(f"  PRICE CAP FAIL {peptide}/{vid}: ${price:.2f} exceeds max ${cap:.2f} — skipping")
+                    run_stats["price_capped"].append((vid, peptide, price, cap))
                     continue
 
                 # Sanity check 2: reject prices > 4x or < 0.25x previous
                 prev = info["price"]
                 ratio = price / prev if prev > 0 else 999
-                if ratio > 4.0 or ratio < 0.25:
-                    log.warning(f"  SANITY FAIL {peptide}/{vid}: ${prev:.2f} → ${price:.2f} (ratio {ratio:.2f}x) — skipping")
+                # Allow larger swings for peptides sold in different mg sizes
+                # e.g. Epithalon: 10mg ($27) vs 50mg ($119) = 4.4x but both valid
+                max_ratio = 6.0 if peptide in {
+                    "Epithalon", "GHK-Cu", "NAD+", "Klow Blend",
+                    "Tesamorelin/Ipamorelin Blend", "BPC-157 + TB-500 Blend"
+                } else 4.0
+                if ratio > max_ratio or ratio < 0.20:
+                    log.warning(f"  SANITY FAIL {peptide}/{vid}: ${prev:.2f} → ${price:.2f} (ratio {ratio:.2f}x, max {max_ratio}x) — skipping")
+                    run_stats["sanity_failed"].append((vid, peptide, prev, price))
                 else:
                     updates.setdefault(peptide, {})[vid] = price
                     log.info(f"  CHANGE {peptide}/{vid}: ${prev:.2f} → ${price:.2f}")
@@ -855,9 +1048,118 @@ def main():
         return
 
     new_html, count = patch_prices(html, updates, oos_items)
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    github_push_file(new_html, sha, f"🤖 Daily price update: {count} changes, {len(oos_items)} OOS ({now})")
+    now = datetime.now(timezone.utc)
+    # Update SCRAPE_DATE in the HTML so the site shows the real last-updated date
+    scrape_date_str = now.strftime("%B %-d, %Y")  # e.g. "May 26, 2026"
+    new_html = re.sub(
+        r'const SCRAPE_DATE = "[^"]*";',
+        f'const SCRAPE_DATE = "{scrape_date_str}";',
+        new_html
+    )
+    now_str = now.strftime("%Y-%m-%d %H:%M UTC")
+    github_push_file(new_html, sha, f"🤖 Daily price update: {count} changes, {len(oos_items)} OOS ({now_str})")
     log.info(f"=== Done: {count} prices updated, {len(oos_items)} marked OOS ===")
+
+    # ── Generate diagnostics report ──────────────────────────
+    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    report_lines = [
+        f"# PepsTracker Scraper Diagnostics",
+        f"**Run:** {now_str}",
+        f"**Result:** {count} prices updated, {len(oos_items)} OOS",
+        "",
+        "## ✅ Successful Fetches",
+        f"Total: {len(run_stats['successes'])}",
+    ]
+    for vid, pep, price, elapsed in sorted(run_stats["successes"], key=lambda x: x[3], reverse=True)[:10]:
+        report_lines.append(f"- {vid}/{pep}: ${price:.2f} ({elapsed:.1f}s)")
+
+    if run_stats["blocked_403"]:
+        report_lines += ["", "## 🚫 Cloudflare Blocked (403)"]
+        report_lines.append("**FIX: Add these to CLOUDFLARE_VENDORS in scraper.py**")
+        vendors_403 = {}
+        for vid, pep in run_stats["blocked_403"]:
+            vendors_403.setdefault(vid, []).append(pep)
+        for vid, peps in vendors_403.items():
+            report_lines.append(f"- **{vid}** ({len(peps)} products blocked): {', '.join(peps[:5])}")
+
+    if run_stats["timeouts"]:
+        report_lines += ["", "## ⏱ Timeouts"]
+        vendors_to = {}
+        for vid, pep, elapsed in run_stats["timeouts"]:
+            vendors_to.setdefault(vid, []).append(f"{pep} ({elapsed:.0f}s)")
+        for vid, items in vendors_to.items():
+            report_lines.append(f"- **{vid}**: {', '.join(items[:5])}")
+        slow_vendors = set(v for v, p, e in run_stats["timeouts"] if e > 45)
+        if slow_vendors:
+            report_lines.append(f"\n**Consistently slow vendors:** {', '.join(slow_vendors)}")
+
+    if run_stats["url_404"]:
+        report_lines += ["", "## ❌ 404 Not Found (URL needs updating)"]
+        for vid, pep in run_stats["url_404"]:
+            report_lines.append(f"- {vid}/{pep} — check URL in PRODUCT_URLS")
+
+    if run_stats["price_capped"]:
+        report_lines += ["", "## 🔒 Price Cap Failures"]
+        report_lines.append("These prices were blocked by caps — may need cap adjustment:")
+        for vid, pep, price, cap in run_stats["price_capped"]:
+            report_lines.append(f"- {vid}/{pep}: got ${price:.2f}, cap is ${cap:.2f}")
+
+    if run_stats["sanity_failed"]:
+        report_lines += ["", "## ⚠️ Sanity Check Failures"]
+        report_lines.append("Price changed too dramatically — investigate:")
+        for vid, pep, prev, new_p in run_stats["sanity_failed"]:
+            pct = ((new_p/prev)-1)*100 if prev else 0
+            report_lines.append(f"- {vid}/{pep}: ${prev:.2f} → ${new_p:.2f} ({pct:+.0f}%)")
+
+    if run_stats["not_found"]:
+        report_lines += ["", "## 🔍 Price Not Found"]
+        vendors_nf = {}
+        for item in run_stats["not_found"]:
+            vid, pep = item[0], item[1]
+            vendors_nf.setdefault(vid, []).append(pep)
+        for vid, peps in vendors_nf.items():
+            report_lines.append(f"- **{vid}** ({len(peps)}): {', '.join(peps[:8])}")
+
+    report_lines += [
+        "",
+        "## 📊 Summary",
+        f"| Metric | Count |",
+        f"|--------|-------|",
+        f"| ✅ Prices fetched | {len(run_stats['successes'])} |",
+        f"| 💰 Prices updated | {count} |",
+        f"| 🚫 Cloudflare 403 | {len(run_stats['blocked_403'])} |",
+        f"| ⏱ Timeouts | {len(run_stats['timeouts'])} |",
+        f"| ❌ 404 URLs | {len(run_stats['url_404'])} |",
+        f"| 🔒 Price capped | {len(run_stats['price_capped'])} |",
+        f"| ⚠️ Sanity failed | {len(run_stats['sanity_failed'])} |",
+        f"| 📦 OOS | {len(run_stats['oos'])} |",
+    ]
+
+    report = "\n".join(report_lines)
+    log.info("\n" + "="*60)
+    log.info("DIAGNOSTICS REPORT:")
+    log.info(report)
+    log.info("="*60)
+
+    # Push report to GitHub as SCRAPER_REPORT.md
+    try:
+        report_file = "SCRAPER_REPORT.md"
+        url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{report_file}"
+        resp = requests.get(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"})
+        report_sha = resp.json().get("sha") if resp.status_code == 200 else None
+        payload = {
+            "message": f"📊 Scraper report {now_str}",
+            "content": base64.b64encode(report.encode()).decode(),
+            "branch": "main"
+        }
+        if report_sha:
+            payload["sha"] = report_sha
+        requests.put(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}", "Content-Type": "application/json"}, json=payload)
+        log.info("Pushed diagnostics report to SCRAPER_REPORT.md")
+    except Exception as e:
+        log.warning(f"Could not push report: {e}")
+
+    log.info(f"=== Run complete. Check SCRAPER_REPORT.md in GitHub for full diagnostics ===")
 
 # ── Vendor Discovery System ─────────────────────────────────
 # To add a new vendor, add it to this list and run the scraper once.

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Price Update Tool — PepsTracker</title>
+  <style>
+    :root {
+      --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
+      --border:#2a3347; --blue:#3b9eff; --green:#4de87a;
+      --text:#e8edf5; --muted:#7a8ba8; --gold:#f5c842;
+      --red:#ff5c5c; --radius:12px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:100;}
+    .header-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+    .logo-text{font-size:1.5rem;font-weight:800;letter-spacing:-.5px;}
+    .logo-text span:first-child{color:var(--blue);}
+    .logo-text span:last-child{color:var(--green);}
+    nav a{color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:600;padding:6px 12px;border-radius:8px;}
+    nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+
+    .page{max-width:900px;margin:0 auto;padding:40px 24px 60px;}
+    h1{font-size:1.6rem;font-weight:800;margin-bottom:8px;}
+    h1 span{color:var(--blue);}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:32px;}
+
+    .token-form{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:24px;}
+    .token-form h3{font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+    .field{margin-bottom:16px;}
+    .field label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:6px;font-weight:600;}
+    .field input, .field select{width:100%;background:var(--surface);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:10px 14px;font-size:.95rem;transition:border-color .2s;}
+    .field input:focus, .field select:focus{outline:none;border-color:var(--blue);}
+    .field select option{background:var(--surface);}
+
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+
+    .btn{background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;border:none;border-radius:8px;padding:12px 24px;font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s;width:100%;}
+    .btn:hover{opacity:.88;}
+    .btn:disabled{opacity:.4;cursor:not-allowed;}
+    .btn-danger{background:linear-gradient(135deg,var(--red),#cc3333);}
+    .btn-success{background:linear-gradient(135deg,var(--green),#2bb858);color:#0d0f14;}
+
+    .queue{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:24px;}
+    .queue h3{font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+    .queue-count{background:rgba(59,158,255,.15);color:var(--blue);border-radius:20px;padding:2px 10px;font-size:.8rem;}
+    .queue-item{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:.88rem;}
+    .queue-item:last-child{border-bottom:none;}
+    .queue-vendor{font-weight:700;}
+    .queue-peptide{color:var(--muted);}
+    .queue-price{color:var(--green);font-weight:700;}
+    .queue-oos{color:var(--red);font-weight:700;}
+    .btn-remove{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:.75rem;cursor:pointer;}
+    .btn-remove:hover{border-color:var(--red);color:var(--red);}
+    .empty-queue{color:var(--muted);font-size:.88rem;text-align:center;padding:20px;}
+
+    .status-box{border-radius:var(--radius);padding:16px;margin-bottom:16px;font-size:.9rem;display:none;}
+    .status-success{background:rgba(77,232,122,.08);border:1px solid rgba(77,232,122,.3);color:var(--green);}
+    .status-error{background:rgba(255,92,92,.08);border:1px solid rgba(255,92,92,.3);color:var(--red);}
+    .status-info{background:rgba(59,158,255,.08);border:1px solid rgba(59,158,255,.3);color:var(--blue);}
+
+    .toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+    .toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;}
+    .slider{position:absolute;inset:0;background:var(--border);border-radius:20px;cursor:pointer;transition:.2s;}
+    .slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+    input:checked + .slider{background:var(--red);}
+    input:checked + .slider:before{transform:translateX(20px);}
+    .toggle-label{font-size:.88rem;color:var(--text);}
+    .toggle-label span{color:var(--red);font-weight:700;}
+
+    .hint{font-size:.78rem;color:var(--muted);margin-top:4px;}
+
+    footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:.82rem;}
+    footer a{color:var(--blue);text-decoration:none;}
+    @media(max-width:600px){.grid-2,.grid-3{grid-template-columns:1fr;}.queue-item{grid-template-columns:1fr 1fr;}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
+    </a>
+    <nav>
+      <a href="index.html">← Back to Tracker</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page">
+  <h1>Manual <span>Price Update</span> Tool</h1>
+  <p class="subtitle">Update prices for vendors the scraper can't reach automatically (Labsourced, Retaone, etc). Changes are queued and committed to GitHub in one batch.</p>
+
+  <!-- GitHub Token -->
+  <div class="token-form">
+    <h3>GitHub Config</h3>
+    <div class="grid-2">
+      <div class="field">
+        <label>GitHub Token</label>
+        <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx" />
+        <p class="hint">Personal access token with repo write access. Stored in browser only.</p>
+      </div>
+      <div class="field">
+        <label>Repository</label>
+        <input type="text" id="ghRepo" value="Thepepstracker/pepstracker" />
+      </div>
+    </div>
+    <div class="field">
+      <label>File path in repo</label>
+      <input type="text" id="ghFile" value="pepstracker_fixed/index.html" />
+    </div>
+    <button class="btn" style="width:auto;padding:10px 20px;" onclick="saveConfig()">Save Config</button>
+    <span id="configStatus" style="margin-left:12px;font-size:.85rem;color:var(--muted);"></span>
+  </div>
+
+  <!-- Add Price Update -->
+  <div class="token-form">
+    <h3>Add Price Update</h3>
+    <div class="grid-2">
+      <div class="field">
+        <label>Vendor</label>
+        <select id="vendor">
+          <option value="">— Select vendor —</option>
+          <option value="ascension">Ascension Peptides</option>
+          <option value="atomik">AtomiK Labz</option>
+          <option value="lapeptides">LA Peptides</option>
+          <option value="glacier">Glacier Aminos</option>
+          <option value="milehigh">Mile High Compound</option>
+          <option value="ezpeptides">EZ Peptides</option>
+          <option value="amp">AMP Ameano Peptides</option>
+          <option value="labsourced">Labsourced</option>
+          <option value="ion">Ion Peptides</option>
+          <option value="retaone">Reta One Labs</option>
+          <option value="nura">NuraPeptide</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Peptide</label>
+        <select id="peptide">
+          <option value="">— Select peptide —</option>
+          <optgroup label="GLP-1">
+            <option>Semaglutide</option>
+            <option>Tirzepatide</option>
+            <option>Retatrutide</option>
+          </optgroup>
+          <optgroup label="Healing">
+            <option>BPC-157</option>
+            <option>TB-500</option>
+            <option>BPC-157 + TB-500 Blend</option>
+          </optgroup>
+          <optgroup label="Growth Hormone">
+            <option>Ipamorelin</option>
+            <option>CJC-1295 (with DAC)</option>
+            <option>Sermorelin</option>
+            <option>Tesamorelin</option>
+          </optgroup>
+          <optgroup label="Skin & Tanning">
+            <option>Melanotan II</option>
+            <option>PT-141 (Bremelanotide)</option>
+            <option>GHK-Cu</option>
+          </optgroup>
+          <optgroup label="Longevity">
+            <option>Epithalon</option>
+            <option>MOTS-c</option>
+            <option>NAD+</option>
+          </optgroup>
+          <optgroup label="Cognitive">
+            <option>Semax</option>
+            <option>Selank</option>
+            <option>DSIP</option>
+          </optgroup>
+          <optgroup label="Immune">
+            <option>KPV</option>
+            <option>ARA-290</option>
+          </optgroup>
+          <optgroup label="Fat Loss">
+            <option>AOD-9604</option>
+          </optgroup>
+          <optgroup label="Blends">
+            <option>Klow Blend</option>
+            <option>Tesamorelin/Ipamorelin Blend</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="field">
+        <label>Price ($)</label>
+        <input type="number" id="price" placeholder="49.99" step="0.01" min="0" />
+      </div>
+      <div class="field">
+        <label>mg size</label>
+        <select id="mgSize">
+          <option value="">— Keep current —</option>
+          <optgroup label="mg — Small">
+            <option value="1">1mg</option>
+            <option value="2">2mg</option>
+            <option value="3">3mg</option>
+            <option value="4">4mg</option>
+            <option value="5">5mg</option>
+            <option value="6">6mg</option>
+            <option value="7">7mg</option>
+            <option value="8">8mg</option>
+            <option value="9">9mg</option>
+            <option value="10">10mg</option>
+          </optgroup>
+          <optgroup label="mg — Medium">
+            <option value="11">11mg</option>
+            <option value="12">12mg</option>
+            <option value="13">13mg</option>
+            <option value="14">14mg</option>
+            <option value="15">15mg</option>
+            <option value="16">16mg</option>
+            <option value="17">17mg</option>
+            <option value="18">18mg</option>
+            <option value="19">19mg</option>
+            <option value="20">20mg</option>
+            <option value="25">25mg</option>
+            <option value="30">30mg</option>
+            <option value="40">40mg</option>
+          </optgroup>
+          <optgroup label="mg — Large">
+            <option value="50">50mg</option>
+            <option value="60">60mg</option>
+            <option value="70">70mg</option>
+            <option value="80">80mg</option>
+            <option value="91">91mg</option>
+            <option value="92">92mg</option>
+            <option value="100">100mg</option>
+            <option value="150">150mg</option>
+            <option value="200">200mg</option>
+            <option value="250">250mg</option>
+            <option value="500">500mg</option>
+            <option value="700">700mg</option>
+            <option value="1000">1000mg</option>
+          </optgroup>
+          <optgroup label="mL">
+            <option value="1">1mL</option>
+            <option value="2">2mL</option>
+            <option value="5">5mL</option>
+            <option value="10">10mL</option>
+            <option value="15">15mL</option>
+            <option value="20">20mL</option>
+            <option value="30">30mL</option>
+            <option value="50">50mL</option>
+          </optgroup>
+        </select>
+        <p class="hint">Leave blank to keep current mg size</p>
+      </div>
+      <div class="field">
+        <label>Listing name</label>
+        <input type="text" id="listing" placeholder="BPC-157 10mg" />
+        <p class="hint">Leave blank to keep current</p>
+      </div>
+    </div>
+    <div class="toggle-row">
+      <label class="toggle">
+        <input type="checkbox" id="oosToggle" onchange="toggleOOS()">
+        <span class="slider"></span>
+      </label>
+      <span class="toggle-label">Mark as <span>Out of Stock</span></span>
+    </div>
+    <div id="oosNote" style="display:none;background:rgba(255,92,92,.08);border:1px solid rgba(255,92,92,.2);border-radius:8px;padding:10px 14px;font-size:.85rem;color:var(--red);margin-bottom:16px;">
+      ⚠️ This will show the vendor as OOS on the site. Price will be preserved but hidden.
+    </div>
+    <button class="btn" onclick="addToQueue()" style="width:auto;padding:10px 24px;">Add to Queue →</button>
+  </div>
+
+  <!-- Queue -->
+  <div class="queue">
+    <h3>
+      Pending Updates
+      <span class="queue-count" id="queueCount">0 items</span>
+    </h3>
+    <div id="queueList">
+      <p class="empty-queue">No updates queued yet. Add prices above.</p>
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="status-box" id="statusBox"></div>
+
+  <!-- Commit -->
+  <button class="btn btn-success" id="commitBtn" onclick="commitAll()" disabled>
+    Commit All Updates to GitHub
+  </button>
+  <p class="hint" style="margin-top:8px;text-align:center;">This will directly update index.html in your GitHub repo and deploy to pepstracker.com</p>
+</div>
+
+<footer>
+  <p>PepsTracker admin tool — for internal use only</p>
+</footer>
+
+<script>
+const VENDORS = {
+  ascension:"Ascension Peptides", atomik:"AtomiK Labz", lapeptides:"LA Peptides",
+  glacier:"Glacier Aminos", milehigh:"Mile High Compound", ezpeptides:"EZ Peptides",
+  amp:"AMP Ameano Peptides", labsourced:"Labsourced", ion:"Ion Peptides",
+  retaone:"Reta One Labs", nura:"NuraPeptide"
+};
+
+// Load saved queue from localStorage
+let queue = JSON.parse(localStorage.getItem('pt_queue') || '[]');
+let config = {
+  token: localStorage.getItem('gh_token') || '',
+  repo: localStorage.getItem('gh_repo') || 'Thepepstracker/pepstracker',
+  file: localStorage.getItem('gh_file') || 'pepstracker_fixed/index.html',
+};
+
+// Pre-fill saved config
+document.getElementById('ghToken').value = config.token;
+document.getElementById('ghRepo').value = config.repo;
+document.getElementById('ghFile').value = config.file;
+
+function saveConfig() {
+  config.token = document.getElementById('ghToken').value.trim();
+  config.repo = document.getElementById('ghRepo').value.trim();
+  config.file = document.getElementById('ghFile').value.trim();
+  localStorage.setItem('gh_token', config.token);
+  localStorage.setItem('gh_repo', config.repo);
+  localStorage.setItem('gh_file', config.file);
+  document.getElementById('configStatus').textContent = '✓ Saved';
+  setTimeout(() => document.getElementById('configStatus').textContent = '', 2000);
+}
+
+function toggleOOS() {
+  const on = document.getElementById('oosToggle').checked;
+  document.getElementById('oosNote').style.display = on ? 'block' : 'none';
+}
+
+function addToQueue() {
+  const vendor = document.getElementById('vendor').value;
+  const peptide = document.getElementById('peptide').value;
+  const price = parseFloat(document.getElementById('price').value);
+  const mg = document.getElementById('mgSize').value;
+  const listing = document.getElementById('listing').value.trim();
+  const oos = document.getElementById('oosToggle').checked;
+
+  if (!vendor) { showStatus('Please select a vendor', 'error'); return; }
+  if (!peptide) { showStatus('Please select a peptide', 'error'); return; }
+  if (!oos && (isNaN(price) || price <= 0)) { showStatus('Please enter a valid price', 'error'); return; }
+
+  // Check for duplicate
+  const existing = queue.findIndex(q => q.vendor === vendor && q.peptide === peptide);
+  if (existing >= 0) {
+    queue[existing] = { vendor, peptide, price, mg: mg || null, listing: listing || null, oos };
+    showStatus(`Updated existing entry for ${VENDORS[vendor]} / ${peptide}`, 'info');
+  } else {
+    queue.push({ vendor, peptide, price, mg: mg || null, listing: listing || null, oos });
+    showStatus(`Added ${VENDORS[vendor]} / ${peptide} to queue`, 'info');
+  }
+
+  // Reset form
+  document.getElementById('vendor').value = '';
+  document.getElementById('peptide').value = '';
+  document.getElementById('price').value = '';
+  document.getElementById('mgSize').value = '';
+  document.getElementById('listing').value = '';
+  document.getElementById('oosToggle').checked = false;
+  document.getElementById('oosNote').style.display = 'none';
+
+  renderQueue();
+}
+
+function removeFromQueue(idx) {
+  queue.splice(idx, 1);
+  renderQueue();
+}
+
+function renderQueue() {
+  // Persist queue to localStorage so it survives page refresh
+  localStorage.setItem('pt_queue', JSON.stringify(queue));
+  const list = document.getElementById('queueList');
+  const count = document.getElementById('queueCount');
+  const btn = document.getElementById('commitBtn');
+  count.textContent = `${queue.length} item${queue.length !== 1 ? 's' : ''}`;
+  btn.disabled = queue.length === 0;
+
+  if (queue.length === 0) {
+    list.innerHTML = '<p class="empty-queue">No updates queued yet. Add prices above.</p>';
+    return;
+  }
+
+  list.innerHTML = queue.map((q, i) => `
+    <div class="queue-item">
+      <div class="queue-vendor">${VENDORS[q.vendor]}</div>
+      <div class="queue-peptide">${q.peptide}</div>
+      <div class="${q.oos ? 'queue-oos' : 'queue-price'}">
+        ${q.oos ? '⚠ Out of Stock' : `$${q.price.toFixed(2)}${q.mg ? ` / ${q.mg}mg` : ''}`}
+      </div>
+      <button class="btn-remove" onclick="removeFromQueue(${i})">Remove</button>
+    </div>
+  `).join('');
+}
+
+function showStatus(msg, type) {
+  const box = document.getElementById('statusBox');
+  box.className = `status-box status-${type}`;
+  box.textContent = msg;
+  box.style.display = 'block';
+  if (type !== 'error') setTimeout(() => box.style.display = 'none', 4000);
+}
+
+async function commitAll() {
+  if (!config.token) { showStatus('Please enter your GitHub token first', 'error'); return; }
+  if (queue.length === 0) { showStatus('No updates to commit', 'error'); return; }
+
+  const btn = document.getElementById('commitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Fetching current file...';
+  showStatus('Connecting to GitHub...', 'info');
+
+  try {
+    // Fetch current index.html
+    const apiBase = `https://api.github.com/repos/${config.repo}/contents/${config.file}`;
+    const getResp = await fetch(apiBase, {
+      headers: { 'Authorization': `Bearer ${config.token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (!getResp.ok) throw new Error(`GitHub API error: ${getResp.status} ${getResp.statusText}`);
+    const fileData = await getResp.json();
+    let html = atob(fileData.content.replace(/\n/g, ''));
+    const sha = fileData.sha;
+
+    btn.textContent = 'Applying updates...';
+    showStatus(`Applying ${queue.length} price updates...`, 'info');
+
+    let applied = 0;
+    let errors = [];
+
+    for (const update of queue) {
+      const { vendor, peptide, price, mg, listing, oos } = update;
+
+      // Find the vendor line for this peptide in the PRICES block
+      // Pattern: vendor:{price:XX.XX,mg:YY,listing:"..."}  or vendor:null
+      const escPeptide = peptide.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const escVendor = vendor;
+
+      // Find the peptide block first
+      const peptideBlockRegex = new RegExp(
+        `("${escPeptide}"\\s*:\\s*\\{[^}]*?${escVendor}:\\{price:[^}]*?\\}[^}]*?\\})`,
+        'gs'
+      );
+
+      // Simpler approach: find the exact vendor line within the peptide block
+      // Look for: vendor:{price:XX,mg:YY,listing:"ZZ"} or vendor:{price:XX,mg:YY,listing:"ZZ",oos:true}
+      const vendorLineRegex = new RegExp(
+        `([ \\t]*${escVendor}:\\{price:[\\d.]+,mg:[\\d.]+,listing:"[^"]*"(?:,oos:true)?\\})`,
+        'g'
+      );
+
+      // We need to find it within the right peptide section
+      // Find the peptide section start
+      const peptideStart = html.indexOf(`"${peptide}": {`);
+      if (peptideStart === -1) {
+        errors.push(`${peptide} block not found`);
+        continue;
+      }
+
+      // Find the next peptide block to bound our search
+      const nextPeptideStart = html.indexOf('  "', peptideStart + 10);
+      const peptideSection = html.substring(peptideStart, nextPeptideStart > 0 ? nextPeptideStart : peptideStart + 2000);
+
+      // Find vendor line in this section
+      const vendorMatch = peptideSection.match(new RegExp(
+        `([ \\t]*${escVendor}:\\{price:[\\d.]+,mg:[\\d.]+,listing:"[^"]*"(?:,oos:true)?\\},?)`
+      ));
+
+      // Also check for null entry e.g. labsourced:null,
+      const nullMatch = !vendorMatch ? peptideSection.match(new RegExp(
+        String.raw`([ \t]*${escVendor}:null,?)`
+      )) : null;
+
+      if (!vendorMatch && !nullMatch) {
+        errors.push(`${vendor}/${peptide} line not found in PRICES block`);
+        continue;
+      }
+
+      const oldLine = (vendorMatch || nullMatch)[0];
+
+      // Extract current mg and listing if not provided
+      const currentMgMatch = oldLine.match(/mg:([\d.]+)/);
+      const currentListingMatch = oldLine.match(/listing:"([^"]*)"/);
+      const currentMg = mg || (currentMgMatch ? currentMgMatch[1] : '10');
+      const currentListing = listing || (currentListingMatch ? currentListingMatch[1] : `${peptide} ${currentMg}mg`);
+
+      // Build new line
+      const trailingComma = oldLine.endsWith(',') ? ',' : '';
+      const indent = oldLine.match(/^([ \t]*)/)[1];
+      let newLine;
+      if (oos) {
+        newLine = `${indent}${vendor}:{price:${price.toFixed(2)},mg:${currentMg},listing:"${currentListing}",oos:true}${trailingComma}`;
+      } else {
+        newLine = `${indent}${vendor}:{price:${price.toFixed(2)},mg:${currentMg},listing:"${currentListing}"}${trailingComma}`;
+      }
+
+      html = html.replace(oldLine, newLine);
+      applied++;
+    }
+
+    if (applied === 0) {
+      showStatus(`No updates applied. Errors: ${errors.join(', ')}`, 'error');
+      btn.disabled = false;
+      btn.textContent = 'Commit All Updates to GitHub';
+      return;
+    }
+
+    btn.textContent = 'Pushing to GitHub...';
+
+    // Push updated file
+    const now = new Date().toISOString().slice(0,16).replace('T',' ');
+    const putResp = await fetch(apiBase, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${config.token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `💰 Manual price update: ${applied} changes (${now} UTC)`,
+        content: btoa(encodeURIComponent(html).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1))),
+        sha: sha,
+        branch: 'main'
+      })
+    });
+
+    if (!putResp.ok) {
+      const errData = await putResp.json();
+      throw new Error(`Push failed: ${errData.message}`);
+    }
+
+    // Success! Clear queue
+    const failedMsg = errors.length > 0 ? ` (${errors.length} failed: ${errors.join(', ')})` : '';
+    showStatus(`✓ Successfully committed ${applied} price updates to GitHub!${failedMsg} Site will update in ~1 minute.`, 'success');
+    queue = [];
+    localStorage.removeItem('pt_queue');
+    renderQueue();
+
+  } catch (err) {
+    showStatus(`Error: ${err.message}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Commit All Updates to GitHub';
+  }
+}
+</script>
+</body>
+</html>
