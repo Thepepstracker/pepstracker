@@ -976,7 +976,7 @@ def main():
         "Klow Blend",
         "Tesamorelin/Ipamorelin Blend",
     ]
-    SKIP_VENDORS = set()  # glacier + milehigh now handled via premium proxies
+    # SKIP_VENDORS defined at module level — atomik, labsourced, retaone
 
     html, sha = github_get_file()
 
