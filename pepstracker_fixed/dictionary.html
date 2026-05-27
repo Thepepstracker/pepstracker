@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Peptide Dictionary — PepsTracker</title>
   <meta name="description" content="Complete guide to 24 research peptides — what they are, how they work, typical protocols, half-life, and storage." />
@@ -82,11 +85,18 @@
   <div class="header-inner">
     <a class="logo" href="index.html">
       <svg class="logo-icon" viewBox="0 0 42 42" fill="none">
-        <circle cx="7" cy="30" r="4" fill="#3b9eff"/><circle cx="19" cy="22" r="4" fill="#3bb8ff"/><circle cx="31" cy="14" r="4" fill="#4de87a"/>
+        <defs>
+          <linearGradient id="g1" x1="7" y1="30" x2="31" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3b9eff"/><stop offset="100%" stop-color="#4de87a"/></linearGradient>
+          <marker id="arr1" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+            <path d="M0 0L10 5L0 10" fill="none" stroke="#4de87a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <circle cx="7" cy="30" r="4" fill="#3b9eff"/>
+        <circle cx="19" cy="22" r="4" fill="#3bb8ff"/>
+        <circle cx="31" cy="14" r="4" fill="#4de87a"/>
         <line x1="7" y1="30" x2="19" y2="22" stroke="#3b9eff" stroke-width="2.5" stroke-linecap="round"/>
         <line x1="19" y1="22" x2="31" y2="14" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
-        <polyline points="28,8 35,8 35,15" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        <defs><linearGradient id="g1" x1="19" y1="22" x2="31" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3b9eff"/><stop offset="100%" stop-color="#4de87a"/></linearGradient></defs>
+        <line x1="31" y1="14" x2="38" y2="7" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round" marker-end="url(#arr1)"/>
       </svg>
       <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
     </a>
