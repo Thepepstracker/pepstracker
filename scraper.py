@@ -49,6 +49,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://ascensionpeptides.com/product/selank-10mg/","mg":10},
     "Sermorelin":                     {"url":"https://ascensionpeptides.com/product/sermorelin-10mg/","mg":10},
     "DSIP":                           {"url":"https://ascensionpeptides.com/product/dsip-10mg/","mg":10},
+    "Adamax":                         {"url":"https://ascensionpeptides.com/product/adamax-10mg/","mg":10},
   },
   "atomik": {
     "Semaglutide":                    {"url":"https://atomiklabz.com/product/peptide-1-s-10mg/","mg":10},
@@ -100,6 +101,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://lapeptides.net/product/selank/","mg":10},
     "Sermorelin":                     {"url":"https://lapeptides.net/product/sermorelin/","mg":10},
     "DSIP":                           {"url":"https://lapeptides.net/product/dsip/","mg":5},
+    "Adamax":                         {"url":"https://lapeptides.net/product/adamax/","mg":10},
   },
   "glacier": {
     "Semaglutide":                    {"url":"https://glacieraminos.shop/product/gla1-s/","mg":15},
@@ -127,6 +129,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://glacieraminos.shop/product/selank-10/","mg":10},
     "Sermorelin":                     {"url":"https://glacieraminos.shop/product/sermorelin/","mg":10},
     "DSIP":                           {"url":"https://glacieraminos.shop/product/dsip/","mg":5},
+    "Adamax":                         {"url":"https://glacieraminos.shop/product/adamax-10mg/","mg":10},
   },
   "milehigh": {
     "Semaglutide":                    {"url":"https://milehighcompounds.is/product/mhc-1-sm/","mg":10},
@@ -153,6 +156,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://milehighcompounds.is/product/selank/","mg":10},
     "Sermorelin":                     {"url":"https://milehighcompounds.is/product/sermorelin/","mg":10},
     "DSIP":                           {"url":"https://milehighcompounds.is/product/dsip/","mg":10},
+    "Adamax":                         {"url":"https://milehighcompounds.is/product/adamax/","mg":10},
   },
   "ezpeptides": {
     "Semaglutide":                    {"url":"https://ezpeptides.com/product/ezp-1p-10mg/","mg":10},
@@ -182,6 +186,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://ezpeptides.com/product/selank-10mg/","mg":10},
     "Sermorelin":                     {"url":"https://ezpeptides.com/product/sermorelin-5mg/","mg":5},
     "DSIP":                           {"url":"https://ezpeptides.com/product/dsip-10mg/","mg":10},
+    "Adamax":                         {"url":"https://ezpeptides.com/product/adamax-10mg/","mg":10},
   },
   "amp": {
     "Semaglutide":                    {"url":"https://ameanopeptides.com/product/amp-1p-5mg/","mg":5},
@@ -207,6 +212,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://ameanopeptides.com/product/n-acetyl-selank-amidate-10mg-research-peptide/","mg":10},
     "Sermorelin":                     {"url":"https://ameanopeptides.com/product/sermorelin-5mg/","mg":5},
     "DSIP":                           {"url":"https://ameanopeptides.com/product/dsip-10mg/","mg":10},
+    "Adamax":                         {"url":"https://ameanopeptides.com/product/adamax-10mg/","mg":10},
   },
   "labsourced": {
     "Tirzepatide":                    {"url":"https://www.labsourced.com/products/tirzepatide-30mg","mg":30},
@@ -255,6 +261,7 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://ionpeptide.com/product/selank-2/","mg":5},
     "Sermorelin":                     {"url":"https://ionpeptide.com/product/sermorelin/","mg":5},
     "DSIP":                           {"url":"https://ionpeptide.com/product/dsip/","mg":5},
+    "Adamax":                         {"url":"https://ionpeptide.com/product/adamax-10mg/","mg":10},
   },
   "retaone": {
     "Semaglutide":                    {"url":"https://retaonelabs.com/product/ro-1s-10mg/","mg":10},
@@ -295,19 +302,21 @@ PRODUCT_URLS = {
     "Selank":                         {"url":"https://nurapeptide.com/product/selank-peptide-10mg/","mg":10},
     "Sermorelin":                     {"url":"https://nurapeptide.com/product/sermorelin-5mg/","mg":5},
     "DSIP":                           {"url":"https://nurapeptide.com/product/dsip-5mg/","mg":5},
+    "Adamax":                         {"url":"https://nurapeptide.com/product/adamax-10mg/","mg":10},
   },
 }
 
 # Vendors that need real browser (Cloudflare protected)
 CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "nura"}
 
-# Vendors that are frequently unreliable (502s, robots.txt, etc)
-# Only try once, no JS retry — saves time
-UNRELIABLE_VENDORS = {"retaone", "labsourced"}
+# Vendors excluded from auto-scraping:
+# - atomik: Cloudflare Turnstile (human verification) — unbypassable
+# - labsourced: robots.txt blocks all scrapers
+# - retaone: 502 server constantly unreliable
+# Update these manually via price-update.html
+SKIP_VENDORS = {"atomik", "labsourced", "retaone"}
 
-# Vendors that need ScraperAPI premium tier to bypass Cloudflare
-# Premium uses residential proxies which are much harder to block
-PREMIUM_VENDORS = {"atomik"}
+PREMIUM_VENDORS = set()
 
 def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
     params = {
@@ -751,7 +760,7 @@ def fetch_price_from_url(vendor_id, product, product_url):
         else:
             # Ion Peptides needs JS rendering - use it on first attempt
             ion_needs_js = vendor_id in {"ion"}
-            max_attempts = 1 if vendor_id in UNRELIABLE_VENDORS else 2
+            max_attempts = 2  # All remaining vendors get 2 attempts
             # Try without JS first (faster), except for known JS-heavy sites
             for attempt in range(max_attempts):
                 try:
@@ -776,10 +785,12 @@ def fetch_price_from_url(vendor_id, product, product_url):
                         if resp.status_code == 403:
                             log.warning(f"  💡 FIX: Add '{vendor_id}' to CLOUDFLARE_VENDORS to use Playwright")
                             run_stats["blocked_403"].append((vendor_id, product))
-                            break
+                            break  # CF won't change its mind
                         if resp.status_code == 404:
                             run_stats["url_404"].append((vendor_id, product))
-                            break
+                            break  # URL is wrong, retry won't help
+                        if resp.status_code in {500, 502, 503}:
+                            break  # Server error — skip fast, retry won't help
                         continue
                     html = resp.text
                     if is_out_of_stock(html):
@@ -956,7 +967,7 @@ def main():
         # Longevity
         "Epithalon", "MOTS-c", "NAD+",
         # Cognitive
-        "Semax", "Selank", "DSIP",
+        "Semax", "Selank", "DSIP", "Adamax",
         # Immune
         "KPV", "ARA-290",
         # Fat Loss
@@ -974,7 +985,8 @@ def main():
         log.error("Could not parse PRICES block — aborting")
         return
     log.info(f"Parsed {len(existing)} peptides from PRICES block")
-    log.info(f"Scraping {len(ACTIVE_PEPTIDES)} active peptides, skipping: {SKIP_VENDORS}")
+    log.info(f"Scraping {len(ACTIVE_PEPTIDES)} active peptides")
+    log.info(f"⏭ Skipping manual vendors (update via price-update.html): {', '.join(sorted(SKIP_VENDORS))}")
 
     updates = {}
     oos_items = []
@@ -1004,7 +1016,7 @@ def main():
                     "Ipamorelin": 100, "CJC-1295 (with DAC)": 100, "Sermorelin": 120,
                     "Tesamorelin": 150, "Melanotan II": 80, "PT-141 (Bremelanotide)": 100,
                     "GHK-Cu": 250, "Epithalon": 200, "MOTS-c": 150, "NAD+": 150,
-                    "Semax": 100, "Selank": 100, "DSIP": 80, "KPV": 100,
+                    "Semax": 100, "Selank": 100, "DSIP": 80, "Adamax": 100, "KPV": 100,
                     "ARA-290": 120, "AOD-9604": 80, "Klow Blend": 200,
                     "Tesamorelin/Ipamorelin Blend": 200,
                 }
