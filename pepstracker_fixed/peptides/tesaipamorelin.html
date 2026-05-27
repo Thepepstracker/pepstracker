@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="icon" type="image/png" href="../favicon.png" />
+  <link rel="apple-touch-icon" href="../favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tesamorelin/Ipamorelin Blend — Peptide Dictionary | PepsTracker</title>
   <meta name="description" content="GHRH + GHRP combination that amplifies natural GH pulses through complementary receptor activation." />
@@ -81,12 +84,31 @@
 <header>
   <div class="header-inner">
     <a class="logo" href="../index.html">
-      <svg class="logo-icon" viewBox="0 0 42 42" fill="none">
-        <circle cx="7" cy="30" r="4" fill="#3b9eff"/><circle cx="19" cy="22" r="4" fill="#3bb8ff"/><circle cx="31" cy="14" r="4" fill="#4de87a"/>
-        <line x1="7" y1="30" x2="19" y2="22" stroke="#3b9eff" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="19" y1="22" x2="31" y2="14" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
-        <polyline points="28,8 35,8 35,15" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        <defs><linearGradient id="g1" x1="19" y1="22" x2="31" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3b9eff"/><stop offset="100%" stop-color="#4de87a"/></linearGradient></defs>
+      <svg class="logo-icon" viewBox="0 0 44 44" fill="none">
+        <defs>
+          <linearGradient id="g1" x1="4" y1="28" x2="40" y2="8" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1a7fe8"/>
+            <stop offset="50%" stop-color="#00e5cc"/>
+            <stop offset="100%" stop-color="#4de87a"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="4" y1="32" x2="40" y2="32" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1a7fe8"/>
+            <stop offset="100%" stop-color="#4de87a"/>
+          </linearGradient>
+        </defs>
+        <!-- Arc curve underneath -->
+        <path d="M4 30 Q22 42 40 26" fill="none" stroke="url(#g2)" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Connecting lines -->
+        <line x1="4" y1="28" x2="18" y2="18" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="18" y1="18" x2="28" y2="23" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Arrow shaft — perfectly 45 degrees -->
+        <line x1="28" y1="23" x2="38" y2="10" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Solid filled arrowhead at 45 degrees -->
+        <polygon points="40,8 33,10 38,15" fill="#4de87a"/>
+        <!-- Dots -->
+        <circle cx="4" cy="28" r="4" fill="#1a7fe8"/>
+        <circle cx="18" cy="18" r="4" fill="#00e5cc"/>
+        <circle cx="28" cy="23" r="4" fill="#4de87a"/>
       </svg>
       <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
     </a>
