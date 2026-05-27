@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NAD+ — Peptide Dictionary | PepsTracker</title>
+  <meta name="description" content="Essential coenzyme critical for energy metabolism, DNA repair, and sirtuin activation." />
+  <style>
+    :root {
+      --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
+      --border:#2a3347; --blue:#3b9eff; --green:#4de87a;
+      --text:#e8edf5; --muted:#7a8ba8; --gold:#f5c842;
+      --red:#ff5c5c; --radius:12px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:100;}
+    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px;}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+    .logo-icon{width:42px;height:42px;}
+    .logo-text{font-size:1.5rem;font-weight:800;letter-spacing:-.5px;}
+    .logo-text span:first-child{color:var(--blue);}
+    .logo-text span:last-child{color:var(--green);}
+    nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+    nav a{color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:600;padding:6px 12px;border-radius:8px;transition:all .2s;white-space:nowrap;}
+    nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    nav a.active{color:var(--blue);}
+    nav a.nav-calc{background:rgba(77,232,122,.1);color:var(--green);border:1px solid rgba(77,232,122,.25);}
+    nav a.nav-apply{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);}
+    .page{max-width:1100px;margin:0 auto;padding:32px 24px 60px;}
+    .breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:28px;font-size:.85rem;color:var(--muted);}
+    .breadcrumb a{color:var(--muted);text-decoration:none;transition:color .2s;}
+    .breadcrumb a:hover{color:var(--blue);}
+    .breadcrumb span{color:var(--muted);}
+    .hero-row{display:flex;align-items:flex-start;gap:24px;margin-bottom:32px;flex-wrap:wrap;}
+    .hero-left{flex:1;min-width:280px;}
+    .name-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+    .pep-name{font-size:2rem;font-weight:800;letter-spacing:-.5px;}
+    .cat-badge{font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;}
+    .tagline{font-size:1.05rem;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+    .hero-btns{display:flex;gap:10px;flex-wrap:wrap;}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.9rem;padding:11px 22px;border-radius:8px;text-decoration:none;transition:opacity .2s;}
+    .btn-primary:hover{opacity:.88;}
+    .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--muted);font-weight:600;font-size:.9rem;padding:11px 22px;border-radius:8px;text-decoration:none;transition:all .2s;}
+    .btn-secondary:hover{border-color:var(--blue);color:var(--blue);}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;min-width:260px;}
+    .stat-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;}
+    .stat-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+    .stat-value{font-size:1rem;font-weight:700;color:var(--text);}
+    .divider{height:1px;background:var(--border);margin:8px 0 28px;}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    .section-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;}
+    .section-card h3{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;}
+    .section-card p{font-size:.92rem;color:var(--text);line-height:1.7;}
+    .uses-list{display:flex;flex-direction:column;gap:8px;}
+    .use-item{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--text);}
+    .use-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;}
+    .storage-row{display:flex;gap:16px;flex-wrap:wrap;}
+    .storage-item{display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--text);}
+    .storage-icon{font-size:1.1rem;}
+    .notes-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:16px;}
+    .notes-card h3{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;}
+    .notes-card p{font-size:.92rem;color:var(--text);line-height:1.7;margin-bottom:10px;}
+    .notes-card p:last-child{margin-bottom:0;}
+    .cta-bar{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+    .cta-text h4{font-size:1rem;font-weight:700;margin-bottom:4px;}
+    .cta-text p{font-size:.85rem;color:var(--muted);}
+    .also-section{margin-top:32px;}
+    .also-section h3{font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;}
+    .also-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+    .also-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;text-decoration:none;color:inherit;transition:border-color .2s,transform .15s;display:block;}
+    .also-card:hover{border-color:var(--blue);transform:translateY(-1px);}
+    .also-name{font-size:.9rem;font-weight:700;margin-bottom:4px;}
+    .also-cat{font-size:.7rem;color:var(--muted);}
+    footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:.82rem;}
+    footer a{color:var(--blue);text-decoration:none;}
+    @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a class="logo" href="../index.html">
+      <svg class="logo-icon" viewBox="0 0 42 42" fill="none">
+        <circle cx="7" cy="30" r="4" fill="#3b9eff"/><circle cx="19" cy="22" r="4" fill="#3bb8ff"/><circle cx="31" cy="14" r="4" fill="#4de87a"/>
+        <line x1="7" y1="30" x2="19" y2="22" stroke="#3b9eff" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="19" y1="22" x2="31" y2="14" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
+        <polyline points="28,8 35,8 35,15" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <defs><linearGradient id="g1" x1="19" y1="22" x2="31" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3b9eff"/><stop offset="100%" stop-color="#4de87a"/></linearGradient></defs>
+      </svg>
+      <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
+    </a>
+    <nav>
+      <a href="../index.html">Price Tracker</a>
+      <a href="../dictionary.html" class="active">📖 Dictionary</a>
+      <a href="../calculators.html" class="nav-calc">🧮 Calculators</a>
+      <a href="../vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
+      <a href="../disclaimer.html">Disclaimer</a>
+    </nav>
+  </div>
+</header>
+
+<div style="height:3px;background:linear-gradient(90deg,#3b9eff,#4de87a 50%,#f5c842);"></div>
+
+<div class="page">
+  <div class="breadcrumb">
+    <a href="../dictionary.html">← Dictionary</a>
+    <span>/</span>
+    <span>NAD+</span>
+  </div>
+
+  <div class="hero-row">
+    <div class="hero-left">
+      <div class="name-row">
+        <h1 class="pep-name">NAD+</h1>
+        <span class="cat-badge cat-longevity">Longevity</span>
+      </div>
+      <p class="tagline">Essential coenzyme critical for energy metabolism, DNA repair, and sirtuin activation.</p>
+      <div class="hero-btns">
+        <a class="btn-primary" href="../index.html">💰 Compare Prices</a>
+        <a class="btn-secondary" href="../dictionary.html">← Back to Dictionary</a>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Half-life</div><div class="stat-value">~1–2 hours (IV); varies by route</div></div>
+      <div class="stat-card"><div class="stat-label">Research dose</div><div class="stat-value">100–500mg/session</div></div>
+      <div class="stat-card"><div class="stat-label">Frequency</div><div class="stat-value">Weekly or as needed</div></div>
+      <div class="stat-card"><div class="stat-label">Routes</div><div class="stat-value">IV, SubQ, or oral</div></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="two-col">
+    <div class="section-card">
+      <h3>How it works</h3>
+      <p>Serves as electron carrier in cellular respiration (NAD+/NADH cycling). Substrate for sirtuins (longevity proteins), PARP (DNA repair), and CD38. Declines ~50% between ages 40 and 60, potentially driving age-related decline.</p>
+    </div>
+    <div class="section-card">
+      <h3>Research uses</h3>
+      <div class="uses-list">
+        <div class="use-item"><div class="use-dot"></div>Energy metabolism research</div>
+        <div class="use-item"><div class="use-dot"></div>DNA repair</div>
+        <div class="use-item"><div class="use-dot"></div>Sirtuin activation</div>
+        <div class="use-item"><div class="use-dot"></div>Addiction research</div>
+        <div class="use-item"><div class="use-dot"></div>Neurological studies</div>
+        <div class="use-item"><div class="use-dot"></div>Anti-aging</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes-card">
+    <h3>Research notes</h3>
+    <p>NAD+ levels decline significantly with age. Research interest has exploded following discovery of its role in sirtuin activation — sirtuins are a family of proteins associated with longevity and stress resistance.</p>
+    <p>IV delivery produces the most rapid and complete repletion. SubQ administration is increasingly popular for convenience. Oral precursors (NMN, NR) are popular but bioavailability to specific tissues is debated.</p>
+  </div>
+
+  <div class="section-card" style="margin-bottom:16px;">
+    <h3>Storage</h3>
+    <div class="storage-row">
+      <div class="storage-item"><span class="storage-icon">❄️</span>Freeze lyophilized powder</div>
+      <div class="storage-item"><span class="storage-icon">🌡️</span>Refrigerate reconstituted; use within 24 hours</div>
+      <div class="storage-item"><span class="storage-icon">⚡</span>Sensitive to light and heat</div>
+    </div>
+  </div>
+
+  <div class="cta-bar">
+    <div class="cta-text">
+      <h4>Ready to compare NAD+ prices?</h4>
+      <p>Real-time prices across 11 vendors with discount codes already applied.</p>
+    </div>
+    <a class="btn-primary" href="../index.html">Compare Prices →</a>
+  </div>
+
+  <div class="also-section">
+    <h3>Also in the dictionary</h3>
+    <div class="also-grid">
+      <a class="also-card" href="semaglutide.html"><div class="also-name">Semaglutide</div><div class="also-cat">GLP-1</div></a>
+      <a class="also-card" href="tirzepatide.html"><div class="also-name">Tirzepatide</div><div class="also-cat">GLP-1</div></a>
+      <a class="also-card" href="retatrutide.html"><div class="also-name">Retatrutide</div><div class="also-cat">GLP-1</div></a>
+      <a class="also-card" href="bpc157.html"><div class="also-name">BPC-157</div><div class="also-cat">Healing</div></a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>PepsTracker is a price comparison service only. All content is for informational and research purposes only.</p>
+  <p style="margin-top:8px;"><a href="../index.html">Price Tracker</a> &nbsp;|&nbsp; <a href="../dictionary.html">Dictionary</a> &nbsp;|&nbsp; <a href="../calculators.html">Calculators</a> &nbsp;|&nbsp; <a href="../disclaimer.html">Disclaimer</a></p>
+  <p style="margin-top:8px;">© 2026 PepsTracker — For research purposes only.</p>
+</footer>
+</body>
+</html>
