@@ -460,7 +460,7 @@ async function commitAll() {
       },
       body: JSON.stringify({
         message: `💰 Manual price update: ${applied} changes (${now} UTC)`,
-        content: btoa(unescape(encodeURIComponent(html))),
+        content: btoa(encodeURIComponent(html).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1))),
         sha: sha,
         branch: 'main'
       })
