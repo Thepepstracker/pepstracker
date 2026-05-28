@@ -62,6 +62,18 @@
 
     footer{border-top:1px solid var(--border);padding:20px 16px;text-align:center;color:var(--muted);font-size:.8rem;}
     footer a{color:var(--blue);text-decoration:none;}
+
+    /* Hamburger */
+    .menu-btn{display:none;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;padding:7px 10px;font-size:1.1rem;line-height:1;}
+    .menu-btn:hover{color:var(--text);border-color:var(--blue);}
+    .mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);}
+    .mobile-nav.open{display:flex;}
+    .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;transition:all .2s;}
+    .mobile-nav a:hover,.mobile-nav a.active{color:var(--text);background:rgba(255,255,255,.06);}
+    .mobile-nav a.active{color:var(--blue);}
+    .mobile-nav a.nav-calc{background:rgba(77,232,122,.08);color:var(--green);border:1px solid rgba(77,232,122,.2);}
+    .mobile-nav a.nav-apply{background:rgba(245,200,66,.08);color:var(--gold);border:1px solid rgba(245,200,66,.2);}
+    @media(max-width:768px){nav{display:none;}.menu-btn{display:block;}}
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -100,6 +112,15 @@
       <a href="disclaimer.html">Disclaimer</a>
       <a href="account.html" class="active">👤 Account</a>
     </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" onclick="toggleMenu()">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html" onclick="toggleMenu()">🏠 Price Tracker</a>
+    <a href="dictionary.html" onclick="toggleMenu()">📖 Dictionary</a>
+    <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
+    <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
+    <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
+    <a href="account.html" class="active" onclick="toggleMenu()">👤 My Account</a>
   </div>
 </header>
 
