@@ -155,6 +155,17 @@
     footer{border-top:1px solid var(--border);padding:20px 16px;text-align:center;color:var(--muted);font-size:.8rem;}
     footer a{color:var(--blue);text-decoration:none;}
 
+
+    /* ── Save button ── */
+    .btn-save-peptide{background:none;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 10px;font-size:.8rem;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+    .btn-save-peptide:hover{border-color:var(--gold);color:var(--gold);}
+    .btn-save-peptide.saved{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,.08);}
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green);color:#0d0f14;font-weight:700;font-size:.88rem;padding:11px 22px;border-radius:30px;transition:transform .3s;z-index:999;pointer-events:none;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    /* Save button on mobile — full width row */
+    @media(max-width:640px){
+      .btn-save-peptide{grid-column:1/-1;text-align:center;padding:10px;}
+    }
     /* ══════════════════════════════════════════
        MOBILE STYLES  ≤ 640px
     ══════════════════════════════════════════ */
@@ -231,10 +242,10 @@
       nav{display:none;}
       .menu-btn{display:block;}
     }
-
-    nav a.nav-account{background:rgba(59,158,255,.1);color:var(--blue);border:1px solid rgba(59,158,255,.25);}
-    .mobile-nav a.nav-account{background:rgba(59,158,255,.08);color:var(--blue);border:1px solid rgba(59,158,255,.2);}
   </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -283,7 +294,6 @@
       <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
       <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
-      <a href="account.html" class="nav-account">👤 Account</a>
     </nav>
 
     <!-- Hamburger -->
@@ -297,7 +307,6 @@
     <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
     <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
     <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
-    <a href="account.html" class="nav-account" onclick="toggleMenu()">👤 My Account</a>
   </div>
 </header>
 
@@ -401,7 +410,10 @@
   <div id="resultsContainer" style="display:none;">
     <div class="results-header">
       <div class="results-title">Prices for <span id="resultTitle"></span></div>
-      <div class="last-updated">Last updated: <em id="lastUpdated"></em></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div class="last-updated">Last updated: <em id="lastUpdated"></em></div>
+        <button class="btn-save-peptide" id="headerSaveBtn" onclick="toggleSavePeptide(currentPeptide)">☆ Save</button>
+      </div>
     </div>
     <div class="result-list" id="resultList"></div>
   </div>
@@ -939,7 +951,71 @@ function renderResults() {
   const scrapeDate = typeof SCRAPE_DATE !== "undefined" ? SCRAPE_DATE : null;
   document.getElementById('lastUpdated').textContent = scrapeDate || new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   document.getElementById('resultList').innerHTML = html;
+  updateSaveButtons();
 }
+
+// ── Firebase + Save Peptide ──
+const firebaseConfig = {
+  apiKey: "AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
+  authDomain: "pepstracker.firebaseapp.com",
+  projectId: "pepstracker",
+  storageBucket: "pepstracker.firebasestorage.app",
+  messagingSenderId: "575079448915",
+  appId: "1:575079448915:web:4937336ccc15a6764ca1a6"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser = null;
+let savedPeptides = [];
+
+auth.onAuthStateChanged(async user => {
+  currentUser = user;
+  if (user) {
+    const snap = await db.collection('users').doc(user.uid).get();
+    savedPeptides = snap.exists ? (snap.data().savedPeptides || []) : [];
+  } else {
+    savedPeptides = [];
+  }
+  if (currentPeptide) updateSaveButtons();
+});
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+async function toggleSavePeptide(peptide) {
+  if (!currentUser) {
+    showToast('👤 Sign in to save peptides');
+    setTimeout(() => window.location.href = 'login.html', 1200);
+    return;
+  }
+  const idx = savedPeptides.indexOf(peptide);
+  if (idx === -1) {
+    savedPeptides.push(peptide);
+    showToast('⭐ Saved to your account!');
+  } else {
+    savedPeptides.splice(idx, 1);
+    showToast('Removed from saved');
+  }
+  await db.collection('users').doc(currentUser.uid).update({ savedPeptides });
+  updateSaveButtons();
+}
+
+function updateSaveButtons() {
+  const btn = document.getElementById('headerSaveBtn');
+  if (btn && currentPeptide) {
+    const isSaved = savedPeptides.includes(currentPeptide);
+    btn.textContent = isSaved ? '⭐ Saved' : '☆ Save';
+    btn.classList.toggle('saved', isSaved);
+  }
+}
+
 </script>
+<div class="toast" id="toast"></div>
 </body>
 </html>
