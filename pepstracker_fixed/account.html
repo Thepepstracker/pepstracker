@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account — PepsTracker</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    :root {
+      --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
+      --border:#2a3347; --blue:#3b9eff; --green:#4de87a;
+      --text:#e8edf5; --muted:#7a8ba8; --gold:#f5c842;
+      --red:#ff5c5c; --radius:12px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+    /* ── Header ── */
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px;}
+    .logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;}
+    .logo-icon{width:36px;height:36px;}
+    .logo-text{font-size:1.35rem;font-weight:800;letter-spacing:-.5px;}
+    .logo-text span:first-child{color:var(--blue);}
+    .logo-text span:last-child{color:var(--green);}
+    nav{display:flex;align-items:center;gap:4px;}
+    nav a{color:var(--muted);text-decoration:none;font-size:.82rem;font-weight:600;padding:6px 10px;border-radius:8px;transition:all .2s;white-space:nowrap;}
+    nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    nav a.nav-calc{background:rgba(77,232,122,.1);color:var(--green);border:1px solid rgba(77,232,122,.25);}
+    nav a.nav-account{background:rgba(59,158,255,.1);color:var(--blue);border:1px solid rgba(59,158,255,.25);}
+    .menu-btn{display:none;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;padding:7px 10px;font-size:1.1rem;line-height:1;}
+    .mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);}
+    .mobile-nav.open{display:flex;}
+    .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;transition:all .2s;}
+    .mobile-nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    .mobile-nav a.nav-calc{background:rgba(77,232,122,.08);color:var(--green);border:1px solid rgba(77,232,122,.2);}
+    .mobile-nav a.nav-apply{background:rgba(245,200,66,.08);color:var(--gold);border:1px solid rgba(245,200,66,.2);}
+    .mobile-nav a.nav-account{background:rgba(59,158,255,.08);color:var(--blue);border:1px solid rgba(59,158,255,.2);}
+    .mobile-nav .sign-out-link{color:var(--red) !important;}
+
+    /* ── Loading screen ── */
+    #loadingScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;font-size:1.5rem;}
+
+    /* ── Welcome banner ── */
+    .welcome-banner{background:linear-gradient(135deg,rgba(77,232,122,.1),rgba(59,158,255,.1));border:1px solid rgba(77,232,122,.3);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:12px;margin-bottom:24px;font-size:.92rem;}
+    .welcome-banner strong{color:var(--green);}
+
+    /* ── Page layout ── */
+    .page{max-width:900px;margin:0 auto;padding:32px 16px 60px;}
+
+    /* Profile section */
+    .profile-row{display:flex;align-items:center;gap:16px;margin-bottom:32px;}
+    .avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--green));display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:#0d0f14;flex-shrink:0;overflow:hidden;}
+    .avatar img{width:100%;height:100%;object-fit:cover;}
+    .profile-info h2{font-size:1.2rem;font-weight:800;margin-bottom:2px;}
+    .profile-info p{font-size:.85rem;color:var(--muted);}
+
+    /* Tabs */
+    .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto;}
+    .tab{padding:10px 16px;font-size:.85rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;}
+    .tab:hover{color:var(--text);}
+    .tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+    .tab-panel{display:none;}
+    .tab-panel.active{display:block;}
+
+    /* Section cards */
+    .section-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:16px;}
+    .section-card h3{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;}
+
+    /* Toggle rows */
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+    .toggle-row:last-child{border-bottom:none;padding-bottom:0;}
+    .toggle-row:first-of-type{padding-top:0;}
+    .toggle-info strong{font-size:.9rem;font-weight:600;display:block;margin-bottom:2px;}
+    .toggle-info span{font-size:.78rem;color:var(--muted);}
+    .toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:24px;cursor:pointer;transition:background .2s;}
+    .toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;}
+    .toggle input:checked + .toggle-slider{background:var(--green);}
+    .toggle input:checked + .toggle-slider::before{transform:translateX(20px);}
+
+    /* Saved peptides */
+    .saved-empty{text-align:center;padding:40px 20px;color:var(--muted);}
+    .saved-empty .empty-icon{font-size:2rem;margin-bottom:10px;}
+    .saved-empty p{font-size:.88rem;line-height:1.5;}
+    .saved-empty a{color:var(--blue);text-decoration:none;}
+    .saved-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+    .saved-item{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+    .saved-item-name{font-size:.88rem;font-weight:700;}
+    .saved-item-cat{font-size:.7rem;color:var(--muted);margin-top:2px;}
+    .btn-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:2px;transition:color .2s;flex-shrink:0;}
+    .btn-remove:hover{color:var(--red);}
+
+    /* Price alerts */
+    .alert-list{display:flex;flex-direction:column;gap:10px;}
+    .alert-item{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .alert-info{flex:1;}
+    .alert-peptide{font-size:.9rem;font-weight:700;}
+    .alert-threshold{font-size:.78rem;color:var(--muted);margin-top:2px;}
+    .alert-threshold em{color:var(--blue);font-style:normal;}
+
+    /* Add alert form */
+    .add-alert{background:var(--surface);border:1.5px dashed var(--border);border-radius:10px;padding:16px;margin-top:12px;}
+    .add-alert h4{font-size:.82rem;font-weight:700;color:var(--muted);margin-bottom:12px;}
+    .add-alert-row{display:flex;gap:10px;flex-wrap:wrap;}
+    .add-alert select,.add-alert input{background:var(--card);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-size:.88rem;font-family:inherit;flex:1;min-width:120px;}
+    .add-alert select:focus,.add-alert input:focus{outline:none;border-color:var(--blue);}
+    .btn-add-alert{background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:.88rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .2s;}
+    .btn-add-alert:hover{opacity:.9;}
+
+    /* Danger zone */
+    .danger-zone{background:rgba(255,92,92,.04);border:1px solid rgba(255,92,92,.2);border-radius:var(--radius);padding:20px;}
+    .danger-zone h3{color:var(--red);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+    .btn-danger{background:transparent;border:1.5px solid var(--red);color:var(--red);border-radius:8px;padding:10px 18px;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;}
+    .btn-danger:hover{background:rgba(255,92,92,.1);}
+
+    /* Save button */
+    .btn-save{background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-size:.9rem;font-weight:700;cursor:pointer;transition:opacity .2s;}
+    .btn-save:hover{opacity:.9;}
+    .save-row{display:flex;justify-content:flex-end;margin-top:8px;}
+
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green);color:#0d0f14;font-weight:700;font-size:.9rem;padding:12px 24px;border-radius:30px;transition:transform .3s;z-index:999;pointer-events:none;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+
+    footer{border-top:1px solid var(--border);padding:20px 16px;text-align:center;color:var(--muted);font-size:.8rem;}
+    footer a{color:var(--blue);text-decoration:none;}
+
+    @media(max-width:640px){
+      nav{display:none;}
+      .menu-btn{display:block;}
+      .saved-grid{grid-template-columns:1fr 1fr;}
+      .add-alert-row{flex-direction:column;}
+    }
+  </style>
+</head>
+<body>
+
+<div id="loadingScreen">🔬</div>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <svg class="logo-icon" viewBox="0 0 200 200" fill="none">
+        <defs>
+          <linearGradient id="g1" x1="20" y1="130" x2="180" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1a7fe8"/><stop offset="50%" stop-color="#00e5cc"/><stop offset="100%" stop-color="#4de87a"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="20" y1="150" x2="180" y2="150" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1a7fe8"/><stop offset="100%" stop-color="#4de87a"/>
+          </linearGradient>
+        </defs>
+        <path d="M20 140 Q100 195 180 120" fill="none" stroke="url(#g2)" stroke-width="10" stroke-linecap="round"/>
+        <line x1="20" y1="128" x2="82" y2="82" stroke="url(#g1)" stroke-width="10" stroke-linecap="round"/>
+        <line x1="82" y1="82" x2="128" y2="105" stroke="url(#g1)" stroke-width="10" stroke-linecap="round"/>
+        <line x1="128" y1="105" x2="168" y2="48" stroke="#4de87a" stroke-width="10" stroke-linecap="round"/>
+        <polygon points="178,38 152,46 168,64" fill="#4de87a"/>
+        <circle cx="20" cy="128" r="18" fill="#1a7fe8"/>
+        <circle cx="82" cy="82" r="18" fill="#00e5cc"/>
+        <circle cx="128" cy="105" r="18" fill="#4de87a"/>
+      </svg>
+      <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
+    </a>
+    <nav>
+      <a href="index.html">Price Tracker</a>
+      <a href="dictionary.html">📖 Dictionary</a>
+      <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
+      <a href="account.html" class="nav-account">👤 My Account</a>
+      <a href="#" onclick="signOut()" style="color:var(--red);">Sign Out</a>
+    </nav>
+    <button class="menu-btn" id="menuBtn" onclick="toggleMenu()">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html" onclick="toggleMenu()">🏠 Price Tracker</a>
+    <a href="dictionary.html" onclick="toggleMenu()">📖 Dictionary</a>
+    <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
+    <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
+    <a href="account.html" class="nav-account" onclick="toggleMenu()">👤 My Account</a>
+    <a href="#" class="sign-out-link" onclick="signOut()">🚪 Sign Out</a>
+  </div>
+</header>
+
+<div style="height:3px;background:linear-gradient(90deg,var(--blue),var(--green) 50%,var(--gold));"></div>
+
+<div class="page" id="mainContent" style="display:none;">
+
+  <div class="welcome-banner" id="welcomeBanner" style="display:none;">
+    🎉 <div><strong>Welcome to PepsTracker!</strong> Your account is ready. Set up your price alerts below.</div>
+  </div>
+
+  <!-- Profile -->
+  <div class="profile-row">
+    <div class="avatar" id="avatarEl">?</div>
+    <div class="profile-info">
+      <h2 id="userName">Loading…</h2>
+      <p id="userEmail"></p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('alerts',this)">🔔 Price Alerts</button>
+    <button class="tab" onclick="switchTab('saved',this)">⭐ Saved Peptides</button>
+    <button class="tab" onclick="switchTab('notifications',this)">💌 Email Preferences</button>
+    <button class="tab" onclick="switchTab('settings',this)">⚙️ Settings</button>
+  </div>
+
+  <!-- ── Tab: Price Alerts ── -->
+  <div class="tab-panel active" id="tab-alerts">
+    <div class="section-card">
+      <h3>Active Price Alerts</h3>
+      <div class="alert-list" id="alertList">
+        <div style="color:var(--muted);font-size:.88rem;padding:8px 0;">Loading alerts…</div>
+      </div>
+
+      <div class="add-alert" style="margin-top:16px;">
+        <h4>+ Add new alert</h4>
+        <div class="add-alert-row">
+          <select id="alertPeptide">
+            <option value="">Select peptide…</option>
+            <option>Semaglutide</option><option>Tirzepatide</option><option>Retatrutide</option>
+            <option>BPC-157</option><option>TB-500</option><option>BPC-157 + TB-500 Blend</option>
+            <option>Ipamorelin</option><option>CJC-1295 (with DAC)</option><option>Sermorelin</option>
+            <option>Tesamorelin</option><option>Melanotan II</option><option>PT-141 (Bremelanotide)</option>
+            <option>GHK-Cu</option><option>Epithalon</option><option>MOTS-c</option><option>NAD+</option>
+            <option>Semax</option><option>Selank</option><option>DSIP</option><option>Adamax</option>
+            <option>KPV</option><option>ARA-290</option><option>AOD-9604</option>
+            <option>Klow Blend</option><option>Tesamorelin/Ipamorelin Blend</option>
+          </select>
+          <input type="number" id="alertPrice" placeholder="Alert when below $" min="1" step="0.01" />
+          <button class="btn-add-alert" onclick="addAlert()">Add Alert</button>
+        </div>
+        <p style="font-size:.75rem;color:var(--muted);margin-top:8px;">We'll email you when the best price drops below your threshold.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tab: Saved Peptides ── -->
+  <div class="tab-panel" id="tab-saved">
+    <div class="section-card">
+      <h3>Your Saved Peptides</h3>
+      <div id="savedContainer"></div>
+    </div>
+  </div>
+
+  <!-- ── Tab: Email Preferences ── -->
+  <div class="tab-panel" id="tab-notifications">
+    <div class="section-card">
+      <h3>Email Notifications</h3>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>Weekly Deal Digest</strong>
+          <span>Best prices across all vendors every week</span>
+        </div>
+        <label class="toggle"><input type="checkbox" id="togWeekly" checked /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>Price Drop Alerts</strong>
+          <span>Email when a peptide you track drops in price</span>
+        </div>
+        <label class="toggle"><input type="checkbox" id="togAlerts" checked /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>New Vendor Announcements</strong>
+          <span>When we add a new vendor to PepsTracker</span>
+        </div>
+        <label class="toggle"><input type="checkbox" id="togVendors" /></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>Flash Sales & Limited Deals</strong>
+          <span>Time-sensitive deals from vendors</span>
+        </div>
+        <label class="toggle"><input type="checkbox" id="togFlash" checked /></label>
+      </div>
+      <div class="save-row" style="margin-top:16px;">
+        <button class="btn-save" onclick="saveNotificationPrefs()">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tab: Settings ── -->
+  <div class="tab-panel" id="tab-settings">
+    <div class="section-card" style="margin-bottom:16px;">
+      <h3>Account Info</h3>
+      <div class="field" style="margin-bottom:14px;">
+        <label style="display:block;font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Display Name</label>
+        <input type="text" id="displayNameInput" style="width:100%;background:var(--surface);border:1.5px solid var(--border);color:var(--text);border-radius:9px;padding:11px 14px;font-size:.92rem;font-family:inherit;" />
+      </div>
+      <div class="save-row">
+        <button class="btn-save" onclick="saveName()">Save Name</button>
+      </div>
+    </div>
+
+    <div class="danger-zone">
+      <h3>Danger Zone</h3>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px;">Signing out removes your session from this device. Deleting your account is permanent.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn-danger" onclick="signOut()">Sign Out</button>
+        <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  <p><a href="index.html">Price Tracker</a> &nbsp;|&nbsp; <a href="dictionary.html">Dictionary</a> &nbsp;|&nbsp; <a href="calculators.html">Calculators</a></p>
+  <p style="margin-top:6px;">© 2026 PepsTracker — For research purposes only.</p>
+</footer>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
+  authDomain: "pepstracker.firebaseapp.com",
+  projectId: "pepstracker",
+  storageBucket: "pepstracker.firebasestorage.app",
+  messagingSenderId: "575079448915",
+  appId: "1:575079448915:web:4937336ccc15a6764ca1a6",
+  measurementId: "G-5GCTD1XQ7X"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser = null;
+let userDoc = null;
+
+// ── Auth gate ──
+auth.onAuthStateChanged(async user => {
+  document.getElementById('loadingScreen').style.display = 'none';
+  if (!user) { window.location.href = 'login.html'; return; }
+  currentUser = user;
+  document.getElementById('mainContent').style.display = 'block';
+
+  // Populate profile
+  document.getElementById('userName').textContent = user.displayName || 'PepsTracker User';
+  document.getElementById('userEmail').textContent = user.email;
+  document.getElementById('displayNameInput').value = user.displayName || '';
+  if (user.photoURL) {
+    document.getElementById('avatarEl').innerHTML = `<img src="${user.photoURL}" alt="avatar" />`;
+  } else {
+    document.getElementById('avatarEl').textContent = (user.displayName || user.email || 'P')[0].toUpperCase();
+  }
+
+  // Welcome banner
+  if (new URLSearchParams(window.location.search).get('welcome')) {
+    document.getElementById('welcomeBanner').style.display = 'flex';
+    window.history.replaceState({}, '', 'account.html');
+  }
+
+  // Load Firestore data
+  const snap = await db.collection('users').doc(user.uid).get();
+  userDoc = snap.exists ? snap.data() : {};
+
+  // Load prefs
+  if (userDoc.weeklyDeals !== undefined) document.getElementById('togWeekly').checked = userDoc.weeklyDeals;
+  if (userDoc.emailAlerts !== undefined) document.getElementById('togAlerts').checked = userDoc.emailAlerts;
+  if (userDoc.newVendors !== undefined) document.getElementById('togVendors').checked = userDoc.newVendors;
+  if (userDoc.flashSales !== undefined) document.getElementById('togFlash').checked = userDoc.flashSales;
+
+  renderAlerts(userDoc.priceAlerts || []);
+  renderSaved(userDoc.savedPeptides || []);
+});
+
+// ── Tabs ──
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Toast ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── Price Alerts ──
+function renderAlerts(alerts) {
+  const list = document.getElementById('alertList');
+  if (!alerts.length) {
+    list.innerHTML = '<p style="color:var(--muted);font-size:.85rem;padding:8px 0;">No alerts yet. Add one below to get notified when prices drop!</p>';
+    return;
+  }
+  list.innerHTML = alerts.map((a, i) => `
+    <div class="alert-item">
+      <div class="alert-info">
+        <div class="alert-peptide">${a.peptide}</div>
+        <div class="alert-threshold">Alert when best price drops below <em>$${parseFloat(a.threshold).toFixed(2)}</em></div>
+      </div>
+      <button class="btn-remove" onclick="removeAlert(${i})" title="Remove alert">✕</button>
+    </div>
+  `).join('');
+}
+
+async function addAlert() {
+  const peptide = document.getElementById('alertPeptide').value;
+  const price = parseFloat(document.getElementById('alertPrice').value);
+  if (!peptide) return showToast('⚠️ Please select a peptide');
+  if (!price || price <= 0) return showToast('⚠️ Please enter a valid price');
+  const alerts = [...(userDoc.priceAlerts || []), { peptide, threshold: price }];
+  await db.collection('users').doc(currentUser.uid).update({ priceAlerts: alerts });
+  userDoc.priceAlerts = alerts;
+  renderAlerts(alerts);
+  document.getElementById('alertPeptide').value = '';
+  document.getElementById('alertPrice').value = '';
+  showToast('✅ Alert added!');
+}
+
+async function removeAlert(i) {
+  const alerts = [...(userDoc.priceAlerts || [])];
+  alerts.splice(i, 1);
+  await db.collection('users').doc(currentUser.uid).update({ priceAlerts: alerts });
+  userDoc.priceAlerts = alerts;
+  renderAlerts(alerts);
+  showToast('🗑️ Alert removed');
+}
+
+// ── Saved Peptides ──
+function renderSaved(saved) {
+  const container = document.getElementById('savedContainer');
+  if (!saved.length) {
+    container.innerHTML = `
+      <div class="saved-empty">
+        <div class="empty-icon">⭐</div>
+        <p>No saved peptides yet.<br><a href="index.html">Browse the price tracker</a> and save peptides you care about.</p>
+      </div>`;
+    return;
+  }
+  container.innerHTML = `<div class="saved-grid">${saved.map((p, i) => `
+    <div class="saved-item">
+      <div>
+        <div class="saved-item-name">${p}</div>
+      </div>
+      <button class="btn-remove" onclick="removeSaved(${i})" title="Remove">✕</button>
+    </div>
+  `).join('')}</div>`;
+}
+
+async function removeSaved(i) {
+  const saved = [...(userDoc.savedPeptides || [])];
+  saved.splice(i, 1);
+  await db.collection('users').doc(currentUser.uid).update({ savedPeptides: saved });
+  userDoc.savedPeptides = saved;
+  renderSaved(saved);
+  showToast('Removed from saved');
+}
+
+// ── Email prefs ──
+async function saveNotificationPrefs() {
+  await db.collection('users').doc(currentUser.uid).update({
+    weeklyDeals: document.getElementById('togWeekly').checked,
+    emailAlerts: document.getElementById('togAlerts').checked,
+    newVendors: document.getElementById('togVendors').checked,
+    flashSales: document.getElementById('togFlash').checked,
+  });
+  showToast('✅ Email preferences saved!');
+}
+
+// ── Save name ──
+async function saveName() {
+  const name = document.getElementById('displayNameInput').value.trim();
+  if (!name) return showToast('⚠️ Name cannot be empty');
+  await currentUser.updateProfile({ displayName: name });
+  await db.collection('users').doc(currentUser.uid).update({ name });
+  document.getElementById('userName').textContent = name;
+  showToast('✅ Name updated!');
+}
+
+// ── Sign out ──
+async function signOut() {
+  await auth.signOut();
+  window.location.href = 'index.html';
+}
+
+// ── Delete account ──
+async function deleteAccount() {
+  if (!confirm('Are you sure you want to permanently delete your account? This cannot be undone.')) return;
+  await db.collection('users').doc(currentUser.uid).delete();
+  await currentUser.delete();
+  window.location.href = 'index.html';
+}
+
+// ── Mobile menu ──
+function toggleMenu() {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  const open = nav.classList.toggle('open');
+  btn.textContent = open ? '✕' : '☰';
+}
+document.addEventListener('click', e => {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  if (nav && nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove('open');
+    btn.textContent = '☰';
+  }
+});
+</script>
+</body>
+</html>

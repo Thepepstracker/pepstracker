@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to PepsTracker!</title>
+</head>
+<body style="margin:0;padding:0;background:#0d0f14;font-family:'Segoe UI',system-ui,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0d0f14;padding:40px 16px;">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+
+        <!-- Logo -->
+        <tr><td align="center" style="padding-bottom:32px;">
+          <a href="https://pepstracker.com" style="text-decoration:none;">
+            <span style="font-size:1.6rem;font-weight:800;letter-spacing:-.5px;">
+              <span style="color:#3b9eff;">Peps</span><span style="color:#4de87a;">Tracker</span>
+            </span>
+          </a>
+        </td></tr>
+
+        <!-- Hero card -->
+        <tr><td style="background:#161b25;border:1.5px solid #2a3347;border-radius:16px;padding:40px 36px;text-align:center;">
+          <div style="font-size:3rem;margin-bottom:16px;">🎉</div>
+          <h1 style="color:#e8edf5;font-size:1.6rem;font-weight:800;letter-spacing:-.5px;margin:0 0 12px;">Welcome to PepsTracker!</h1>
+          <p style="color:#7a8ba8;font-size:.95rem;line-height:1.6;margin:0 0 28px;">
+            Hey {{NAME}}, you're officially in. Your account is set up and ready to go — here's everything you can do now.
+          </p>
+
+          <!-- Perks -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+            <tr><td style="background:rgba(77,232,122,0.06);border:1px solid rgba(77,232,122,0.2);border-radius:10px;padding:13px 16px;margin-bottom:8px;">
+              <table width="100%"><tr>
+                <td width="32" style="font-size:1.1rem;">🔔</td>
+                <td style="color:#e8edf5;font-size:.88rem;font-weight:600;">Price drop alerts when your peptides get cheaper</td>
+              </tr></table>
+            </td></tr>
+            <tr><td height="8"></td></tr>
+            <tr><td style="background:rgba(59,158,255,0.06);border:1px solid rgba(59,158,255,0.2);border-radius:10px;padding:13px 16px;">
+              <table width="100%"><tr>
+                <td width="32" style="font-size:1.1rem;">💌</td>
+                <td style="color:#e8edf5;font-size:.88rem;font-weight:600;">Weekly deal emails with the best prices across all 11 vendors</td>
+              </tr></table>
+            </td></tr>
+            <tr><td height="8"></td></tr>
+            <tr><td style="background:rgba(245,200,66,0.06);border:1px solid rgba(245,200,66,0.2);border-radius:10px;padding:13px 16px;">
+              <table width="100%"><tr>
+                <td width="32" style="font-size:1.1rem;">⭐</td>
+                <td style="color:#e8edf5;font-size:.88rem;font-weight:600;">Save your favorite peptides and track them from your dashboard</td>
+              </tr></table>
+            </td></tr>
+          </table>
+
+          <!-- CTA button -->
+          <a href="https://pepstracker.com/account.html" style="display:inline-block;background:linear-gradient(135deg,#4de87a,#2bb858);color:#0d0f14;font-weight:800;font-size:1rem;padding:14px 32px;border-radius:10px;text-decoration:none;">
+            Set Up Your Alerts →
+          </a>
+        </td></tr>
+
+        <!-- Today's best deal teaser -->
+        <tr><td height="16"></td></tr>
+        <tr><td style="background:#1c2230;border:1.5px solid #2a3347;border-radius:16px;padding:24px 28px;">
+          <p style="color:#7a8ba8;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0 0 12px;">Today's Best Price</p>
+          <table width="100%"><tr>
+            <td>
+              <div style="color:#e8edf5;font-size:1rem;font-weight:700;">{{TOP_PEPTIDE}}</div>
+              <div style="color:#7a8ba8;font-size:.82rem;margin-top:2px;">{{TOP_VENDOR}} · {{TOP_MG}}mg</div>
+            </td>
+            <td align="right">
+              <div style="color:#4de87a;font-size:1.3rem;font-weight:800;">${{TOP_PRICE}}</div>
+              <div style="color:#7a8ba8;font-size:.75rem;">${{TOP_PER_MG}}/mg</div>
+            </td>
+          </tr></table>
+          <a href="https://pepstracker.com/index.html?peptide={{TOP_PEPTIDE_SLUG}}" style="display:block;text-align:center;margin-top:14px;color:#3b9eff;font-size:.85rem;font-weight:600;text-decoration:none;">
+            Compare All Prices →
+          </a>
+        </td></tr>
+
+        <!-- Footer -->
+        <tr><td style="padding:24px 0;text-align:center;">
+          <p style="color:#7a8ba8;font-size:.75rem;line-height:1.6;margin:0;">
+            You're receiving this because you created a PepsTracker account.<br>
+            <a href="https://pepstracker.com/account.html" style="color:#3b9eff;text-decoration:none;">Manage email preferences</a> &nbsp;·&nbsp;
+            <a href="{{UNSUBSCRIBE_URL}}" style="color:#7a8ba8;text-decoration:none;">Unsubscribe</a>
+          </p>
+          <p style="color:#2a3347;font-size:.72rem;margin-top:8px;">© 2026 PepsTracker — For research purposes only.</p>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

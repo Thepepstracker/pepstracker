@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>This Week's Best Peptide Deals — PepsTracker</title>
+</head>
+<body style="margin:0;padding:0;background:#0d0f14;font-family:'Segoe UI',system-ui,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0d0f14;padding:40px 16px;">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;">
+
+        <!-- Header -->
+        <tr><td style="background:#161b25;border:1.5px solid #2a3347;border-radius:16px 16px 0 0;padding:24px 28px;border-bottom:none;">
+          <table width="100%"><tr>
+            <td>
+              <a href="https://pepstracker.com" style="text-decoration:none;">
+                <span style="font-size:1.3rem;font-weight:800;"><span style="color:#3b9eff;">Peps</span><span style="color:#4de87a;">Tracker</span></span>
+              </a>
+            </td>
+            <td align="right">
+              <span style="background:rgba(77,232,122,0.1);border:1px solid rgba(77,232,122,0.25);color:#4de87a;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;">Weekly Deals</span>
+            </td>
+          </tr></table>
+        </td></tr>
+
+        <!-- Hero -->
+        <tr><td style="background:#161b25;border-left:1.5px solid #2a3347;border-right:1.5px solid #2a3347;padding:28px 28px 24px;">
+          <h1 style="color:#e8edf5;font-size:1.45rem;font-weight:800;letter-spacing:-.5px;margin:0 0 8px;">
+            This Week's Best Prices 🔥
+          </h1>
+          <p style="color:#7a8ba8;font-size:.88rem;line-height:1.5;margin:0;">
+            Hey {{NAME}} — here are the lowest prices across all 11 vendors as of {{DATE}}. All prices shown after discount codes.
+          </p>
+        </td></tr>
+
+        <!-- Deal cards — repeated for each peptide -->
+        <tr><td style="background:#161b25;border-left:1.5px solid #2a3347;border-right:1.5px solid #2a3347;padding:0 20px 20px;">
+
+          <!-- Deal row template — scraper fills these in -->
+          {{#DEALS}}
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#1c2230;border:1.5px solid #2a3347;border-radius:12px;padding:16px 18px;margin-bottom:10px;">
+            <tr>
+              <td style="padding:16px 18px;">
+                <table width="100%"><tr>
+                  <td>
+                    <div style="color:#e8edf5;font-size:.95rem;font-weight:700;">{{PEPTIDE_NAME}}</div>
+                    <div style="color:#7a8ba8;font-size:.78rem;margin-top:3px;">Best: <span style="color:#3b9eff;font-weight:600;">{{VENDOR_NAME}}</span> · {{MG}}mg vial</div>
+                  </td>
+                  <td align="right" style="white-space:nowrap;">
+                    <div style="color:#4de87a;font-size:1.2rem;font-weight:800;">${{PRICE}}</div>
+                    <div style="color:#7a8ba8;font-size:.72rem;">${{PER_MG}}/mg</div>
+                  </td>
+                </tr></table>
+                <table width="100%" style="margin-top:12px;"><tr>
+                  <td>
+                    <span style="background:rgba(59,158,255,0.1);border:1px solid rgba(59,158,255,0.3);color:#3b9eff;font-family:monospace;font-size:.82rem;font-weight:700;padding:4px 10px;border-radius:6px;">{{CODE}}</span>
+                    <span style="color:#7a8ba8;font-size:.75rem;margin-left:8px;">{{DISCOUNT}}% off at checkout</span>
+                  </td>
+                  <td align="right">
+                    <a href="https://pepstracker.com/index.html?peptide={{PEPTIDE_SLUG}}" style="color:#3b9eff;font-size:.8rem;font-weight:600;text-decoration:none;">Compare all →</a>
+                  </td>
+                </tr></table>
+              </td>
+            </tr>
+          </table>
+          {{/DEALS}}
+
+        </td></tr>
+
+        <!-- Price drop section (personalized alerts) -->
+        {{#HAS_DROPS}}
+        <tr><td style="background:#161b25;border-left:1.5px solid #2a3347;border-right:1.5px solid #2a3347;padding:0 20px 20px;">
+          <div style="background:rgba(77,232,122,0.06);border:1px solid rgba(77,232,122,0.2);border-radius:12px;padding:16px 18px;">
+            <p style="color:#4de87a;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0 0 12px;">🔔 Your Price Alerts Triggered</p>
+            {{#DROPS}}
+            <table width="100%" style="margin-bottom:8px;"><tr>
+              <td style="color:#e8edf5;font-size:.88rem;font-weight:600;">{{PEPTIDE_NAME}}</td>
+              <td align="right" style="color:#4de87a;font-size:.9rem;font-weight:700;">↓ ${{NEW_PRICE}} <span style="color:#7a8ba8;font-size:.75rem;font-weight:400;">(was ${{OLD_PRICE}})</span></td>
+            </tr></table>
+            {{/DROPS}}
+          </div>
+        </td></tr>
+        {{/HAS_DROPS}}
+
+        <!-- CTA -->
+        <tr><td style="background:#161b25;border:1.5px solid #2a3347;border-radius:0 0 16px 16px;padding:24px 28px;text-align:center;border-top:1px solid #2a3347;">
+          <a href="https://pepstracker.com" style="display:inline-block;background:linear-gradient(135deg,#3b9eff,#1e6fcf);color:#fff;font-weight:800;font-size:.95rem;padding:13px 28px;border-radius:10px;text-decoration:none;margin-bottom:16px;">
+            See All Current Prices →
+          </a>
+          <p style="color:#7a8ba8;font-size:.75rem;line-height:1.6;margin:0;">
+            <a href="https://pepstracker.com/account.html" style="color:#3b9eff;text-decoration:none;">Manage alerts</a> &nbsp;·&nbsp;
+            <a href="{{UNSUBSCRIBE_URL}}" style="color:#7a8ba8;text-decoration:none;">Unsubscribe</a>
+          </p>
+          <p style="color:#2a3347;font-size:.7rem;margin-top:8px;">© 2026 PepsTracker — For research purposes only. Not medical advice.</p>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>
