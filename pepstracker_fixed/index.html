@@ -231,7 +231,27 @@
       nav{display:none;}
       .menu-btn{display:block;}
     }
+
+    /* ── COA Badge ── */
+    .coa-badge{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.3px;cursor:help;white-space:nowrap;}
+    .coa-badge.verified{background:rgba(77,232,122,.12);color:var(--green);border:1px solid rgba(77,232,122,.3);}
+    .coa-badge.none{background:rgba(122,139,168,.08);color:var(--muted);border:1px solid rgba(122,139,168,.2);}
+    /* ── Save button ── */
+    .btn-save-peptide{background:none;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 12px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .25s;white-space:nowrap;flex-shrink:0;}
+    .btn-save-peptide:hover{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,.06);}
+    .btn-save-peptide.saved{border-color:var(--gold);color:#0d0f14;background:var(--gold);font-weight:700;box-shadow:0 0 10px rgba(245,200,66,.35);}
+    .btn-save-peptide.saved:hover{background:#d4a800;border-color:#d4a800;}
+    .btn-save-peptide.just-saved{animation:savePop .4s ease;}
+    @keyframes savePop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+    /* ── Toast ── */
+    .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1.5px solid var(--gold);color:var(--text);font-weight:700;font-size:.9rem;padding:13px 24px;border-radius:14px;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;z-index:9999;pointer-events:none;opacity:0;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto;}
+    .toast a{color:var(--gold);text-decoration:underline;font-weight:700;white-space:nowrap;}
+    @media(max-width:640px){.btn-save-peptide{grid-column:1/-1;text-align:center;padding:10px;}}
   </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -922,6 +942,7 @@ function renderResults() {
         <button class="btn-copy" onclick="copyCode('${r.vendor.code}',this)">Copy</button>
       </div>
       <a class="btn-shop ${isBest?'':'secondary'}" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Shop →</a>
+      <button class="btn-save-peptide" data-key="${r.vendor.id}::${currentPeptide}" onclick="toggleSaveListing('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)}, '${r.vendor.code}')">☆ Save</button>
     </div>`;
   }).join('');
 
@@ -936,7 +957,6 @@ function renderResults() {
   document.getElementById('resultList').innerHTML = html;
   setTimeout(updateSaveButtons, 0);
 }
-
 // ── Firebase + Save Peptide ──
 const firebaseConfig = {
   apiKey: "AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
