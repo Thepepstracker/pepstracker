@@ -16,6 +16,8 @@
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+    /* ── Modal ── */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;}
     .modal-box{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;max-width:560px;width:100%;padding:32px;}
     .modal-box h2{font-size:1.2rem;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
@@ -24,81 +26,210 @@
     .modal-box p strong{color:var(--text);}
     .modal-accept{width:100%;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:800;cursor:pointer;margin-top:8px;transition:opacity .2s;}
     .modal-accept:hover{opacity:.9;}
-    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:100;}
-    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px;}
-    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
-    .logo-icon{width:42px;height:42px;}
-    .logo-text{font-size:1.5rem;font-weight:800;letter-spacing:-.5px;}
+
+    /* ── Header ── */
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px;}
+    .logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;}
+    .logo-icon{width:36px;height:36px;}
+    .logo-text{font-size:1.35rem;font-weight:800;letter-spacing:-.5px;}
     .logo-text span:first-child{color:var(--blue);}
     .logo-text span:last-child{color:var(--green);}
-    nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
-    nav a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:600;padding:6px 12px;border-radius:8px;transition:all .2s;white-space:nowrap;}
+
+    /* Desktop nav */
+    nav{display:flex;align-items:center;gap:4px;}
+    nav a{color:var(--muted);text-decoration:none;font-size:0.82rem;font-weight:600;padding:6px 10px;border-radius:8px;transition:all .2s;white-space:nowrap;}
     nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
     nav a.active{color:var(--blue);}
     nav a.nav-calc{background:rgba(77,232,122,.1);color:var(--green);border:1px solid rgba(77,232,122,.25);}
     nav a.nav-calc:hover{background:rgba(77,232,122,.18);}
     nav a.nav-apply{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);}
     nav a.nav-apply:hover{background:rgba(245,200,66,.18);}
-    .hero{text-align:center;padding:56px 24px 40px;background:radial-gradient(ellipse at 50% 0%,rgba(59,158,255,.08) 0%,transparent 65%);}
-    .search-wrap{max-width:720px;margin:0 auto;display:flex;gap:10px;align-items:stretch;}
-    .select-wrap{position:relative;flex:1;}
+
+    /* Hamburger button — hidden on desktop */
+    .menu-btn{display:none;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;padding:7px 10px;font-size:1.1rem;line-height:1;}
+    .menu-btn:hover{color:var(--text);border-color:var(--blue);}
+
+    /* Mobile nav drawer */
+    .mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);}
+    .mobile-nav.open{display:flex;}
+    .mobile-nav a{color:var(--muted);text-decoration:none;font-size:0.95rem;font-weight:600;padding:10px 14px;border-radius:10px;transition:all .2s;}
+    .mobile-nav a:hover,.mobile-nav a.active{color:var(--text);background:rgba(255,255,255,.06);}
+    .mobile-nav a.active{color:var(--blue);}
+    .mobile-nav a.nav-calc{background:rgba(77,232,122,.08);color:var(--green);border:1px solid rgba(77,232,122,.2);}
+    .mobile-nav a.nav-apply{background:rgba(245,200,66,.08);color:var(--gold);border:1px solid rgba(245,200,66,.2);}
+
+    /* ── Hero ── */
+    .hero{text-align:center;padding:40px 20px 32px;background:radial-gradient(ellipse at 50% 0%,rgba(59,158,255,.08) 0%,transparent 65%);}
+    .hero h1{font-size:clamp(1.7rem,5vw,2.8rem);font-weight:800;letter-spacing:-1.5px;line-height:1.12;margin-bottom:12px;color:#e8edf5;}
+    .hero p{color:#7a8ba8;font-size:0.95rem;margin-bottom:24px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.5;}
+
+    /* Stats row */
+    .stats-row{display:flex;justify-content:center;align-items:center;gap:0;margin-bottom:24px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;max-width:320px;margin-left:auto;margin-right:auto;overflow:hidden;}
+    .stat-item{flex:1;text-align:center;padding:14px 8px;}
+    .stat-item + .stat-item{border-left:1px solid var(--border);}
+    .stat-num{font-size:1.3rem;font-weight:800;color:var(--text);}
+    .stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:2px;}
+
+    /* Quick-pick pills */
+    .quick-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:24px;padding:0 4px;}
+    .quick-pill{border-radius:20px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid;}
+    .quick-pill.hot{background:rgba(77,232,122,0.07);border-color:rgba(77,232,122,0.25);color:#4de87a;}
+    .quick-pill.hot:hover{background:rgba(77,232,122,0.15);}
+    .quick-pill.normal{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1);color:#7a8ba8;}
+    .quick-pill.normal:hover{background:rgba(255,255,255,0.08);color:var(--text);}
+
+    /* Search bar */
+    .search-wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:10px;}
+    .select-wrap{position:relative;}
     .select-wrap select{width:100%;appearance:none;background:var(--card);border:1.5px solid var(--border);color:var(--text);border-radius:var(--radius);padding:14px 44px 14px 18px;font-size:1rem;cursor:pointer;transition:border-color .2s;}
     .select-wrap select:focus{outline:none;border-color:var(--blue);}
     .select-wrap::after{content:'▾';position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
-    .btn-search{background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;border:none;border-radius:var(--radius);padding:14px 28px;font-size:1rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .2s,transform .1s;}
+    .btn-search{width:100%;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;border:none;border-radius:var(--radius);padding:14px 28px;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;}
     .btn-search:hover{opacity:.9;transform:translateY(-1px);}
-    .glp-banner{max-width:1200px;margin:0 auto;padding:0 24px;display:none;}
-    .glp-banner-inner{background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.3);border-radius:var(--radius);padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:.88rem;color:var(--gold);}
-    .filter-row{max-width:1200px;margin:0 auto;padding:20px 24px 16px;display:none;align-items:center;gap:10px;flex-wrap:wrap;}
-    .filter-label{color:var(--muted);font-size:.9rem;margin-right:4px;}
-    .pill{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.85rem;cursor:pointer;transition:all .2s;}
+
+    /* ── GLP Banner ── */
+    .glp-banner{max-width:1200px;margin:0 auto;padding:0 16px;display:none;}
+    .glp-banner-inner{background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.3);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:flex-start;gap:8px;font-size:.85rem;color:var(--gold);line-height:1.5;}
+
+    /* ── Filter row ── */
+    .filter-row{max-width:1200px;margin:0 auto;padding:16px 16px 12px;display:none;align-items:center;gap:8px;flex-wrap:wrap;}
+    .filter-label{color:var(--muted);font-size:.85rem;}
+    .pill{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.82rem;cursor:pointer;transition:all .2s;}
     .pill.active{border-color:var(--blue);color:var(--blue);background:rgba(59,158,255,.08);font-weight:700;}
-    .results{max-width:1200px;margin:0 auto;padding:0 24px 40px;}
-    .results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-    .results-title{font-size:1.15rem;font-weight:700;}
+
+    /* ── Results ── */
+    .results{max-width:1200px;margin:0 auto;padding:0 16px 40px;}
+    .results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:6px;}
+    .results-title{font-size:1.05rem;font-weight:700;}
     .results-title span{color:var(--blue);}
-    .last-updated{font-size:.8rem;color:var(--muted);}
+    .last-updated{font-size:.78rem;color:var(--muted);}
     .last-updated em{color:var(--green);font-style:normal;}
     .result-list{display:flex;flex-direction:column;gap:10px;}
-    .result-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);display:grid;grid-template-columns:48px 1fr auto auto auto;align-items:center;gap:16px;padding:16px 20px;transition:border-color .2s,transform .15s;}
+
+    /* Desktop card */
+    .result-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);display:grid;grid-template-columns:44px 1fr auto auto auto;align-items:center;gap:14px;padding:14px 18px;transition:border-color .2s,transform .15s;}
     .result-card:hover{border-color:var(--blue);transform:translateY(-1px);}
-    .result-card.best{border-color:var(--green);background:linear-gradient(90deg,rgba(77,232,122,.06) 0%,var(--card) 60%);}
-    .rank{font-size:1.3rem;font-weight:800;text-align:center;color:var(--muted);}
+    .result-card.best{border-color:var(--green);background:linear-gradient(90deg,rgba(77,232,122,.05) 0%,var(--card) 60%);}
+
+    .rank{font-size:1.2rem;font-weight:800;text-align:center;color:var(--muted);}
     .rank.first{color:var(--gold);}
-    .vendor-name{font-weight:700;font-size:1rem;}
-    .best-badge{display:inline-block;font-size:.68rem;font-weight:700;background:rgba(77,232,122,.15);color:var(--green);border:1px solid rgba(77,232,122,.35);border-radius:20px;padding:2px 8px;margin-left:8px;vertical-align:middle;text-transform:uppercase;letter-spacing:.5px;}
-    .vendor-listing{font-size:.75rem;color:var(--muted);margin-top:3px;}
+    .vendor-name{font-weight:700;font-size:.95rem;}
+    .best-badge{display:inline-block;font-size:.65rem;font-weight:700;background:rgba(77,232,122,.15);color:var(--green);border:1px solid rgba(77,232,122,.35);border-radius:20px;padding:2px 8px;margin-left:8px;vertical-align:middle;text-transform:uppercase;letter-spacing:.5px;}
+    .vendor-listing{font-size:.72rem;color:var(--muted);margin-top:2px;}
     .vendor-listing em{color:var(--blue);font-style:normal;font-weight:600;}
+
     .price-block{text-align:right;}
-    .price-original{font-size:1.4rem;font-weight:800;white-space:nowrap;}
+    .price-original{font-size:1.3rem;font-weight:800;white-space:nowrap;}
     .price-original.best-price{color:var(--green);}
-    .price-reg{font-size:.78rem;color:var(--muted);margin-top:3px;}
+    .price-reg{font-size:.73rem;color:var(--muted);margin-top:2px;}
     .price-original-strike{text-decoration:line-through;color:var(--muted);}
-    .price-strength{font-size:.78rem;color:var(--muted);margin-top:1px;}
-    .price-per-mg{font-size:.82rem;color:var(--blue);font-weight:700;margin-top:2px;}
-    .code-block{text-align:center;min-width:110px;}
-    .code-row{display:flex;align-items:center;gap:6px;justify-content:center;}
-    .code-badge{background:rgba(59,158,255,.10);border:1px solid rgba(59,158,255,.3);color:var(--blue);border-radius:7px;padding:5px 10px;font-size:.82rem;font-weight:700;font-family:monospace;letter-spacing:.5px;white-space:nowrap;}
-    .btn-copy{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 8px;font-size:.72rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
+    .price-strength{font-size:.73rem;color:var(--muted);margin-top:1px;}
+    .price-per-mg{font-size:.78rem;color:var(--blue);font-weight:700;margin-top:2px;}
+
+    .code-block{text-align:center;min-width:100px;}
+    .code-row{display:flex;align-items:center;gap:5px;justify-content:center;}
+    .code-badge{background:rgba(59,158,255,.10);border:1px solid rgba(59,158,255,.3);color:var(--blue);border-radius:7px;padding:5px 9px;font-size:.78rem;font-weight:700;font-family:monospace;letter-spacing:.5px;white-space:nowrap;}
+    .btn-copy{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 7px;font-size:.68rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
     .btn-copy:hover{border-color:var(--blue);color:var(--blue);}
     .btn-copy.copied{border-color:var(--green);color:var(--green);}
-    .code-label{font-size:.68rem;color:var(--muted);margin-top:4px;}
-    .discount-pct{font-size:.72rem;color:var(--green);font-weight:700;margin-top:2px;}
-    .btn-shop{display:inline-block;background:linear-gradient(135deg,var(--green),#2bb858);color:#0d0f14;font-weight:800;font-size:.9rem;padding:11px 22px;border-radius:8px;text-decoration:none;white-space:nowrap;transition:opacity .2s,transform .1s;}
+    .code-label{font-size:.65rem;color:var(--muted);margin-top:3px;}
+    .discount-pct{font-size:.68rem;color:var(--green);font-weight:700;margin-top:2px;}
+
+    .btn-shop{display:inline-block;background:linear-gradient(135deg,var(--green),#2bb858);color:#0d0f14;font-weight:800;font-size:.85rem;padding:10px 18px;border-radius:8px;text-decoration:none;white-space:nowrap;transition:opacity .2s,transform .1s;}
     .btn-shop:hover{opacity:.88;transform:translateY(-1px);}
     .btn-shop.secondary{background:transparent;border:1.5px solid var(--blue);color:var(--blue);}
-    .empty{text-align:center;padding:80px 24px;color:var(--muted);}
-    .empty-icon{font-size:3rem;margin-bottom:16px;}
-    .empty h3{font-size:1.2rem;color:var(--text);margin-bottom:8px;}
-    .disclaimer-strip{max-width:1200px;margin:0 auto 60px;padding:0 24px;}
-    .disclaimer-inner{background:rgba(255,92,92,.05);border:1px solid rgba(255,92,92,.2);border-radius:var(--radius);padding:16px 20px;font-size:.82rem;color:var(--muted);line-height:1.6;}
+
+    /* ── Empty state ── */
+    .empty{text-align:center;padding:60px 20px;color:var(--muted);}
+    .empty-icon{font-size:2.5rem;margin-bottom:14px;}
+    .empty h3{font-size:1.1rem;color:var(--text);margin-bottom:8px;}
+
+    /* ── Disclaimer ── */
+    .disclaimer-strip{max-width:1200px;margin:0 auto 50px;padding:0 16px;}
+    .disclaimer-inner{background:rgba(255,92,92,.05);border:1px solid rgba(255,92,92,.2);border-radius:var(--radius);padding:14px 18px;font-size:.8rem;color:var(--muted);line-height:1.6;}
     .disclaimer-inner strong{color:var(--text);}
     .disclaimer-inner a{color:var(--blue);text-decoration:none;}
-    footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:.82rem;}
+
+    /* ── Footer ── */
+    footer{border-top:1px solid var(--border);padding:20px 16px;text-align:center;color:var(--muted);font-size:.8rem;}
     footer a{color:var(--blue);text-decoration:none;}
-    @media(max-width:700px){
-      .result-card{grid-template-columns:36px 1fr;}.price-block{text-align:left;}
-      .code-block{display:none;}.btn-shop{grid-column:1/-1;text-align:center;}
+
+    /* ══════════════════════════════════════════
+       MOBILE STYLES  ≤ 640px
+    ══════════════════════════════════════════ */
+    @media(max-width:640px){
+      nav{display:none;}
+      .menu-btn{display:block;}
+
+      /* Card: 2-row stacked layout */
+      .result-card{
+        grid-template-columns:36px 1fr;
+        grid-template-rows:auto auto auto auto;
+        gap:8px;
+        padding:14px;
+      }
+
+      /* Price block: full-width pill row */
+      .price-block{
+        grid-column:1/-1;
+        display:flex;
+        align-items:center;
+        gap:14px;
+        text-align:left;
+        background:rgba(255,255,255,.03);
+        border-radius:8px;
+        padding:8px 10px;
+      }
+      .price-original{font-size:1.15rem;}
+      .price-reg,.price-strength{font-size:.7rem;}
+      .price-per-mg{font-size:.75rem;margin-top:0;}
+
+      /* Code block: ALWAYS visible on mobile, full-width with big Copy button */
+      .code-block{
+        grid-column:1/-1;
+        display:flex !important;
+        align-items:center;
+        justify-content:space-between;
+        background:rgba(59,158,255,.07);
+        border:1px solid rgba(59,158,255,.25);
+        border-radius:10px;
+        padding:10px 14px;
+        text-align:left;
+        min-width:0;
+      }
+      .code-row{justify-content:flex-start;gap:8px;}
+      .code-badge{font-size:.9rem;padding:6px 12px;}
+      .code-label{font-size:.7rem;margin-top:2px;}
+      .discount-pct{font-size:.75rem;}
+      .btn-copy{
+        padding:9px 18px;
+        font-size:.85rem;
+        border-radius:8px;
+        border-color:var(--blue);
+        color:var(--blue);
+        min-width:72px;
+        flex-shrink:0;
+      }
+
+      /* Shop button: full width */
+      .btn-shop{
+        grid-column:1/-1;
+        text-align:center;
+        padding:12px;
+        font-size:.95rem;
+        border-radius:10px;
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       TABLET STYLES  641–900px
+    ══════════════════════════════════════════ */
+    @media(min-width:641px) and (max-width:900px){
+      .result-card{grid-template-columns:44px 1fr auto auto auto;}
+      .btn-shop{min-width:90px;}
+      nav{display:none;}
+      .menu-btn{display:block;}
     }
   </style>
 </head>
@@ -118,17 +249,31 @@
 <header>
   <div class="header-inner">
     <a class="logo" href="#">
-      <svg class="logo-icon" viewBox="0 0 42 42" fill="none">
-        <circle cx="7" cy="30" r="4" fill="#3b9eff"/>
-        <circle cx="19" cy="22" r="4" fill="#3bb8ff"/>
-        <circle cx="31" cy="14" r="4" fill="#4de87a"/>
-        <line x1="7" y1="30" x2="19" y2="22" stroke="#3b9eff" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="19" y1="22" x2="31" y2="14" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
-        <polyline points="28,8 35,8 35,15" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        <defs><linearGradient id="g1" x1="19" y1="22" x2="31" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3b9eff"/><stop offset="100%" stop-color="#4de87a"/></linearGradient></defs>
+      <svg class="logo-icon" viewBox="0 0 200 200" fill="none">
+        <defs>
+          <linearGradient id="g1" x1="20" y1="130" x2="180" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1a7fe8"/>
+            <stop offset="50%" stop-color="#00e5cc"/>
+            <stop offset="100%" stop-color="#4de87a"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="20" y1="150" x2="180" y2="150" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1a7fe8"/>
+            <stop offset="100%" stop-color="#4de87a"/>
+          </linearGradient>
+        </defs>
+        <path d="M20 140 Q100 195 180 120" fill="none" stroke="url(#g2)" stroke-width="10" stroke-linecap="round"/>
+        <line x1="20" y1="128" x2="82" y2="82" stroke="url(#g1)" stroke-width="10" stroke-linecap="round"/>
+        <line x1="82" y1="82" x2="128" y2="105" stroke="url(#g1)" stroke-width="10" stroke-linecap="round"/>
+        <line x1="128" y1="105" x2="168" y2="48" stroke="#4de87a" stroke-width="10" stroke-linecap="round"/>
+        <polygon points="178,38 152,46 168,64" fill="#4de87a"/>
+        <circle cx="20" cy="128" r="18" fill="#1a7fe8"/>
+        <circle cx="82" cy="82" r="18" fill="#00e5cc"/>
+        <circle cx="128" cy="105" r="18" fill="#4de87a"/>
       </svg>
       <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
     </a>
+
+    <!-- Desktop nav -->
     <nav>
       <a href="index.html" class="active">Price Tracker</a>
       <a href="dictionary.html" style="color:var(--blue);">📖 Dictionary</a>
@@ -136,31 +281,48 @@
       <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
     </nav>
+
+    <!-- Hamburger -->
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" onclick="toggleMenu()">☰</button>
+  </div>
+
+  <!-- Mobile nav drawer -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html" class="active" onclick="toggleMenu()">🏠 Price Tracker</a>
+    <a href="dictionary.html" style="color:var(--blue);" onclick="toggleMenu()">📖 Dictionary</a>
+    <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
+    <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
+    <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
   </div>
 </header>
 
 <div style="height:3px;background:linear-gradient(90deg,#B22234,#3C3B6E 50%,#4de87a);"></div>
+
 <section class="hero">
-  <div class="badge-wrap" style="margin-bottom:20px;">
+  <div style="margin-bottom:18px;">
     <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:5px 16px;font-size:12px;font-weight:500;">💊 Daily Price Updates</span>
   </div>
-  <h1 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-1.5px;line-height:1.12;margin-bottom:14px;color:#e8edf5;"><span style="color:#3b9eff;">Pin</span> the Best Peptide Prices<br><em style="font-style:normal;color:#4de87a;">in Just a Click.</em></h1>
-  <p style="color:#7a8ba8;font-size:1.05rem;margin-bottom:28px;">We compare prices across 11 trusted vendors — with discount codes already applied. No math, no guesswork.</p>
-  <div style="display:flex;justify-content:center;gap:48px;margin-bottom:28px;">
-    <div style="text-align:center;"><div style="font-size:22px;font-weight:800;color:#e8edf5;">11</div><div style="font-size:11px;color:#7a8ba8;text-transform:uppercase;letter-spacing:.6px;margin-top:3px;">Vendors</div></div>
-    <div style="width:1px;background:#2a3347;"></div>
-    <div style="text-align:center;"><div style="font-size:22px;font-weight:800;color:#e8edf5;">24</div><div style="font-size:11px;color:#7a8ba8;text-transform:uppercase;letter-spacing:.6px;margin-top:3px;">Peptides</div></div>
-    <div style="width:1px;background:#2a3347;"></div>
-    <div style="text-align:center;"><div style="font-size:22px;font-weight:800;color:#e8edf5;">Daily</div><div style="font-size:11px;color:#7a8ba8;text-transform:uppercase;letter-spacing:.6px;margin-top:3px;">Updates</div></div>
+  <h1><span style="color:#3b9eff;">Pin</span> the Best Peptide Prices<br><em style="font-style:normal;color:#4de87a;">in Just a Click.</em></h1>
+  <p>We compare prices across 11 trusted vendors — with discount codes already applied. No math, no guesswork.</p>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-item"><div class="stat-num">11</div><div class="stat-label">Vendors</div></div>
+    <div class="stat-item"><div class="stat-num">24</div><div class="stat-label">Peptides</div></div>
+    <div class="stat-item"><div class="stat-num">Daily</div><div class="stat-label">Updates</div></div>
   </div>
-  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:28px;">
-    <span onclick="document.getElementById('peptideSelect').value='Semaglutide';handleSearch();" style="background:rgba(77,232,122,0.07);border:1px solid rgba(77,232,122,0.2);color:#4de87a;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer;">🔥 Semaglutide</span>
-    <span onclick="document.getElementById('peptideSelect').value='Tirzepatide';handleSearch();" style="background:rgba(77,232,122,0.07);border:1px solid rgba(77,232,122,0.2);color:#4de87a;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer;">🔥 Tirzepatide</span>
-    <span onclick="document.getElementById('peptideSelect').value='BPC-157';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">BPC-157</span>
-    <span onclick="document.getElementById('peptideSelect').value='TB-500';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">TB-500</span>
-    <span onclick="document.getElementById('peptideSelect').value='PT-141 (Bremelanotide)';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">PT-141</span>
-    <span onclick="document.getElementById('peptideSelect').value='Klow Blend';handleSearch();" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">🔥 Klow Blend</span>
+
+  <!-- Quick-pick pills -->
+  <div class="quick-pills">
+    <span class="quick-pill hot" onclick="quickPick('Semaglutide')">🔥 Semaglutide</span>
+    <span class="quick-pill hot" onclick="quickPick('Tirzepatide')">🔥 Tirzepatide</span>
+    <span class="quick-pill normal" onclick="quickPick('BPC-157')">BPC-157</span>
+    <span class="quick-pill normal" onclick="quickPick('TB-500')">TB-500</span>
+    <span class="quick-pill normal" onclick="quickPick('PT-141 (Bremelanotide)')">PT-141</span>
+    <span class="quick-pill hot" onclick="quickPick('Klow Blend')">🔥 Klow Blend</span>
   </div>
+
+  <!-- Search -->
   <div class="search-wrap">
     <div class="select-wrap">
       <select id="peptideSelect" onchange="handleSearch()">
@@ -258,12 +420,40 @@
 </footer>
 
 <script>
+// ── Disclaimer ──
 function acceptDisclaimer() {
   document.getElementById('disclaimerModal').style.display = 'none';
   sessionStorage.setItem('disc_accepted', '1');
 }
 if (sessionStorage.getItem('disc_accepted')) {
   document.getElementById('disclaimerModal').style.display = 'none';
+}
+
+// ── Mobile menu ──
+function toggleMenu() {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  const open = nav.classList.toggle('open');
+  btn.textContent = open ? '✕' : '☰';
+  btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+}
+// Close menu on outside click
+document.addEventListener('click', e => {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove('open');
+    btn.textContent = '☰';
+  }
+});
+
+// ── Quick pick helper ──
+function quickPick(peptide) {
+  document.getElementById('peptideSelect').value = peptide;
+  handleSearch();
+  setTimeout(() => {
+    document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
 }
 
 const VENDORS = [
@@ -301,8 +491,7 @@ function getShopUrl(vid, peptide) {
 
 const GLP1 = new Set(["Semaglutide","Tirzepatide","Retatrutide","Liraglutide"]);
 
-// PRICES BLOCK — updated by scraper daily
-const SCRAPE_DATE = "May 26, 2026"; // updated by scraper
+const SCRAPE_DATE = "May 27, 2026";
 const PRICES = {
   "Semaglutide": {
     ascension:{price:65.00,mg:5,listing:"Semaglutide 5mg",oos:true},
@@ -352,7 +541,7 @@ const PRICES = {
     ezpeptides:{price:44.00,mg:10,listing:"BPC-157 10mg"},
     amp:{price:44.00,mg:10,listing:"BPC-157 10mg"},
     labsourced:{price:49.00,mg:10,listing:"BPC-157 10mg"},
-    ion:{price:48.00,mg:10,listing:"BPC 157 10mg"},
+    ion:{price:29.00,mg:10,listing:"BPC 157 10mg"},
     retaone:null,
     nura:{price:65.00,mg:10,listing:"BPC-157 10mg"},
   },
@@ -391,9 +580,9 @@ const PRICES = {
     ezpeptides:{price:44.00,mg:10,listing:"Ipamorelin 10mg"},
     amp:{price:44.00,mg:10,listing:"Ipamorelin 10mg"},
     labsourced:{price:49.00,mg:10,listing:"Ipamorelin 10mg"},
-    ion:{price:35.00,mg:5,listing:"Ipamorelin 5mg"},
+    ion:{price:42.00,mg:5,listing:"Ipamorelin 5mg"},
     retaone:null,
-    nura:{price:63.00,mg:10,listing:"Ipamorelin 10mg"},
+    nura:{price:70.00,mg:10,listing:"Ipamorelin 10mg"},
   },
   "CJC-1295 (with DAC)": {
     ascension:{price:32.00,mg:2,listing:"CJC-1295 w/DAC 2mg"},
@@ -428,7 +617,7 @@ const PRICES = {
     glacier:null,
     milehigh:{price:79.99,mg:10,listing:"Tesamorelin 10mg"},
     ezpeptides:{price:68.00,mg:10,listing:"Tesamorelin 10mg"},
-    amp:{price:68.00,mg:10,listing:"Tesamorelin 10mg"},
+    amp:{price:68.00,mg:10,listing:"Tesamorelin 10mg",oos:true},
     labsourced:{price:99.00,mg:10,listing:"Tesamorelin 10mg"},
     ion:{price:69.95,mg:5,listing:"Tesamorelin 5mg"},
     retaone:null,
@@ -453,7 +642,7 @@ const PRICES = {
     lapeptides:{price:69.99,mg:10,listing:"PT-141 10mg"},
     glacier:{price:40.99,mg:10,listing:"PT-141 10mg"},
     milehigh:{price:39.99,mg:10,listing:"PT-141 10mg"},
-    ezpeptides:{price:34.00,mg:10,listing:"PT-141 10mg"},
+    ezpeptides:{price:44.00,mg:10,listing:"PT-141 10mg"},
     amp:{price:44.00,mg:10,listing:"PT-141 10mg"},
     labsourced:{price:49.00,mg:10,listing:"PT-141 10mg"},
     ion:{price:37.00,mg:10,listing:"PT-141 10mg"},
@@ -467,7 +656,7 @@ const PRICES = {
     glacier:{price:41.99,mg:50,listing:"GHK-Cu 50mg"},
     milehigh:{price:49.99,mg:50,listing:"GHK-Cu 50mg"},
     ezpeptides:{price:35.00,mg:50,listing:"GHK-Copper 50mg"},
-    amp:{price:53.00,mg:100,listing:"GHK-Cu 100mg"},
+    amp:{price:53.00,mg:100,listing:"GHK-Cu 100mg",oos:true},
     labsourced:{price:49.00,mg:50,listing:"GHK-Cu 50mg"},
     ion:{price:29.00,mg:50,listing:"GHK-Cu 50mg"},
     retaone:null,
@@ -479,9 +668,9 @@ const PRICES = {
     lapeptides:{price:79.99,mg:50,listing:"Epithalon 50mg"},
     glacier:{price:45.99,mg:10,listing:"Epithalon 10mg"},
     milehigh:{price:119.99,mg:50,listing:"Epithalon 50mg"},
-    ezpeptides:{price:31.00,mg:10,listing:"Epithalon 10mg"},
+    ezpeptides:{price:38.00,mg:10,listing:"Epithalon 10mg"},
     amp:{price:38.00,mg:10,listing:"Epithalon 10mg"},
-    labsourced:{price:0.00,mg:10,listing:"Epithalon 10mg",oos:true},
+    labsourced:{price:0.00,mg:10,listing:"Epithalon 10mg"},
     ion:{price:35.00,mg:10,listing:"Epithalon 10mg"},
     retaone:null,
     nura:{price:49.00,mg:10,listing:"Epithalon 10mg"},
@@ -492,7 +681,7 @@ const PRICES = {
     lapeptides:{price:69.99,mg:10,listing:"MOTS-c 10mg"},
     glacier:{price:45.99,mg:10,listing:"MOTS-c 10mg"},
     milehigh:{price:49.99,mg:10,listing:"MOTS-c 10mg"},
-    ezpeptides:{price:61.00,mg:10,listing:"MOTS-c 10mg"},
+    ezpeptides:{price:54.00,mg:10,listing:"MOTS-c 10mg"},
     amp:{price:54.00,mg:10,listing:"MOTS-c 10mg"},
     labsourced:{price:69.00,mg:10,listing:"MOTS-c 10mg"},
     ion:{price:42.00,mg:10,listing:"MOTS-c 10mg"},
@@ -518,10 +707,10 @@ const PRICES = {
     lapeptides:{price:39.99,mg:10,listing:"Semax 10mg"},
     glacier:{price:40.99,mg:10,listing:"Semax 10mg"},
     milehigh:{price:39.99,mg:10,listing:"Semax 10mg"},
-    ezpeptides:{price:33.00,mg:10,listing:"Semax 10mg"},
+    ezpeptides:{price:44.00,mg:10,listing:"Semax 10mg"},
     amp:null,
     labsourced:{price:69.00,mg:10,listing:"Semax 10mg"},
-    ion:{price:35.00,mg:10,listing:"Semax 10mg"},
+    ion:{price:32.90,mg:10,listing:"Semax 10mg"},
     retaone:null,
     nura:{price:45.00,mg:10,listing:"Semax 10mg"},
   },
@@ -531,7 +720,7 @@ const PRICES = {
     lapeptides:{price:39.99,mg:10,listing:"Selank 10mg"},
     glacier:{price:40.99,mg:10,listing:"Selank 10mg"},
     milehigh:{price:39.99,mg:10,listing:"Selank 10mg"},
-    ezpeptides:{price:32.00,mg:10,listing:"Selank 10mg"},
+    ezpeptides:{price:44.00,mg:10,listing:"Selank 10mg"},
     amp:{price:44.00,mg:10,listing:"Selank 10mg"},
     labsourced:{price:49.00,mg:10,listing:"Selank 10mg"},
     ion:{price:25.00,mg:5,listing:"Selank 5mg"},
@@ -544,7 +733,7 @@ const PRICES = {
     lapeptides:{price:29.99,mg:5,listing:"DSIP 5mg"},
     glacier:{price:33.99,mg:5,listing:"DSIP 5mg"},
     milehigh:{price:49.99,mg:10,listing:"DSIP 10mg"},
-    ezpeptides:{price:29.00,mg:10,listing:"DSIP 10mg"},
+    ezpeptides:{price:58.00,mg:10,listing:"DSIP 10mg"},
     amp:{price:58.00,mg:10,listing:"DSIP 10mg"},
     labsourced:{price:49.00,mg:5,listing:"DSIP 5mg"},
     ion:{price:45.00,mg:5,listing:"DSIP 5mg"},
@@ -552,17 +741,10 @@ const PRICES = {
     nura:{price:33.00,mg:5,listing:"DSIP 5mg"},
   },
   "Adamax": {
-    ascension:null,
-    atomik:null,
-    lapeptides:null,
-    glacier:null,
-    milehigh:null,
-    ezpeptides:null,
-    amp:null,
+    ascension:null,atomik:null,lapeptides:null,glacier:null,milehigh:null,ezpeptides:null,amp:null,
     labsourced:{price:49.00,mg:10,listing:"Adamax 10mg"},
-    ion:{price:45.00,mg:10,listing:"Adamax 10mg"},
-    retaone:null,
-    nura:null,
+    ion:{price:69.00,mg:10,listing:"Adamax 10mg"},
+    retaone:null,nura:null,
   },
   "KPV": {
     ascension:{price:38.00,mg:10,listing:"KPV 10mg",oos:true},
@@ -570,7 +752,7 @@ const PRICES = {
     lapeptides:{price:59.99,mg:10,listing:"KPV 10mg"},
     glacier:{price:51.99,mg:10,listing:"KPV 10mg"},
     milehigh:{price:49.99,mg:10,listing:"KPV 10mg"},
-    ezpeptides:{price:37.00,mg:10,listing:"KPV Tripeptide 10mg"},
+    ezpeptides:{price:44.00,mg:10,listing:"KPV Tripeptide 10mg"},
     amp:{price:44.00,mg:10,listing:"KPV 10mg"},
     labsourced:{price:49.00,mg:10,listing:"KPV 10mg"},
     ion:{price:49.00,mg:10,listing:"KPV 10mg"},
@@ -583,33 +765,31 @@ const PRICES = {
     lapeptides:{price:69.99,mg:16,listing:"ARA-290 16mg"},
     glacier:{price:54.99,mg:10,listing:"ARA-290 10mg"},
     milehigh:{price:49.99,mg:10,listing:"ARA-290 10mg"},
-    ezpeptides:{price:53.00,mg:10,listing:"ARA-290 10mg"},
-    amp:null,
-    labsourced:null,
+    ezpeptides:{price:48.00,mg:10,listing:"ARA-290 10mg"},
+    amp:null,labsourced:null,
     ion:{price:59.00,mg:10,listing:"ARA-290 10mg"},
-    retaone:null,
-    nura:null,
+    retaone:null,nura:null,
   },
   "AOD-9604": {
-    ascension:{price:28.00,mg:5,listing:"AOD-9604 5mg"},
+    ascension:{price:28.00,mg:5,listing:"AOD-9604 5mg",oos:true},
     atomik:{price:39.00,mg:5,listing:"AOD 9604 5mg"},
     lapeptides:{price:49.99,mg:10,listing:"AOD-9604 10mg"},
     glacier:null,
     milehigh:{price:59.99,mg:5,listing:"AOD 9604 5mg"},
     ezpeptides:{price:27.00,mg:5,listing:"AOD-9604 5mg",oos:true},
-    amp:{price:58.00,mg:5,listing:"AOD 9604 5mg"},
+    amp:{price:58.00,mg:5,listing:"AOD 9604 5mg",oos:true},
     labsourced:{price:59.00,mg:5,listing:"AOD-9604 5mg"},
-    ion:{price:29.00,mg:5,listing:"AOD 9604 5mg"},
+    ion:{price:49.00,mg:5,listing:"AOD 9604 5mg"},
     retaone:null,
     nura:{price:40.00,mg:5,listing:"AOD-9604 5mg"},
   },
   "Klow Blend": {
-    ascension:{price:55.00,mg:80,listing:"Klow Blend 80mg"},
+    ascension:{price:55.00,mg:80,listing:"Klow Blend 80mg",oos:true},
     atomik:{price:139.00,mg:91,listing:"Klow Blend 91mg"},
-    lapeptides:{price:52.00,mg:80,listing:"Klow Blend 80mg"},
+    lapeptides:{price:129.99,mg:80,listing:"Klow Blend 80mg"},
     glacier:{price:118.99,mg:80,listing:"Klow Blend 80mg"},
-    milehigh:{price:49.00,mg:80,listing:"Klow Blend 80mg"},
-    ezpeptides:{price:51.00,mg:80,listing:"Klow Blend 80mg"},
+    milehigh:{price:149.99,mg:80,listing:"Klow Blend 80mg"},
+    ezpeptides:{price:98.00,mg:80,listing:"Klow Blend 80mg"},
     amp:{price:98.00,mg:80,listing:"Klow Blend 80mg"},
     labsourced:{price:129.00,mg:80,listing:"Klow Blend 80mg"},
     ion:{price:109.00,mg:80,listing:"Klow Blend 80mg"},
@@ -627,10 +807,9 @@ const PRICES = {
     labsourced:null,
     ion:{price:79.95,mg:10,listing:"Tesamorelin/Ipamorelin 10mg"},
     retaone:null,
-    nura:{price:109.00,mg:13,listing:"Tesamorelin/Ipamorelin 13mg/3mg"},
+    nura:{price:49.00,mg:13,listing:"Tesamorelin/Ipamorelin 13mg/3mg"},
   },
 };
-
 
 let currentPeptide = null;
 
@@ -638,14 +817,12 @@ function handleSearch() {
   const sel = document.getElementById('peptideSelect').value;
   if (!sel) return;
   currentPeptide = sel;
-  // Update URL so it's shareable/linkable
   const url = new URL(window.location);
   url.searchParams.set('peptide', sel);
   window.history.replaceState({}, '', url);
   renderResults();
 }
 
-// On page load, check for ?peptide= param and auto-select it
 window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   const peptide = params.get('peptide');
@@ -654,7 +831,6 @@ window.addEventListener('DOMContentLoaded', () => {
     sel.value = peptide;
     if (sel.value === peptide) {
       handleSearch();
-      // Scroll down to results smoothly
       setTimeout(() => {
         document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 300);
@@ -710,14 +886,17 @@ function renderResults() {
           <div class="vendor-listing" style="color:var(--red);font-weight:700;">⚠ Out of Stock</div>
         </div>
         <div class="price-block">
-          <div style="font-size:1rem;font-weight:700;color:var(--red);">Out of Stock</div>
+          <div style="font-size:1rem;font-weight:700;color:var(--red);">OOS</div>
           <div class="price-reg">${unitLabel}</div>
         </div>
         <div class="code-block">
-          <div class="code-row"><div class="code-badge">${r.vendor.code}</div></div>
-          <div class="code-label">Discount code</div>
+          <div>
+            <div class="code-label">Discount code</div>
+            <div class="code-row"><div class="code-badge">${r.vendor.code}</div></div>
+          </div>
+          <button class="btn-copy" onclick="navigator.clipboard.writeText('${r.vendor.code}').then(()=>{this.textContent='✓ Copied!';this.classList.add('copied');setTimeout(()=>{this.textContent='Copy';this.classList.remove('copied')},2000)})">Copy</button>
         </div>
-        <a class="btn-shop secondary" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Check Site →</a>
+        <a class="btn-shop secondary oos-shop" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Check Site →</a>
       </div>`;
     }
 
@@ -731,19 +910,18 @@ function renderResults() {
       </div>
       <div class="price-block">
         <div class="price-original ${isBest?'best-price':''}">$${afterDisc.toFixed(2)}</div>
-        <div class="price-reg">Reg. <span class="price-original-strike">$${r.price.toFixed(2)}</span> · ${discPct}% off with code</div>
-        <div class="price-strength">${unitLabel}</div>
-        <div class="price-per-mg">$${(afterDisc/r.mg).toFixed(2)}/mg after discount</div>
+        <div class="price-reg">Reg. <span class="price-original-strike">$${r.price.toFixed(2)}</span> · ${discPct}% off</div>
+        <div class="price-per-mg">$${(afterDisc/r.mg).toFixed(2)}/mg</div>
       </div>
       <div class="code-block">
-        <div class="code-row">
-          <div class="code-badge">${r.vendor.code}</div>
-          <button class="btn-copy" onclick="copyCode('${r.vendor.code}',this)">Copy</button>
+        <div>
+          <div class="code-label">Discount code</div>
+          <div class="code-row"><div class="code-badge">${r.vendor.code}</div></div>
+          <div class="discount-pct">${discPct}% off</div>
         </div>
-        <div class="code-label">Discount code</div>
-        <div class="discount-pct">${discPct}% off at checkout</div>
+        <button class="btn-copy" onclick="copyCode('${r.vendor.code}',this)">Copy</button>
       </div>
-      <a class="btn-shop ${isBest?'':'secondary'}" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Shop Now →</a>
+      <a class="btn-shop ${isBest?'':'secondary'}" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Shop →</a>
     </div>`;
   }).join('');
 
@@ -753,7 +931,6 @@ function renderResults() {
   document.getElementById('resultsContainer').style.display = 'block';
   document.getElementById('disclaimerStrip').style.display = 'block';
   document.getElementById('resultTitle').textContent = currentPeptide;
-  // Use SCRAPE_DATE if available, otherwise fall back to today
   const scrapeDate = typeof SCRAPE_DATE !== "undefined" ? SCRAPE_DATE : null;
   document.getElementById('lastUpdated').textContent = scrapeDate || new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   document.getElementById('resultList').innerHTML = html;

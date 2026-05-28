@@ -17,42 +17,56 @@
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:100;}
-    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px;}
-    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
-    .logo-icon{width:42px;height:42px;}
-    .logo-text{font-size:1.5rem;font-weight:800;letter-spacing:-.5px;}
+
+    /* ── Header ── */
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px;}
+    .logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;}
+    .logo-icon{width:36px;height:36px;}
+    .logo-text{font-size:1.35rem;font-weight:800;letter-spacing:-.5px;}
     .logo-text span:first-child{color:var(--blue);}
     .logo-text span:last-child{color:var(--green);}
-    nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
-    nav a{color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:600;padding:6px 12px;border-radius:8px;transition:all .2s;white-space:nowrap;}
+    nav{display:flex;align-items:center;gap:4px;}
+    nav a{color:var(--muted);text-decoration:none;font-size:.82rem;font-weight:600;padding:6px 10px;border-radius:8px;transition:all .2s;white-space:nowrap;}
     nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
     nav a.active{color:var(--blue);}
     nav a.nav-calc{background:rgba(77,232,122,.1);color:var(--green);border:1px solid rgba(77,232,122,.25);}
     nav a.nav-apply{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);}
+    .menu-btn{display:none;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;padding:7px 10px;font-size:1.1rem;line-height:1;}
+    .menu-btn:hover{color:var(--text);border-color:var(--blue);}
+    .mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);}
+    .mobile-nav.open{display:flex;}
+    .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;transition:all .2s;}
+    .mobile-nav a:hover,.mobile-nav a.active{color:var(--text);background:rgba(255,255,255,.06);}
+    .mobile-nav a.active{color:var(--blue);}
+    .mobile-nav a.nav-calc{background:rgba(77,232,122,.08);color:var(--green);border:1px solid rgba(77,232,122,.2);}
+    .mobile-nav a.nav-apply{background:rgba(245,200,66,.08);color:var(--gold);border:1px solid rgba(245,200,66,.2);}
 
-    .hero{text-align:center;padding:56px 24px 40px;background:radial-gradient(ellipse at 50% 0%,rgba(59,158,255,.08) 0%,transparent 65%);}
-    .hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-1px;margin-bottom:12px;}
+    /* ── Hero ── */
+    .hero{text-align:center;padding:40px 20px 32px;background:radial-gradient(ellipse at 50% 0%,rgba(59,158,255,.08) 0%,transparent 65%);}
+    .hero h1{font-size:clamp(1.7rem,4vw,2.6rem);font-weight:800;letter-spacing:-1px;margin-bottom:10px;}
     .hero h1 span{color:var(--blue);}
-    .hero p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto 0;}
+    .hero p{color:var(--muted);font-size:.95rem;max-width:560px;margin:0 auto;line-height:1.55;}
 
-    .controls{max-width:1200px;margin:0 auto;padding:28px 24px 24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+    /* ── Controls ── */
+    .controls{max-width:1200px;margin:0 auto;padding:24px 16px 20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
     .search-box{flex:1;min-width:200px;position:relative;}
     .search-box input{width:100%;background:var(--card);border:1.5px solid var(--border);color:var(--text);border-radius:var(--radius);padding:12px 16px 12px 44px;font-size:.95rem;transition:border-color .2s;}
     .search-box input:focus{outline:none;border-color:var(--blue);}
     .search-box input::placeholder{color:var(--muted);}
     .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);}
-    .filter-pills{display:flex;gap:8px;flex-wrap:wrap;}
-    .fpill{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.82rem;cursor:pointer;transition:all .2s;font-weight:600;}
+    .filter-pills{display:flex;gap:6px;flex-wrap:wrap;}
+    .fpill{padding:7px 12px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.8rem;cursor:pointer;transition:all .2s;font-weight:600;}
     .fpill:hover{border-color:var(--blue);color:var(--blue);}
     .fpill.active{border-color:var(--blue);color:var(--blue);background:rgba(59,158,255,.08);}
 
-    .grid{max-width:1200px;margin:0 auto;padding:0 24px 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
-    .card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;cursor:pointer;transition:border-color .2s,transform .15s;text-decoration:none;display:block;color:inherit;}
+    /* ── Grid ── */
+    .grid{max-width:1200px;margin:0 auto;padding:0 16px 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+    .card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:border-color .2s,transform .15s;text-decoration:none;display:block;color:inherit;}
     .card:hover{border-color:var(--blue);transform:translateY(-2px);}
-    .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;}
-    .card-name{font-size:1.05rem;font-weight:800;}
-    .cat-badge{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;}
+    .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px;}
+    .card-name{font-size:1rem;font-weight:800;}
+    .cat-badge{font-size:.65rem;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;}
     .cat-glp1{background:rgba(77,232,122,.12);color:var(--green);border:1px solid rgba(77,232,122,.3);}
     .cat-healing{background:rgba(59,158,255,.12);color:var(--blue);border:1px solid rgba(59,158,255,.3);}
     .cat-gh{background:rgba(245,200,66,.12);color:var(--gold);border:1px solid rgba(245,200,66,.3);}
@@ -62,25 +76,36 @@
     .cat-immune{background:rgba(255,165,92,.12);color:#ffa55c;border:1px solid rgba(255,165,92,.3);}
     .cat-fatloss{background:rgba(255,92,92,.12);color:#ff5c5c;border:1px solid rgba(255,92,92,.3);}
     .cat-blend{background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.1);}
-    .card-tagline{font-size:.85rem;color:var(--muted);line-height:1.55;margin-bottom:14px;}
-    .card-stats{display:flex;gap:8px;margin-bottom:14px;}
-    .stat{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:.73rem;}
+    .card-tagline{font-size:.83rem;color:var(--muted);line-height:1.55;margin-bottom:12px;}
+    .card-stats{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+    .stat{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:.72rem;}
     .stat span{color:var(--muted);display:block;margin-bottom:1px;}
     .stat strong{color:var(--text);font-weight:700;}
-    .card-cta{display:flex;align-items:center;justify-content:space-between;font-size:.82rem;}
+    .card-cta{display:flex;align-items:center;justify-content:space-between;font-size:.8rem;}
     .card-cta-left{color:var(--blue);font-weight:600;}
     .card-arrow{color:var(--muted);font-size:1rem;transition:transform .2s;}
     .card:hover .card-arrow{transform:translateX(4px);color:var(--blue);}
-
-    .no-results{text-align:center;padding:60px 24px;color:var(--muted);display:none;}
+    .no-results{text-align:center;padding:60px 20px;color:var(--muted);display:none;}
     .no-results h3{color:var(--text);margin-bottom:8px;}
 
-    footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:.82rem;}
+    /* ── Footer ── */
+    footer{border-top:1px solid var(--border);padding:20px 16px;text-align:center;color:var(--muted);font-size:.8rem;}
     footer a{color:var(--blue);text-decoration:none;}
-    @media(max-width:600px){.grid{grid-template-columns:1fr;}}
+
+    /* ── Mobile ── */
+    @media(max-width:640px){
+      nav{display:none;}
+      .menu-btn{display:block;}
+      .grid{grid-template-columns:1fr;padding:0 12px 48px;}
+      .controls{padding:16px 12px 14px;}
+      .filter-pills{gap:6px;}
+      .fpill{font-size:.75rem;padding:6px 10px;}
+      .hero{padding:32px 16px 24px;}
+    }
   </style>
 </head>
 <body>
+
 <header>
   <div class="header-inner">
     <a class="logo" href="index.html">
@@ -96,16 +121,11 @@
             <stop offset="100%" stop-color="#4de87a"/>
           </linearGradient>
         </defs>
-        <!-- Arc curve underneath -->
         <path d="M4 30 Q22 42 40 26" fill="none" stroke="url(#g2)" stroke-width="2.5" stroke-linecap="round"/>
-        <!-- Connecting lines -->
         <line x1="4" y1="28" x2="18" y2="18" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
         <line x1="18" y1="18" x2="28" y2="23" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
-        <!-- Arrow shaft — perfectly 45 degrees -->
         <line x1="28" y1="23" x2="38" y2="10" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round"/>
-        <!-- Solid filled arrowhead at 45 degrees -->
         <polygon points="40,8 33,10 38,15" fill="#4de87a"/>
-        <!-- Dots -->
         <circle cx="4" cy="28" r="4" fill="#1a7fe8"/>
         <circle cx="18" cy="18" r="4" fill="#00e5cc"/>
         <circle cx="28" cy="23" r="4" fill="#4de87a"/>
@@ -119,6 +139,14 @@
       <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
     </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" onclick="toggleMenu()">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html" onclick="toggleMenu()">🏠 Price Tracker</a>
+    <a href="dictionary.html" class="active" onclick="toggleMenu()">📖 Dictionary</a>
+    <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
+    <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
+    <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
   </div>
 </header>
 
@@ -138,8 +166,8 @@
     <button class="fpill active" onclick="filterCat('all',this)">All</button>
     <button class="fpill" onclick="filterCat('glp1',this)">GLP-1</button>
     <button class="fpill" onclick="filterCat('healing',this)">Healing</button>
-    <button class="fpill" onclick="filterCat('gh',this)">Growth Hormone</button>
-    <button class="fpill" onclick="filterCat('skin',this)">Skin &amp; Tanning</button>
+    <button class="fpill" onclick="filterCat('gh',this)">GH</button>
+    <button class="fpill" onclick="filterCat('skin',this)">Skin</button>
     <button class="fpill" onclick="filterCat('longevity',this)">Longevity</button>
     <button class="fpill" onclick="filterCat('cognitive',this)">Cognitive</button>
     <button class="fpill" onclick="filterCat('immune',this)">Immune</button>
@@ -158,6 +186,21 @@
 </footer>
 
 <script>
+function toggleMenu() {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  const open = nav.classList.toggle('open');
+  btn.textContent = open ? '✕' : '☰';
+}
+document.addEventListener('click', e => {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove('open');
+    btn.textContent = '☰';
+  }
+});
+
 const PEPTIDES = [
   {slug:"semaglutide",name:"Semaglutide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"A GLP-1 receptor agonist studied for appetite regulation and glucose metabolism.",halfLife:"~7 days",dose:"0.25–2.4mg/wk"},
   {slug:"tirzepatide",name:"Tirzepatide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"Dual GIP/GLP-1 agonist with superior weight reduction outcomes vs semaglutide alone.",halfLife:"~5 days",dose:"2.5–15mg/wk"},
