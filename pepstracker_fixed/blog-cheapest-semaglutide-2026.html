@@ -110,6 +110,18 @@
       .price-table{font-size:.78rem;}
       .price-table td,.price-table th{padding:8px 10px;}
     }
+
+    /* ── Full Nav ── */
+    .menu-btn{display:none;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;padding:7px 10px;font-size:1.1rem;line-height:1;flex-shrink:0;}
+    .menu-btn:hover{color:var(--text);border-color:var(--blue);}
+    .mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);}
+    .mobile-nav.open{display:flex;}
+    .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;transition:all .2s;}
+    .mobile-nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    .mobile-nav a.active{color:var(--blue);background:rgba(59,158,255,.08);}
+    .mobile-nav a.nav-calc{background:rgba(77,232,122,.08);color:var(--green);border:1px solid rgba(77,232,122,.2);}
+    .mobile-nav a.nav-apply{background:rgba(245,200,66,.08);color:var(--gold);border:1px solid rgba(245,200,66,.2);}
+    @media(max-width:900px){nav{display:none;}.menu-btn{display:block;}}
   </style>
 </head>
 <body>
@@ -140,6 +152,17 @@
       <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
     </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" onclick="toggleMenu()">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html" onclick="toggleMenu()">🏠 Price Tracker</a>
+    <a href="dictionary.html" onclick="toggleMenu()">📖 Dictionary</a>
+    <a href="blog.html" onclick="toggleMenu()">📝 Blog</a>
+    <a href="quiz.html" onclick="toggleMenu()">🧬 Quiz</a>
+    <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
+    <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
+    <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
+    <a href="account.html" onclick="toggleMenu()">👤 My Account</a>
   </div>
 </header>
 
@@ -323,5 +346,23 @@
   <p style="margin-top:8px;">© 2026 PepsTracker — For research purposes only.</p>
 </footer>
 
+<script>
+function toggleMenu() {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  if (!nav || !btn) return;
+  const open = nav.classList.toggle('open');
+  btn.textContent = open ? '✕' : '☰';
+  btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+}
+document.addEventListener('click', function(e) {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  if (nav && btn && nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove('open');
+    btn.textContent = '☰';
+  }
+});
+</script>
 </body>
 </html>
