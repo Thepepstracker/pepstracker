@@ -347,6 +347,7 @@
       <a href="index.html" class="active">Price Tracker</a>
       <a href="dictionary.html" style="color:var(--blue);">📖 Dictionary</a>
       <a href="blog.html">📝 Blog</a>
+      <a href="quiz.html">🧬 Quiz</a>
       <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
       <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
@@ -362,6 +363,7 @@
     <a href="index.html" class="active" onclick="toggleMenu()">🏠 Price Tracker</a>
     <a href="dictionary.html" style="color:var(--blue);" onclick="toggleMenu()">📖 Dictionary</a>
     <a href="blog.html" onclick="toggleMenu()">📝 Blog</a>
+    <a href="quiz.html" onclick="toggleMenu()">🧬 Quiz</a>
     <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
     <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
     <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
@@ -446,6 +448,18 @@
       </select>
     </div>
     <button class="btn-search" onclick="handleSearch()">Compare Prices</button>
+  </div>
+
+  <!-- Quiz Banner -->
+  <div style="max-width:680px;margin:16px auto 0;">
+    <a href="quiz.html" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:linear-gradient(135deg,rgba(59,158,255,.08),rgba(77,232,122,.08));border:1.5px solid rgba(59,158,255,.25);border-radius:14px;padding:18px 22px;text-decoration:none;transition:border-color .2s;" onmouseover="this.style.borderColor='rgba(59,158,255,.5)'" onmouseout="this.style.borderColor='rgba(59,158,255,.25)'">
+      <div>
+        <div style="font-size:.7rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;">🧬 Peptide Finder Quiz</div>
+        <div style="font-weight:800;font-size:.97rem;color:var(--text);margin-bottom:3px;">Not sure where to start?</div>
+        <div style="font-size:.82rem;color:var(--muted);">Answer 5 questions → get personalized recommendations with live prices.</div>
+      </div>
+      <div style="background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:800;font-size:.88rem;padding:11px 22px;border-radius:10px;white-space:nowrap;flex-shrink:0;">Take the Quiz →</div>
+    </a>
   </div>
 </section>
 
