@@ -156,6 +156,11 @@
     footer a{color:var(--blue);text-decoration:none;}
 
 
+
+    /* ── COA Badge ── */
+    .coa-badge{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.3px;cursor:help;white-space:nowrap;}
+    .coa-badge.verified{background:rgba(77,232,122,.12);color:var(--green);border:1px solid rgba(77,232,122,.3);}
+    .coa-badge.none{background:rgba(122,139,168,.08);color:var(--muted);border:1px solid rgba(122,139,168,.2);}
     /* ── Save button ── */
     .btn-save-peptide{background:none;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 10px;font-size:.8rem;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
     .btn-save-peptide:hover{border-color:var(--gold);color:var(--gold);}
@@ -294,6 +299,7 @@
       <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
       <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
+      <a href="account.html" class="nav-account">👤 Account</a>
     </nav>
 
     <!-- Hamburger -->
@@ -307,6 +313,7 @@
     <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
     <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
     <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
+    <a href="account.html" class="nav-account" onclick="toggleMenu()">👤 My Account</a>
   </div>
 </header>
 
@@ -474,17 +481,17 @@ function quickPick(peptide) {
 }
 
 const VENDORS = [
-  { id:"ascension",  name:"Ascension Peptides",  url:"https://ascensionpeptides.com/ref/Glowlab/",     code:"Glowlab",   discount:0.50 },
-  { id:"atomik",     name:"AtomiK Labz",          url:"https://affiliatepirate.com/r/IE180L",           code:"Glowlab15", discount:0.15 },
-  { id:"lapeptides", name:"LA Peptides",          url:"https://lapeptides.net/?ref=Glowlab",            code:"Glowlab",   discount:0.10 },
-  { id:"glacier",    name:"Glacier Aminos",       url:"https://glacieraminos.shop/?ref=sidbilvi",       code:"Glowlab",   discount:0.10 },
-  { id:"milehigh",   name:"Mile High Compound",   url:"https://milehighcompounds.is/ref=glowlab10",     code:"Glowlab",   discount:0.10 },
-  { id:"ezpeptides", name:"EZ Peptides",          url:"https://ezpeptides.com/?red=glowlab",            code:"GlowLab",   discount:0.10 },
-  { id:"amp",        name:"AMP Ameano Peptides",  url:"https://ameanopeptides.com/?ref=lcbpndeo",       code:"Glowlab",   discount:0.10 },
-  { id:"labsourced", name:"Labsourced",           url:"https://labsourced.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15 },
-  { id:"ion",        name:"Ion Peptides",         url:"https://ionpeptide.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15 },
-  { id:"retaone",    name:"Reta One Labs",        url:"https://retaonelabs.com/ref/0rgv6",              code:"Glowlab",   discount:0.05 },
-  { id:"nura",       name:"NuraPeptide",          url:"https://nurapeptide.com/?ref=glowlab",           code:"Glowlab15", discount:0.15 },
+  { id:"ascension",  name:"Ascension Peptides",  url:"https://ascensionpeptides.com/ref/Glowlab/",     code:"Glowlab",   discount:0.50, coa:"full",    coaNote:"HPLC + Mass Spec + LAL Endotoxin · MZ Biolabs · Public library" },
+  { id:"atomik",     name:"AtomiK Labz",          url:"https://affiliatepirate.com/r/IE180L",           code:"Glowlab15", discount:0.15, coa:"full",    coaNote:"Third-party tested · Finnrick verified · COAs available on site" },
+  { id:"lapeptides", name:"LA Peptides",          url:"https://lapeptides.net/?ref=Glowlab",            code:"Glowlab",   discount:0.10, coa:"none",    coaNote:"No public COA documentation found" },
+  { id:"glacier",    name:"Glacier Aminos",       url:"https://glacieraminos.shop/?ref=sidbilvi",       code:"Glowlab",   discount:0.10, coa:"full",    coaNote:"4-panel testing: HPLC, LC-MS, KF Moisture, Endotoxin · Most comprehensive testing of any vendor" },
+  { id:"milehigh",   name:"Mile High Compound",   url:"https://milehighcompounds.is/ref=glowlab10",     code:"Glowlab",   discount:0.10, coa:"full",    coaNote:"COAs posted publicly · Kovera Labs · cGMP certified manufacturers" },
+  { id:"ezpeptides", name:"EZ Peptides",          url:"https://ezpeptides.com/?red=glowlab",            code:"GlowLab",   discount:0.10, coa:"full",    coaNote:"QR code on every product links to per-product COA · Most accessible verification system" },
+  { id:"amp",        name:"AMP Ameano Peptides",  url:"https://ameanopeptides.com/?ref=lcbpndeo",       code:"Glowlab",   discount:0.10, coa:"none",    coaNote:"No public COA documentation found" },
+  { id:"labsourced", name:"Labsourced",           url:"https://labsourced.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15, coa:"none",    coaNote:"No public COA documentation found" },
+  { id:"ion",        name:"Ion Peptides",         url:"https://ionpeptide.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15, coa:"full",    coaNote:"Lot-specific COAs · Full HPLC chromatograms + Mass Spec profiles" },
+  { id:"retaone",    name:"Reta One Labs",        url:"https://retaonelabs.com/ref/0rgv6",              code:"Glowlab",   discount:0.05, coa:"none",    coaNote:"No public COA documentation found" },
+  { id:"nura",       name:"NuraPeptide",          url:"https://nurapeptide.com/?ref=glowlab",           code:"Glowlab15", discount:0.15, coa:"none",    coaNote:"No public COA documentation found" },
 ];
 const vMap = {};
 VENDORS.forEach(v => vMap[v.id] = v);
@@ -899,7 +906,7 @@ function renderResults() {
       <div class="result-card" style="opacity:0.55;border-color:var(--red);">
         <div class="rank" style="color:var(--red);">—</div>
         <div>
-          <div class="vendor-name">${r.vendor.name}</div>
+          <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${r.vendor.name}${r.vendor.coa==='full'?`<span class="coa-badge verified" title="${r.vendor.coaNote}">✓ COA</span>`:`<span class="coa-badge none" title="${r.vendor.coaNote}">No COA</span>`}</div>
           <div class="vendor-listing" style="color:var(--red);font-weight:700;">⚠ Out of Stock</div>
         </div>
         <div class="price-block">
@@ -922,7 +929,7 @@ function renderResults() {
     <div class="result-card ${isBest?'best':''}">
       <div class="rank ${rank===0?'first':''}">${rank===0?'🥇':'#'+(rank+1)}</div>
       <div>
-        <div class="vendor-name">${r.vendor.name}${isBest?'<span class="best-badge">Best Value</span>':''}</div>
+        <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${r.vendor.name}${isBest?'<span class="best-badge">Best Value</span>':''}${r.vendor.coa==='full'?`<span class="coa-badge verified" title="${r.vendor.coaNote}">✓ COA</span>`:`<span class="coa-badge none" title="${r.vendor.coaNote}">No COA</span>`}</div>
         <div class="vendor-listing">Listed as: <em>${r.listing}</em></div>
       </div>
       <div class="price-block">
