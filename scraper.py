@@ -922,7 +922,8 @@ def main():
         return
     log.info(f"Parsed {len(existing)} peptides from PRICES block")
     log.info(f"Scraping {len(ACTIVE_PEPTIDES)} active peptides")
-    log.info(f"Skipping manual vendors: {', '.join(f'{v} ({SKIP_REASONS.get(v, \"manual\")})' for v in sorted(SKIP_VENDORS))}")
+    skip_summary = ", ".join(f"{v} ({SKIP_REASONS.get(v, 'manual')})" for v in sorted(SKIP_VENDORS))
+    log.info(f"Skipping manual vendors: {skip_summary}")
 
     updates = {}
     oos_items = []
