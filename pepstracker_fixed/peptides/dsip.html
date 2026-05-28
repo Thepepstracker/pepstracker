@@ -17,8 +17,8 @@
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:100;}
-    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px;}
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;}
+    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px;}
     .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
     .logo-icon{width:42px;height:42px;}
     .logo-text{font-size:1.5rem;font-weight:800;letter-spacing:-.5px;}
@@ -78,6 +78,34 @@
     footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:.82rem;}
     footer a{color:var(--blue);text-decoration:none;}
     @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+  
+    .menu-btn{display:none;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;padding:7px 10px;font-size:1.1rem;line-height:1;flex-shrink:0;}
+    .menu-btn:hover{color:var(--text);border-color:var(--blue);}
+    .mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);}
+    .mobile-nav.open{display:flex;}
+    .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;transition:all .2s;}
+    .mobile-nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    .mobile-nav a.active{color:var(--blue);}
+    .mobile-nav a.nav-calc{background:rgba(77,232,122,.08);color:var(--green);border:1px solid rgba(77,232,122,.2);}
+    .mobile-nav a.nav-apply{background:rgba(245,200,66,.08);color:var(--gold);border:1px solid rgba(245,200,66,.2);}
+    @media(max-width:640px){
+      nav{display:none;}
+      .menu-btn{display:block;}
+      .header-inner{height:60px;padding:0;}
+      .logo-icon{width:32px;height:32px;}
+      .logo-text{font-size:1.2rem;}
+      .page{padding:20px 14px 48px;}
+      .hero-row{gap:16px;}
+      .pep-name{font-size:1.5rem;}
+      .two-col{grid-template-columns:1fr;}
+      .stats-grid{grid-template-columns:1fr 1fr;}
+      .hero-btns{flex-direction:column;}
+      .btn-primary,.btn-secondary{text-align:center;}
+      .cta-bar{flex-direction:column;align-items:stretch;}
+      .cta-bar .btn-primary{text-align:center;}
+      .also-grid{grid-template-columns:1fr 1fr;}
+      .storage-row{flex-direction:column;gap:10px;}
+    }
   </style>
 </head>
 <body>
@@ -119,8 +147,17 @@
       <a href="../vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="../disclaimer.html">Disclaimer</a>
     </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" onclick="toggleMenu()">☰</button>
   </div>
 </header>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html" onclick="toggleMenu()">🏠 Price Tracker</a>
+    <a href="../dictionary.html" class="active" onclick="toggleMenu()">📖 Dictionary</a>
+    <a href="../calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
+    <a href="../vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
+    <a href="../disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
+  </div>
 
 <div style="height:3px;background:linear-gradient(90deg,#3b9eff,#4de87a 50%,#f5c842);"></div>
 
@@ -209,5 +246,21 @@
   <p style="margin-top:8px;"><a href="../index.html">Price Tracker</a> &nbsp;|&nbsp; <a href="../dictionary.html">Dictionary</a> &nbsp;|&nbsp; <a href="../calculators.html">Calculators</a> &nbsp;|&nbsp; <a href="../disclaimer.html">Disclaimer</a></p>
   <p style="margin-top:8px;">© 2026 PepsTracker — For research purposes only.</p>
 </footer>
+<script>
+function toggleMenu() {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  const open = nav.classList.toggle('open');
+  btn.textContent = open ? '✕' : '☰';
+}
+document.addEventListener('click', e => {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  if (nav && nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove('open');
+    btn.textContent = '☰';
+  }
+});
+</script>
 </body>
 </html>
