@@ -108,7 +108,7 @@
     .result-list{display:flex;flex-direction:column;gap:10px;}
 
     /* Desktop card */
-    .result-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);display:grid;grid-template-columns:44px 1fr auto auto auto auto;align-items:center;gap:14px;padding:14px 18px;transition:border-color .2s,transform .15s;}
+    .result-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);display:grid;grid-template-columns:44px 1fr auto auto auto;align-items:center;gap:14px;padding:14px 18px;transition:border-color .2s,transform .15s;}
     .result-card:hover{border-color:var(--blue);transform:translateY(-1px);}
     .result-card.best{border-color:var(--green);background:linear-gradient(90deg,rgba(77,232,122,.05) 0%,var(--card) 60%);}
 
@@ -155,25 +155,6 @@
     footer{border-top:1px solid var(--border);padding:20px 16px;text-align:center;color:var(--muted);font-size:.8rem;}
     footer a{color:var(--blue);text-decoration:none;}
 
-
-
-    /* ── COA Badge ── */
-    .coa-badge{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.3px;cursor:help;white-space:nowrap;}
-    .coa-badge.verified{background:rgba(77,232,122,.12);color:var(--green);border:1px solid rgba(77,232,122,.3);}
-    .coa-badge.none{background:rgba(122,139,168,.08);color:var(--muted);border:1px solid rgba(122,139,168,.2);}
-    /* ── Save button ── */
-    .btn-save-peptide{background:none;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 12px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .25s;white-space:nowrap;flex-shrink:0;}
-    .btn-save-peptide:hover{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,.06);}
-    .btn-save-peptide.saved{border-color:var(--gold);color:#0d0f14;background:var(--gold);font-weight:700;box-shadow:0 0 10px rgba(245,200,66,.35);}
-    .btn-save-peptide.saved:hover{background:#d4a800;border-color:#d4a800;}
-    .btn-save-peptide.just-saved{animation:savePop .4s ease;}
-    @keyframes savePop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
-    .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1.5px solid var(--gold);color:var(--text);font-weight:700;font-size:.9rem;padding:13px 24px;border-radius:14px;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;z-index:9999;pointer-events:none;opacity:0;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.4);}
-    .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
-    /* Save button on mobile — full width row */
-    @media(max-width:640px){
-      .btn-save-peptide{grid-column:1/-1;text-align:center;padding:10px;}
-    }
     /* ══════════════════════════════════════════
        MOBILE STYLES  ≤ 640px
     ══════════════════════════════════════════ */
@@ -239,12 +220,6 @@
         font-size:.95rem;
         border-radius:10px;
       }
-      /* Save button: full width on mobile */
-      .btn-save-peptide{
-        grid-column:1/-1;
-        text-align:center;
-        padding:10px;
-      }
     }
 
     /* ══════════════════════════════════════════
@@ -257,9 +232,6 @@
       .menu-btn{display:block;}
     }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -308,7 +280,6 @@
       <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
       <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
-      <a href="account.html" class="nav-account">👤 Account</a>
     </nav>
 
     <!-- Hamburger -->
@@ -322,7 +293,6 @@
     <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
     <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
     <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
-    <a href="account.html" class="nav-account" onclick="toggleMenu()">👤 My Account</a>
   </div>
 </header>
 
@@ -487,17 +457,17 @@ function quickPick(peptide) {
 }
 
 const VENDORS = [
-  { id:"ascension",  name:"Ascension Peptides",  url:"https://ascensionpeptides.com/ref/Glowlab/",     code:"Glowlab",   discount:0.50, coa:"full",    coaNote:"HPLC + Mass Spec + LAL Endotoxin · MZ Biolabs · Public library" },
-  { id:"atomik",     name:"AtomiK Labz",          url:"https://affiliatepirate.com/r/IE180L",           code:"Glowlab15", discount:0.15, coa:"full",    coaNote:"Third-party tested · Finnrick verified · COAs available on site" },
-  { id:"lapeptides", name:"LA Peptides",          url:"https://lapeptides.net/?ref=Glowlab",            code:"Glowlab",   discount:0.10, coa:"none",    coaNote:"No public COA documentation found" },
-  { id:"glacier",    name:"Glacier Aminos",       url:"https://glacieraminos.shop/?ref=sidbilvi",       code:"Glowlab",   discount:0.10, coa:"full",    coaNote:"4-panel testing: HPLC, LC-MS, KF Moisture, Endotoxin · Most comprehensive testing of any vendor" },
-  { id:"milehigh",   name:"Mile High Compound",   url:"https://milehighcompounds.is/ref=glowlab10",     code:"Glowlab",   discount:0.10, coa:"full",    coaNote:"COAs posted publicly · Kovera Labs · cGMP certified manufacturers" },
-  { id:"ezpeptides", name:"EZ Peptides",          url:"https://ezpeptides.com/?red=glowlab",            code:"GlowLab",   discount:0.10, coa:"full",    coaNote:"QR code on every product links to per-product COA · Most accessible verification system" },
-  { id:"amp",        name:"AMP Ameano Peptides",  url:"https://ameanopeptides.com/?ref=lcbpndeo",       code:"Glowlab",   discount:0.10, coa:"none",    coaNote:"No public COA documentation found" },
-  { id:"labsourced", name:"Labsourced",           url:"https://labsourced.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15, coa:"none",    coaNote:"No public COA documentation found" },
-  { id:"ion",        name:"Ion Peptides",         url:"https://ionpeptide.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15, coa:"full",    coaNote:"Lot-specific COAs · Full HPLC chromatograms + Mass Spec profiles" },
-  { id:"retaone",    name:"Reta One Labs",        url:"https://retaonelabs.com/ref/0rgv6",              code:"Glowlab",   discount:0.05, coa:"none",    coaNote:"No public COA documentation found" },
-  { id:"nura",       name:"NuraPeptide",          url:"https://nurapeptide.com/?ref=glowlab",           code:"Glowlab15", discount:0.15, coa:"none",    coaNote:"No public COA documentation found" },
+  { id:"ascension",  name:"Ascension Peptides",  url:"https://ascensionpeptides.com/ref/Glowlab/",     code:"Glowlab",   discount:0.50 },
+  { id:"atomik",     name:"AtomiK Labz",          url:"https://affiliatepirate.com/r/IE180L",           code:"Glowlab15", discount:0.15 },
+  { id:"lapeptides", name:"LA Peptides",          url:"https://lapeptides.net/?ref=Glowlab",            code:"Glowlab",   discount:0.10 },
+  { id:"glacier",    name:"Glacier Aminos",       url:"https://glacieraminos.shop/?ref=sidbilvi",       code:"Glowlab",   discount:0.10 },
+  { id:"milehigh",   name:"Mile High Compound",   url:"https://milehighcompounds.is/ref=glowlab10",     code:"Glowlab",   discount:0.10 },
+  { id:"ezpeptides", name:"EZ Peptides",          url:"https://ezpeptides.com/?red=glowlab",            code:"GlowLab",   discount:0.10 },
+  { id:"amp",        name:"AMP Ameano Peptides",  url:"https://ameanopeptides.com/?ref=lcbpndeo",       code:"Glowlab",   discount:0.10 },
+  { id:"labsourced", name:"Labsourced",           url:"https://labsourced.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15 },
+  { id:"ion",        name:"Ion Peptides",         url:"https://ionpeptide.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15 },
+  { id:"retaone",    name:"Reta One Labs",        url:"https://retaonelabs.com/ref/0rgv6",              code:"Glowlab",   discount:0.05 },
+  { id:"nura",       name:"NuraPeptide",          url:"https://nurapeptide.com/?ref=glowlab",           code:"Glowlab15", discount:0.15 },
 ];
 const vMap = {};
 VENDORS.forEach(v => vMap[v.id] = v);
@@ -912,7 +882,7 @@ function renderResults() {
       <div class="result-card" style="opacity:0.55;border-color:var(--red);">
         <div class="rank" style="color:var(--red);">—</div>
         <div>
-          <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${r.vendor.name}${r.vendor.coa==='full'?`<span class="coa-badge verified" title="${r.vendor.coaNote}">✓ COA</span>`:`<span class="coa-badge none" title="${r.vendor.coaNote}">No COA</span>`}</div>
+          <div class="vendor-name">${r.vendor.name}</div>
           <div class="vendor-listing" style="color:var(--red);font-weight:700;">⚠ Out of Stock</div>
         </div>
         <div class="price-block">
@@ -935,7 +905,7 @@ function renderResults() {
     <div class="result-card ${isBest?'best':''}">
       <div class="rank ${rank===0?'first':''}">${rank===0?'🥇':'#'+(rank+1)}</div>
       <div>
-        <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${r.vendor.name}${isBest?'<span class="best-badge">Best Value</span>':''}${r.vendor.coa==='full'?`<span class="coa-badge verified" title="${r.vendor.coaNote}">✓ COA</span>`:`<span class="coa-badge none" title="${r.vendor.coaNote}">No COA</span>`}</div>
+        <div class="vendor-name">${r.vendor.name}${isBest?'<span class="best-badge">Best Value</span>':''}</div>
         <div class="vendor-listing">Listed as: <em>${r.listing}</em></div>
       </div>
       <div class="price-block">
@@ -952,7 +922,6 @@ function renderResults() {
         <button class="btn-copy" onclick="copyCode('${r.vendor.code}',this)">Copy</button>
       </div>
       <a class="btn-shop ${isBest?'':'secondary'}" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Shop →</a>
-      <button class="btn-save-peptide" data-key="${r.vendor.id}::${currentPeptide}" onclick="toggleSaveListing('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)}, '${r.vendor.code}')">☆ Save</button>
     </div>`;
   }).join('');
 
@@ -982,7 +951,7 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let currentUser = null;
-let savedListings = []; // [{key:"ion::BPC-157", peptide, vendorId, vendorName, price, code}]
+let savedListings = [];
 
 auth.onAuthStateChanged(async user => {
   currentUser = user;
@@ -995,17 +964,17 @@ auth.onAuthStateChanged(async user => {
   if (currentPeptide) updateSaveButtons();
 });
 
-function showToast(msg, icon='') {
+function showToast(msg) {
   const t = document.getElementById('toast');
-  t.innerHTML = icon ? `<span style="font-size:1.1rem">${icon}</span> ${msg}` : msg;
+  t.innerHTML = msg;
   t.classList.add('show');
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+  t._timer = setTimeout(() => t.classList.remove('show'), 4000);
 }
 
 async function toggleSaveListing(vendorId, peptide, vendorName, price, code) {
   if (!currentUser) {
-    showToast('Sign in to save listings', '👤');
+    showToast('👤 Sign in to save listings');
     setTimeout(() => window.location.href = 'login.html', 1400);
     return;
   }
@@ -1013,14 +982,13 @@ async function toggleSaveListing(vendorId, peptide, vendorName, price, code) {
   const idx = savedListings.findIndex(s => s.key === key);
   if (idx === -1) {
     savedListings.push({ key, peptide, vendorId, vendorName, price, code });
-    showToast(`${vendorName} · ${peptide} saved!`, '⭐');
+    showToast(`⭐ <strong style="color:var(--text)">${vendorName} · ${peptide}</strong> saved! &nbsp;<a href="account.html">View My Saves →</a>`);
   } else {
     savedListings.splice(idx, 1);
-    showToast('Removed from saved', '🗑️');
+    showToast('🗑️ Removed from saved listings');
   }
   await db.collection('users').doc(currentUser.uid).update({ savedListings });
   updateSaveButtons();
-  // Animate the button that was just clicked
   const btn = document.querySelector(`.btn-save-peptide[data-key="${key}"]`);
   if (btn) { btn.classList.add('just-saved'); btn.addEventListener('animationend', () => btn.classList.remove('just-saved'), {once:true}); }
 }
