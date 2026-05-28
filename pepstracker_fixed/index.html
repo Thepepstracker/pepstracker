@@ -578,7 +578,7 @@ function getShopUrl(vid, peptide) {
 
 const GLP1 = new Set(["Semaglutide","Tirzepatide","Retatrutide","Liraglutide"]);
 
-const SCRAPE_DATE = "May 27, 2026";
+const SCRAPE_DATE = "May 28, 2026";
 const PRICES = {
   "Semaglutide": {
     ascension:{price:65.00,mg:5,listing:"Semaglutide 5mg",oos:true},
@@ -597,7 +597,7 @@ const PRICES = {
     ascension:{price:85.00,mg:10,listing:"Tirzepatide 10mg",oos:true},
     atomik:{price:99.00,mg:10,listing:"Tirzepatide 10mg"},
     lapeptides:{price:99.99,mg:15,listing:"Tirz 15mg"},
-    glacier:{price:68.99,mg:10,listing:"Tirzepatide 10mg"},
+    glacier:{price:39.99,mg:10,listing:"Tirzepatide 10mg"},
     milehigh:{price:89.99,mg:10,listing:"Tirzepatide 10mg"},
     ezpeptides:{price:53.00,mg:10,listing:"Tirzepatide 10mg"},
     amp:null,
@@ -615,7 +615,7 @@ const PRICES = {
     ezpeptides:{price:78.00,mg:10,listing:"Retatrutide 10mg"},
     amp:null,
     labsourced:{price:79.00,mg:10,listing:"Retatrutide 10mg"},
-    ion:{price:45.00,mg:5,listing:"Retatrutide 5mg"},
+    ion:{price:39.00,mg:5,listing:"Retatrutide 5mg"},
     retaone:null,
     nura:{price:83.00,mg:12,listing:"Reta GLP-1/GIP 12mg"},
   },
@@ -623,7 +623,7 @@ const PRICES = {
     ascension:{price:29.99,mg:5,listing:"BPC-157 5mg",oos:true},
     atomik:{price:65.00,mg:10,listing:"BPC-157 10mg"},
     lapeptides:{price:59.99,mg:10,listing:"BPC-157 10mg"},
-    glacier:{price:45.99,mg:10,listing:"BPC-157 10mg"},
+    glacier:{price:49.99,mg:10,listing:"BPC-157 10mg"},
     milehigh:{price:49.99,mg:10,listing:"BPC-157 10mg"},
     ezpeptides:{price:44.00,mg:10,listing:"BPC-157 10mg"},
     amp:{price:44.00,mg:10,listing:"BPC-157 10mg"},
@@ -649,7 +649,7 @@ const PRICES = {
     ascension:{price:55.00,mg:20,listing:"BPC+TB Blend 20mg",oos:true},
     atomik:{price:90.00,mg:10,listing:"BPC/TB Blend 10mg"},
     lapeptides:{price:69.99,mg:10,listing:"BPC-157 + TB-500 10mg"},
-    glacier:{price:62.99,mg:10,listing:"BPC+TB Blend 10mg"},
+    glacier:{price:49.99,mg:10,listing:"BPC+TB Blend 10mg"},
     milehigh:{price:119.99,mg:20,listing:"BPC/TB Blend 20mg"},
     ezpeptides:{price:88.00,mg:10,listing:"BPC-157 + TB-500 10mg"},
     amp:{price:88.00,mg:10,listing:"BPC+TB Blend 10mg"},
@@ -667,9 +667,9 @@ const PRICES = {
     ezpeptides:{price:44.00,mg:10,listing:"Ipamorelin 10mg"},
     amp:{price:44.00,mg:10,listing:"Ipamorelin 10mg"},
     labsourced:{price:49.00,mg:10,listing:"Ipamorelin 10mg"},
-    ion:{price:42.00,mg:5,listing:"Ipamorelin 5mg"},
+    ion:{price:35.00,mg:5,listing:"Ipamorelin 5mg"},
     retaone:null,
-    nura:{price:70.00,mg:10,listing:"Ipamorelin 10mg"},
+    nura:{price:63.00,mg:10,listing:"Ipamorelin 10mg"},
   },
   "CJC-1295 (with DAC)": {
     ascension:{price:32.00,mg:2,listing:"CJC-1295 w/DAC 2mg"},
@@ -706,7 +706,7 @@ const PRICES = {
     ezpeptides:{price:68.00,mg:10,listing:"Tesamorelin 10mg"},
     amp:{price:68.00,mg:10,listing:"Tesamorelin 10mg",oos:true},
     labsourced:{price:99.00,mg:10,listing:"Tesamorelin 10mg"},
-    ion:{price:69.95,mg:5,listing:"Tesamorelin 5mg"},
+    ion:{price:45.00,mg:5,listing:"Tesamorelin 5mg"},
     retaone:null,
     nura:{price:70.00,mg:10,listing:"Tesamorelin 10mg"},
   },
@@ -740,7 +740,7 @@ const PRICES = {
     ascension:{price:160.00,mg:100,listing:"GHK-Cu 100mg",oos:true},
     atomik:{price:55.00,mg:100,listing:"GHK-Cu 100mg"},
     lapeptides:{price:39.99,mg:100,listing:"GHK-Cu 100mg"},
-    glacier:{price:41.99,mg:50,listing:"GHK-Cu 50mg"},
+    glacier:{price:49.99,mg:50,listing:"GHK-Cu 50mg"},
     milehigh:{price:49.99,mg:50,listing:"GHK-Cu 50mg"},
     ezpeptides:{price:35.00,mg:50,listing:"GHK-Copper 50mg"},
     amp:{price:53.00,mg:100,listing:"GHK-Cu 100mg",oos:true},
@@ -766,7 +766,7 @@ const PRICES = {
     ascension:{price:62.00,mg:10,listing:"MOTS-c 10mg",oos:true},
     atomik:{price:39.00,mg:10,listing:"MOTS-c 10mg"},
     lapeptides:{price:69.99,mg:10,listing:"MOTS-c 10mg"},
-    glacier:{price:45.99,mg:10,listing:"MOTS-c 10mg"},
+    glacier:{price:49.99,mg:10,listing:"MOTS-c 10mg"},
     milehigh:{price:49.99,mg:10,listing:"MOTS-c 10mg"},
     ezpeptides:{price:54.00,mg:10,listing:"MOTS-c 10mg"},
     amp:{price:54.00,mg:10,listing:"MOTS-c 10mg"},
@@ -894,7 +894,7 @@ const PRICES = {
     labsourced:null,
     ion:{price:79.95,mg:10,listing:"Tesamorelin/Ipamorelin 10mg"},
     retaone:null,
-    nura:{price:49.00,mg:13,listing:"Tesamorelin/Ipamorelin 13mg/3mg"},
+    nura:{price:70.00,mg:13,listing:"Tesamorelin/Ipamorelin 13mg/3mg"},
   },
 };
 
