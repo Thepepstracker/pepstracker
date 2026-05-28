@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personalized Peptide Profile — PepsTracker</title>
+  <meta name="robots" content="noindex" />
+  <style>
+    :root{--bg:#0d0f14;--surface:#161b25;--card:#1c2230;--border:#2a3347;--blue:#3b9eff;--green:#4de87a;--text:#e8edf5;--muted:#7a8ba8;--gold:#f5c842;--red:#ff5c5c;--radius:12px;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
+    .logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+    .logo-icon{width:36px;height:36px;}
+    .logo-text{font-size:1.35rem;font-weight:800;letter-spacing:-.5px;}
+    .logo-text span:first-child{color:var(--blue);}
+    .logo-text span:last-child{color:var(--green);}
+
+    .wrap{max-width:640px;margin:0 auto;padding:48px 20px 80px;}
+
+    /* Progress */
+    .progress-bar-wrap{margin-bottom:28px;}
+    .progress-label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-bottom:8px;font-weight:600;}
+    .progress-track{height:4px;background:var(--border);border-radius:99px;overflow:hidden;}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;transition:width .5s ease;}
+
+    /* Cards */
+    .step-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:32px;animation:fadeUp .35s ease;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    .step-badge{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;}
+    .step-title{font-size:1.3rem;font-weight:800;letter-spacing:-.3px;margin-bottom:6px;}
+    .step-sub{font-size:.88rem;color:var(--muted);margin-bottom:24px;line-height:1.55;}
+
+    /* Input fields */
+    .field{margin-bottom:18px;}
+    .field label{display:block;font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
+    .field input,.field select{width:100%;background:var(--surface);border:1.5px solid var(--border);color:var(--text);border-radius:10px;padding:12px 16px;font-size:.97rem;font-family:inherit;transition:border-color .2s;outline:none;}
+    .field input:focus,.field select:focus{border-color:var(--blue);}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .field-hint{font-size:.75rem;color:var(--muted);margin-top:5px;}
+
+    /* Option pills */
+    .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
+    .opt-pill{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:10px;}
+    .opt-pill:hover{border-color:var(--blue);}
+    .opt-pill.selected{border-color:var(--blue);background:rgba(59,158,255,.08);}
+    .opt-pill.selected .pill-icon{background:var(--blue);color:#fff;}
+    .pill-icon{width:34px;height:34px;border-radius:8px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;transition:all .2s;}
+    .pill-text{font-weight:600;font-size:.88rem;line-height:1.3;}
+    .pill-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+
+    /* Goal ranking */
+    .goal-list{display:flex;flex-direction:column;gap:8px;}
+    .goal-item{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:grab;transition:border-color .2s;}
+    .goal-item.selected{border-color:var(--blue);background:rgba(59,158,255,.06);}
+    .goal-item:hover{border-color:var(--blue);}
+    .goal-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:.7rem;}
+    .goal-item.selected .goal-check{background:var(--blue);border-color:var(--blue);color:#fff;}
+
+    /* Buttons */
+    .btns{display:flex;gap:12px;margin-top:24px;}
+    .btn-back{background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:10px;padding:13px 22px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
+    .btn-back:hover{border-color:var(--blue);color:var(--blue);}
+    .btn-next{flex:1;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;border:none;border-radius:10px;padding:13px 22px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
+    .btn-next:hover{opacity:.88;}
+    .btn-next:disabled{opacity:.35;cursor:not-allowed;}
+
+    /* Results */
+    .results-header{text-align:center;margin-bottom:28px;}
+    .results-header h2{font-size:1.6rem;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;}
+    .results-header p{color:var(--muted);font-size:.9rem;line-height:1.6;}
+
+    .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+    .profile-stat{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;}
+    .profile-stat-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+    .profile-stat-value{font-size:1rem;font-weight:700;}
+
+    .rec-section{margin-bottom:24px;}
+    .rec-section h3{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+
+    .peptide-rec{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:10px;transition:border-color .2s;}
+    .peptide-rec:hover{border-color:var(--blue);}
+    .peptide-rec.primary{border-color:var(--green);background:rgba(77,232,122,.04);}
+    .rec-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+    .rec-name{font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px;}
+    .rec-badge{font-size:.65rem;font-weight:700;background:rgba(77,232,122,.15);color:var(--green);border:1px solid rgba(77,232,122,.3);border-radius:20px;padding:2px 8px;}
+    .rec-dose{background:var(--card);border-radius:8px;padding:10px 14px;font-size:.82rem;margin-bottom:8px;}
+    .rec-dose strong{color:var(--blue);}
+    .rec-why{font-size:.8rem;color:var(--muted);line-height:1.5;}
+    .rec-actions{display:flex;gap:8px;margin-top:10px;}
+    .btn-prices{background:linear-gradient(135deg,var(--green),#2bb858);color:#0d0f14;font-weight:800;font-size:.8rem;padding:8px 16px;border-radius:8px;text-decoration:none;transition:opacity .2s;}
+    .btn-prices:hover{opacity:.85;}
+    .btn-dict{background:transparent;border:1.5px solid var(--border);color:var(--muted);font-size:.8rem;font-weight:600;padding:8px 14px;border-radius:8px;text-decoration:none;transition:all .2s;}
+    .btn-dict:hover{border-color:var(--blue);color:var(--blue);}
+
+    .save-btn{width:100%;background:linear-gradient(135deg,var(--gold),#d4a800);color:#0d0f14;border:none;border-radius:10px;padding:14px;font-size:1rem;font-weight:800;cursor:pointer;font-family:inherit;transition:opacity .2s;margin-top:8px;}
+    .save-btn:hover{opacity:.88;}
+
+    .disclaimer{font-size:.75rem;color:var(--muted);padding:14px;background:rgba(255,92,92,.04);border:1px solid rgba(255,92,92,.12);border-radius:10px;margin-top:16px;line-height:1.6;}
+
+    @media(max-width:560px){.options-grid,.field-row,.profile-grid{grid-template-columns:1fr;}.step-title{font-size:1.1rem;}}
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <svg class="logo-icon" viewBox="0 0 200 200" fill="none">
+        <defs>
+          <linearGradient id="g1" x1="20" y1="130" x2="180" y2="40" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1a7fe8"/><stop offset="50%" stop-color="#00e5cc"/><stop offset="100%" stop-color="#4de87a"/></linearGradient>
+          <linearGradient id="g2" x1="20" y1="150" x2="180" y2="150" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1a7fe8"/><stop offset="100%" stop-color="#4de87a"/></linearGradient>
+        </defs>
+        <path d="M20 140 Q100 195 180 120" fill="none" stroke="url(#g2)" stroke-width="10" stroke-linecap="round"/>
+        <line x1="20" y1="128" x2="82" y2="82" stroke="url(#g1)" stroke-width="10" stroke-linecap="round"/>
+        <line x1="82" y1="82" x2="128" y2="105" stroke="url(#g1)" stroke-width="10" stroke-linecap="round"/>
+        <line x1="128" y1="105" x2="168" y2="48" stroke="#4de87a" stroke-width="10" stroke-linecap="round"/>
+        <polygon points="178,38 152,46 168,64" fill="#4de87a"/>
+        <circle cx="20" cy="128" r="18" fill="#1a7fe8"/>
+        <circle cx="82" cy="82" r="18" fill="#00e5cc"/>
+        <circle cx="128" cy="105" r="18" fill="#4de87a"/>
+      </svg>
+      <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
+    </a>
+  </div>
+</header>
+
+<div class="wrap" id="root"></div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
+  authDomain: "pepstracker.firebaseapp.com",
+  projectId: "pepstracker",
+  storageBucket: "pepstracker.firebasestorage.app",
+  messagingSenderId: "575079448915",
+  appId: "1:575079448915:web:4937336ccc15a6764ca1a6"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+const TOTAL_STEPS = 6;
+let step = 0;
+let profile = {
+  age: '', sex: '', weight: '', weightUnit: 'lbs', height: '', activity: '',
+  goals: [], experience: '', conditions: [], currentPeptides: [], budget: ''
+};
+
+// ── Dosage engine ──
+function getDoseRecommendations(p) {
+  const recs = [];
+  const isLighter = (p.weightUnit === 'lbs' ? parseFloat(p.weight) < 160 : parseFloat(p.weight) < 73);
+  const isOlder = parseInt(p.age) > 45;
+  const isBeginner = p.experience === 'beginner';
+
+  const goals = p.goals;
+  const conds = p.conditions;
+
+  if (goals.includes('weight')) {
+    recs.push({
+      name: 'Semaglutide', emoji: '💉', primary: true,
+      dose: isBeginner ? '0.25mg' : '0.5mg',
+      frequency: 'Once weekly SubQ',
+      protocol: `Start at ${isBeginner?'0.25mg':'0.5mg'}/week. Titrate up by 0.25mg every 4 weeks as tolerated. Max 2.4mg/week.`,
+      why: 'GLP-1 agonist — reduces appetite and improves insulin sensitivity. Most studied weight loss peptide.'
+    });
+    recs.push({
+      name: 'AOD-9604', emoji: '🔥', primary: false,
+      dose: isLighter ? '250mcg' : '300mcg',
+      frequency: 'Daily SubQ, fasted',
+      protocol: `${isLighter?'250':'300'}mcg SubQ injection in the morning on an empty stomach. 12-week cycles.`,
+      why: 'GH fragment targeting fat metabolism without systemic GH effects. Good stack with GLP-1s.'
+    });
+  }
+
+  if (goals.includes('recovery') || conds.includes('injury')) {
+    recs.push({
+      name: 'BPC-157', emoji: '🩹', primary: goals[0]==='recovery',
+      dose: isLighter ? '250mcg' : '500mcg',
+      frequency: 'Once or twice daily SubQ',
+      protocol: `${isLighter?'250':'500'}mcg SubQ near injury site. Can also use oral for gut healing. 4-8 week cycles.`,
+      why: 'Pentadecapeptide with exceptional tissue repair and anti-inflammatory properties.'
+    });
+    recs.push({
+      name: 'TB-500', emoji: '💪', primary: false,
+      dose: isLighter ? '2mg' : '2.5mg',
+      frequency: 'Twice weekly SubQ',
+      protocol: `${isLighter?'2':'2.5'}mg SubQ twice weekly for 4 weeks loading, then once weekly maintenance.`,
+      why: 'Systemic healing and anti-inflammatory. Often stacked with BPC-157 for synergistic effect.'
+    });
+  }
+
+  if (goals.includes('cognitive')) {
+    recs.push({
+      name: 'Semax', emoji: '🧠', primary: goals[0]==='cognitive',
+      dose: '300mcg',
+      frequency: 'Daily intranasal',
+      protocol: '300mcg intranasal (2-3 drops per nostril) in the morning. 2 weeks on, 2 weeks off.',
+      why: 'BDNF-boosting nootropic. Easy intranasal administration. Strong cognitive research from Russia.'
+    });
+    if (!isBeginner) {
+      recs.push({
+        name: 'Selank', emoji: '🌊', primary: false,
+        dose: '250mcg',
+        frequency: 'Daily intranasal',
+        protocol: '250mcg intranasal 1-2x daily. Anxiolytic + cognitive enhancing. Can combine with Semax.',
+        why: 'Reduces anxiety while improving focus. Excellent safety profile. Easy intranasal dosing.'
+      });
+    }
+  }
+
+  if (goals.includes('longevity') || isOlder) {
+    recs.push({
+      name: 'Epithalon', emoji: '⏳', primary: goals[0]==='longevity',
+      dose: '5mg',
+      frequency: 'Daily for 10-day cycles',
+      protocol: '5mg SubQ daily for 10 consecutive days, 2x per year. Supports telomere maintenance.',
+      why: 'Tetrapeptide shown to extend telomere length. One of the most studied longevity compounds.'
+    });
+    recs.push({
+      name: 'GHK-Cu', emoji: '✨', primary: false,
+      dose: '2mg',
+      frequency: '3-5x weekly SubQ',
+      protocol: '2mg SubQ injection 3-5x weekly. Also available as topical. Excellent safety profile.',
+      why: 'Copper peptide — collagen synthesis, wound healing, anti-aging. Suitable for beginners.'
+    });
+  }
+
+  if (goals.includes('performance')) {
+    recs.push({
+      name: 'Ipamorelin', emoji: '🌙', primary: goals[0]==='performance',
+      dose: isLighter ? '100mcg' : '200mcg',
+      frequency: 'Daily SubQ before bed',
+      protocol: `${isLighter?'100':'200'}mcg SubQ 30-60 min before sleep. Stimulates natural GH pulse.`,
+      why: 'Clean GHRP with minimal side effects. Improves sleep quality and recovery. Great for beginners.'
+    });
+    if (!isBeginner) {
+      recs.push({
+        name: 'CJC-1295 (with DAC)', emoji: '📈', primary: false,
+        dose: '2mg',
+        frequency: 'Once weekly SubQ',
+        protocol: '2mg SubQ once weekly. Long-acting GHRH. Often stacked with Ipamorelin.',
+        why: 'Extended half-life GHRH analogue. Maintains elevated GH levels throughout the week.'
+      });
+    }
+  }
+
+  if (goals.includes('immune') || conds.includes('inflammation')) {
+    recs.push({
+      name: 'KPV', emoji: '🛡️', primary: goals[0]==='immune',
+      dose: '500mcg',
+      frequency: 'Daily SubQ or oral',
+      protocol: '500mcg SubQ or oral daily. Potent anti-inflammatory. Can use topically for skin.',
+      why: 'Tripeptide with strong anti-inflammatory and immune-modulating properties.'
+    });
+  }
+
+  // Deduplicate and return top 4
+  const seen = new Set();
+  return recs.filter(r => { if (seen.has(r.name)) return false; seen.add(r.name); return true; }).slice(0, 4);
+}
+
+function render() {
+  const root = document.getElementById('root');
+
+  if (step === 0) {
+    root.innerHTML = `
+      <div class="step-card" style="text-align:center;padding:40px;">
+        <div style="font-size:3rem;margin-bottom:16px;">🧬</div>
+        <div style="font-size:1.6rem;font-weight:800;letter-spacing:-.5px;margin-bottom:10px;">Build Your Peptide Profile</div>
+        <div style="color:var(--muted);font-size:.92rem;line-height:1.7;max-width:420px;margin:0 auto 28px;">
+          Answer 6 quick questions and we'll generate personalized peptide recommendations with dosage guidance tailored to your body stats and goals.
+        </div>
+        <div style="display:flex;justify-content:center;gap:24px;margin-bottom:28px;flex-wrap:wrap;">
+          <div style="text-align:center;"><div style="font-size:1.3rem;font-weight:800;">6</div><div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Questions</div></div>
+          <div style="text-align:center;"><div style="font-size:1.3rem;font-weight:800;">~2 min</div><div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">To complete</div></div>
+          <div style="text-align:center;"><div style="font-size:1.3rem;font-weight:800;">Saved</div><div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">To your account</div></div>
+        </div>
+        <button class="btn-next" style="max-width:280px;width:100%;" onclick="nextStep()">Start Profile Setup →</button>
+      </div>`;
+    return;
+  }
+
+  const pct = Math.round((step / TOTAL_STEPS) * 100);
+  let html = `
+    <div class="progress-bar-wrap">
+      <div class="progress-label"><span>Step ${step} of ${TOTAL_STEPS}</span><span>${pct}% complete</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>`;
+
+  if (step === 1) {
+    html += `<div class="step-card">
+      <div class="step-badge">📏 Step 1</div>
+      <div class="step-title">Body Stats</div>
+      <div class="step-sub">Used to calculate personalized dosage ranges. All data is private and saved only to your account.</div>
+      <div class="field-row">
+        <div class="field"><label>Age</label><input type="number" id="age" placeholder="e.g. 35" value="${profile.age}" min="18" max="100" onchange="profile.age=this.value" /></div>
+        <div class="field"><label>Biological Sex</label>
+          <select id="sex" onchange="profile.sex=this.value">
+            <option value="" ${!profile.sex?'selected':''}>Select…</option>
+            <option value="male" ${profile.sex==='male'?'selected':''}>Male</option>
+            <option value="female" ${profile.sex==='female'?'selected':''}>Female</option>
+            <option value="other" ${profile.sex==='other'?'selected':''}>Prefer not to say</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Weight</label>
+          <input type="number" id="weight" placeholder="e.g. 185" value="${profile.weight}" onchange="profile.weight=this.value" />
+          <div class="field-hint">
+            <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:.78rem;color:var(--muted);text-transform:none;letter-spacing:0;">
+              <input type="checkbox" ${profile.weightUnit==='kg'?'checked':''} onchange="profile.weightUnit=this.checked?'kg':'lbs';document.getElementById('wunit').textContent=this.checked?'kg':'lbs'" style="accent-color:var(--blue);width:14px;height:14px;" />
+              <span id="wunit">${profile.weightUnit==='kg'?'kg':'lbs'}</span>
+            </label>
+          </div>
+        </div>
+        <div class="field"><label>Activity Level</label>
+          <select onchange="profile.activity=this.value">
+            <option value="" ${!profile.activity?'selected':''}>Select…</option>
+            <option value="sedentary" ${profile.activity==='sedentary'?'selected':''}>Sedentary</option>
+            <option value="light" ${profile.activity==='light'?'selected':''}>Lightly active</option>
+            <option value="moderate" ${profile.activity==='moderate'?'selected':''}>Moderately active</option>
+            <option value="active" ${profile.activity==='active'?'selected':''}>Very active</option>
+            <option value="athlete" ${profile.activity==='athlete'?'selected':''}>Athlete</option>
+          </select>
+        </div>
+      </div>
+      <div class="btns">
+        <button class="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn-next" onclick="nextStep()" ${!profile.age||!profile.sex||!profile.weight?'disabled':''}>Next →</button>
+      </div>
+    </div>`;
+  }
+
+  else if (step === 2) {
+    const goals = [
+      {icon:'⚖️',text:'Weight loss',sub:'GLP-1, fat loss',val:'weight'},
+      {icon:'💪',text:'Recovery & healing',sub:'Injury, tissue repair',val:'recovery'},
+      {icon:'🧠',text:'Cognitive enhancement',sub:'Focus, memory',val:'cognitive'},
+      {icon:'⏳',text:'Longevity & anti-aging',sub:'Cellular health',val:'longevity'},
+      {icon:'🏋️',text:'Performance',sub:'GH, muscle, sleep',val:'performance'},
+      {icon:'🌿',text:'Immune support',sub:'Inflammation, immunity',val:'immune'},
+    ];
+    html += `<div class="step-card">
+      <div class="step-badge">🎯 Step 2</div>
+      <div class="step-title">Research Goals</div>
+      <div class="step-sub">Select up to 3 goals — ranked by importance (first selected = highest priority).</div>
+      <div class="options-grid">
+        ${goals.map(g => `
+          <div class="opt-pill ${profile.goals.includes(g.val)?'selected':''}" onclick="toggleGoal('${g.val}')">
+            <div class="pill-icon">${g.icon}</div>
+            <div><div class="pill-text">${g.text}</div><div class="pill-sub">${g.sub}</div></div>
+          </div>`).join('')}
+      </div>
+      ${profile.goals.length > 0 ? `<div style="font-size:.78rem;color:var(--blue);margin-top:10px;">Priority order: ${profile.goals.map((g,i)=>`<strong>#${i+1}</strong> ${g}`).join(', ')}</div>` : ''}
+      <div class="btns">
+        <button class="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn-next" onclick="nextStep()" ${profile.goals.length===0?'disabled':''}>Next →</button>
+      </div>
+    </div>`;
+  }
+
+  else if (step === 3) {
+    const exps = [
+      {icon:'👋',text:'Complete beginner',sub:'Never used research peptides',val:'beginner'},
+      {icon:'📖',text:'Some experience',sub:'Tried 1-2 peptides',val:'intermediate'},
+      {icon:'🔬',text:'Experienced',sub:'Multiple peptides, familiar with protocols',val:'advanced'},
+    ];
+    html += `<div class="step-card">
+      <div class="step-badge">🔬 Step 3</div>
+      <div class="step-title">Experience Level</div>
+      <div class="step-sub">This helps calibrate your dosage recommendations.</div>
+      <div class="goal-list">
+        ${exps.map(e => `
+          <div class="goal-item ${profile.experience===e.val?'selected':''}" onclick="profile.experience='${e.val}';render()">
+            <div class="goal-check">${profile.experience===e.val?'✓':''}</div>
+            <div style="font-size:1.2rem;">${e.icon}</div>
+            <div><div style="font-weight:700;font-size:.9rem;">${e.text}</div><div style="font-size:.78rem;color:var(--muted);">${e.sub}</div></div>
+          </div>`).join('')}
+      </div>
+      <div class="btns">
+        <button class="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn-next" onclick="nextStep()" ${!profile.experience?'disabled':''}>Next →</button>
+      </div>
+    </div>`;
+  }
+
+  else if (step === 4) {
+    const conds = [
+      {icon:'😴',text:'Poor sleep',val:'sleep'},
+      {icon:'🔥',text:'Chronic inflammation',val:'inflammation'},
+      {icon:'🩹',text:'Joint / tissue injury',val:'injury'},
+      {icon:'😰',text:'Anxiety / stress',val:'anxiety'},
+      {icon:'🫀',text:'Metabolic issues',val:'metabolic'},
+      {icon:'🧬',text:'Cellular aging',val:'aging'},
+      {icon:'✅',text:'None of the above',val:'none'},
+    ];
+    html += `<div class="step-card">
+      <div class="step-badge">🩺 Step 4</div>
+      <div class="step-title">Health Considerations</div>
+      <div class="step-sub">Select any that apply. This helps tailor specific peptide recommendations.</div>
+      <div class="options-grid">
+        ${conds.map(c => `
+          <div class="opt-pill ${profile.conditions.includes(c.val)?'selected':''}" onclick="toggleCond('${c.val}')">
+            <div class="pill-icon">${c.icon}</div>
+            <div><div class="pill-text">${c.text}</div></div>
+          </div>`).join('')}
+      </div>
+      <div class="btns">
+        <button class="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn-next" onclick="nextStep()">Next →</button>
+      </div>
+    </div>`;
+  }
+
+  else if (step === 5) {
+    const peptides = ['BPC-157','TB-500','Semaglutide','Tirzepatide','Ipamorelin','Semax','Selank','GHK-Cu','NAD+','Epithalon','MOTS-c','Klow Blend','Other'];
+    html += `<div class="step-card">
+      <div class="step-badge">💊 Step 5</div>
+      <div class="step-title">Current Peptides</div>
+      <div class="step-sub">Select any peptides you're currently using or have used recently. We'll avoid redundant recommendations.</div>
+      <div class="options-grid">
+        ${peptides.map(p => `
+          <div class="opt-pill ${profile.currentPeptides.includes(p)?'selected':''}" onclick="toggleCurrent('${p}')">
+            <div class="pill-text" style="font-size:.85rem;">${p}</div>
+          </div>`).join('')}
+      </div>
+      <div class="btns">
+        <button class="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn-next" onclick="nextStep()">Next →</button>
+      </div>
+    </div>`;
+  }
+
+  else if (step === 6) {
+    const budgets = [
+      {icon:'💵',text:'Under $50/month',val:'low'},
+      {icon:'💵💵',text:'$50 – $150/month',val:'mid'},
+      {icon:'💵💵💵',text:'$150 – $300/month',val:'high'},
+      {icon:'🚀',text:'No budget limit',val:'unlimited'},
+    ];
+    html += `<div class="step-card">
+      <div class="step-badge">💰 Step 6</div>
+      <div class="step-title">Monthly Budget</div>
+      <div class="step-sub">Helps us prioritize cost-effective recommendations.</div>
+      <div class="goal-list">
+        ${budgets.map(b => `
+          <div class="goal-item ${profile.budget===b.val?'selected':''}" onclick="profile.budget='${b.val}';render()">
+            <div class="goal-check">${profile.budget===b.val?'✓':''}</div>
+            <div style="font-size:1.1rem;">${b.icon}</div>
+            <div style="font-weight:700;font-size:.9rem;">${b.text}</div>
+          </div>`).join('')}
+      </div>
+      <div class="btns">
+        <button class="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn-next" onclick="showResults()" ${!profile.budget?'disabled':''}>Generate My Profile →</button>
+      </div>
+    </div>`;
+  }
+
+  else if (step === 7) {
+    const recs = getDoseRecommendations(profile);
+    html += `<div class="step-card">
+      <div class="results-header">
+        <div style="font-size:2.5rem;margin-bottom:12px;">🎯</div>
+        <h2>Your Personalized Profile</h2>
+        <p>Based on your stats, goals, and experience level. These are starting point recommendations — always consult a healthcare professional.</p>
+      </div>
+
+      <div class="profile-grid">
+        <div class="profile-stat"><div class="profile-stat-label">Age</div><div class="profile-stat-value">${profile.age} years</div></div>
+        <div class="profile-stat"><div class="profile-stat-label">Weight</div><div class="profile-stat-value">${profile.weight} ${profile.weightUnit}</div></div>
+        <div class="profile-stat"><div class="profile-stat-label">Primary Goal</div><div class="profile-stat-value" style="text-transform:capitalize;">${profile.goals[0] || '—'}</div></div>
+        <div class="profile-stat"><div class="profile-stat-label">Experience</div><div class="profile-stat-value" style="text-transform:capitalize;">${profile.experience}</div></div>
+      </div>
+
+      <div class="rec-section">
+        <h3>Recommended Peptides & Starting Doses</h3>
+        ${recs.map(r => `
+          <div class="peptide-rec ${r.primary?'primary':''}">
+            <div class="rec-top">
+              <div class="rec-name">${r.emoji} ${r.name} ${r.primary?'<span class="rec-badge">TOP PICK</span>':''}</div>
+            </div>
+            <div class="rec-dose">
+              📋 <strong>Starting dose:</strong> ${r.dose} &nbsp;·&nbsp; <strong>Frequency:</strong> ${r.frequency}
+              <br><span style="color:var(--muted);font-size:.78rem;margin-top:4px;display:block;">${r.protocol}</span>
+            </div>
+            <div class="rec-why">${r.why}</div>
+            <div class="rec-actions">
+              <a class="btn-prices" href="index.html?peptide=${encodeURIComponent(r.name)}">Compare Prices →</a>
+              <a class="btn-dict" href="peptides/${r.name.toLowerCase().replace(/[^a-z0-9]/g,'')}.html">Learn More</a>
+            </div>
+          </div>`).join('')}
+      </div>
+
+      <button class="save-btn" onclick="saveProfile()">⭐ Save Profile to My Account</button>
+      <button class="btn-back" style="width:100%;margin-top:8px;" onclick="step=0;render()">↩ Retake Quiz</button>
+      <div class="disclaimer">⚠️ These recommendations are for research purposes only and do not constitute medical advice. Dosages shown are general starting point references based on published research literature. Always consult a licensed healthcare professional before use.</div>
+    </div>`;
+  }
+
+  root.innerHTML = html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleGoal(val) {
+  const idx = profile.goals.indexOf(val);
+  if (idx > -1) { profile.goals.splice(idx, 1); }
+  else if (profile.goals.length < 3) { profile.goals.push(val); }
+  render();
+}
+
+function toggleCond(val) {
+  if (val === 'none') { profile.conditions = ['none']; render(); return; }
+  profile.conditions = profile.conditions.filter(c => c !== 'none');
+  const idx = profile.conditions.indexOf(val);
+  if (idx > -1) profile.conditions.splice(idx, 1);
+  else profile.conditions.push(val);
+  render();
+}
+
+function toggleCurrent(val) {
+  const idx = profile.currentPeptides.indexOf(val);
+  if (idx > -1) profile.currentPeptides.splice(idx, 1);
+  else profile.currentPeptides.push(val);
+  render();
+}
+
+function nextStep() {
+  step++;
+  render();
+}
+
+function prevStep() {
+  step = Math.max(0, step - 1);
+  render();
+}
+
+function showResults() {
+  step = 7;
+  render();
+}
+
+async function saveProfile() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert('Please sign in to save your profile.');
+    window.location.href = 'account.html';
+    return;
+  }
+  const recs = getDoseRecommendations(profile);
+  await db.collection('users').doc(user.uid).set({
+    profile,
+    recommendations: recs,
+    profileUpdated: new Date().toISOString()
+  }, { merge: true });
+  const btn = document.querySelector('.save-btn');
+  btn.textContent = '✅ Profile Saved!';
+  btn.style.background = 'var(--green)';
+  setTimeout(() => window.location.href = 'account.html', 1500);
+}
+
+render();
+</script>
+</body>
+</html>
