@@ -4,48 +4,69 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="icon" type="image/png" href="favicon.png" />
-
+  <link rel="apple-touch-icon" href="favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calculators — PepsTracker</title>
   <style>
     :root {
-      --bg: #0d0f14; --surface: #161b25; --card: #1c2230;
-      --border: #2a3347; --blue: #3b9eff; --green: #4de87a;
-      --text: #e8edf5; --muted: #7a8ba8; --radius: 12px;
+      --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
+      --border:#2a3347; --blue:#3b9eff; --green:#4de87a;
+      --text:#e8edf5; --muted:#7a8ba8; --gold:#f5c842; --radius:12px;
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
-    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; position: sticky; top: 0; z-index: 100; }
-    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 68px; }
-    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .logo-icon { width: 42px; height: 42px; }
-    .logo-text { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
-    .logo-text span:first-child { color: var(--blue); }
-    .logo-text span:last-child  { color: var(--green); }
-    nav { display: flex; align-items: center; gap: 6px; }
-    nav a { color: var(--muted); text-decoration: none; font-size: 0.92rem; font-weight: 600; padding: 6px 14px; border-radius: 8px; transition: all 0.2s; }
-    nav a:hover { color: var(--text); background: rgba(255,255,255,0.06); }
-    nav a.active { color: var(--green); background: rgba(77,232,122,0.1); border: 1px solid rgba(77,232,122,0.25); }
-    nav a.nav-apply { background: rgba(245,200,66,0.1); color: #f5c842; border: 1px solid rgba(245,200,66,0.25); }
+    /* ── Header ── */
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px;}
+    .logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;}
+    .logo-icon{width:36px;height:36px;}
+    .logo-text{font-size:1.35rem;font-weight:800;letter-spacing:-.5px;}
+    .logo-text span:first-child{color:var(--blue);}
+    .logo-text span:last-child{color:var(--green);}
+    nav{display:flex;align-items:center;gap:4px;}
+    nav a{color:var(--muted);text-decoration:none;font-size:.82rem;font-weight:600;padding:6px 10px;border-radius:8px;transition:all .2s;white-space:nowrap;}
+    nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    nav a.active{color:var(--green);background:rgba(77,232,122,.1);border:1px solid rgba(77,232,122,.25);}
+    nav a.nav-dict{color:var(--blue);}
+    nav a.nav-apply{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);}
+    .menu-btn{display:none;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;padding:7px 10px;font-size:1.1rem;line-height:1;}
+    .menu-btn:hover{color:var(--text);border-color:var(--blue);}
+    .mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);}
+    .mobile-nav.open{display:flex;}
+    .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;transition:all .2s;}
+    .mobile-nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    .mobile-nav a.active{color:var(--green);background:rgba(77,232,122,.08);border:1px solid rgba(77,232,122,.2);}
+    .mobile-nav a.nav-apply{background:rgba(245,200,66,.08);color:var(--gold);border:1px solid rgba(245,200,66,.2);}
 
-    .hero { text-align: center; padding: 56px 24px 40px; background: radial-gradient(ellipse at 50% 0%, rgba(77,232,122,0.07) 0%, transparent 65%); }
-    .hero h1 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; }
-    .hero h1 em { font-style: normal; color: var(--green); }
-    .hero p { color: var(--muted); font-size: 1rem; }
+    /* ── Hero ── */
+    .hero{text-align:center;padding:40px 20px 32px;background:radial-gradient(ellipse at 50% 0%,rgba(77,232,122,.07) 0%,transparent 65%);}
+    .hero h1{font-size:clamp(1.7rem,4vw,2.6rem);font-weight:800;letter-spacing:-1px;margin-bottom:10px;}
+    .hero h1 em{font-style:normal;color:var(--green);}
+    .hero p{color:var(--muted);font-size:.95rem;line-height:1.55;}
 
-    .grid { max-width: 900px; margin: 48px auto 80px; padding: 0 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+    /* ── Calculator grid ── */
+    .grid{max-width:900px;margin:40px auto 80px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+    .calc-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:28px 24px;display:flex;flex-direction:column;gap:14px;transition:border-color .2s,transform .15s;}
+    .calc-card:hover{border-color:var(--blue);transform:translateY(-3px);}
+    .calc-icon{font-size:2.2rem;}
+    .calc-title{font-size:1.1rem;font-weight:800;}
+    .calc-desc{color:var(--muted);font-size:.88rem;line-height:1.55;flex:1;}
+    .calc-btn{display:block;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.9rem;padding:12px 22px;border-radius:10px;text-align:center;text-decoration:none;transition:opacity .2s;margin-top:4px;}
+    .calc-btn:hover{opacity:.85;}
 
-    .calc-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 32px 28px; display: flex; flex-direction: column; gap: 16px; transition: border-color 0.2s, transform 0.15s; text-decoration: none; color: inherit; }
-    .calc-card:hover { border-color: var(--blue); transform: translateY(-3px); }
-    .calc-icon { font-size: 2.4rem; }
-    .calc-title { font-size: 1.15rem; font-weight: 800; }
-    .calc-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.55; flex: 1; }
-    .calc-btn { display: inline-block; background: linear-gradient(135deg, var(--blue), #1e6fcf); color: #fff; font-weight: 700; font-size: 0.9rem; padding: 11px 22px; border-radius: 8px; text-align: center; text-decoration: none; transition: opacity 0.2s; margin-top: 4px; }
-    .calc-btn:hover { opacity: 0.85; }
+    /* ── Footer ── */
+    footer{border-top:1px solid var(--border);padding:20px 16px;text-align:center;color:var(--muted);font-size:.8rem;}
+    footer a{color:var(--blue);text-decoration:none;}
 
-    footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; color: var(--muted); font-size: 0.82rem; }
-    footer a { color: var(--blue); text-decoration: none; }
+    /* ── Mobile ── */
+    @media(max-width:640px){
+      nav{display:none;}
+      .menu-btn{display:block;}
+      .grid{grid-template-columns:1fr;margin-top:28px;}
+      .calc-card{padding:22px 20px;}
+      .hero{padding:32px 16px 24px;}
+    }
   </style>
 </head>
 <body>
@@ -75,12 +96,23 @@
     </a>
     <nav>
       <a href="index.html">Price Tracker</a>
+      <a href="dictionary.html" class="nav-dict">📖 Dictionary</a>
       <a href="calculators.html" class="active">🧮 Calculators</a>
       <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
     </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" onclick="toggleMenu()">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html" onclick="toggleMenu()">🏠 Price Tracker</a>
+    <a href="dictionary.html" onclick="toggleMenu()">📖 Dictionary</a>
+    <a href="calculators.html" class="active" onclick="toggleMenu()">🧮 Calculators</a>
+    <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
+    <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
   </div>
 </header>
+
+<div style="height:3px;background:linear-gradient(90deg,#4de87a,#3b9eff 50%,#f5c842);"></div>
 
 <section class="hero">
   <h1>Research <em>Calculators</em></h1>
@@ -88,33 +120,47 @@
 </section>
 
 <div class="grid">
-
   <div class="calc-card">
     <div class="calc-icon">💉</div>
     <div class="calc-title">Peptide Reconstitution</div>
     <div class="calc-desc">Calculate exactly how many units to draw on your insulin syringe based on your vial size, BAC water volume, and desired dose.</div>
-    <a class="calc-btn" href="reconstitution.html" target="_blank">Open Calculator →</a>
+    <a class="calc-btn" href="reconstitution.html">Open Calculator →</a>
   </div>
-
   <div class="calc-card">
     <div class="calc-icon">🔥</div>
     <div class="calc-title">TDEE Calculator</div>
     <div class="calc-desc">Find your Total Daily Energy Expenditure — your BMR adjusted for activity level — to optimize calories and macros for your goals.</div>
-    <a class="calc-btn" href="tdee.html" target="_blank">Open Calculator →</a>
+    <a class="calc-btn" href="tdee.html">Open Calculator →</a>
   </div>
-
   <div class="calc-card">
     <div class="calc-icon">⚖️</div>
     <div class="calc-title">BMI Calculator</div>
     <div class="calc-desc">Calculate your Body Mass Index in seconds. Supports both imperial (lbs / ft & in) and metric (kg / cm) inputs.</div>
-    <a class="calc-btn" href="bmi.html" target="_blank">Open Calculator →</a>
+    <a class="calc-btn" href="bmi.html">Open Calculator →</a>
   </div>
-
 </div>
 
 <footer>
-  <p>PepsTracker — For research purposes only. &nbsp;|&nbsp; <a href="index.html">← Back to Price Tracker</a></p>
+  <p>PepsTracker — For research purposes only.</p>
+  <p style="margin-top:8px;"><a href="index.html">Price Tracker</a> &nbsp;|&nbsp; <a href="dictionary.html">Dictionary</a> &nbsp;|&nbsp; <a href="calculators.html">Calculators</a> &nbsp;|&nbsp; <a href="disclaimer.html">Disclaimer</a></p>
+  <p style="margin-top:8px;">© 2026 PepsTracker — For research purposes only.</p>
 </footer>
 
+<script>
+function toggleMenu() {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  const open = nav.classList.toggle('open');
+  btn.textContent = open ? '✕' : '☰';
+}
+document.addEventListener('click', e => {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove('open');
+    btn.textContent = '☰';
+  }
+});
+</script>
 </body>
 </html>
