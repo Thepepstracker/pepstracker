@@ -6,7 +6,42 @@
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="apple-touch-icon" href="favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PepsTracker — Peptide Price Comparison</title>
+  <title>PepsTracker — Compare Peptide Prices Across 11 Vendors | Updated Daily</title>
+  <meta name="description" content="Compare peptide prices across 11 trusted vendors in real time. Semaglutide, Tirzepatide, BPC-157, TB-500 and 22 more — with discount codes already applied. Updated daily." />
+  <meta name="keywords" content="peptide prices, buy peptides, semaglutide price, tirzepatide price, BPC-157, TB-500, research peptides, peptide comparison, cheapest peptides" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="PepsTracker" />
+  <link rel="canonical" href="https://pepstracker.com/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://pepstracker.com/" />
+  <meta property="og:title" content="PepsTracker — Compare Peptide Prices Across 11 Vendors" />
+  <meta property="og:description" content="Real-time peptide price comparison across 11 trusted vendors. Semaglutide, Tirzepatide, BPC-157 and 22 more — discount codes already applied. Updated daily." />
+  <meta property="og:image" content="https://pepstracker.com/og-image.png" />
+  <meta property="og:site_name" content="PepsTracker" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PepsTracker — Compare Peptide Prices Across 11 Vendors" />
+  <meta name="twitter:description" content="Real-time peptide price comparison across 11 trusted vendors. Discount codes already applied. Updated daily." />
+  <meta name="twitter:image" content="https://pepstracker.com/og-image.png" />
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "PepsTracker",
+    "url": "https://pepstracker.com",
+    "description": "Real-time peptide price comparison across 11 trusted vendors with discount codes applied.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://pepstracker.com/?peptide={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
   <style>
     :root {
       --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
@@ -231,7 +266,40 @@
       nav{display:none;}
       .menu-btn{display:block;}
     }
+
+    /* ── Toast ── */
+    .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--surface);border:2px solid var(--gold);color:var(--text);font-weight:700;font-size:.95rem;padding:16px 28px;border-radius:16px;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s;z-index:9999;pointer-events:none;opacity:0;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 8px 40px rgba(245,200,66,.25),0 4px 20px rgba(0,0,0,.5);min-width:280px;text-align:center;}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto;}
+    .toast a{display:inline-block;margin-top:4px;background:var(--gold);color:#0d0f14;font-weight:800;font-size:.82rem;padding:6px 16px;border-radius:8px;text-decoration:none;transition:opacity .2s;}
+    .toast a:hover{opacity:.85;}
+    .toast-icon{font-size:1.4rem;}
+    .toast-msg{font-size:.88rem;color:var(--muted);}
+
+    /* ── Price Alert ── */
+    .btn-alert{background:none;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 12px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .25s;white-space:nowrap;flex-shrink:0;}
+    .btn-alert:hover{border-color:var(--blue);color:var(--blue);background:rgba(59,158,255,.06);}
+    .btn-alert.alert-set{border-color:var(--blue);color:#fff;background:var(--blue);font-weight:700;}
+    .alert-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:998;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .alert-modal{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;max-width:420px;width:100%;padding:28px;}
+    .alert-modal h3{font-size:1.05rem;font-weight:800;margin-bottom:6px;}
+    .alert-modal p{font-size:.85rem;color:var(--muted);margin-bottom:16px;line-height:1.5;}
+    .alert-input-row{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+    .alert-input-row span{font-size:1.2rem;font-weight:700;color:var(--text);}
+    .alert-input-row input{flex:1;background:var(--card);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:10px 14px;font-size:1.1rem;font-weight:700;outline:none;transition:border-color .2s;}
+    .alert-input-row input:focus{border-color:var(--blue);}
+    .alert-modal-btns{display:flex;gap:10px;}
+    .btn-alert-confirm{flex:1;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;border:none;border-radius:8px;padding:12px;font-size:.95rem;font-weight:800;cursor:pointer;transition:opacity .2s;}
+    .btn-alert-confirm:hover{opacity:.88;}
+    .btn-alert-cancel{background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:12px 18px;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;}
+    .btn-alert-cancel:hover{border-color:var(--red);color:var(--red);}
+    .alert-confirmation{text-align:center;padding:8px 0;}
+    .alert-confirmation .check{font-size:2.5rem;margin-bottom:8px;}
+    .alert-confirmation p{color:var(--green);font-weight:700;font-size:.95rem;}
+    .alert-confirmation small{color:var(--muted);font-size:.8rem;}
   </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -280,6 +348,7 @@
       <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
       <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
+      <a href="account.html" class="nav-account">👤 Account</a>
     </nav>
 
     <!-- Hamburger -->
@@ -293,6 +362,7 @@
     <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
     <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
     <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
+    <a href="account.html" class="nav-account" onclick="toggleMenu()">👤 My Account</a>
   </div>
 </header>
 
@@ -308,7 +378,7 @@
   <!-- Stats -->
   <div class="stats-row">
     <div class="stat-item"><div class="stat-num">11</div><div class="stat-label">Vendors</div></div>
-    <div class="stat-item"><div class="stat-num">24</div><div class="stat-label">Peptides</div></div>
+    <div class="stat-item"><div class="stat-num">25</div><div class="stat-label">Peptides</div></div>
     <div class="stat-item"><div class="stat-num">Daily</div><div class="stat-label">Updates</div></div>
   </div>
 
@@ -457,17 +527,17 @@ function quickPick(peptide) {
 }
 
 const VENDORS = [
-  { id:"ascension",  name:"Ascension Peptides",  url:"https://ascensionpeptides.com/ref/Glowlab/",     code:"Glowlab",   discount:0.50 },
-  { id:"atomik",     name:"AtomiK Labz",          url:"https://affiliatepirate.com/r/IE180L",           code:"Glowlab15", discount:0.15 },
-  { id:"lapeptides", name:"LA Peptides",          url:"https://lapeptides.net/?ref=Glowlab",            code:"Glowlab",   discount:0.10 },
-  { id:"glacier",    name:"Glacier Aminos",       url:"https://glacieraminos.shop/?ref=sidbilvi",       code:"Glowlab",   discount:0.10 },
-  { id:"milehigh",   name:"Mile High Compound",   url:"https://milehighcompounds.is/ref=glowlab10",     code:"Glowlab",   discount:0.10 },
-  { id:"ezpeptides", name:"EZ Peptides",          url:"https://ezpeptides.com/?red=glowlab",            code:"GlowLab",   discount:0.10 },
-  { id:"amp",        name:"AMP Ameano Peptides",  url:"https://ameanopeptides.com/?ref=lcbpndeo",       code:"Glowlab",   discount:0.10 },
-  { id:"labsourced", name:"Labsourced",           url:"https://labsourced.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15 },
-  { id:"ion",        name:"Ion Peptides",         url:"https://ionpeptide.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15 },
-  { id:"retaone",    name:"Reta One Labs",        url:"https://retaonelabs.com/ref/0rgv6",              code:"Glowlab",   discount:0.05 },
-  { id:"nura",       name:"NuraPeptide",          url:"https://nurapeptide.com/?ref=glowlab",           code:"Glowlab15", discount:0.15 },
+  { id:"ascension",  name:"Ascension Peptides",  url:"https://ascensionpeptides.com/ref/Glowlab/",     code:"Glowlab",   discount:0.50, coa:"full", coaNote:"HPLC + Mass Spec + LAL Endotoxin · MZ Biolabs · Public library" },
+  { id:"atomik",     name:"AtomiK Labz",          url:"https://affiliatepirate.com/r/IE180L",           code:"Glowlab15", discount:0.15, coa:"full", coaNote:"Third-party tested · Finnrick verified · COAs available on site" },
+  { id:"lapeptides", name:"LA Peptides",          url:"https://lapeptides.net/?ref=Glowlab",            code:"Glowlab",   discount:0.10, coa:"none", coaNote:"No public COA documentation found" },
+  { id:"glacier",    name:"Glacier Aminos",       url:"https://glacieraminos.shop/?ref=sidbilvi",       code:"Glowlab",   discount:0.10, coa:"full", coaNote:"4-panel testing: HPLC, LC-MS, KF Moisture, Endotoxin · Most comprehensive testing of any vendor" },
+  { id:"milehigh",   name:"Mile High Compound",   url:"https://milehighcompounds.is/ref=glowlab10",     code:"Glowlab",   discount:0.10, coa:"full", coaNote:"COAs posted publicly · Kovera Labs · cGMP certified manufacturers" },
+  { id:"ezpeptides", name:"EZ Peptides",          url:"https://ezpeptides.com/?red=glowlab",            code:"GlowLab",   discount:0.10, coa:"full", coaNote:"QR code on every product links to per-product COA · Most accessible verification system" },
+  { id:"amp",        name:"AMP Ameano Peptides",  url:"https://ameanopeptides.com/?ref=lcbpndeo",       code:"Glowlab",   discount:0.10, coa:"none", coaNote:"No public COA documentation found" },
+  { id:"labsourced", name:"Labsourced",           url:"https://labsourced.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15, coa:"none", coaNote:"No public COA documentation found" },
+  { id:"ion",        name:"Ion Peptides",         url:"https://ionpeptide.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15, coa:"full", coaNote:"Lot-specific COAs · Full HPLC chromatograms + Mass Spec profiles" },
+  { id:"retaone",    name:"Reta One Labs",        url:"https://retaonelabs.com/ref/0rgv6",              code:"Glowlab",   discount:0.05, coa:"none", coaNote:"No public COA documentation found" },
+  { id:"nura",       name:"NuraPeptide",          url:"https://nurapeptide.com/?ref=glowlab",           code:"Glowlab15", discount:0.15, coa:"none", coaNote:"No public COA documentation found" },
 ];
 const vMap = {};
 VENDORS.forEach(v => vMap[v.id] = v);
@@ -882,7 +952,7 @@ function renderResults() {
       <div class="result-card" style="opacity:0.55;border-color:var(--red);">
         <div class="rank" style="color:var(--red);">—</div>
         <div>
-          <div class="vendor-name">${r.vendor.name}</div>
+          <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${r.vendor.name}${r.vendor.coa==='full'?`<span class="coa-badge verified" title="${r.vendor.coaNote}">✓ COA</span>`:`<span class="coa-badge none" title="${r.vendor.coaNote}">No COA</span>`}</div>
           <div class="vendor-listing" style="color:var(--red);font-weight:700;">⚠ Out of Stock</div>
         </div>
         <div class="price-block">
@@ -905,7 +975,7 @@ function renderResults() {
     <div class="result-card ${isBest?'best':''}">
       <div class="rank ${rank===0?'first':''}">${rank===0?'🥇':'#'+(rank+1)}</div>
       <div>
-        <div class="vendor-name">${r.vendor.name}${isBest?'<span class="best-badge">Best Value</span>':''}</div>
+        <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${r.vendor.name}${isBest?'<span class="best-badge">Best Value</span>':''}${r.vendor.coa==='full'?`<span class="coa-badge verified" title="${r.vendor.coaNote}">✓ COA</span>`:`<span class="coa-badge none" title="${r.vendor.coaNote}">No COA</span>`}</div>
         <div class="vendor-listing">Listed as: <em>${r.listing}</em></div>
       </div>
       <div class="price-block">
@@ -922,6 +992,8 @@ function renderResults() {
         <button class="btn-copy" onclick="copyCode('${r.vendor.code}',this)">Copy</button>
       </div>
       <a class="btn-shop ${isBest?'':'secondary'}" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Shop →</a>
+      <button class="btn-save-peptide" data-key="${r.vendor.id}::${currentPeptide}" onclick="toggleSaveListing('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)}, '${r.vendor.code}')">☆ Save</button>
+      <button class="btn-alert" data-alert-key="${r.vendor.id}::${currentPeptide}" onclick="openAlertModal('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)})">🔔 Alert</button>
     </div>`;
   }).join('');
 
@@ -934,7 +1006,136 @@ function renderResults() {
   const scrapeDate = typeof SCRAPE_DATE !== "undefined" ? SCRAPE_DATE : null;
   document.getElementById('lastUpdated').textContent = scrapeDate || new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   document.getElementById('resultList').innerHTML = html;
+  setTimeout(() => { updateSaveButtons(); updateAlertButtons(); }, 0);
+}
+const firebaseConfig = {
+  apiKey: "AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
+  authDomain: "pepstracker.firebaseapp.com",
+  projectId: "pepstracker",
+  storageBucket: "pepstracker.firebasestorage.app",
+  messagingSenderId: "575079448915",
+  appId: "1:575079448915:web:4937336ccc15a6764ca1a6"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+let currentUser = null;
+let savedListings = [];
+auth.onAuthStateChanged(async user => {
+  currentUser = user;
+  if (user) {
+    const snap = await db.collection('users').doc(user.uid).get();
+    savedListings = snap.exists ? (snap.data().savedListings || []) : [];
+  } else { savedListings = []; }
+  if (currentPeptide) updateSaveButtons();
+});
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 4000);
+}
+async function toggleSaveListing(vendorId, peptide, vendorName, price, code) {
+  if (!currentUser) { showToast('<div class="toast-icon">🔒</div><strong>Sign in to save listings</strong><span class="toast-msg">Create a free account to save your favourite deals</span><a href="account.html">Go to Account →</a>'); return; }
+  const key = vendorId + '::' + peptide;
+  const idx = savedListings.findIndex(s => s.key === key);
+  if (idx === -1) {
+    savedListings.push({ key, peptide, vendorId, vendorName, price, code });
+    showToast('<div class="toast-icon">⭐</div><strong>' + vendorName + '</strong><span class="toast-msg">' + peptide + ' has been saved!</span><a href="account.html">👤 View My Saves →</a>');
+  } else {
+    savedListings.splice(idx, 1);
+    showToast('🗑️ Removed from saved listings');
+  }
+  await db.collection('users').doc(currentUser.uid).update({ savedListings });
+  updateSaveButtons();
+  const btn = document.querySelector('.btn-save-peptide[data-key="' + key + '"]');
+  if (btn) { btn.classList.add('just-saved'); btn.addEventListener('animationend', () => btn.classList.remove('just-saved'), {once:true}); }
+}
+// ── Price Alerts ──
+let alertData = {}; // {key: {vendorName, peptide, targetPrice}}
+let pendingAlert = null;
+
+function openAlertModal(vendorId, peptide, vendorName, currentPrice) {
+  pendingAlert = { key: vendorId + '::' + peptide, vendorId, peptide, vendorName, currentPrice };
+  const existing = alertData[pendingAlert.key];
+  document.getElementById('alertModalDesc').innerHTML = 
+    `<strong>${vendorName}</strong> · ${peptide}<br><span style="color:var(--muted);font-size:.8rem;">Current price: <strong style="color:var(--text)">$${currentPrice.toFixed(2)}</strong> — Alert me when it drops below:</span>`;
+  document.getElementById('alertPriceInput').value = existing ? existing.targetPrice : (currentPrice * 0.9).toFixed(2);
+  document.getElementById('alertModalOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('alertPriceInput').focus(), 100);
+}
+
+function closeAlertModal() {
+  document.getElementById('alertModalOverlay').style.display = 'none';
+  pendingAlert = null;
+}
+
+function confirmAlert() {
+  if (!pendingAlert) return;
+  const price = parseFloat(document.getElementById('alertPriceInput').value);
+  if (!price || price <= 0) { document.getElementById('alertPriceInput').style.borderColor='var(--red)'; return; }
+  
+  alertData[pendingAlert.key] = { ...pendingAlert, targetPrice: price };
+  localStorage.setItem('pepstracker_alerts', JSON.stringify(alertData));
+  
+  // Show confirmation inside modal
+  document.getElementById('alertModal').innerHTML = `
+    <div class="alert-confirmation">
+      <div class="check">✅</div>
+      <p>Alert set for ${pendingAlert.vendorName}!</p>
+      <small>${pendingAlert.peptide} · Notify when below $${price.toFixed(2)}</small>
+      <br><br>
+      <button class="btn-alert-confirm" onclick="closeAlertModal()" style="width:100%">Done</button>
+    </div>`;
+  
+  updateAlertButtons();
+  setTimeout(closeAlertModal, 2500);
+}
+
+function loadAlerts() {
+  try { alertData = JSON.parse(localStorage.getItem('pepstracker_alerts') || '{}'); } catch(e) { alertData = {}; }
+}
+
+function updateAlertButtons() {
+  document.querySelectorAll('.btn-alert').forEach(btn => {
+    const key = btn.dataset.alertKey;
+    if (!key) return;
+    const hasAlert = alertData[key];
+    btn.textContent = hasAlert ? `🔔 $${alertData[key].targetPrice.toFixed(2)}` : '🔔 Alert';
+    btn.classList.toggle('alert-set', !!hasAlert);
+  });
+}
+
+loadAlerts();
+
+
+function updateSaveButtons() {
+  document.querySelectorAll('.btn-save-peptide').forEach(btn => {
+    const key = btn.dataset.key;
+    if (!key) return;
+    const isSaved = savedListings.some(s => s.key === key);
+    btn.textContent = isSaved ? '⭐ Saved' : '☆ Save';
+    btn.classList.toggle('saved', isSaved);
+  });
 }
 </script>
+<div class="toast" id="toast"></div>
+
+<!-- Price Alert Modal -->
+<div class="alert-modal-overlay" id="alertModalOverlay" style="display:none;" onclick="if(event.target===this)closeAlertModal()">
+  <div class="alert-modal" id="alertModal">
+    <h3>🔔 Set Price Alert</h3>
+    <p id="alertModalDesc">Get notified when the price drops below your target.</p>
+    <div class="alert-input-row">
+      <span>$</span>
+      <input type="number" id="alertPriceInput" placeholder="0.00" step="0.01" min="0" />
+    </div>
+    <div class="alert-modal-btns">
+      <button class="btn-alert-cancel" onclick="closeAlertModal()">Cancel</button>
+      <button class="btn-alert-confirm" onclick="confirmAlert()">Set Alert →</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
