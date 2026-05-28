@@ -115,6 +115,9 @@
     @media(max-width:360px){
       .benefits{grid-template-columns:1fr;}
     }
+
+    nav a.nav-account{background:rgba(59,158,255,.1);color:var(--blue);border:1px solid rgba(59,158,255,.25);}
+    .mobile-nav a.nav-account{background:rgba(59,158,255,.08);color:var(--blue);border:1px solid rgba(59,158,255,.2);}
   </style>
 </head>
 <body>
@@ -148,6 +151,7 @@
       <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
       <a href="vendor-apply.html" class="active">📋 Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
+      <a href="account.html" class="nav-account">👤 Account</a>
     </nav>
     <button class="menu-btn" id="menuBtn" aria-label="Open menu" onclick="toggleMenu()">☰</button>
   </div>
@@ -157,6 +161,7 @@
     <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
     <a href="vendor-apply.html" class="active" onclick="toggleMenu()">📋 Vendor Apply</a>
     <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
+    <a href="account.html" class="nav-account" onclick="toggleMenu()">👤 My Account</a>
   </div>
 </header>
 
