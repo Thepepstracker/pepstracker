@@ -63,6 +63,9 @@
     footer{border-top:1px solid var(--border);padding:20px 16px;text-align:center;color:var(--muted);font-size:.8rem;}
     footer a{color:var(--blue);text-decoration:none;}
   </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -104,8 +107,20 @@
 
 <div class="page">
   <div class="page-header">
-    <h1>🔔 My Price Alerts</h1>
-    <p>Alerts you've set from the price tracker. Go to <a href="index.html" style="color:var(--blue);">Price Tracker →</a> and click 🔔 Alert on any vendor card to add more.</p>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+      <div>
+        <h1 style="font-size:1.6rem;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;">👤 My Account</h1>
+        <p style="color:var(--muted);font-size:.88rem;">Your personalized peptide profile and price alerts.</p>
+      </div>
+      <a href="onboarding.html" style="display:inline-block;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.85rem;padding:10px 20px;border-radius:10px;text-decoration:none;">🧬 Build My Profile →</a>
+    </div>
+  </div>
+
+  <div id="profileSection"></div>
+
+  <div class="page-header">
+    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px;">🔔 My Price Alerts</h2>
+    <p style="color:var(--muted);font-size:.85rem;">Go to <a href="index.html" style="color:var(--blue);">Price Tracker →</a> and click 🔔 Alert on any vendor card to add more.</p>
   </div>
 
   <div id="mainContent"></div>
@@ -117,6 +132,70 @@
 </footer>
 
 <script>
+// Firebase for profile
+const firebaseConfig = {
+  apiKey: "AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
+  authDomain: "pepstracker.firebaseapp.com",
+  projectId: "pepstracker",
+  storageBucket: "pepstracker.firebasestorage.app",
+  messagingSenderId: "575079448915",
+  appId: "1:575079448915:web:4937336ccc15a6764ca1a6"
+};
+if (!window.firebase) {
+  // Firebase not loaded on this page - skip
+} else {
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  auth.onAuthStateChanged(async user => {
+    if (!user) {
+      document.getElementById('profileSection').innerHTML = `
+        <div style="background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;text-align:center;">
+          <div style="font-size:2rem;margin-bottom:10px;">🧬</div>
+          <div style="font-weight:700;margin-bottom:6px;">No profile yet</div>
+          <div style="color:var(--muted);font-size:.85rem;margin-bottom:16px;">Complete the onboarding quiz to get personalized peptide recommendations with dosage guidance.</div>
+          <a href="onboarding.html" style="display:inline-block;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.88rem;padding:10px 24px;border-radius:10px;text-decoration:none;">Build My Profile →</a>
+        </div>`;
+      return;
+    }
+    const snap = await db.collection('users').doc(user.uid).get();
+    const data = snap.exists ? snap.data() : null;
+    if (data && data.recommendations && data.recommendations.length > 0) {
+      const p = data.profile || {};
+      document.getElementById('profileSection').innerHTML = `
+        <div style="background:var(--card);border:1.5px solid var(--green);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+            <div style="font-weight:800;font-size:.95rem;">🧬 My Peptide Profile</div>
+            <a href="onboarding.html" style="font-size:.75rem;color:var(--blue);text-decoration:none;">Update Profile →</a>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px;">
+            ${p.age ? `<div style="background:var(--surface);border-radius:8px;padding:10px 12px;"><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Age</div><div style="font-weight:700;">${p.age} yrs</div></div>` : ''}
+            ${p.weight ? `<div style="background:var(--surface);border-radius:8px;padding:10px 12px;"><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Weight</div><div style="font-weight:700;">${p.weight} ${p.weightUnit||'lbs'}</div></div>` : ''}
+            ${p.goals && p.goals.length ? `<div style="background:var(--surface);border-radius:8px;padding:10px 12px;"><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Top Goal</div><div style="font-weight:700;text-transform:capitalize;">${p.goals[0]}</div></div>` : ''}
+            ${p.experience ? `<div style="background:var(--surface);border-radius:8px;padding:10px 12px;"><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Level</div><div style="font-weight:700;text-transform:capitalize;">${p.experience}</div></div>` : ''}
+          </div>
+          <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Recommended Peptides</div>
+          ${data.recommendations.map(r => `
+            <div style="background:var(--surface);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+              <div>
+                <div style="font-weight:700;font-size:.9rem;">${r.emoji} ${r.name}</div>
+                <div style="font-size:.75rem;color:var(--blue);margin-top:2px;">${r.dose} · ${r.frequency}</div>
+              </div>
+              <a href="index.html?peptide=${encodeURIComponent(r.name)}" style="display:inline-block;background:linear-gradient(135deg,var(--green),#2bb858);color:#0d0f14;font-weight:800;font-size:.78rem;padding:7px 14px;border-radius:7px;text-decoration:none;white-space:nowrap;">Compare Prices →</a>
+            </div>`).join('')}
+        </div>`;
+    } else {
+      document.getElementById('profileSection').innerHTML = `
+        <div style="background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;text-align:center;">
+          <div style="font-size:2rem;margin-bottom:10px;">🧬</div>
+          <div style="font-weight:700;margin-bottom:6px;">No profile yet</div>
+          <div style="color:var(--muted);font-size:.85rem;margin-bottom:16px;">Complete the onboarding quiz to get personalized peptide recommendations with dosage guidance.</div>
+          <a href="onboarding.html" style="display:inline-block;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.88rem;padding:10px 24px;border-radius:10px;text-decoration:none;">Build My Profile →</a>
+        </div>`;
+    }
+  });
+}
+
 const PRICES = {
   "Semaglutide":{ascension:{price:65.00,mg:5,oos:true},atomik:{price:99.00,mg:10},lapeptides:{price:64.99,mg:5},glacier:{price:74.99,mg:15},milehigh:{price:69.99,mg:10},ezpeptides:{price:48.00,mg:10},ion:{price:39.00,mg:5},nura:{price:69.00,mg:10}},
   "Tirzepatide":{atomik:{price:99.00,mg:10},lapeptides:{price:99.99,mg:15},glacier:{price:68.99,mg:10},milehigh:{price:89.99,mg:10},ezpeptides:{price:53.00,mg:10},labsourced:{price:109.00,mg:30},ion:{price:49.00,mg:10},nura:{price:69.00,mg:10}},
