@@ -231,6 +231,14 @@
       nav{display:none;}
       .menu-btn{display:block;}
     }
+
+    /* ── Toast ── */
+    .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--surface);border:2px solid var(--gold);color:var(--text);font-weight:700;font-size:.95rem;padding:16px 28px;border-radius:16px;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s;z-index:9999;pointer-events:none;opacity:0;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 8px 40px rgba(245,200,66,.25),0 4px 20px rgba(0,0,0,.5);min-width:280px;text-align:center;}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto;}
+    .toast a{display:inline-block;margin-top:4px;background:var(--gold);color:#0d0f14;font-weight:800;font-size:.82rem;padding:6px 16px;border-radius:8px;text-decoration:none;transition:opacity .2s;}
+    .toast a:hover{opacity:.85;}
+    .toast-icon{font-size:1.4rem;}
+    .toast-msg{font-size:.88rem;color:var(--muted);}
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -976,7 +984,7 @@ async function toggleSaveListing(vendorId, peptide, vendorName, price, code) {
   const idx = savedListings.findIndex(s => s.key === key);
   if (idx === -1) {
     savedListings.push({ key, peptide, vendorId, vendorName, price, code });
-    showToast('⭐ <strong style="color:var(--text)">' + vendorName + ' · ' + peptide + '</strong> saved! &nbsp;<a href="account.html">View My Saves →</a>');
+    showToast('<div class="toast-icon">⭐</div><strong>' + vendorName + '</strong><span class="toast-msg">' + peptide + ' has been saved!</span><a href="account.html">👤 View My Saves →</a>');
   } else {
     savedListings.splice(idx, 1);
     showToast('🗑️ Removed from saved listings');
