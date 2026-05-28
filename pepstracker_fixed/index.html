@@ -108,7 +108,7 @@
     .result-list{display:flex;flex-direction:column;gap:10px;}
 
     /* Desktop card */
-    .result-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);display:grid;grid-template-columns:44px 1fr auto auto auto;align-items:center;gap:14px;padding:14px 18px;transition:border-color .2s,transform .15s;}
+    .result-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);display:grid;grid-template-columns:44px 1fr auto auto auto auto;align-items:center;gap:14px;padding:14px 18px;transition:border-color .2s,transform .15s;}
     .result-card:hover{border-color:var(--blue);transform:translateY(-1px);}
     .result-card.best{border-color:var(--green);background:linear-gradient(90deg,rgba(77,232,122,.05) 0%,var(--card) 60%);}
 
@@ -162,11 +162,14 @@
     .coa-badge.verified{background:rgba(77,232,122,.12);color:var(--green);border:1px solid rgba(77,232,122,.3);}
     .coa-badge.none{background:rgba(122,139,168,.08);color:var(--muted);border:1px solid rgba(122,139,168,.2);}
     /* ── Save button ── */
-    .btn-save-peptide{background:none;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 10px;font-size:.8rem;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
-    .btn-save-peptide:hover{border-color:var(--gold);color:var(--gold);}
-    .btn-save-peptide.saved{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,.08);}
-    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green);color:#0d0f14;font-weight:700;font-size:.88rem;padding:11px 22px;border-radius:30px;transition:transform .3s;z-index:999;pointer-events:none;}
-    .toast.show{transform:translateX(-50%) translateY(0);}
+    .btn-save-peptide{background:none;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 12px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .25s;white-space:nowrap;flex-shrink:0;}
+    .btn-save-peptide:hover{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,.06);}
+    .btn-save-peptide.saved{border-color:var(--gold);color:#0d0f14;background:var(--gold);font-weight:700;box-shadow:0 0 10px rgba(245,200,66,.35);}
+    .btn-save-peptide.saved:hover{background:#d4a800;border-color:#d4a800;}
+    .btn-save-peptide.just-saved{animation:savePop .4s ease;}
+    @keyframes savePop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+    .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1.5px solid var(--gold);color:var(--text);font-weight:700;font-size:.9rem;padding:13px 24px;border-radius:14px;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;z-index:9999;pointer-events:none;opacity:0;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
     /* Save button on mobile — full width row */
     @media(max-width:640px){
       .btn-save-peptide{grid-column:1/-1;text-align:center;padding:10px;}
@@ -235,6 +238,12 @@
         padding:12px;
         font-size:.95rem;
         border-radius:10px;
+      }
+      /* Save button: full width on mobile */
+      .btn-save-peptide{
+        grid-column:1/-1;
+        text-align:center;
+        padding:10px;
       }
     }
 
@@ -417,10 +426,7 @@
   <div id="resultsContainer" style="display:none;">
     <div class="results-header">
       <div class="results-title">Prices for <span id="resultTitle"></span></div>
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <div class="last-updated">Last updated: <em id="lastUpdated"></em></div>
-        <button class="btn-save-peptide" id="headerSaveBtn" onclick="toggleSavePeptide(currentPeptide)">☆ Save</button>
-      </div>
+      <div class="last-updated">Last updated: <em id="lastUpdated"></em></div>
     </div>
     <div class="result-list" id="resultList"></div>
   </div>
@@ -946,6 +952,7 @@ function renderResults() {
         <button class="btn-copy" onclick="copyCode('${r.vendor.code}',this)">Copy</button>
       </div>
       <a class="btn-shop ${isBest?'':'secondary'}" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Shop →</a>
+      <button class="btn-save-peptide" data-key="${r.vendor.id}::${currentPeptide}" onclick="toggleSaveListing('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)}, '${r.vendor.code}')">☆ Save</button>
     </div>`;
   }).join('');
 
@@ -958,7 +965,7 @@ function renderResults() {
   const scrapeDate = typeof SCRAPE_DATE !== "undefined" ? SCRAPE_DATE : null;
   document.getElementById('lastUpdated').textContent = scrapeDate || new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   document.getElementById('resultList').innerHTML = html;
-  updateSaveButtons();
+  setTimeout(updateSaveButtons, 0);
 }
 
 // ── Firebase + Save Peptide ──
@@ -975,51 +982,57 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let currentUser = null;
-let savedPeptides = [];
+let savedListings = []; // [{key:"ion::BPC-157", peptide, vendorId, vendorName, price, code}]
 
 auth.onAuthStateChanged(async user => {
   currentUser = user;
   if (user) {
     const snap = await db.collection('users').doc(user.uid).get();
-    savedPeptides = snap.exists ? (snap.data().savedPeptides || []) : [];
+    savedListings = snap.exists ? (snap.data().savedListings || []) : [];
   } else {
-    savedPeptides = [];
+    savedListings = [];
   }
   if (currentPeptide) updateSaveButtons();
 });
 
-function showToast(msg) {
+function showToast(msg, icon='') {
   const t = document.getElementById('toast');
-  t.textContent = msg;
+  t.innerHTML = icon ? `<span style="font-size:1.1rem">${icon}</span> ${msg}` : msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-async function toggleSavePeptide(peptide) {
+async function toggleSaveListing(vendorId, peptide, vendorName, price, code) {
   if (!currentUser) {
-    showToast('👤 Sign in to save peptides');
-    setTimeout(() => window.location.href = 'login.html', 1200);
+    showToast('Sign in to save listings', '👤');
+    setTimeout(() => window.location.href = 'login.html', 1400);
     return;
   }
-  const idx = savedPeptides.indexOf(peptide);
+  const key = vendorId + '::' + peptide;
+  const idx = savedListings.findIndex(s => s.key === key);
   if (idx === -1) {
-    savedPeptides.push(peptide);
-    showToast('⭐ Saved to your account!');
+    savedListings.push({ key, peptide, vendorId, vendorName, price, code });
+    showToast(`${vendorName} · ${peptide} saved!`, '⭐');
   } else {
-    savedPeptides.splice(idx, 1);
-    showToast('Removed from saved');
+    savedListings.splice(idx, 1);
+    showToast('Removed from saved', '🗑️');
   }
-  await db.collection('users').doc(currentUser.uid).update({ savedPeptides });
+  await db.collection('users').doc(currentUser.uid).update({ savedListings });
   updateSaveButtons();
+  // Animate the button that was just clicked
+  const btn = document.querySelector(`.btn-save-peptide[data-key="${key}"]`);
+  if (btn) { btn.classList.add('just-saved'); btn.addEventListener('animationend', () => btn.classList.remove('just-saved'), {once:true}); }
 }
 
 function updateSaveButtons() {
-  const btn = document.getElementById('headerSaveBtn');
-  if (btn && currentPeptide) {
-    const isSaved = savedPeptides.includes(currentPeptide);
+  document.querySelectorAll('.btn-save-peptide').forEach(btn => {
+    const key = btn.dataset.key;
+    if (!key) return;
+    const isSaved = savedListings.some(s => s.key === key);
     btn.textContent = isSaved ? '⭐ Saved' : '☆ Save';
     btn.classList.toggle('saved', isSaved);
-  }
+  });
 }
 
 </script>
