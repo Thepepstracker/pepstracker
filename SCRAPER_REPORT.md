@@ -1,28 +1,28 @@
 # PepsTracker Scraper Diagnostics
-**Run:** 2026-05-29 18:54 UTC
-**Result:** 2 prices updated, 26 OOS
+**Run:** 2026-05-30 10:34 UTC
+**Result:** 1 prices updated, 25 OOS
 
 ## ✅ Successful Fetches
-Total: 148
-- glacier/BPC-157 + TB-500 Blend: $49.99 (53.5s)
-- glacier/Tirzepatide: $49.99 (53.4s)
-- glacier/BPC-157: $49.99 (53.2s)
-- glacier/MOTS-c: $49.99 (46.7s)
-- glacier/GHK-Cu: $49.99 (44.5s)
-- ion/Ipamorelin: $35.00 (44.4s)
-- ion/Sermorelin: $39.00 (42.5s)
-- ion/Retatrutide: $39.00 (42.0s)
-- ion/DSIP: $45.00 (41.9s)
-- ion/Semaglutide: $39.00 (41.9s)
+Total: 149
+- glacier/BPC-157 + TB-500 Blend: $49.99 (42.9s)
+- glacier/MOTS-c: $49.99 (42.9s)
+- glacier/Tirzepatide: $49.99 (42.7s)
+- glacier/BPC-157: $49.99 (42.6s)
+- ion/TB-500: $29.00 (41.7s)
+- ion/ARA-290: $59.00 (41.6s)
+- ion/Tesamorelin: $45.00 (41.6s)
+- ion/Tirzepatide: $49.00 (41.6s)
+- ion/AOD-9604: $49.00 (41.6s)
+- ion/Ipamorelin: $35.00 (41.6s)
 
 ## 📊 Summary
 | Metric | Count |
 |--------|-------|
-| ✅ Prices fetched | 148 |
-| 💰 Prices updated | 2 |
+| ✅ Prices fetched | 149 |
+| 💰 Prices updated | 1 |
 | 🚫 Cloudflare 403 | 0 |
 | ⏱ Timeouts | 0 |
 | ❌ 404 URLs | 0 |
 | 🔒 Price capped | 0 |
 | ⚠️ Sanity failed | 0 |
-| 📦 OOS | 26 |
+| 📦 OOS | 25 |
