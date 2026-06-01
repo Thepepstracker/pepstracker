@@ -154,7 +154,9 @@
       <a href="blog.html">📝 Blog</a>
       <a href="quiz.html" class="active">🧬 Quiz</a>
       <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
+      <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="disclaimer.html">Disclaimer</a>
+      <a href="account.html">👤 Account</a>
     </nav>
     <button class="menu-btn" id="menuBtn" aria-label="Open menu" onclick="toggleMenu()">☰</button>
   </div>
@@ -421,6 +423,8 @@ function render() {
     </div>`;
 }
 
+let autoAdvanceTimer = null;
+
 function selectOption(qId, value, type, max) {
   if (type === 'single') {
     answers[qId] = value;
@@ -434,17 +438,26 @@ function selectOption(qId, value, type, max) {
     }
   }
   render();
-  // Auto-advance on single select
-  if (type === 'single') setTimeout(nextQ, 300);
+  // Auto-advance on single select — clear any existing timer first
+  if (type === 'single') {
+    clearTimeout(autoAdvanceTimer);
+    const advanceFromQ = currentQ;
+    autoAdvanceTimer = setTimeout(() => {
+      // Only advance if we're still on the same question
+      if (currentQ === advanceFromQ) nextQ();
+    }, 350);
+  }
 }
 
 function nextQ() {
+  clearTimeout(autoAdvanceTimer);
   currentQ++;
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function prevQ() {
+  clearTimeout(autoAdvanceTimer);
   currentQ--;
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
