@@ -60,6 +60,19 @@
     .clear-all{float:right;background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:7px 14px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;}
     .clear-all:hover{border-color:var(--red);color:var(--red);}
 
+    /* ── Saved Listings ── */
+    .saves-grid{display:flex;flex-direction:column;gap:10px;}
+    .save-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:16px;transition:border-color .2s;}
+    .save-card:hover{border-color:var(--gold);}
+    .save-vendor{font-weight:700;font-size:.95rem;margin-bottom:3px;display:flex;align-items:center;gap:8px;}
+    .save-peptide{font-size:.78rem;color:var(--muted);}
+    .save-price-block{text-align:right;}
+    .save-price{font-size:1.1rem;font-weight:800;color:var(--green);}
+    .save-code{font-size:.72rem;color:var(--muted);margin-top:3px;}
+    .save-code span{background:rgba(245,200,66,.12);color:var(--gold);border:1px solid rgba(245,200,66,.25);border-radius:6px;padding:2px 8px;font-weight:700;letter-spacing:.4px;}
+    .empty-saves{text-align:center;padding:40px 20px;color:var(--muted);}
+    .empty-saves .empty-icon{font-size:2.5rem;margin-bottom:12px;}
+
     footer{border-top:1px solid var(--border);padding:20px 16px;text-align:center;color:var(--muted);font-size:.8rem;}
     footer a{color:var(--blue);text-decoration:none;}
 
@@ -144,6 +157,12 @@
   <div id="profileSection"></div>
 
   <div class="page-header">
+    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px;">⭐ My Saved Listings</h2>
+    <p style="color:var(--muted);font-size:.85rem;">Go to <a href="index.html" style="color:var(--blue);">Price Tracker →</a> and click ☆ on any vendor card to save it here.</p>
+  </div>
+  <div id="savedListingsSection"></div>
+
+  <div class="page-header" style="margin-top:24px;">
     <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px;">🔔 My Price Alerts</h2>
     <p style="color:var(--muted);font-size:.85rem;">Go to <a href="index.html" style="color:var(--blue);">Price Tracker →</a> and click 🔔 Alert on any vendor card to add more.</p>
   </div>
@@ -185,6 +204,30 @@ if (!window.firebase) {
     }
     const snap = await db.collection('users').doc(user.uid).get();
     const data = snap.exists ? snap.data() : null;
+
+    // ── Render Saved Listings ──
+    const saved = data?.savedListings || [];
+    const savesEl = document.getElementById('savedListingsSection');
+    if (!saved.length) {
+      savesEl.innerHTML = `<div class="empty-saves"><div class="empty-icon">☆</div><div style="font-weight:700;margin-bottom:6px;">No saved listings yet</div><div style="font-size:.85rem;">Hit the ☆ star on any vendor card on the <a href="index.html" style="color:var(--blue);">Price Tracker</a> to save it here.</div></div>`;
+    } else {
+      savesEl.innerHTML = `<div class="saves-grid">${saved.map(s => `
+        <div class="save-card">
+          <div>
+            <div class="save-vendor">⭐ ${s.vendorName}</div>
+            <div class="save-peptide">${s.peptide}</div>
+          </div>
+          <div class="save-price-block">
+            <div class="save-price">$${Number(s.price).toFixed(2)}</div>
+            ${s.code ? `<div class="save-code">Code: <span>${s.code}</span></div>` : ''}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+            <a href="index.html?peptide=${encodeURIComponent(s.peptide)}" class="btn-go">Shop →</a>
+            <button class="btn-remove" onclick="removeSaved('${s.key}', this)">✕ Remove</button>
+          </div>
+        </div>`).join('')}
+      </div>`;
+    }
     if (data && data.recommendations && data.recommendations.length > 0) {
       const p = data.profile || {};
       document.getElementById('profileSection').innerHTML = `
