@@ -544,17 +544,17 @@ function quickPick(peptide) {
 }
 
 const VENDORS = [
-  { id:"ascension",  name:"Ascension Peptides",  url:"https://ascensionpeptides.com/ref/Glowlab/",     code:"Glowlab",   discount:0.50 },
-  { id:"atomik",     name:"AtomiK Labz",          url:"https://affiliatepirate.com/r/IE180L",           code:"Glowlab15", discount:0.15 },
-  { id:"lapeptides", name:"LA Peptides",          url:"https://lapeptides.net/?ref=vqjaougw",           code:"pepstracker", discount:0.10 },
-  { id:"glacier",    name:"Glacier Aminos",       url:"https://glacieraminos.shop/?ref=sidbilvi",       code:"Glowlab",   discount:0.10 },
-  { id:"milehigh",   name:"Mile High Compound",   url:"https://milehighcompounds.is/ref=glowlab10",     code:"Glowlab",   discount:0.10 },
-  { id:"ezpeptides", name:"EZ Peptides",          url:"https://ezpeptides.com/?red=glowlab",            code:"GlowLab",   discount:0.10 },
-  { id:"amp",        name:"AMP Ameano Peptides",  url:"https://ameanopeptides.com/?ref=lcbpndeo",       code:"Glowlab",   discount:0.10 },
-  { id:"labsourced", name:"Labsourced",           url:"https://labsourced.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15 },
-  { id:"ion",        name:"Ion Peptides",         url:"https://ionpeptide.com/?ref=Glowlab",            code:"Glowlab",   discount:0.15 },
-  { id:"retaone",    name:"Reta One Labs",        url:"https://retaonelabs.com/ref/0rgv6",              code:"Glowlab",   discount:0.05 },
-  { id:"nura",       name:"NuraPeptide",          url:"https://nurapeptide.com/?ref=glowlab",           code:"Glowlab15", discount:0.15 },
+  { id:"ascension",  name:"Ascension Peptides",  domain:"ascensionpeptides.com",  url:"https://ascensionpeptides.com/ref/Glowlab/",     code:"Glowlab",     discount:0.50 },
+  { id:"atomik",     name:"AtomiK Labz",          domain:"atomiklabz.com",         url:"https://affiliatepirate.com/r/IE180L",           code:"Glowlab15",   discount:0.15 },
+  { id:"lapeptides", name:"LA Peptides",          domain:"lapeptides.net",         url:"https://lapeptides.net/?ref=vqjaougw",           code:"pepstracker", discount:0.10 },
+  { id:"glacier",    name:"Glacier Aminos",       domain:"glacieraminos.shop",     url:"https://glacieraminos.shop/?ref=sidbilvi",       code:"Glowlab",     discount:0.10 },
+  { id:"milehigh",   name:"Mile High Compound",   domain:"milehighcompounds.is",   url:"https://milehighcompounds.is/ref=glowlab10",     code:"Glowlab",     discount:0.10 },
+  { id:"ezpeptides", name:"EZ Peptides",          domain:"ezpeptides.com",         url:"https://ezpeptides.com/?red=glowlab",            code:"GlowLab",     discount:0.10 },
+  { id:"amp",        name:"AMP Ameano Peptides",  domain:"ameanopeptides.com",     url:"https://ameanopeptides.com/?ref=lcbpndeo",       code:"Glowlab",     discount:0.10 },
+  { id:"labsourced", name:"Labsourced",           domain:"labsourced.com",         url:"https://labsourced.com/?ref=Glowlab",            code:"Glowlab",     discount:0.15 },
+  { id:"ion",        name:"Ion Peptides",         domain:"ionpeptide.com",         url:"https://ionpeptide.com/?ref=Glowlab",            code:"Glowlab",     discount:0.15 },
+  { id:"retaone",    name:"Reta One Labs",        domain:"retaonelabs.com",        url:"https://retaonelabs.com/ref/0rgv6",              code:"Glowlab",     discount:0.05 },
+  { id:"nura",       name:"NuraPeptide",          domain:"nurapeptide.com",        url:"https://nurapeptide.com/?ref=glowlab",           code:"Glowlab15",   discount:0.15 },
 ];
 const vMap = {};
 VENDORS.forEach(v => vMap[v.id] = v);
@@ -969,7 +969,7 @@ function renderResults() {
       <div class="result-card" style="opacity:0.55;border-color:var(--red);">
         <div class="rank" style="color:var(--red);">—</div>
         <div>
-          <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${r.vendor.name}</div>
+          <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><img class="vendor-favicon" src="https://www.google.com/s2/favicons?domain=${r.vendor.domain}&sz=32" alt="" onerror="this.style.display='none'" />${r.vendor.name}</div>
           <div class="vendor-listing" style="color:var(--red);font-weight:700;">⚠ Out of Stock</div>
         </div>
         <div class="price-block">
@@ -992,7 +992,7 @@ function renderResults() {
     <div class="result-card ${isBest?'best':''}">
       <div class="rank ${rank===0?'first':''}">${rank===0?'🥇':'#'+(rank+1)}</div>
       <div>
-        <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${r.vendor.name}${isBest?'<span class="best-badge">Best Value</span>':''}</div>
+        <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><img class="vendor-favicon" src="https://www.google.com/s2/favicons?domain=${r.vendor.domain}&sz=32" alt="" onerror="this.style.display='none'" />${r.vendor.name}${isBest?'<span class="best-badge">Best Value</span>':''}</div>
         <div class="vendor-listing">Listed as: <em>${r.listing}</em></div>
       </div>
       <div class="price-block">
