@@ -102,6 +102,7 @@ PRODUCT_URLS = {
     "Sermorelin":                     {"url":"https://lapeptides.net/product/sermorelin/","mg":10},
     "DSIP":                           {"url":"https://lapeptides.net/product/dsip/","mg":5},
     "Adamax":                         {"url":"https://lapeptides.net/product/adamax/","mg":10},
+    "SS-31":                          {"url":"https://lapeptides.net/product/ss-31/","mg":10},
   },
   "glacier": {
     "Semaglutide":                    {"url":"https://glacieraminos.shop/product/gla1-s/","mg":15},
@@ -130,6 +131,8 @@ PRODUCT_URLS = {
     "Sermorelin":                     {"url":"https://glacieraminos.shop/product/sermorelin/","mg":10},
     "DSIP":                           {"url":"https://glacieraminos.shop/product/dsip/","mg":5},
     "Adamax":                         {"url":"https://glacieraminos.shop/product/adamax-10mg/","mg":10},
+    "Lipo-C":                         {"url":"https://glacieraminos.shop/product/lipo-c/","mg":10},
+    "Glutathione":                    {"url":"https://glacieraminos.shop/product/glutathione-1500mg/","mg":1500},
   },
   "milehigh": {
     "Semaglutide":                    {"url":"https://milehighcompounds.is/product/mhc-1-sm/","mg":10},
@@ -157,6 +160,9 @@ PRODUCT_URLS = {
     "Sermorelin":                     {"url":"https://milehighcompounds.is/product/sermorelin/","mg":10},
     "DSIP":                           {"url":"https://milehighcompounds.is/product/dsip/","mg":10},
     "Adamax":                         {"url":"https://milehighcompounds.is/product/adamax/","mg":10},
+    "Lipo-C":                         {"url":"https://milehighcompounds.is/product/lipo-c/","mg":10},
+    "SS-31":                          {"url":"https://milehighcompounds.is/product/mtp-31/","mg":10},
+    "Glutathione":                    {"url":"https://milehighcompounds.is/product/glutathione/","mg":1500},
   },
   "ezpeptides": {
     "Semaglutide":                    {"url":"https://ezpeptides.com/product/ezp-1p-10mg/","mg":10},
@@ -173,6 +179,7 @@ PRODUCT_URLS = {
     "Research Diluent Solution":      {"url":"https://ezpeptides.com/product/research-diluent-solution-10ml/","mg":10},
     "Buffered NAD+":                  {"url":"https://ezpeptides.com/product/buffered-nad-500mg/","mg":500},
     "Buffered NAD+ 250mg":            {"url":"https://ezpeptides.com/product/buffered-nad-250mg/","mg":250},
+    "Lipo-C":                         {"url":"https://ezpeptides.com/product/lipo-c-with-b12-10ml-research-grade-solution/","mg":10},
     "LIPO-C with B12":                {"url":"https://ezpeptides.com/product/lipo-c-with-b12-10ml-research-grade-solution/","mg":10},
     "GHK-Cu Lyophilized":             {"url":"https://ezpeptides.com/product/ghk-cu-50mg/","mg":50},
     "Klow Blend":                     {"url":"https://ezpeptides.com/product/klow-blend-80mg/","mg":80},
@@ -262,6 +269,9 @@ PRODUCT_URLS = {
     "Sermorelin":                     {"url":"https://ionpeptide.com/product/sermorelin/","mg":5},
     "DSIP":                           {"url":"https://ionpeptide.com/product/dsip/","mg":5},
     "Adamax":                         {"url":"https://ionpeptide.com/product/adamax-10mg/","mg":10},
+    "Lipo-C":                         {"url":"https://ionpeptide.com/product/lipo-c-b12-methylated-10mg/","mg":10},
+    "SS-31":                          {"url":"https://ionpeptide.com/product/ss-31/","mg":10},
+    "Glutathione":                    {"url":"https://ionpeptide.com/product/glutathione/","mg":600},
   },
   "retaone": {
     "Semaglutide":                    {"url":"https://retaonelabs.com/product/ro-1s-10mg/","mg":10},
@@ -303,24 +313,20 @@ PRODUCT_URLS = {
     "Sermorelin":                     {"url":"https://nurapeptide.com/product/sermorelin-5mg/","mg":5},
     "DSIP":                           {"url":"https://nurapeptide.com/product/dsip-5mg/","mg":5},
     "Adamax":                         {"url":"https://nurapeptide.com/product/adamax-10mg/","mg":10},
+    "SS-31":                          {"url":"https://nurapeptide.com/product/ss-31-50mg/","mg":50},
+    "Glutathione":                    {"url":"https://nurapeptide.com/product/glutathione-peptide-1500mg/","mg":1500},
   },
 }
 
-# FIX 1: ion moved to Playwright — was taking 29-38s via ScraperAPI JS render
-CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "nura", "ion"}
+# Vendors that need real browser (Cloudflare protected)
+CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "nura"}
 
-# Vendors excluded from auto-scraping with accurate reasons:
+# Vendors excluded from auto-scraping:
 # - atomik: Cloudflare Turnstile (human verification) — unbypassable
 # - labsourced: robots.txt blocks all scrapers
 # - retaone: 502 server constantly unreliable
+# Update these manually via price-update.html
 SKIP_VENDORS = {"atomik", "labsourced", "retaone"}
-
-# FIX 3: accurate skip reasons for logging
-SKIP_REASONS = {
-    "atomik":     "Turnstile (human verification)",
-    "labsourced": "robots.txt blocks scrapers",
-    "retaone":    "502 server unreliable",
-}
 
 PREMIUM_VENDORS = set()
 
@@ -338,6 +344,7 @@ def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
         params["wait"] = str(wait_ms)
     return requests.get("https://api.scraperapi.com/", params=params, timeout=timeout)
 
+# Login state cache — stores cookies per vendor so we only log in once per session
 _login_cookies = {}
 
 def playwright_get(url, vendor_id="unknown"):
@@ -345,6 +352,7 @@ def playwright_get(url, vendor_id="unknown"):
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
+            # Atomik needs extra stealth to bypass Cloudflare "Just a moment" page
             stealth_args = [
                 "--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage",
                 "--disable-blink-features=AutomationControlled",
@@ -352,7 +360,11 @@ def playwright_get(url, vendor_id="unknown"):
                 "--flag-switches-begin", "--disable-site-isolation-trials",
                 "--flag-switches-end",
             ]
-            browser = p.chromium.launch(headless=True, args=stealth_args)
+            browser = p.chromium.launch(
+                headless=True,
+                args=stealth_args
+            )
+            # Use a realistic user agent and extra headers to look like a real browser
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
                 viewport={"width": 1280, "height": 800},
@@ -365,21 +377,24 @@ def playwright_get(url, vendor_id="unknown"):
                     "sec-ch-ua-platform": '"Windows"',
                 }
             )
+            # Remove webdriver flag that Cloudflare detects
             context.add_init_script("""
                 Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
                 Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3] });
                 Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });
             """)
 
+            # Restore cached cookies if we have them
             if vendor_id in _login_cookies:
                 context.add_cookies(_login_cookies[vendor_id])
             else:
+                # First time — need to log in or handle challenges
                 page = context.new_page()
                 try:
                     if vendor_id == "atomik":
                         log.info("  Logging in to Atomik Labz...")
                         page.goto("https://atomiklabz.com/my-account/", wait_until="domcontentloaded", timeout=30000)
-                        page.wait_for_timeout(3000)
+                        page.wait_for_timeout(3000)  # Wait for CF challenge to clear
                         if "just a moment" in page.title().lower():
                             log.warning("  Atomik Cloudflare challenge not cleared — waiting longer...")
                             page.wait_for_timeout(5000)
@@ -411,38 +426,33 @@ def playwright_get(url, vendor_id="unknown"):
                         page.click("button[name='login']")
                         page.wait_for_load_state("domcontentloaded", timeout=15000)
                         log.info(f"  MileHigh login done, title={page.title()}")
+                    # Cache the cookies for subsequent requests
                     _login_cookies[vendor_id] = context.cookies()
                 except Exception as e:
                     log.warning(f"  Login error for {vendor_id}: {e}")
                 finally:
                     page.close()
 
+            # Now fetch the actual product page
             page = context.new_page()
             page.route("**/*.{png,jpg,jpeg,gif,webp,svg,woff,woff2,ttf,otf}", lambda r: r.abort())
             page.goto(url, wait_until="domcontentloaded", timeout=30000)
 
+            # Wait longer for JS-heavy sites like Nura (Elementor) to render prices
             wait_time = 5000 if vendor_id in {"nura", "atomik"} else 8000
             try:
                 page.wait_for_selector(".woocommerce-Price-amount, .price, [class*=price]", timeout=wait_time)
             except Exception:
                 pass
 
+            # For Nura specifically, wait extra time for Elementor to finish rendering
             if vendor_id == "nura":
                 page.wait_for_timeout(2000)
 
-            # FIX 2a: dismiss any live chat / notification popup before reading price or title
+            # Step 1: Select single unit if bundle selector exists
+            # Handles sites like Labsourced with 1/3/5 bottle options
             try:
-                page.locator(
-                    "[class*='chat'] [class*='close'], [id*='chat'] button[class*='close'], "
-                    "[class*='close-chat'], [aria-label*='close chat' i], "
-                    "[class*='notification'] [class*='close'], [id*='notification'] button"
-                ).first.click(timeout=2000)
-                page.wait_for_timeout(500)
-                log.info(f"  Dismissed popup for {vendor_id}")
-            except Exception:
-                pass
-
-            try:
+                # Look for bundle/quantity selector buttons (common in Shopify)
                 bundle_btns = page.query_selector_all("[class*='bundle'] button, [class*='quantity-break'] button, [class*='multipacks'] button, [data-quantity='1']")
                 for btn in bundle_btns:
                     txt = btn.inner_text().strip().lower()
@@ -454,25 +464,30 @@ def playwright_get(url, vendor_id="unknown"):
             except Exception:
                 pass
 
+            # Step 2: Select correct mg size if dropdown exists
+            # Priority: 10mg > 5mg > 2mg > skip (never grab 20mg, 50mg etc)
             try:
                 selects = page.query_selector_all("select")
                 for sel in selects:
                     options = sel.query_selector_all("option")
                     option_texts = [o.inner_text().strip() for o in options]
+
+                    # Only process size dropdowns
                     has_mg_options = any('mg' in t.lower() for t in option_texts)
                     if not has_mg_options:
                         continue
+
+                    # Try preferred sizes in strict order: 10mg, 5mg, 2mg
                     target = None
                     for preferred_mg in ["10", "5", "2"]:
                         for opt_text in option_texts:
-                            if opt_text.lower().strip().startswith(preferred_mg + "mg") or \
-                               opt_text.lower().strip().startswith(preferred_mg + " mg") or \
-                               f" {preferred_mg}mg" in opt_text.lower() or \
-                               f" {preferred_mg} mg" in opt_text.lower():
+                            # Match "10mg", "10 mg", "10MG" etc — but not "100mg"
+                            if opt_text.lower().strip().startswith(preferred_mg + "mg") or                                opt_text.lower().strip().startswith(preferred_mg + " mg") or                                f" {preferred_mg}mg" in opt_text.lower() or                                f" {preferred_mg} mg" in opt_text.lower():
                                 target = opt_text
                                 break
                         if target:
                             break
+
                     if target:
                         sel.select_option(label=target)
                         page.wait_for_timeout(2000)
@@ -483,47 +498,48 @@ def playwright_get(url, vendor_id="unknown"):
             except Exception:
                 pass
 
-            # Shared price selectors used both here and in post-reload re-read
-            price_selectors = [
-                ".woocommerce-Price-amount bdi",
-                ".price .amount",
-                "[class*='price'] .amount",
-                ".elementor-widget-woocommerce-product-price .amount",
-                ".summary .price bdi",
-                ".woocommerce-variation-price .woocommerce-Price-amount bdi",
-                "p.price bdi",
-                "span.price bdi",
-            ]
+            # Try to read the visible sale price directly from the DOM first
+            # This is more reliable than parsing HTML for sale prices
+            visible_price = None
+            try:
+                # Try ins tag (WooCommerce sale price) first
+                ins_el = page.query_selector("ins .woocommerce-Price-amount bdi")
+                if ins_el:
+                    txt = ins_el.inner_text().strip().replace("$","").replace(",","")
+                    visible_price = float(txt)
+                    log.info(f"  Got sale price from ins tag: ${visible_price}")
 
-            def read_price_from_page():
-                """Read price from current page state. Returns float or None."""
-                result = None
-                try:
-                    ins_el = page.query_selector("ins .woocommerce-Price-amount bdi")
-                    if ins_el:
-                        txt = ins_el.inner_text().strip().replace("$", "").replace(",", "")
-                        result = float(txt)
-                        log.info(f"  Got sale price from ins tag: ${result}")
-                        return result
+                if not visible_price:
+                    # Try multiple price selectors — Nura uses Elementor which has different structure
+                    price_selectors = [
+                        ".woocommerce-Price-amount bdi",
+                        ".price .amount",
+                        "[class*='price'] .amount",
+                        ".elementor-widget-woocommerce-product-price .amount",
+                        ".summary .price bdi",
+                        ".woocommerce-variation-price .woocommerce-Price-amount bdi",
+                        "p.price bdi",
+                        "span.price bdi",
+                    ]
                     for selector in price_selectors:
                         els = page.query_selector_all(selector)
                         for el in els:
                             try:
-                                txt = el.inner_text().strip().replace("$", "").replace(",", "")
+                                txt = el.inner_text().strip().replace("$","").replace(",","")
                                 p = float(txt)
                                 if p > 1:
-                                    result = p
-                                    log.info(f"  Got price from DOM: ${result}")
-                                    return result
+                                    visible_price = p
+                                    log.info(f"  Got price from DOM: ${visible_price}")
+                                    break
                             except Exception:
                                 pass
-                except Exception as e:
-                    log.warning(f"  DOM price read error: {e}")
-                return result
+                        if visible_price:
+                            break
+            except Exception as e:
+                log.warning(f"  DOM price read error: {e}")
 
-            visible_price = read_price_from_page()
-
-            # FIX 2b: check for wrong page AFTER initial price read, then re-read after reload
+            # Glacier sometimes redirects to inbox/notifications after cookie restore
+            # Detect wrong page and navigate directly to the product URL
             page_title = page.title()
             if any(x in page_title.lower() for x in ["new message", "inbox", "notification", "just a moment", "attention required"]):
                 log.warning(f"  Wrong page loaded ({page_title}), navigating directly to product URL...")
@@ -534,16 +550,12 @@ def playwright_get(url, vendor_id="unknown"):
                     pass
                 page_title = page.title()
                 log.info(f"  Reloaded: {page_title}")
-                visible_price = None  # discard price from wrong page
-
-                # FIX 2c: re-read price after reload (was missing before — caused glacier to always fail)
-                visible_price = read_price_from_page()
-                if not visible_price:
-                    log.warning(f"  -- {vendor_id}: price not found after reload")
+                visible_price = None  # Reset price so we re-read after size selection below
 
             html = page.content()
             log.info(f"  Playwright loaded: {page_title}")
 
+            # If we got a price directly from DOM, inject it so extract_main_product_price finds it
             if visible_price:
                 html = f'<div class="woocommerce-Price-amount amount"><bdi>${visible_price:.2f}</bdi></div>' + html
 
@@ -561,6 +573,8 @@ def parse_price(val):
         return None
 
 def is_out_of_stock(html):
+    # Step 1: Strip related/upsell/cross-sell sections to avoid false positives
+    # These sections often contain OOS products that aren't the main product
     main_html = html
     for pattern in [
         r'<section[^>]*class="[^"]*related[^"]*".*',
@@ -576,6 +590,8 @@ def is_out_of_stock(html):
 
     html_lower = main_html.lower()
 
+    # Step 2: Check STRONG definitive OOS signals first — these always mean OOS
+    # regardless of any add-to-cart buttons in related products
     strong_oos = [
         '"availability":"http://schema.org/OutOfStock"',
         'availability":"OutOfStock"',
@@ -584,6 +600,7 @@ def is_out_of_stock(html):
         '"availability": "OutOfStock"',
         'sold_out":true',
         '"sold_out": true',
+        # Ascension-specific: uses email notification form instead of standard OOS
         'email me when this item is back in stock',
         'notify me when available',
         'email me when available',
@@ -592,6 +609,8 @@ def is_out_of_stock(html):
     if any(s.lower() in html_lower for s in strong_oos):
         return True
 
+    # Step 3: If there's a main product add-to-cart button, it's in stock
+    # But only count it if it's clearly the MAIN product button (not related)
     has_main_atc = any(x in html_lower for x in [
         'name="add-to-cart"', 'value="add-to-cart"',
         '"add_to_cart"', 'add-to-cart-button',
@@ -600,6 +619,7 @@ def is_out_of_stock(html):
     if has_main_atc:
         return False
 
+    # Step 4: Weaker OOS signals - only if no main add-to-cart found
     weak_oos = [
         '>out of stock<',
         '>currently unavailable<',
@@ -609,16 +629,20 @@ def is_out_of_stock(html):
     return any(s.lower() in html_lower for s in weak_oos)
 
 def extract_main_product_price(html):
-    html = re.sub(r'<del[^>]*>.*?</del>', '', html, flags=re.DOTALL|re.IGNORECASE)
+    # Strip <del> tags (old/strikethrough prices) so we never grab them
+    html = re.sub(r'<del[^>]*>.*?</del>', '', html, flags=re.DOTALL|re.IGNORECASE)
 
-    ins_match = re.search(r'<ins[^>]*>.*?(\d+\.\d{2}).*?</ins>', html, re.DOTALL|re.IGNORECASE)
+    # Check for <ins> sale price first (WooCommerce sale format)
+    ins_match = re.search(r'<ins[^>]*>.*?(\d+\.\d{2}).*?</ins>', html, re.DOTALL|re.IGNORECASE)
     if ins_match:
         p = parse_price(ins_match.group(1))
         if p: return p
 
+    # Strip shipping banners
     html = re.sub(r'[^<]{0,80}free\s*ship[^<]{0,150}\$\s*[\d,]+\.?\d*[^<]{0,80}', '', html, flags=re.IGNORECASE)
     html = re.sub(r'\$\s*[\d,]+\.?\d*[^<]{0,80}free\s*ship[^<]{0,150}', '', html, flags=re.IGNORECASE)
 
+    # Cut off related/upsell/bundle sections to avoid grabbing multi-pack prices
     for pattern in [
         r'<section[^>]*class="[^"]*related',
         r'<div[^>]*class="[^"]*related',
@@ -627,6 +651,7 @@ def extract_main_product_price(html):
         r'<[^>]*class="[^"]*bundle[^"]*"',
         r'<[^>]*class="[^"]*multipacks[^"]*"',
         r'<[^>]*class="[^"]*quantity.break[^"]*"',
+        # Ascension kit pricing - strip everything after first price variation table
         r'<tr[^>]*>.*?Kit.*?</tr>',
         r'Kit\s*\(',
         r'Buy more',
@@ -637,6 +662,7 @@ def extract_main_product_price(html):
         if m:
             html = html[:m.start()]
 
+    # JSON-LD — always grab lowPrice or minimum price (handles sale prices + bundle variants)
     for m in re.finditer(r'<script[^>]+type="application/ld\+json"[^>]*>(.*?)</script>', html, re.DOTALL):
         try:
             data = json.loads(m.group(1))
@@ -645,12 +671,16 @@ def extract_main_product_price(html):
                 if item.get("@type") == "Product":
                     offers = item.get("offers", {})
                     if isinstance(offers, list):
+                        # Always use minimum price — handles bundles (1 bottle = cheapest)
+                        # and sale prices (sale price < original price)
                         prices = []
                         for o in offers:
                             p = parse_price(o.get("price") or o.get("lowPrice"))
                             if p: prices.append(p)
                         if prices: return min(prices)
                     else:
+                        # Prefer lowPrice (sale price) over price (original)
+                        # Never grab highPrice - that's the kit/bundle price
                         for key in ["lowPrice", "price"]:
                             val = offers.get(key)
                             if val:
@@ -659,6 +689,8 @@ def extract_main_product_price(html):
         except Exception:
             pass
 
+    # Shopify — check for variants JSON (labsourced uses this)
+    # Labsourced stores prices in cents e.g. 4165 = $41.65
     shopify_match = re.search(r'"variants"\s*:\s*\[(.*?)\]', html, re.DOTALL)
     if shopify_match:
         try:
@@ -666,16 +698,18 @@ def extract_main_product_price(html):
             prices = []
             for rp in raw_prices:
                 val = float(rp)
+                # Shopify stores in cents if value > 1000
                 if val > 1000:
                     val = val / 100
                 p = parse_price(val)
                 if p:
                     prices.append(p)
             if prices:
-                return min(prices)
+                return min(prices)  # Always grab cheapest = single bottle
         except Exception:
             pass
 
+    # Shopify meta price tag (another common pattern)
     meta_match = re.search(r'"price":\s*"(\d+)"', html)
     if meta_match:
         try:
@@ -686,6 +720,7 @@ def extract_main_product_price(html):
         except Exception:
             pass
 
+    # WooCommerce price spans — after del removal, first price found is always current/sale price
     for pattern in [
         r'class="woocommerce-Price-amount[^"]*"[^>]*>.*?<bdi>.*?\$\s*([\d,]+\.?\d*)',
         r'<p[^>]*class="[^"]*price[^"]*"[^>]*>.*?\$\s*([\d,]+\.?\d*)',
@@ -694,6 +729,7 @@ def extract_main_product_price(html):
             p = parse_price(raw)
             if p: return p
 
+    # Shopify price in cents
     m = re.search(r'"price"\s*:\s*(\d+)', html)
     if m:
         val = float(m.group(1))
@@ -704,6 +740,12 @@ def extract_main_product_price(html):
     return None
 
 def fetch_price_from_url(vendor_id, product, product_url):
+    """
+    Returns (price, oos) where:
+      - (float, False) = got a price, in stock
+      - (None, True)   = confirmed out of stock
+      - (None, False)  = couldn't reach site (timeout/error) — do NOT update anything
+    """
     import time as _time
     t_start = _time.time()
     log.info(f"  Fetching {vendor_id}/{product} → {product_url}")
@@ -728,12 +770,16 @@ def fetch_price_from_url(vendor_id, product, product_url):
             return price, False
 
         else:
-            max_attempts = 2
+            # Ion Peptides needs JS rendering - use it on first attempt
+            ion_needs_js = vendor_id in {"ion"}
+            max_attempts = 2  # All remaining vendors get 2 attempts
+            # Try without JS first (faster), except for known JS-heavy sites
             for attempt in range(max_attempts):
                 try:
-                    use_js = (attempt == 1)
-                    if attempt == 1:
+                    use_js = ion_needs_js or (attempt == 1)
+                    if attempt == 1 and not ion_needs_js:
                         log.info(f"  Retrying with JS...")
+                    # Use premium ScraperAPI for Cloudflare-heavy vendors
                     use_premium = vendor_id in PREMIUM_VENDORS
                     if use_premium and attempt == 0:
                         log.info(f"  Using ScraperAPI premium for {vendor_id}...")
@@ -751,12 +797,12 @@ def fetch_price_from_url(vendor_id, product, product_url):
                         if resp.status_code == 403:
                             log.warning(f"  💡 FIX: Add '{vendor_id}' to CLOUDFLARE_VENDORS to use Playwright")
                             run_stats["blocked_403"].append((vendor_id, product))
-                            break
+                            break  # CF won't change its mind
                         if resp.status_code == 404:
                             run_stats["url_404"].append((vendor_id, product))
-                            break
+                            break  # URL is wrong, retry won't help
                         if resp.status_code in {500, 502, 503}:
-                            break
+                            break  # Server error — skip fast, retry won't help
                         continue
                     html = resp.text
                     if is_out_of_stock(html):
@@ -770,8 +816,8 @@ def fetch_price_from_url(vendor_id, product, product_url):
                         return price, False
                 except requests.exceptions.Timeout:
                     elapsed = _time.time() - t_start
-                    log.warning(f"  ⏱ TIMEOUT attempt {attempt+1} for {vendor_id}/{product} [{elapsed:.1f}s]")
-                    if attempt == 1:
+                    log.warning(f"  ⏱ TIMEOUT attempt {attempt+1} for {vendor_id}/{product} [{elapsed:.1f}s] — ScraperAPI may be blocked or site is slow")
+                    if attempt == 1:  # Only log on final timeout
                         run_stats["timeouts"].append((vendor_id, product, elapsed))
                     time.sleep(2)
                     continue
@@ -782,9 +828,9 @@ def fetch_price_from_url(vendor_id, product, product_url):
 
             elapsed = _time.time() - t_start
             if elapsed > 60:
-                log.warning(f"  🐢 SLOW: {vendor_id}/{product} took {elapsed:.1f}s")
+                log.warning(f"  🐢 SLOW: {vendor_id}/{product} took {elapsed:.1f}s — consider adding to Playwright vendors or skipping")
             elif elapsed > 30:
-                log.warning(f"  ⚠️ SLOW: {vendor_id}/{product} took {elapsed:.1f}s")
+                log.warning(f"  ⚠️ SLOW: {vendor_id}/{product} took {elapsed:.1f}s — retries needed")
             log.info(f"  -- {vendor_id}/{product}: price not found after retries [{elapsed:.1f}s]")
             run_stats["not_found"].append((vendor_id, product, elapsed))
             return None, False
@@ -834,17 +880,35 @@ def parse_prices_block(html):
     return result
 
 def patch_prices(html, updates, out_of_stock_items):
+    """
+    Bulletproof line-by-line price patcher.
+    Finds vendor lines like:
+        ascension:{price:65.00,mg:5,listing:"Semaglutide 5mg"},
+    and replaces just the price value. Never touches mg or listing.
+    Also handles oos flag adding/removing.
+    """
     patched = 0
     lines = html.split('\n')
+
+    # Build a fast lookup: {peptide: {vid: new_price}}
+    # and a set of oos items: {(peptide, vid)}
     oos_set = set(out_of_stock_items)
+
+    # We track which peptide block we're currently inside
     current_peptide = None
     peptide_detect = re.compile(r'^\s*"([^"]+)":\s*\{')
+    # Matches a vendor price line: vid:{price:XX.XX,mg:YY,...}
     vendor_line = re.compile(
         r'^(\s*)(\w+):\{price:([\d.]+)(,mg:[\d.]+,listing:"[^"]*")((?:,oos:true)?)\}(,?)\s*$'
+    )
+    # Also matches array format: vid:[{price:XX.XX,mg:YY,...},...]
+    vendor_line_array = re.compile(
+        r'^(\s*)(\w+):\[\{price:([\d.]+)(,mg:[\d.]+,listing:"[^"]*")((?:,oos:true)?)\}(.*?)\](,?)\s*$'
     )
 
     new_lines = []
     for line in lines:
+        # Detect peptide block start
         pm = peptide_detect.match(line)
         if pm:
             current_peptide = pm.group(1)
@@ -854,30 +918,44 @@ def patch_prices(html, updates, out_of_stock_items):
             continue
 
         vm = vendor_line.match(line)
-        if vm:
-            indent    = vm.group(1)
-            vid       = vm.group(2)
-            price_val = vm.group(3)
-            mg_list   = vm.group(4)
-            trailing  = vm.group(6)
+        vm_arr = vendor_line_array.match(line) if not vm else None
+        matched = vm or vm_arr
+        is_array = vm_arr is not None and vm is None
+
+        if matched:
+            indent    = matched.group(1)
+            vid       = matched.group(2)
+            price_val = matched.group(3)
+            mg_list   = matched.group(4)   # e.g. ,mg:10,listing:"BPC-157 10mg"
+            oos_part  = matched.group(5)
+            rest      = matched.group(6) if is_array else ""   # remaining array items
+            trailing  = matched.group(7) if is_array else matched.group(6)
             is_oos    = (current_peptide, vid) in oos_set
 
+            # Check if we have a price update for this vendor
             new_price = updates.get(current_peptide, {}).get(vid)
 
             if new_price is not None:
                 price_str = f"{new_price:.2f}"
                 oos_flag = ",oos:true" if is_oos else ""
-                new_line = f'{indent}{vid}:{{price:{price_str}{mg_list}{oos_flag}}}{trailing}'
+                if is_array:
+                    new_line = f'{indent}{vid}:[{{price:{price_str}{mg_list}{oos_flag}}}{rest}]{trailing}'
+                else:
+                    new_line = f'{indent}{vid}:{{price:{price_str}{mg_list}{oos_flag}}}{trailing}'
                 new_lines.append(new_line)
                 patched += 1
-                log.info(f"  PATCHED {current_peptide}/{vid}: ${price_val} → ${price_str}{' [OOS]' if is_oos else ''}")
+                log.info(f"  PATCHED {current_peptide}/{vid}: ${price_val} → ${price_str}{chr(32)}[array={is_array}]{chr(32)}[OOS={is_oos}]")
             elif is_oos:
                 oos_flag = ",oos:true"
-                new_line = f'{indent}{vid}:{{price:{price_val}{mg_list}{oos_flag}}}{trailing}'
+                if is_array:
+                    new_line = f'{indent}{vid}:[{{price:{price_val}{mg_list}{oos_flag}}}{rest}]{trailing}'
+                else:
+                    new_line = f'{indent}{vid}:{{price:{price_val}{mg_list}{oos_flag}}}{trailing}'
                 if new_line.rstrip() != line.rstrip():
                     log.info(f"  Marked OOS: {current_peptide}/{vid}")
                 new_lines.append(new_line)
             else:
+                # Remove oos flag if no longer OOS
                 clean = line.replace(',oos:true', '')
                 new_lines.append(clean)
         else:
@@ -886,33 +964,52 @@ def patch_prices(html, updates, out_of_stock_items):
     log.info(f"Patched {patched} prices")
     return '\n'.join(new_lines), patched
 
+# ── Run Statistics Tracker ──────────────────────────────────
 run_stats = {
-    "successes": [],
-    "timeouts": [],
-    "blocked_403": [],
-    "not_found": [],
-    "oos": [],
-    "price_capped": [],
-    "sanity_failed": [],
-    "url_404": [],
+    "successes": [],      # (vendor, peptide, price, elapsed)
+    "timeouts": [],       # (vendor, peptide, elapsed)
+    "blocked_403": [],    # (vendor, peptide)
+    "not_found": [],      # (vendor, peptide, elapsed)
+    "oos": [],            # (vendor, peptide)
+    "price_capped": [],   # (vendor, peptide, price, cap)
+    "sanity_failed": [],  # (vendor, peptide, prev, new)
+    "url_404": [],        # (vendor, peptide)
 }
 
 
 def main():
     log.info("=== PepsTracker Scraper v6 (daily + OOS) Starting ===")
 
+    # Only scrape the 13 peptides shown in the dropdown — not the full 60-peptide catalog
+    # Glacier and MileHigh block ScraperAPI (always timeout) — skip them to save time + credits
     ACTIVE_PEPTIDES = [
+        # GLP-1
         "Semaglutide", "Tirzepatide", "Retatrutide",
+        # BPC / TB
         "BPC-157", "TB-500", "BPC-157 + TB-500 Blend",
+        # Growth Hormone
         "Ipamorelin", "CJC-1295 (with DAC)", "Sermorelin", "Tesamorelin",
+        # Skin / Tanning
         "Melanotan II", "PT-141 (Bremelanotide)", "GHK-Cu",
+        # Longevity
         "Epithalon", "MOTS-c", "NAD+",
+        # Cognitive
         "Semax", "Selank", "DSIP", "Adamax",
+        # Immune
         "KPV", "ARA-290",
+        # Fat Loss
         "AOD-9604",
+        # Blends
         "Klow Blend",
         "Tesamorelin/Ipamorelin Blend",
+        # Immune / Metabolic
+        "Lipo-C",
+        # Mitochondrial
+        "SS-31",
+        # Antioxidant
+        "Glutathione",
     ]
+    # SKIP_VENDORS defined at module level — atomik, labsourced, retaone
 
     html, sha = github_get_file()
 
@@ -922,8 +1019,7 @@ def main():
         return
     log.info(f"Parsed {len(existing)} peptides from PRICES block")
     log.info(f"Scraping {len(ACTIVE_PEPTIDES)} active peptides")
-    skip_summary = ", ".join(f"{v} ({SKIP_REASONS.get(v, 'manual')})" for v in sorted(SKIP_VENDORS))
-    log.info(f"Skipping manual vendors: {skip_summary}")
+    log.info(f"⏭ Skipping manual vendors (update via price-update.html): {', '.join(sorted(SKIP_VENDORS))}")
 
     updates = {}
     oos_items = []
@@ -935,9 +1031,7 @@ def main():
             continue
         for vid, info in vendor_map.items():
             if vid in SKIP_VENDORS:
-                # FIX 3: accurate skip reason per vendor
-                reason = SKIP_REASONS.get(vid, "manual update only")
-                log.info(f"  Skipping {vid}/{peptide} ({reason})")
+                log.info(f"  Skipping {vid}/{peptide} (Cloudflare blocked)")
                 continue
             url_info = PRODUCT_URLS.get(vid, {}).get(peptide)
             if not url_info:
@@ -947,6 +1041,8 @@ def main():
                 oos_items.append((peptide, vid))
                 run_stats["oos"].append((vid, peptide))
             elif price and abs(price - info["price"]) > 0.01:
+                # Sanity check 1: hard price caps per peptide type
+                # Prevents bundle/page errors from corrupting prices
                 PRICE_CAPS = {
                     "Semaglutide": 150, "Tirzepatide": 200, "Retatrutide": 250,
                     "BPC-157": 100, "TB-500": 120, "BPC-157 + TB-500 Blend": 180,
@@ -963,8 +1059,11 @@ def main():
                     run_stats["price_capped"].append((vid, peptide, price, cap))
                     continue
 
+                # Sanity check 2: reject prices > 4x or < 0.25x previous
                 prev = info["price"]
                 ratio = price / prev if prev > 0 else 999
+                # Allow larger swings for peptides sold in different mg sizes
+                # e.g. Epithalon: 10mg ($27) vs 50mg ($119) = 4.4x but both valid
                 max_ratio = 6.0 if peptide in {
                     "Epithalon", "GHK-Cu", "NAD+", "Klow Blend",
                     "Tesamorelin/Ipamorelin Blend", "BPC-157 + TB-500 Blend"
@@ -983,7 +1082,8 @@ def main():
 
     new_html, count = patch_prices(html, updates, oos_items)
     now = datetime.now(timezone.utc)
-    scrape_date_str = now.strftime("%B %-d, %Y")
+    # Update SCRAPE_DATE in the HTML so the site shows the real last-updated date
+    scrape_date_str = now.strftime("%B %-d, %Y")  # e.g. "May 26, 2026"
     new_html = re.sub(
         r'const SCRAPE_DATE = "[^"]*";',
         f'const SCRAPE_DATE = "{scrape_date_str}";',
@@ -993,6 +1093,7 @@ def main():
     github_push_file(new_html, sha, f"🤖 Daily price update: {count} changes, {len(oos_items)} OOS ({now_str})")
     log.info(f"=== Done: {count} prices updated, {len(oos_items)} marked OOS ===")
 
+    # ── Generate diagnostics report ──────────────────────────
     now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     report_lines = [
         f"# PepsTracker Scraper Diagnostics",
@@ -1073,6 +1174,7 @@ def main():
     log.info(report)
     log.info("="*60)
 
+    # Push report to GitHub as SCRAPER_REPORT.md
     try:
         report_file = "SCRAPER_REPORT.md"
         url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{report_file}"
@@ -1092,8 +1194,26 @@ def main():
 
     log.info(f"=== Run complete. Check SCRAPER_REPORT.md in GitHub for full diagnostics ===")
 
+# ── Vendor Discovery System ─────────────────────────────────
+# To add a new vendor, add it to this list and run the scraper once.
+# It will auto-discover all product URLs and add them to PRODUCT_URLS.
+# Leave empty for normal daily runs.
 
-NEW_VENDORS_TO_DISCOVER = []
+NEW_VENDORS_TO_DISCOVER = [
+    # Example:
+    # {
+    #   "id": "newvendor",
+    #   "name": "New Vendor Name",
+    #   "base_url": "https://newvendor.com",
+    #   "code": "GLOWLAB",
+    #   "discount": 0.10,
+    #   "platform": "auto",      # "woocommerce", "shopify", or "auto"
+    #   "needs_login": False,
+    #   "login_url": "",
+    #   "email_secret": "",      # GitHub secret name e.g. "NEWVENDOR_EMAIL"
+    #   "password_secret": "",   # GitHub secret name e.g. "NEWVENDOR_PASSWORD"
+    # }
+]
 
 PEPTIDE_SEARCH_TERMS = {
     "Semaglutide":                  ["semaglutide", "glp-1s", "sem"],
@@ -1155,6 +1275,7 @@ def extract_product_links(html, base_url, search_term):
                 url = base + url
             if url not in found:
                 found.append(url)
+    # Score by relevance to search term
     term_words = search_term.lower().replace("-", " ").split()
     scored = []
     for url in found:
@@ -1185,6 +1306,7 @@ def extract_mg_from_page(html, url):
 
 
 def discover_vendor_urls(vendor_info):
+    """Auto-discover product URLs for a new vendor."""
     base_url = vendor_info["base_url"]
     vendor_id = vendor_info["id"]
     platform = vendor_info.get("platform", "auto")
@@ -1193,6 +1315,7 @@ def discover_vendor_urls(vendor_info):
 
     log.info(f"=== Discovering {vendor_info['name']} ({base_url}) ===")
 
+    # Detect platform
     if platform == "auto":
         try:
             use_playwright = needs_login or vendor_id in CLOUDFLARE_VENDORS
@@ -1261,6 +1384,7 @@ def discover_vendor_urls(vendor_info):
 
 
 def run_discovery():
+    """Run vendor discovery for any new vendors in NEW_VENDORS_TO_DISCOVER."""
     if not NEW_VENDORS_TO_DISCOVER:
         return
 
@@ -1268,6 +1392,7 @@ def run_discovery():
     for vendor_info in NEW_VENDORS_TO_DISCOVER:
         vid = vendor_info["id"]
 
+        # Load login credentials from env if needed
         if vendor_info.get("needs_login"):
             email_key = vendor_info.get("email_secret", "")
             pass_key = vendor_info.get("password_secret", "")
@@ -1278,6 +1403,7 @@ def run_discovery():
 
         results = discover_vendor_urls(vendor_info)
 
+        # Print summary for manual review
         log.info(f"\n=== DISCOVERY RESULTS FOR {vendor_info['name']} ===")
         log.info(f"Add to VENDORS list:")
         log.info(f"  {{ id:\"{vid}\", name:\"{vendor_info['name']}\", url:\"{vendor_info['base_url']}\", code:\"{vendor_info['code']}\", discount:{vendor_info['discount']} }},")
