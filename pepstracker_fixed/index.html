@@ -1081,7 +1081,7 @@ function renderResults() {
         <button class="btn-copy" onclick="copyCode('${r.vendor.code}',this)">Copy</button>
       </div>
       <a class="btn-shop ${isBest?'':'secondary'}" id="shop-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Shop →</a>
-      <button class="btn-save-peptide" data-key="${r.vendor.id}::${currentPeptide}" onclick="toggleSaveListing('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)}, '${r.vendor.code}')">☆ Save</button>
+      <button class="btn-save-peptide" data-key="${r.vendor.id}::${currentPeptide}" onclick="toggleSaveListing('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)}, '${r.vendor.code}')">☆</button>
       <button class="btn-alert" data-alert-key="${r.vendor.id}::${currentPeptide}" onclick="openAlertModal('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)})">🔔 Alert</button>
     </div>`;
   }).join('');
@@ -1227,7 +1227,7 @@ function updateSaveButtons() {
     const key = btn.dataset.key;
     if (!key) return;
     const isSaved = savedListings.some(s => s.key === key);
-    btn.textContent = isSaved ? '⭐ Saved' : '☆ Save';
+    btn.textContent = isSaved ? '⭐' : '☆';
     btn.classList.toggle('saved', isSaved);
   });
 }
