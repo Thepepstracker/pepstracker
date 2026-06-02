@@ -304,12 +304,12 @@
     .size-pill-btn:hover{border-color:var(--blue);color:var(--blue);background:rgba(59,158,255,.07);transform:translateY(-1px);}
     .size-pill-btn.active{border-color:var(--blue);background:rgba(59,158,255,.15);color:var(--blue);box-shadow:0 0 0 1px rgba(59,158,255,.2);}
     /* ── Save button ── */
-    .btn-save-peptide{background:none;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 12px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .25s;white-space:nowrap;flex-shrink:0;}
-    .btn-save-peptide:hover{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,.06);}
-    .btn-save-peptide.saved{border-color:var(--gold);color:#0d0f14;background:var(--gold);font-weight:700;box-shadow:0 0 10px rgba(245,200,66,.35);}
-    .btn-save-peptide.saved:hover{background:#d4a800;border-color:#d4a800;}
+    .btn-save-peptide{background:none;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 12px;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .25s;white-space:nowrap;flex-shrink:0;}
+    .btn-save-peptide:hover{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,.06);box-shadow:0 0 8px rgba(245,200,66,.2);}
+    .btn-save-peptide.saved{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,.12);font-weight:700;box-shadow:0 0 12px rgba(245,200,66,.5),0 0 24px rgba(245,200,66,.25),0 0 40px rgba(245,200,66,.12);text-shadow:0 0 8px rgba(245,200,66,.8);}
+    .btn-save-peptide.saved:hover{background:rgba(245,200,66,.2);box-shadow:0 0 16px rgba(245,200,66,.65),0 0 32px rgba(245,200,66,.35);}
     .btn-save-peptide.just-saved{animation:savePop .4s ease;}
-    @keyframes savePop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+    @keyframes savePop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
     /* ── Toast ── */
     .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--surface);border:2px solid var(--gold);color:var(--text);font-weight:700;font-size:.95rem;padding:16px 28px;border-radius:16px;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s;z-index:9999;pointer-events:none;opacity:0;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 8px 40px rgba(245,200,66,.25),0 4px 20px rgba(0,0,0,.5);min-width:280px;text-align:center;}
     .toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto;}
