@@ -103,6 +103,7 @@ PRODUCT_URLS = {
     "DSIP":                           {"url":"https://lapeptides.net/product/dsip/","mg":5},
     "Adamax":                         {"url":"https://lapeptides.net/product/adamax/","mg":10},
     "SS-31":                          {"url":"https://lapeptides.net/product/ss-31/","mg":10},
+    "Glow Blend":                     {"url":"https://lapeptides.net/product/glow/","mg":70},
   },
   "glacier": {
     "Semaglutide":                    {"url":"https://glacieraminos.shop/product/gla1-s/","mg":15},
@@ -133,6 +134,7 @@ PRODUCT_URLS = {
     "Adamax":                         {"url":"https://glacieraminos.shop/product/adamax-10mg/","mg":10},
     "Lipo-C":                         {"url":"https://glacieraminos.shop/product/lipo-c/","mg":10},
     "Glutathione":                    {"url":"https://glacieraminos.shop/product/glutathione-1500mg/","mg":1500},
+    "Glow Blend":                     {"url":"https://glacieraminos.shop/product/glow/","mg":70},
   },
   "milehigh": {
     "Semaglutide":                    {"url":"https://milehighcompounds.is/product/mhc-1-sm/","mg":10},
@@ -163,6 +165,7 @@ PRODUCT_URLS = {
     "Lipo-C":                         {"url":"https://milehighcompounds.is/product/lipo-c/","mg":10},
     "SS-31":                          {"url":"https://milehighcompounds.is/product/mtp-31/","mg":10},
     "Glutathione":                    {"url":"https://milehighcompounds.is/product/glutathione/","mg":1500},
+    "Glow Blend":                     {"url":"https://milehighcompounds.is/product/glow-70-research-blend/","mg":70},
   },
   "ezpeptides": {
     "Semaglutide":                    {"url":"https://ezpeptides.com/product/ezp-1p-10mg/","mg":10},
@@ -180,6 +183,7 @@ PRODUCT_URLS = {
     "Buffered NAD+":                  {"url":"https://ezpeptides.com/product/buffered-nad-500mg/","mg":500},
     "Buffered NAD+ 250mg":            {"url":"https://ezpeptides.com/product/buffered-nad-250mg/","mg":250},
     "Lipo-C":                         {"url":"https://ezpeptides.com/product/lipo-c-with-b12-10ml-research-grade-solution/","mg":10},
+    "Glow Blend":                     {"url":"https://ezpeptides.com/product/glow-blend-bpc-157-tb4-ghk-cu-10mg/","mg":70},
     "LIPO-C with B12":                {"url":"https://ezpeptides.com/product/lipo-c-with-b12-10ml-research-grade-solution/","mg":10},
     "GHK-Cu Lyophilized":             {"url":"https://ezpeptides.com/product/ghk-cu-50mg/","mg":50},
     "Klow Blend":                     {"url":"https://ezpeptides.com/product/klow-blend-80mg/","mg":80},
@@ -220,6 +224,8 @@ PRODUCT_URLS = {
     "Sermorelin":                     {"url":"https://ameanopeptides.com/product/sermorelin-5mg/","mg":5},
     "DSIP":                           {"url":"https://ameanopeptides.com/product/dsip-10mg/","mg":10},
     "Adamax":                         {"url":"https://ameanopeptides.com/product/adamax-10mg/","mg":10},
+    "Lipo-C":                         {"url":"https://ameanopeptides.com/product/lipo-c-with-b12-10ml/","mg":10},
+    "Glow Blend":                     {"url":"https://ameanopeptides.com/product/glow-blend-10mg/","mg":70},
   },
   "labsourced": {
     "Tirzepatide":                    {"url":"https://www.labsourced.com/products/tirzepatide-30mg","mg":30},
@@ -272,6 +278,7 @@ PRODUCT_URLS = {
     "Lipo-C":                         {"url":"https://ionpeptide.com/product/lipo-c-b12-methylated-10mg/","mg":10},
     "SS-31":                          {"url":"https://ionpeptide.com/product/ss-31/","mg":10},
     "Glutathione":                    {"url":"https://ionpeptide.com/product/glutathione/","mg":600},
+    "Glow Blend":                     {"url":"https://ionpeptide.com/product/glow/","mg":70},
   },
   "retaone": {
     "Semaglutide":                    {"url":"https://retaonelabs.com/product/ro-1s-10mg/","mg":10},
@@ -315,6 +322,7 @@ PRODUCT_URLS = {
     "Adamax":                         {"url":"https://nurapeptide.com/product/adamax-10mg/","mg":10},
     "SS-31":                          {"url":"https://nurapeptide.com/product/ss-31-50mg/","mg":50},
     "Glutathione":                    {"url":"https://nurapeptide.com/product/glutathione-peptide-1500mg/","mg":1500},
+    "Glow Blend":                     {"url":"https://nurapeptide.com/product/glow-bpc-157-ghk-cu-tb-500-blend/","mg":70},
   },
 }
 
@@ -1008,6 +1016,8 @@ def main():
         "SS-31",
         # Antioxidant
         "Glutathione",
+        # Skin / Blend
+        "Glow Blend",
     ]
     # SKIP_VENDORS defined at module level — atomik, labsourced, retaone
 
