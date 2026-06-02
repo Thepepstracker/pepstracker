@@ -1060,7 +1060,7 @@ function renderResults() {
       <div class="result-card" style="opacity:0.55;border-color:var(--red);">
         <div class="rank" style="color:var(--red);">—</div>
         <div>
-          <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><img class="vendor-favicon" src="https://www.google.com/s2/favicons?domain=${r.vendor.domain}&sz=32" alt="" onerror="this.style.display='none'" />${r.vendor.name}</div>
+          <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><img class="vendor-favicon" src="${r.vendor.id === 'lapeptides' ? 'https://lapeptides.net/wp-content/uploads/2025/06/favicon-new.svg' : 'https://www.google.com/s2/favicons?domain=' + r.vendor.domain + '&sz=32'}" alt="" onerror="this.style.display='none'" />${r.vendor.name}</div>
           <div class="vendor-listing" style="color:var(--red);font-weight:700;">⚠ Out of Stock</div>
         </div>
         <div class="price-block">
@@ -1083,7 +1083,7 @@ function renderResults() {
     <div class="result-card ${isBest?'best':''}">
       <div class="rank ${rank===0?'first':''}">${rank===0?'🥇':'#'+(rank+1)}</div>
       <div>
-        <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><img class="vendor-favicon" src="https://www.google.com/s2/favicons?domain=${r.vendor.domain}&sz=32" alt="" onerror="this.style.display='none'" />${r.vendor.name}${isBest?'<span class="best-badge">Best Value</span>':''}</div>
+        <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><img class="vendor-favicon" src="${r.vendor.id === 'lapeptides' ? 'https://lapeptides.net/wp-content/uploads/2025/06/favicon-new.svg' : 'https://www.google.com/s2/favicons?domain=' + r.vendor.domain + '&sz=32'}" alt="" onerror="this.style.display='none'" />${r.vendor.name}${isBest?'<span class="best-badge">Best Value</span>':''}</div>
         <div class="vendor-listing">Listed as: <em>${r.listing}</em> &nbsp;·&nbsp; <a href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-size:.7rem;font-weight:600;text-decoration:none;">See all sizes →</a></div>
       </div>
       <div class="price-block">
