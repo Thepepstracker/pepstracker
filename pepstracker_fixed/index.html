@@ -997,7 +997,7 @@ function renderResults() {
         <div class="vendor-listing">Listed as: <em>${r.listing}</em> &nbsp;·&nbsp; <a href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-size:.7rem;font-weight:600;text-decoration:none;">See all sizes →</a></div>
       </div>
       <div class="price-block">
-        ${r.sizes && r.sizes.length > 1 ? `<div class="size-selector"><label>Size:</label><select class="size-select" onchange="updateCardPrice(this,'${r.vendor.id}','${currentPeptide}',${r.vendor.discount})">${r.sizes.map((s,i)=>`<option value="${i}" ${i===0?'selected':''}>${s.mg}mg — $${(s.price*(1-r.vendor.discount)).toFixed(2)}</option>`).join('')}</select></div>` : ''}
+        ${r.sizes && r.sizes.length > 1 ? `<div class="size-pills"><label>Size:</label>${r.sizes.map((s,i)=>`<button class="size-pill-btn ${i===0?'active':''}" onclick="selectSizePill(this,'${r.vendor.id}','${currentPeptide}',${i},${r.vendor.discount})">${s.mg}mg</button>`).join('')}</div>` : ''}
         <div class="price-original ${isBest?'best-price':''}" id="price-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${afterDisc.toFixed(2)}</div>
         <div class="price-reg" id="pricereg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">Reg. <span class="price-original-strike">$${r.price.toFixed(2)}</span> · ${discPct}% off</div>
         <div class="price-per-mg" id="permg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${(afterDisc/r.mg).toFixed(2)}/mg</div>
@@ -1129,11 +1129,14 @@ function updateAlertButtons() {
 loadAlerts();
 
 
-function updateCardPrice(sel, vendorId, peptide, discount) {
+function selectSizePill(btn, vendorId, peptide, idx, discount) {
+  // Highlight selected pill
+  btn.closest('.size-pills').querySelectorAll('.size-pill-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Update prices
   const priceMap = PRICES[peptide];
   if (!priceMap || !priceMap[vendorId]) return;
   const sizes = Array.isArray(priceMap[vendorId]) ? priceMap[vendorId] : [priceMap[vendorId]];
-  const idx = parseInt(sel.value);
   const chosen = sizes[idx];
   if (!chosen) return;
   const afterDisc = chosen.price * (1 - discount);
