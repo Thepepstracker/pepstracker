@@ -104,6 +104,7 @@ PRODUCT_URLS = {
     "Adamax":                         {"url":"https://lapeptides.net/product/adamax/","mg":10},
     "SS-31":                          {"url":"https://lapeptides.net/product/ss-31/","mg":10},
     "Glow Blend":                     {"url":"https://lapeptides.net/product/glow/","mg":70},
+    "Glutathione":                    {"url":"https://lapeptides.net/product/glutathione/","mg":600},
   },
   "glacier": {
     "Semaglutide":                    {"url":"https://glacieraminos.shop/product/gla1-s/","mg":15},
@@ -247,6 +248,7 @@ PRODUCT_URLS = {
     "Tesamorelin":                    {"url":"https://www.labsourced.com/products/tesamorelin-10mg","mg":10},
     "Sermorelin":                     {"url":"https://www.labsourced.com/products/sermorelin-10mg","mg":10},
     "DSIP":                           {"url":"https://www.labsourced.com/products/dsip-5mg","mg":5},
+    "Glutathione":                    {"url":"https://www.labsourced.com/products/glutathione-1500mg","mg":1500},
   },
   "ion": {
     "Semaglutide":                    {"url":"https://ionpeptide.com/product/glp-1s/","mg":5},
@@ -324,10 +326,35 @@ PRODUCT_URLS = {
     "Glutathione":                    {"url":"https://nurapeptide.com/product/glutathione-peptide-1500mg/","mg":1500},
     "Glow Blend":                     {"url":"https://nurapeptide.com/product/glow-bpc-157-ghk-cu-tb-500-blend/","mg":70},
   },
+  "puratek": {
+    "Semaglutide":                    {"url":"https://puratekpeptides.com/product/pur-1s/","mg":5},
+    "Tirzepatide":                    {"url":"https://puratekpeptides.com/product/pur-2t/","mg":15},
+    "Retatrutide":                    {"url":"https://puratekpeptides.com/product/pur-3r/","mg":10},
+    "BPC-157":                        {"url":"https://puratekpeptides.com/product/bpc-157-10-mg/","mg":10},
+    "TB-500":                         {"url":"https://puratekpeptides.com/product/tb-500/","mg":10},
+    "BPC-157 + TB-500 Blend":         {"url":"https://puratekpeptides.com/product/bpc-157-tb-500-blend-20-mg/","mg":20},
+    "Ipamorelin":                     {"url":"https://puratekpeptides.com/product/ipamorelin-10-mg/","mg":10},
+    "Tesamorelin":                    {"url":"https://puratekpeptides.com/product/tesamorelin/","mg":10},
+    "Epithalon":                      {"url":"https://puratekpeptides.com/product/epithalon-10-mg/","mg":10},
+    "Melanotan II":                   {"url":"https://puratekpeptides.com/product/melanotan-2-10-mg/","mg":10},
+    "PT-141 (Bremelanotide)":         {"url":"https://puratekpeptides.com/product/pt-141-10mg/","mg":10},
+    "GHK-Cu":                         {"url":"https://puratekpeptides.com/product/ghk-cu/","mg":50},
+    "MOTS-c":                         {"url":"https://puratekpeptides.com/product/mots-c/","mg":10},
+    "NAD+":                           {"url":"https://puratekpeptides.com/product/nad/","mg":500},
+    "Selank":                         {"url":"https://puratekpeptides.com/product/selank-10-mg/","mg":10},
+    "DSIP":                           {"url":"https://puratekpeptides.com/product/dsip-10mg/","mg":10},
+    "KPV":                            {"url":"https://puratekpeptides.com/product/kpv-10-mg/","mg":10},
+    "Klow Blend":                     {"url":"https://puratekpeptides.com/product/klow-80-mg/","mg":80},
+    "Glow Blend":                     {"url":"https://puratekpeptides.com/product/glow-70mg/","mg":70},
+    "Glutathione":                    {"url":"https://puratekpeptides.com/product/glutathione-1500mg/","mg":1500},
+    "SS-31":                          {"url":"https://puratekpeptides.com/product/ss-31/","mg":30},
+    "Tesamorelin/Ipamorelin Blend":   {"url":"https://puratekpeptides.com/product/tesa-ipa-10-3-blend/","mg":13},
+    "Adamax":                         {"url":"https://puratekpeptides.com/product/adamax-5mg/","mg":5},
+  },
 }
 
 # Vendors that need real browser (Cloudflare protected)
-CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "nura"}
+CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "nura", "puratek"}
 
 # Vendors excluded from auto-scraping:
 # - atomik: Cloudflare Turnstile (human verification) — unbypassable
