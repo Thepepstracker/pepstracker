@@ -1786,7 +1786,7 @@ function renderResults() {
         ${r.sizes && r.sizes.length > 1 ? `<div class="size-pills"><label>Size:</label>${r.sizes.map((s,i)=>`<button class="size-pill-btn ${i===0?'active':''}" onclick="selectSizePill(this,'${r.vendor.id}','${currentPeptide}',${i},${r.vendor.discount})">${s.mg}mg</button>`).join('')}</div>` : ''}
         <div class="price-original ${isBest?'best-price':''}" id="price-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${afterDisc.toFixed(2)}</div>
         <div class="price-reg" id="pricereg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">Reg. <span class="price-original-strike">$${r.price.toFixed(2)}</span> · ${discPct}% off</div>
-        <div class="price-per-mg" id="permg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${(afterDisc/r.mg).toFixed(2)}/mg</div>
+        <div class="price-per-mg" id="permg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${(afterDisc/r.mg).toFixed(2)}/${currentPeptide==='Bacteriostatic Water'?'mL':'mg'}</div>
       </div>
       <div class="code-block">
         <div>
@@ -1934,7 +1934,8 @@ function selectSizePill(btn, vendorId, peptide, idx, discount) {
   const shopEl = document.getElementById('shop-' + key);
   if (priceEl) priceEl.textContent = '$' + afterDisc.toFixed(2);
   if (regEl) regEl.innerHTML = 'Reg. <span class="price-original-strike">$' + chosen.price.toFixed(2) + '</span> · ' + discPct + '% off';
-  if (permgEl) permgEl.textContent = '$' + (afterDisc / chosen.mg).toFixed(2) + '/mg';
+  const unit = peptide === 'Bacteriostatic Water' ? 'mL' : 'mg';
+  if (permgEl) permgEl.textContent = '$' + (afterDisc / chosen.mg).toFixed(2) + '/' + unit;
   if (shopEl && chosen.url) shopEl.href = chosen.url;
 }
 
