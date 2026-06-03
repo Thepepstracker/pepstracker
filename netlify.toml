@@ -1,6 +1,2 @@
 [build]
   publish = "pepstracker_fixed"
-  functions = "netlify/functions"
-
-[functions]
-  node_bundler = "esbuild"
