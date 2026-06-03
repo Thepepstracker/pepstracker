@@ -166,9 +166,8 @@
   </div>
 
   <!-- Form -->
-  <form id="applyForm" onsubmit="submitForm(event)" data-netlify="true" name="vendor-application" netlify-honeypot="bot-field">
-  <input type="hidden" name="form-name" value="vendor-application" />
-  <input name="bot-field" style="display:none" />
+  <form id="applyForm" onsubmit="submitForm(event)">
+    <input name="bot-field" style="display:none" />
 
     <!-- Section 1: Company Info -->
     <div class="form-card">
@@ -464,10 +463,10 @@ function submitForm(e) {
 
   // Submit to Netlify Forms
   const formData = new FormData(e.target);
-  fetch('/', {
+  fetch('https://formspree.io/f/xykagwnq', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(formData).toString(),
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(Object.fromEntries(formData)),
   })
   .then(() => {
     document.getElementById('applyForm').style.display = 'none';
