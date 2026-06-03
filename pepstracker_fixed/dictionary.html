@@ -14,15 +14,15 @@
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="apple-touch-icon" href="favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Complete peptide dictionary — learn about Semaglutide, BPC-157, TB-500, Tirzepatide, Semax and 20 more research peptides. Dosing, half-life, uses and where to buy." />
+    <meta name="description" content="Complete peptide dictionary — learn about all 73 research peptides tracked on PepsTracker. Dosing, half-life, categories and prices. Dosing, half-life, uses and where to buy." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://pepstracker.com/dictionary.html" />
-  <meta property="og:title" content="Peptide Dictionary — PepsTracker" />
-  <meta property="og:description" content="Learn about 25 research peptides — dosing, half-life, categories and price comparisons." />
+  <meta property="og:title" content="Peptide Dictionary (73 Peptides) — PepsTracker" />
+  <meta property="og:description" content="Learn about 73 research peptides — dosing, half-life, categories and price comparisons." />
   <meta property="og:url" content="https://pepstracker.com/dictionary.html" />
   <meta property="og:type" content="website" />
-  <title>Peptide Dictionary — PepsTracker</title>
-  <meta name="description" content="Complete guide to 24 research peptides — what they are, how they work, typical protocols, half-life, and storage." />
+  <title>Peptide Dictionary (73 Peptides) — PepsTracker</title>
+  <meta name="description" content="Complete guide to 73 research peptides — what they are, how they work, typical protocols, half-life, and storage." />
   <style>
     :root {
       --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
@@ -170,7 +170,7 @@
 
 <section class="hero">
   <h1>Peptide <span>Dictionary</span></h1>
-  <p>Plain-English guides to all 24 peptides we track — what they are, how they work, and what the research says.</p>
+  <p>Plain-English guides to all 73 peptides we track — what they are, how they work, and what the research says.</p>
 </section>
 
 <div class="controls">
@@ -203,31 +203,95 @@
 
 <script>
 const PEPTIDES = [
-  {slug:"semaglutide",name:"Semaglutide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"A GLP-1 receptor agonist studied for appetite regulation and glucose metabolism.",halfLife:"~7 days",dose:"0.25–2.4mg/wk"},
-  {slug:"tirzepatide",name:"Tirzepatide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"Dual GIP/GLP-1 agonist with superior weight reduction outcomes vs semaglutide alone.",halfLife:"~5 days",dose:"2.5–15mg/wk"},
-  {slug:"retatrutide",name:"Retatrutide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"Triple agonist targeting GLP-1, GIP, and glucagon — the most potent metabolic peptide class.",halfLife:"~6 days",dose:"1–12mg/wk"},
-  {slug:"bpc157",name:"BPC-157",cat:"healing",catLabel:"Healing",catClass:"cat-healing",tagline:"Body Protection Compound — a stable gastric peptide with broad tissue repair activity.",halfLife:"~4 hrs",dose:"200–500mcg/day"},
-  {slug:"tb500",name:"TB-500",cat:"healing",catLabel:"Healing",catClass:"cat-healing",tagline:"Synthetic Thymosin Beta-4 fragment — promotes cell migration and systemic tissue regeneration.",halfLife:"~3 hrs",dose:"2–5mg 2x/wk"},
-  {slug:"bpctb500blend",name:"BPC-157 + TB-500 Blend",cat:"healing",catLabel:"Healing",catClass:"cat-healing",tagline:"The Wolverine Stack — combining both peptides for comprehensive tissue repair research.",halfLife:"Varies",dose:"250mcg+2mg 2x/wk"},
-  {slug:"ipamorelin",name:"Ipamorelin",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Selective GH secretagogue — stimulates pulsatile GH release with minimal side effects.",halfLife:"~2 hrs",dose:"200–300mcg 1–3x/day"},
-  {slug:"cjc1295",name:"CJC-1295 (with DAC)",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Long-acting GHRH analogue that sustains elevated GH levels for days per injection.",halfLife:"6–8 days",dose:"1–2mg/wk"},
-  {slug:"sermorelin",name:"Sermorelin",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"First 29 amino acids of natural GHRH — stimulates the pituitary to produce its own GH.",halfLife:"~15 min",dose:"200–500mcg/day"},
-  {slug:"tesamorelin",name:"Tesamorelin",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Stabilized GHRH analogue — FDA-approved for visceral fat reduction in HIV lipodystrophy.",halfLife:"~26 min",dose:"1–2mg/day"},
-  {slug:"melanotan2",name:"Melanotan II",cat:"skin",catLabel:"Skin & Tanning",catClass:"cat-skin",tagline:"Cyclic alpha-MSH analogue that stimulates UV-independent tanning via melanocyte activation.",halfLife:"~33 min",dose:"0.5–1mg/day"},
-  {slug:"pt141",name:"PT-141 (Bremelanotide)",cat:"skin",catLabel:"Skin & Tanning",catClass:"cat-skin",tagline:"Melanocortin agonist derived from Melanotan II, researched for sexual dysfunction.",halfLife:"~2.7 hrs",dose:"0.75–2mg as needed"},
-  {slug:"ghkcu",name:"GHK-Cu",cat:"skin",catLabel:"Skin & Tanning",catClass:"cat-skin",tagline:"Copper peptide naturally found in human plasma — one of the most researched skin and wound healing peptides.",halfLife:"~30 min",dose:"1–2mg/dose"},
-  {slug:"epithalon",name:"Epithalon",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Synthetic tetrapeptide from the pineal gland that activates telomerase and may extend cellular lifespan.",halfLife:"~1 hr",dose:"5–10mg/day x10–20 days"},
-  {slug:"motsc",name:"MOTS-c",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Mitochondrial-derived peptide that regulates metabolic homeostasis and improves insulin sensitivity.",halfLife:"~5 hrs",dose:"5–10mg 2–3x/wk"},
-  {slug:"nad",name:"NAD+",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Essential coenzyme critical for energy metabolism, DNA repair, and sirtuin activation.",halfLife:"~1–2 hrs",dose:"100–500mg/session"},
-  {slug:"adamax",name:"Adamax",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Next-gen Semax analogue with adamantane modification — superior BBB penetration and stronger BDNF activation.",halfLife:"~30–60 min",dose:"200–600mcg/day"},
-  {slug:"semax",name:"Semax",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Synthetic ACTH analogue developed in Russia — nootropic with BDNF-stimulating and neuroprotective properties.",halfLife:"~20 min",dose:"200–600mcg/day"},
-  {slug:"selank",name:"Selank",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Synthetic anxiolytic peptide derived from tuftsin — modulates the immune system and reduces anxiety.",halfLife:"~2 min",dose:"250–500mcg 2x/day"},
-  {slug:"dsip",name:"DSIP",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Delta Sleep Inducing Peptide — a naturally occurring nonapeptide that regulates sleep architecture.",halfLife:"~30 min",dose:"100–500mcg before sleep"},
-  {slug:"kpv",name:"KPV",cat:"immune",catLabel:"Immune",catClass:"cat-immune",tagline:"C-terminal tripeptide of alpha-MSH with potent anti-inflammatory properties, especially for gut health.",halfLife:"~2 hrs",dose:"0.5–1mg/day"},
-  {slug:"ara290",name:"ARA-290",cat:"immune",catLabel:"Immune",catClass:"cat-immune",tagline:"Non-erythropoietic EPO analogue that activates innate repair receptors and reduces neuropathic pain.",halfLife:"~3 hrs",dose:"4–8mg 3x/wk"},
-  {slug:"aod9604",name:"AOD-9604",cat:"fatloss",catLabel:"Fat Loss",catClass:"cat-fatloss",tagline:"C-terminal HGH fragment that mimics GH's fat-burning effects without growth-promoting activity.",halfLife:"~30 min",dose:"250–500mcg/day"},
-  {slug:"klowblend",name:"Klow Blend",cat:"blend",catLabel:"Blend",catClass:"cat-blend",tagline:"Multi-peptide blend of GHK-Cu, BPC-157, TB-500, and KPV for comprehensive skin and healing research.",halfLife:"Varies",dose:"Varies by blend"},
-  {slug:"tesaipamorelin",name:"Tesamorelin/Ipamorelin Blend",cat:"blend",catLabel:"Blend",catClass:"cat-blend",tagline:"GHRH + GHRP combination that amplifies natural GH pulses through complementary receptor activation.",halfLife:"Varies",dose:"1mg Tesa + 300mcg Ipa/day"},
+  // ── GLP-1 ──────────────────────────────────────────────────────────────
+  {slug:"semaglutide",name:"Semaglutide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"GLP-1 receptor agonist with 7-day half-life studied extensively for appetite suppression and glucose metabolism.",halfLife:"~7 days",dose:"0.25–2.4mg/wk"},
+  {slug:"tirzepatide",name:"Tirzepatide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"Dual GIP/GLP-1 agonist showing superior weight reduction outcomes compared to semaglutide alone.",halfLife:"~5 days",dose:"2.5–15mg/wk"},
+  {slug:"retatrutide",name:"Retatrutide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"Triple agonist targeting GLP-1, GIP, and glucagon simultaneously — the most potent metabolic peptide class in development.",halfLife:"~6 days",dose:"1–12mg/wk"},
+  {slug:"cagrilintide",name:"Cagrilintide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"Long-acting amylin analogue studied in combination with semaglutide (CagriSema) for additive weight loss effects.",halfLife:"~7 days",dose:"0.3–4.5mg/wk"},
+  {slug:"survodutide",name:"Survodutide",cat:"glp1",catLabel:"GLP-1",catClass:"cat-glp1",tagline:"Dual GLP-1/glucagon agonist (Boehringer Ingelheim) in Phase 3 for obesity and NASH — distinct from GIP-based mechanisms.",halfLife:"~5 days",dose:"0.6–6mg/wk"},
+
+  // ── HEALING ────────────────────────────────────────────────────────────
+  {slug:"bpc157",name:"BPC-157",cat:"healing",catLabel:"Healing",catClass:"cat-healing",tagline:"Body Protection Compound — a stable 15-amino acid gastric peptide with broad tendon, ligament, and gut tissue repair activity.",halfLife:"~4 hrs",dose:"200–500mcg/day"},
+  {slug:"tb500",name:"TB-500",cat:"healing",catLabel:"Healing",catClass:"cat-healing",tagline:"Synthetic Thymosin Beta-4 fragment — promotes actin upregulation, cell migration, and systemic tissue regeneration.",halfLife:"~3 hrs",dose:"2–5mg 2x/wk"},
+  {slug:"bpctb500blend",name:"BPC-157 + TB-500 Blend",cat:"healing",catLabel:"Healing",catClass:"cat-healing",tagline:"The Wolverine Stack — BPC-157 for local repair and TB-500 for systemic regeneration in a single vial.",halfLife:"Varies",dose:"250mcg BPC + 2mg TB 2x/wk"},
+  {slug:"pda",name:"PDA",cat:"healing",catLabel:"Healing",catClass:"cat-healing",tagline:"Proline-rich polypeptide complex with immunomodulatory and tissue-regenerating properties studied in neurological models.",halfLife:"~2 hrs",dose:"100–300mcg/day"},
+  {slug:"pegmgf",name:"PEG-MGF",cat:"healing",catLabel:"Healing",catClass:"cat-healing",tagline:"Pegylated Mechano Growth Factor — an IGF-1 splice variant that activates satellite cells for muscle repair and hypertrophy.",halfLife:"~5–7 days",dose:"200–400mcg 2x/wk"},
+  {slug:"ll37",name:"LL-37",cat:"healing",catLabel:"Healing",catClass:"cat-healing",tagline:"Host defence peptide derived from cathelicidin — antimicrobial, wound-healing, and immune-modulating properties.",halfLife:"~1–2 hrs",dose:"1–5mg/wk"},
+
+  // ── GROWTH HORMONE ─────────────────────────────────────────────────────
+  {slug:"ipamorelin",name:"Ipamorelin",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Selective GH secretagogue with minimal cortisol or prolactin elevation — the cleanest GHRP in the class.",halfLife:"~2 hrs",dose:"200–300mcg 1–3x/day"},
+  {slug:"cjc1295nodac",name:"CJC-1295 (No DAC)",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Modified GRF 1-29 — amplifies natural GH pulses without the prolonged elevation of the DAC version.",halfLife:"~30 min",dose:"100–200mcg per pulse"},
+  {slug:"cjc1295dac",name:"CJC-1295 (with DAC)",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Long-acting GHRH analogue using Drug Affinity Complex technology — sustains elevated GH/IGF-1 for days.",halfLife:"6–8 days",dose:"1–2mg/wk"},
+  {slug:"cjcipamorelin",name:"CJC/Ipa Blend",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"The most popular GH stack — CJC-1295 (no DAC) and Ipamorelin act synergistically on two different receptor pathways.",halfLife:"Varies",dose:"100mcg CJC + 200mcg Ipa per pulse"},
+  {slug:"sermorelin",name:"Sermorelin",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"First 29 amino acids of natural GHRH — the original prescription GHRH analogue studied for GH deficiency.",halfLife:"~15 min",dose:"200–500mcg/day"},
+  {slug:"tesamorelin",name:"Tesamorelin",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Stabilised GHRH analogue — FDA-approved for visceral fat reduction in HIV lipodystrophy via GH elevation.",halfLife:"~26 min",dose:"1–2mg/day"},
+  {slug:"ghrp2",name:"GHRP-2",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Potent GH secretagogue that also elevates cortisol and prolactin — strong GH pulse but less selective than Ipamorelin.",halfLife:"~30 min",dose:"100–300mcg 2–3x/day"},
+  {slug:"ghrp6",name:"GHRP-6",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"First-generation GHRP with significant ghrelin-like hunger stimulation — often used for appetite increase alongside GH.",halfLife:"~15–25 min",dose:"100–200mcg 2–3x/day"},
+  {slug:"hexarelin",name:"Hexarelin",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Most potent synthetic GHRP — stronger GH release than GHRP-2 but with notable cortisol and prolactin elevation.",halfLife:"~60 min",dose:"100–200mcg 2–3x/day"},
+  {slug:"igf1lr3",name:"IGF-1 LR3",cat:"gh",catLabel:"Growth Hormone",catClass:"cat-gh",tagline:"Long-lasting IGF-1 analogue that bypasses IGFBP binding — directly stimulates muscle growth and nutrient uptake at the receptor.",halfLife:"~20–30 hrs",dose:"20–60mcg/day"},
+
+  // ── SKIN & TANNING ─────────────────────────────────────────────────────
+  {slug:"melanotani",name:"Melanotan I",cat:"skin",catLabel:"Skin & Tanning",catClass:"cat-skin",tagline:"Synthetic alpha-MSH analogue studied for photoprotection and UV-independent tanning without the sexual side effects of MT-II.",halfLife:"~1.5 hrs",dose:"0.5–1mg/day"},
+  {slug:"melanotanii",name:"Melanotan II",cat:"skin",catLabel:"Skin & Tanning",catClass:"cat-skin",tagline:"Cyclic alpha-MSH analogue — UV-independent tanning via melanocyte activation, with notable libido effects.",halfLife:"~33 min",dose:"0.5–1mg/day"},
+  {slug:"pt141",name:"PT-141 (Bremelanotide)",cat:"skin",catLabel:"Skin & Tanning",catClass:"cat-skin",tagline:"Melanocortin agonist derived from MT-II — FDA-approved for hypoactive sexual desire disorder in women.",halfLife:"~2.7 hrs",dose:"0.75–2mg as needed"},
+  {slug:"ghkcu",name:"GHK-Cu",cat:"skin",catLabel:"Skin & Tanning",catClass:"cat-skin",tagline:"Copper tripeptide found naturally in human plasma — collagen synthesis, wound healing, and skin remodelling.",halfLife:"~30 min",dose:"1–2mg/dose"},
+  {slug:"ahkcu",name:"AHK-Cu",cat:"skin",catLabel:"Skin & Tanning",catClass:"cat-skin",tagline:"Copper peptide with stronger hair follicle stimulation than GHK-Cu — studied for alopecia and scalp regeneration.",halfLife:"~30 min",dose:"1–2mg/day"},
+  {slug:"snap8",name:"Snap-8",cat:"skin",catLabel:"Skin & Tanning",catClass:"cat-skin",tagline:"Octapeptide that competes with SNAP-25 to inhibit vesicle docking — a topical botox-mimetic for expression lines.",halfLife:"Topical",dose:"Applied topically"},
+
+  // ── LONGEVITY ──────────────────────────────────────────────────────────
+  {slug:"epithalon",name:"Epithalon",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Synthetic tetrapeptide from the pineal gland — activates telomerase and may extend cellular lifespan via telomere lengthening.",halfLife:"~1 hr",dose:"5–10mg/day x10–20 days"},
+  {slug:"motsc",name:"MOTS-c",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Mitochondrial-derived peptide that regulates metabolic homeostasis, improves insulin sensitivity, and extends lifespan in models.",halfLife:"~5 hrs",dose:"5–10mg 2–3x/wk"},
+  {slug:"nad",name:"NAD+",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Essential coenzyme for energy metabolism, DNA repair, and sirtuin activation — critical for cellular age management.",halfLife:"~1–2 hrs",dose:"100–500mg/session"},
+  {slug:"ss31",name:"SS-31",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Szeto-Schiller tetrapeptide targeting the inner mitochondrial membrane — reduces ROS and preserves mitochondrial function.",halfLife:"~30 min",dose:"1–5mg/day"},
+  {slug:"humanin",name:"Humanin",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Mitochondrially-encoded peptide with cytoprotective effects — studied for neurodegeneration, diabetes, and cardiovascular ageing.",halfLife:"~2 hrs",dose:"2–5mg/wk"},
+  {slug:"foxo4dri",name:"FOXO4-DRI",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"D-retro-inverso peptide that triggers apoptosis selectively in senescent cells — a true senolytic research compound.",halfLife:"~24 hrs",dose:"1–3mg/kg intermittent"},
+  {slug:"pinealon",name:"Pinealon",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Pineal gland-derived tripeptide (EDR) with neuroprotective and circadian-regulating properties studied in ageing models.",halfLife:"~1 hr",dose:"2–10mg/day"},
+  {slug:"thymalin",name:"Thymalin",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Thymic polypeptide extract that restores immune function and has demonstrated lifespan-extending effects in animal studies.",halfLife:"~2 hrs",dose:"10–20mg/course"},
+  {slug:"cardiogen",name:"Cardiogen",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Russian bioregulator tetrapeptide (AEDG) for cardiovascular tissue — studied for cardiac cell regeneration and heart protection.",halfLife:"~1 hr",dose:"5–10mg/course"},
+  {slug:"cartalax",name:"Cartalax",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Cartilage bioregulator peptide that supports connective tissue maintenance and has shown anti-ageing effects in cartilage models.",halfLife:"~1 hr",dose:"5–10mg/course"},
+  {slug:"crystagen",name:"Crystagen",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Bronchial epithelium bioregulator (KEDP) studied for respiratory tissue restoration and lung cell regeneration.",halfLife:"~1 hr",dose:"5–10mg/course"},
+  {slug:"ovagen",name:"Ovagen",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Liver and intestinal tissue bioregulator (KHED) with hepatoprotective properties and GI regeneration research applications.",halfLife:"~1 hr",dose:"5–10mg/course"},
+  {slug:"pancragen",name:"Pancragen",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Pancreatic bioregulator (KEDG) studied for insulin-producing beta cell support and glucose homeostasis restoration.",halfLife:"~1 hr",dose:"5–10mg/course"},
+  {slug:"testagen",name:"Testagen",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Testicular bioregulator tetrapeptide (LKEK) studied for male reproductive system support and natural testosterone optimisation.",halfLife:"~1 hr",dose:"5–10mg/course"},
+  {slug:"vesugen",name:"Vesugen",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Vascular bioregulator (KED) that supports endothelial cell function, studied for blood vessel regeneration and cardiovascular health.",halfLife:"~1 hr",dose:"5–10mg/course"},
+  {slug:"vilon",name:"Vilon",cat:"longevity",catLabel:"Longevity",catClass:"cat-longevity",tagline:"Dipeptide bioregulator (KE) that acts on immune and endocrine systems — one of the most studied Russian anti-ageing peptides.",halfLife:"~30 min",dose:"1–5mg/day"},
+
+  // ── COGNITIVE ──────────────────────────────────────────────────────────
+  {slug:"adamax",name:"Adamax",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Next-gen Semax analogue with adamantane modification — enhanced BBB penetration and stronger BDNF upregulation.",halfLife:"~30–60 min",dose:"200–600mcg/day"},
+  {slug:"semax",name:"Semax",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Synthetic ACTH analogue developed in Russia — nootropic with BDNF-stimulating, neuroprotective, and anxiolytic effects.",halfLife:"~20 min",dose:"200–600mcg/day"},
+  {slug:"selank",name:"Selank",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Anxiolytic heptapeptide derived from tuftsin — modulates GABA and serotonin systems without tolerance or dependence.",halfLife:"~2 min",dose:"250–500mcg 2x/day"},
+  {slug:"nacetysemax",name:"N-Acetyl Semax",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Acetylated and amidated Semax derivative with improved stability and prolonged BDNF-stimulating bioactivity.",halfLife:"~2–4 hrs",dose:"200–500mcg/day"},
+  {slug:"nacetylselank",name:"N-Acetyl Selank",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Modified Selank analogue with acetylation for extended duration — anxiolytic and immune-modulating with fewer dosing intervals.",halfLife:"~4–8 hrs",dose:"250–500mcg/day"},
+  {slug:"dsip",name:"DSIP",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Delta Sleep Inducing Peptide — a naturally occurring nonapeptide that regulates sleep architecture and stress hormones.",halfLife:"~30 min",dose:"100–500mcg before sleep"},
+  {slug:"dihexa",name:"Dihexa",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Potent HGF/Met agonist — promotes synaptogenesis and has shown cognitive enhancement activity up to 7 orders stronger than BDNF.",halfLife:"~12 hrs",dose:"10–30mg/wk"},
+  {slug:"pe2228",name:"PE-22-28",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Spadin analogue targeting TREK-1 potassium channels — rapid antidepressant-like effects with serotonin pathway modulation.",halfLife:"~2 hrs",dose:"500mcg–2mg/day"},
+  {slug:"methyleneblue",name:"Methylene Blue",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Low-dose mitochondrial electron carrier that enhances memory consolidation and shows neuroprotective effects in ageing models.",halfLife:"~5–6 hrs",dose:"0.5–4mg/kg"},
+  {slug:"oxytocin",name:"Oxytocin",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"The bonding neuropeptide — regulates social behaviour, trust, anxiety, and pain perception through hypothalamic action.",halfLife:"~3–5 min",dose:"10–40IU intranasal"},
+  {slug:"vip",name:"VIP",cat:"cognitive",catLabel:"Cognitive",catClass:"cat-cognitive",tagline:"Vasoactive Intestinal Peptide — a potent immunomodulator and neuropeptide with anti-inflammatory and circadian regulatory roles.",halfLife:"~1 min",dose:"50–100mcg/day"},
+
+  // ── IMMUNE ─────────────────────────────────────────────────────────────
+  {slug:"kpv",name:"KPV",cat:"immune",catLabel:"Immune",catClass:"cat-immune",tagline:"C-terminal alpha-MSH tripeptide — potent anti-inflammatory with specific gut research applications for IBD and Crohn's.",halfLife:"~2 hrs",dose:"0.5–1mg/day"},
+  {slug:"ara290",name:"ARA-290",cat:"immune",catLabel:"Immune",catClass:"cat-immune",tagline:"Non-erythropoietic EPO analogue activating innate repair receptors — reduces neuropathic pain and inflammatory cytokines.",halfLife:"~3 hrs",dose:"4–8mg 3x/wk"},
+  {slug:"thymosinA1",name:"Thymosin Alpha-1",cat:"immune",catLabel:"Immune",catClass:"cat-immune",tagline:"Thymic peptide approved in 37 countries for immune enhancement — boosts T-cell maturation and interferon production.",halfLife:"~2 hrs",dose:"1.6mg 2x/wk"},
+  {slug:"pnc27",name:"PNC-27",cat:"immune",catLabel:"Immune",catClass:"cat-immune",tagline:"P53-derived peptide with selective tumour cell membrane disruption — studied for anticancer activity in various cell lines.",halfLife:"~4 hrs",dose:"2–5mg research dosing"},
+  {slug:"glutathione",name:"Glutathione",cat:"immune",catLabel:"Immune",catClass:"cat-immune",tagline:"The master antioxidant — a tripeptide critical for detoxification, immune defence, and mitochondrial health across all cells.",halfLife:"~3–4 hrs",dose:"200–1200mg IV/IM"},
+  {slug:"hcg",name:"HCG",cat:"immune",catLabel:"Immune",catClass:"cat-immune",tagline:"Human Chorionic Gonadotropin — glycoprotein hormone used in research for LH-mimicking and testicular function restoration.",halfLife:"~24–36 hrs",dose:"250–500IU 2–3x/wk"},
+
+  // ── FAT LOSS ───────────────────────────────────────────────────────────
+  {slug:"aod9604",name:"AOD-9604",cat:"fatloss",catLabel:"Fat Loss",catClass:"cat-fatloss",tagline:"C-terminal HGH fragment (176-191) — mimics GH fat-burning activity without growth-promoting or insulin-desensitising effects.",halfLife:"~30 min",dose:"250–500mcg/day"},
+  {slug:"5amino1mq",name:"5-Amino-1MQ",cat:"fatloss",catLabel:"Fat Loss",catClass:"cat-fatloss",tagline:"Small-molecule NNMT inhibitor — activates SIRT1 pathways and promotes fat cell metabolism without receptor downregulation.",halfLife:"~4 hrs",dose:"50–100mg/day"},
+  {slug:"lipoc",name:"Lipo-C",cat:"fatloss",catLabel:"Fat Loss",catClass:"cat-fatloss",tagline:"Lipotropic compound blend (MIC + B12) — supports hepatic fat metabolism and fatty acid oxidation, especially in combination protocols.",halfLife:"~24 hrs",dose:"1–5mL IM injection"},
+  {slug:"tesofensine",name:"Tesofensine",cat:"fatloss",catLabel:"Fat Loss",catClass:"cat-fatloss",tagline:"Triple monoamine reuptake inhibitor (serotonin, dopamine, noradrenaline) with strong appetite suppression in Phase 2 trials.",halfLife:"~220 hrs",dose:"0.25–0.5mg/day"},
+  {slug:"slup332",name:"SLU-PP-332",cat:"fatloss",catLabel:"Fat Loss",catClass:"cat-fatloss",tagline:"ERR agonist that activates the oxidative metabolism programme — mimics the molecular signature of aerobic exercise.",halfLife:"~4 hrs",dose:"50–100mg/day"},
+  {slug:"kisspeptin",name:"Kisspeptin",cat:"fatloss",catLabel:"Fat Loss",catClass:"cat-fatloss",tagline:"Hypothalamic peptide that triggers GnRH pulses — studied for reproductive hormone regulation, fertility, and metabolic signalling.",halfLife:"~28 min",dose:"1–10nmol/kg research dosing"},
+
+  // ── BLENDS ─────────────────────────────────────────────────────────────
+  {slug:"klowblend",name:"Klow Blend",cat:"blend",catLabel:"Blend",catClass:"cat-blend",tagline:"GHK-Cu + BPC-157 + TB-500 + KPV — the comprehensive healing and anti-inflammatory stack in one vial.",halfLife:"Varies",dose:"Varies by blend"},
+  {slug:"glowblend",name:"Glow Blend",cat:"blend",catLabel:"Blend",catClass:"cat-blend",tagline:"GHK-Cu + BPC-157 + TB-500 — targeted skin, healing, and inflammation combination studied for systemic tissue support.",halfLife:"Varies",dose:"Varies by blend"},
+  {slug:"tesaipamorelin",name:"Tesamorelin/Ipamorelin Blend",cat:"blend",catLabel:"Blend",catClass:"cat-blend",tagline:"GHRH + GHRP combination that amplifies natural GH pulses through two synergistic receptor pathways.",halfLife:"Varies",dose:"1mg Tesa + 300mcg Ipa/day"},
+  {slug:"cjcipamorelinsblend",name:"CJC/Ipa Blend",cat:"blend",catLabel:"Blend",catClass:"cat-blend",tagline:"CJC-1295 No DAC paired with Ipamorelin — the most popular GH peptide combination for sleep and recovery.",halfLife:"Varies",dose:"100mcg CJC + 200mcg Ipa per pulse"},
+  {slug:"semaxselankblend",name:"Semax/Selank Blend",cat:"blend",catLabel:"Blend",catClass:"cat-blend",tagline:"Nootropic + anxiolytic combination — BDNF stimulation from Semax with GABA/serotonin modulation from Selank.",halfLife:"Varies",dose:"300mcg Semax + 300mcg Selank"},
+  {slug:"retacagri",name:"Retacagri Blend",cat:"blend",catLabel:"Blend",catClass:"cat-blend",tagline:"Retatrutide + Cagrilintide — a dual amylin/triple incretin combination studied for maximum metabolic effect.",halfLife:"~6–7 days",dose:"Varies by protocol"},
 ];
 
 let activeCat = 'all';
