@@ -328,6 +328,28 @@
     @media(max-width:640px){.btn-save-peptide{grid-column:1/-1;text-align:center;padding:10px;}}
   
     .vendor-favicon { width: 28px !important; height: 28px !important; object-fit: contain; flex-shrink: 0; }
+    .featured-section{background:linear-gradient(135deg,#0d1f35,#0a1628);border:1px solid rgba(245,200,66,.35);border-radius:16px;overflow:hidden;margin-bottom:16px;}
+    .featured-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(255,255,255,.07);}
+    .featured-vendor-info{display:flex;align-items:center;gap:12px;}
+    .featured-vendor-logo{width:34px;height:34px;border-radius:8px;background:#fff;padding:3px;object-fit:contain;}
+    .featured-vendor-name{color:#e8edf5;font-weight:700;font-size:1rem;}
+    .featured-vendor-sub{color:#7a8ba8;font-size:.78rem;margin-top:1px;}
+    .featured-badge{background:rgba(245,200,66,.15);color:#f5c842;border:1px solid rgba(245,200,66,.4);font-size:.68rem;font-weight:700;padding:2px 10px;border-radius:20px;letter-spacing:.3px;}
+    .featured-sale-box{background:rgba(245,200,66,.12);border:1px solid rgba(245,200,66,.3);border-radius:10px;padding:8px 14px;text-align:center;}
+    .featured-sale-title{color:#f5c842;font-size:.68rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+    .featured-sale-pct{color:#f5c842;font-size:1.4rem;font-weight:800;line-height:1.2;}
+    .featured-sale-code{color:rgba(245,200,66,.7);font-size:.72rem;}
+    .featured-body{padding:14px 20px;}
+    .featured-peptide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px;}
+    .featured-peptide-card{background:rgba(255,255,255,.05);border-radius:10px;padding:10px 12px;}
+    .featured-peptide-name{color:#7a8ba8;font-size:.75rem;margin-bottom:4px;}
+    .featured-price-row{display:flex;align-items:baseline;gap:6px;}
+    .featured-price{color:#e8edf5;font-size:1.1rem;font-weight:800;}
+    .featured-orig{color:#7a8ba8;font-size:.75rem;text-decoration:line-through;}
+    .featured-permg{color:#4de87a;font-size:.72rem;margin-top:2px;}
+    .featured-highlight{background:rgba(59,158,255,.08) !important;border:1px solid rgba(59,158,255,.25) !important;}
+    .featured-shop-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:#3b9eff;color:#fff;font-weight:700;font-size:.9rem;padding:11px;border-radius:10px;text-decoration:none;transition:opacity .2s;}
+    .featured-shop-btn:hover{opacity:.88;text-decoration:none;}
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -580,6 +602,7 @@
       <div class="results-title">Prices for <span id="resultTitle"></span></div>
       <div class="last-updated">Last updated: <em id="lastUpdated"></em></div>
     </div>
+    <div id="featuredSection"></div>
     <div class="result-list" id="resultList"></div>
   </div>
 </div>
@@ -1744,6 +1767,87 @@ function copyCode(code, btn) {
     btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
   });
+}
+
+
+function renderFeaturedSection() {
+  const el = document.getElementById('featuredSection');
+  if (!el) return;
+
+  const nuraVendor = VENDORS.find(v => v.id === 'nura');
+  if (!nuraVendor) { el.innerHTML = ''; return; }
+
+  renderFeaturedSection();
+  const priceMap = PRICES[currentPeptide];
+  const nuraData = priceMap ? priceMap['nura'] : null;
+  if (!nuraData || nuraData === null) { el.innerHTML = ''; return; }
+
+  const sizes = Array.isArray(nuraData) ? nuraData : [nuraData];
+  const d = sizes[0];
+  if (!d || d.oos) { el.innerHTML = ''; return; }
+
+  const disc = nuraVendor.discount;
+  const afterDisc = d.price * (1 - disc);
+  const discPct = Math.round(disc * 100);
+  const permg = (afterDisc / d.mg).toFixed(2);
+  const shopUrl = getShopUrl('nura', currentPeptide);
+
+  // Show 3 spotlight peptides (skip current)
+  const spotlightPeps = ['Semaglutide','Tirzepatide','BPC-157','GHK-Cu','Epithalon','MOTS-c','NAD+']
+    .filter(p => p !== currentPeptide && PRICES[p] && PRICES[p]['nura'] && !Array.isArray(PRICES[p]['nura']) === false
+      ? (Array.isArray(PRICES[p]['nura']) ? PRICES[p]['nura'][0] && !PRICES[p]['nura'][0].oos : false)
+      : false);
+
+  const spotlightCards = spotlightPeps.slice(0,3).map(pep => {
+    const sd = Array.isArray(PRICES[pep]['nura']) ? PRICES[pep]['nura'][0] : PRICES[pep]['nura'];
+    if (!sd) return '';
+    const sa = sd.price * (1 - disc);
+    return `<div class="featured-peptide-card">
+      <div class="featured-peptide-name">${pep}</div>
+      <div class="featured-price-row">
+        <span class="featured-price">$${sa.toFixed(2)}</span>
+        <span class="featured-orig">$${sd.price.toFixed(2)}</span>
+      </div>
+      <div class="featured-permg">$${(sa/sd.mg).toFixed(2)}/mg</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+  <div class="featured-section">
+    <div class="featured-header">
+      <div class="featured-vendor-info">
+        <img class="featured-vendor-logo" src="https://www.google.com/s2/favicons?domain=nurapeptide.com&sz=64" alt="Nura Peptide" />
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="featured-vendor-name">Nura Peptide</span>
+            <span class="featured-badge">⭐ Featured Vendor</span>
+          </div>
+          <div class="featured-vendor-sub">nurapeptide.com · 27 peptides</div>
+        </div>
+      </div>
+      <div class="featured-sale-box">
+        <div class="featured-sale-title">Flash sale — ends midnight</div>
+        <div class="featured-sale-pct">${discPct}% off</div>
+        <div class="featured-sale-code">code: ${nuraVendor.code}</div>
+      </div>
+    </div>
+    <div class="featured-body">
+      <div class="featured-peptide-grid">
+        <div class="featured-peptide-card featured-highlight">
+          <div class="featured-peptide-name">${currentPeptide} — ${d.listing}</div>
+          <div class="featured-price-row">
+            <span class="featured-price">$${afterDisc.toFixed(2)}</span>
+            <span class="featured-orig">$${d.price.toFixed(2)}</span>
+          </div>
+          <div class="featured-permg">$${permg}/mg after code</div>
+        </div>
+        ${spotlightCards}
+      </div>
+      <a class="featured-shop-btn" href="${shopUrl}" target="_blank" rel="noopener">
+        Shop Nura Peptide — ${discPct}% off today only →
+      </a>
+    </div>
+  </div>`;
 }
 
 function renderResults() {
