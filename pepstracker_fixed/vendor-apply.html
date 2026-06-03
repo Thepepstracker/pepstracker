@@ -94,7 +94,7 @@
 
 
     /* Hamburger */
-    .menu-btn{display:none;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;padding:7px 10px;font-size:1.1rem;line-height:1;flex-shrink:0;}
+    
     .menu-btn:hover{color:var(--text);border-color:var(--blue);}
     .mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);}
     .mobile-nav.open{display:flex;}
@@ -105,6 +105,26 @@
     @media(max-width:900px){nav{display:none;}.menu-btn{display:block;}}
     footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:.82rem;}
     footer a{color:var(--blue);text-decoration:none;}
+  
+    /* Hamburger on ALL screens */
+    nav { display: none !important; }
+    .menu-btn { display: flex !important; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; color: var(--text); cursor: pointer; padding: 8px 14px; font-size: .9rem; font-weight: 600; transition: all .2s; }
+    .menu-btn:hover { border-color: var(--blue); color: var(--blue); background: rgba(59,158,255,.08); }
+    .menu-btn .ham-icon { font-size: 1.1rem; transition: transform .2s; }
+    .menu-btn.open .ham-icon { transform: rotate(90deg); }
+    /* Mobile: full-width drawer */
+    .mobile-nav { display: none; flex-direction: column; gap: 4px; padding: 12px 16px 16px; border-top: 1px solid var(--border); background: var(--surface); z-index: 200; }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a { color: var(--muted); text-decoration: none; font-size: .95rem; font-weight: 600; padding: 10px 14px; border-radius: 10px; transition: all .2s; }
+    .mobile-nav a:hover, .mobile-nav a.active { color: var(--text); background: rgba(255,255,255,.06); }
+    .mobile-nav a.active { color: var(--blue); }
+    .mobile-nav a.nav-calc { background: rgba(77,232,122,.08); color: var(--green); border: 1px solid rgba(77,232,122,.2); }
+    .mobile-nav a.nav-apply { background: rgba(245,200,66,.08); color: var(--gold); border: 1px solid rgba(245,200,66,.2); }
+    /* Desktop: floating dropdown panel */
+    @media(min-width:769px) {
+      .mobile-nav { position: fixed; top: 68px; right: 16px; width: 220px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 12px 32px rgba(0,0,0,.5); padding: 8px; border-top: 1px solid var(--border); }
+      .mobile-nav a { font-size: .88rem; padding: 9px 12px; }
+    }
   </style>
 </head>
 <body>
@@ -133,7 +153,7 @@
       <a href="disclaimer.html">Disclaimer</a>
       <a href="account.html">👤 Account</a>
     </nav>
-    <button class="menu-btn" id="menuBtn" aria-label="Open menu" onclick="toggleMenu()">☰</button>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu" onclick="toggleMenu()"><span class="ham-icon">☰</span> Menu</button>
   </div>
   <div class="mobile-nav" id="mobileNav">
     <a href="index.html" onclick="toggleMenu()">🏠 Price Tracker</a>
@@ -492,9 +512,9 @@ function submitForm(e) {
 function toggleMenu() {
   const nav = document.getElementById('mobileNav');
   const btn = document.getElementById('menuBtn');
-  if (!nav || !btn) return;
   const open = nav.classList.toggle('open');
-  btn.textContent = open ? '✕' : '☰';
+  btn.classList.toggle('open', open);
+  btn.querySelector('.ham-icon').textContent = open ? '✕' : '☰';
   btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
 }
 document.addEventListener('click', function(e) {

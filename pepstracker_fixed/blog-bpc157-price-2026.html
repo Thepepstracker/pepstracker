@@ -52,12 +52,12 @@
     nav a.active{color:var(--text);}
     nav a.nav-calc{background:rgba(77,232,122,.1);color:var(--green);border:1px solid rgba(77,232,122,.25);}
     nav a.nav-apply{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);}
-    .menu-btn{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;padding:4px 8px;}
+    
     .mobile-nav{display:none;position:fixed;top:60px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;flex-direction:column;gap:4px;z-index:99;}
     .mobile-nav.open{display:flex;}
     .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:600;padding:10px 12px;border-radius:8px;}
     .mobile-nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
-    @media(max-width:768px){nav{display:none;}.menu-btn{display:block;}}
+    
     .article-wrap{max-width:780px;margin:0 auto;padding:48px 20px 80px;}
     .breadcrumb{font-size:.8rem;color:var(--muted);margin-bottom:24px;}
     .breadcrumb a{color:var(--muted);text-decoration:none;}
@@ -92,6 +92,26 @@
     footer{background:var(--surface);border-top:1px solid var(--border);padding:32px 20px;text-align:center;font-size:.8rem;color:var(--muted);}
     footer a{color:var(--muted);text-decoration:none;}
     footer a:hover{color:var(--blue);}
+  
+    /* Hamburger on ALL screens */
+    nav { display: none !important; }
+    .menu-btn { display: flex !important; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; color: var(--text); cursor: pointer; padding: 8px 14px; font-size: .9rem; font-weight: 600; transition: all .2s; }
+    .menu-btn:hover { border-color: var(--blue); color: var(--blue); background: rgba(59,158,255,.08); }
+    .menu-btn .ham-icon { font-size: 1.1rem; transition: transform .2s; }
+    .menu-btn.open .ham-icon { transform: rotate(90deg); }
+    /* Mobile: full-width drawer */
+    .mobile-nav { display: none; flex-direction: column; gap: 4px; padding: 12px 16px 16px; border-top: 1px solid var(--border); background: var(--surface); z-index: 200; }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a { color: var(--muted); text-decoration: none; font-size: .95rem; font-weight: 600; padding: 10px 14px; border-radius: 10px; transition: all .2s; }
+    .mobile-nav a:hover, .mobile-nav a.active { color: var(--text); background: rgba(255,255,255,.06); }
+    .mobile-nav a.active { color: var(--blue); }
+    .mobile-nav a.nav-calc { background: rgba(77,232,122,.08); color: var(--green); border: 1px solid rgba(77,232,122,.2); }
+    .mobile-nav a.nav-apply { background: rgba(245,200,66,.08); color: var(--gold); border: 1px solid rgba(245,200,66,.2); }
+    /* Desktop: floating dropdown panel */
+    @media(min-width:769px) {
+      .mobile-nav { position: fixed; top: 68px; right: 16px; width: 220px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 12px 32px rgba(0,0,0,.5); padding: 8px; border-top: 1px solid var(--border); }
+      .mobile-nav a { font-size: .88rem; padding: 9px 12px; }
+    }
   </style>
 </head>
 <body>
@@ -111,7 +131,7 @@
       <a href="advertise.html" style="background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);border-radius:8px;padding:6px 10px;font-size:.82rem;font-weight:600;text-decoration:none;white-space:nowrap;">📣 Advertise</a>
       <a href="disclaimer.html">Disclaimer</a>
     </nav>
-    <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu" onclick="toggleMenu()"><span class="ham-icon">☰</span> Menu</button>
   </div>
 </header>
 <div class="mobile-nav" id="mobileNav">
@@ -298,10 +318,22 @@
 function toggleMenu() {
   const nav = document.getElementById('mobileNav');
   const btn = document.getElementById('menuBtn');
-  if (!nav || !btn) return;
   const open = nav.classList.toggle('open');
-  btn.textContent = open ? '✕' : '☰';
+  btn.classList.toggle('open', open);
+  btn.querySelector('.ham-icon').textContent = open ? '✕' : '☰';
+  btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
 }
+
+document.addEventListener('click', function(e) {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  if (nav && nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove('open');
+    btn.classList.remove('open');
+    const icon = btn.querySelector('.ham-icon');
+    if (icon) icon.textContent = '☰';
+  }
+});
 </script>
 </body>
 </html>

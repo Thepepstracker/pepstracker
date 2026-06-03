@@ -29,11 +29,11 @@
     nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
     nav a.active{color:var(--text);}
     nav a.nav-cta{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);}
-    .menu-btn{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;padding:4px 8px;}
+    
     .mobile-nav{display:none;position:fixed;top:60px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;flex-direction:column;gap:4px;z-index:99;}
     .mobile-nav.open{display:flex;}
     .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:600;padding:10px 12px;border-radius:8px;}
-    @media(max-width:768px){nav{display:none;}.menu-btn{display:block;}}
+    
 
     .page-hero{max-width:900px;margin:0 auto;padding:48px 20px 32px;text-align:center;}
     .page-tag{display:inline-block;background:rgba(59,158,255,.1);color:var(--blue);border:1px solid rgba(59,158,255,.25);border-radius:20px;font-size:.72rem;font-weight:700;padding:3px 12px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;}
@@ -85,6 +85,26 @@
     footer{background:var(--surface);border-top:1px solid var(--border);padding:32px 20px;text-align:center;font-size:.8rem;color:var(--muted);}
     footer a{color:var(--muted);text-decoration:none;}
     footer a:hover{color:var(--blue);}
+  
+    /* Hamburger on ALL screens */
+    nav { display: none !important; }
+    .menu-btn { display: flex !important; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; color: var(--text); cursor: pointer; padding: 8px 14px; font-size: .9rem; font-weight: 600; transition: all .2s; }
+    .menu-btn:hover { border-color: var(--blue); color: var(--blue); background: rgba(59,158,255,.08); }
+    .menu-btn .ham-icon { font-size: 1.1rem; transition: transform .2s; }
+    .menu-btn.open .ham-icon { transform: rotate(90deg); }
+    /* Mobile: full-width drawer */
+    .mobile-nav { display: none; flex-direction: column; gap: 4px; padding: 12px 16px 16px; border-top: 1px solid var(--border); background: var(--surface); z-index: 200; }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a { color: var(--muted); text-decoration: none; font-size: .95rem; font-weight: 600; padding: 10px 14px; border-radius: 10px; transition: all .2s; }
+    .mobile-nav a:hover, .mobile-nav a.active { color: var(--text); background: rgba(255,255,255,.06); }
+    .mobile-nav a.active { color: var(--blue); }
+    .mobile-nav a.nav-calc { background: rgba(77,232,122,.08); color: var(--green); border: 1px solid rgba(77,232,122,.2); }
+    .mobile-nav a.nav-apply { background: rgba(245,200,66,.08); color: var(--gold); border: 1px solid rgba(245,200,66,.2); }
+    /* Desktop: floating dropdown panel */
+    @media(min-width:769px) {
+      .mobile-nav { position: fixed; top: 68px; right: 16px; width: 220px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 12px 32px rgba(0,0,0,.5); padding: 8px; border-top: 1px solid var(--border); }
+      .mobile-nav a { font-size: .88rem; padding: 9px 12px; }
+    }
   </style>
 </head>
 <body>
@@ -122,7 +142,7 @@
       <a href="vendor-apply.html">📋 Apply</a>
       <a href="advertise.html" class="nav-cta">📣 Advertise</a>
     </nav>
-    <button class="menu-btn" id="menuBtn">☰</button>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu" onclick="toggleMenu()"><span class="ham-icon">☰</span> Menu</button>
   </div>
 </header>
 <div class="mobile-nav" id="mobileNav">
@@ -560,7 +580,14 @@
 </footer>
 
 <script>
-function toggleMenu(){const n=document.getElementById('mobileNav');const b=document.getElementById('menuBtn');const o=n.classList.toggle('open');b.textContent=o?'✕':'☰';}
+function toggleMenu() {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  const open = nav.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  btn.querySelector('.ham-icon').textContent = open ? '✕' : '☰';
+  btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+}
 function copyCode(code,btn){navigator.clipboard.writeText(code).then(()=>{btn.textContent='✓ Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}
 function filterVendors(type,btn){
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
@@ -580,6 +607,17 @@ function filterVendors(type,btn){
   });
   document.getElementById('filterCount').textContent=`Showing ${visible} vendor${visible!==1?'s':''}`;
 }
+
+document.addEventListener('click', function(e) {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('menuBtn');
+  if (nav && nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove('open');
+    btn.classList.remove('open');
+    const icon = btn.querySelector('.ham-icon');
+    if (icon) icon.textContent = '☰';
+  }
+});
 </script>
 </body>
 </html>
