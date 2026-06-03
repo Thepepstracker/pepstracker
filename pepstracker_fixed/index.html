@@ -1777,7 +1777,6 @@ function renderFeaturedSection() {
   const nuraVendor = VENDORS.find(v => v.id === 'nura');
   if (!nuraVendor) { el.innerHTML = ''; return; }
 
-  renderFeaturedSection();
   const priceMap = PRICES[currentPeptide];
   const nuraData = priceMap ? priceMap['nura'] : null;
   if (!nuraData || nuraData === null) { el.innerHTML = ''; return; }
@@ -1851,6 +1850,7 @@ function renderFeaturedSection() {
 }
 
 function renderResults() {
+  renderFeaturedSection();
   const priceMap = PRICES[currentPeptide];
   if (!priceMap) {
     document.getElementById('emptyState').innerHTML = `<div class="empty-icon">🔬</div><h3>Pricing data coming soon for ${currentPeptide}</h3><p>Our scraper will pick this up on the next daily run.</p>`;
