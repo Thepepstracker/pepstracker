@@ -2061,6 +2061,7 @@ function renderResults() {
           <div class="code-label">Discount code</div>
           <div class="code-row"><div class="code-badge">${r.vendor.code}</div></div>
           <div class="discount-pct">${discPct}% off</div>
+          ${r.vendor.bogo ? '<div style="margin-top:5px;background:rgba(77,232,122,.12);border:1px solid rgba(77,232,122,.35);color:#4de87a;border-radius:6px;padding:3px 7px;font-size:.68rem;font-weight:700;letter-spacing:.3px;">🎁 BOGO FREE</div>' : ''}
         </div>
         <button class="btn-copy" onclick="copyCode('${r.vendor.code}',this)">Copy</button>
       </div>
