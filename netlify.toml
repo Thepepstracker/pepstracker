@@ -2,8 +2,5 @@
   publish = "pepstracker_fixed"
   functions = "netlify/functions"
 
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
+[functions]
+  node_bundler = "esbuild"
