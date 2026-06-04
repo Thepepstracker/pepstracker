@@ -260,39 +260,32 @@ footer a{color:var(--blue);text-decoration:none;}
 // ── Firebase ──────────────────────────────────────────────────────────────
 const firebaseConfig={apiKey:"AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",authDomain:"pepstracker.firebaseapp.com",projectId:"pepstracker",storageBucket:"pepstracker.firebasestorage.app",messagingSenderId:"575079448915",appId:"1:575079448915:web:4937336ccc15a6764ca1a6"};
 if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth();
 const db=firebase.firestore();
 
-// ── CONFIG — update this when you have the Stripe link ───────────────────
-const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/7sY28q7X25Jb1Y2gBf6wE02"; // ← paste your Stripe link here
+// ── CONFIG ─────────────────────────────────────────────────────────────────
+const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/7sY28q7X25Jb1Y2gBf6wE02";
 
-// ── State ─────────────────────────────────────────────────────────────────
+// ── State ──────────────────────────────────────────────────────────────────
 let bookedDates = {};
 let selectedDate = null;
-let currentBookingId = null;
 
 const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MONTHS_LONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-// ── Load booked dates from Firestore ──────────────────────────────────────
+// ── Load booked dates — fail gracefully, always render ────────────────────
 async function loadBookedDates() {
   try {
-    // Sign in anonymously so Firestore allows the read
-    if (!auth.currentUser) {
-      await auth.signInAnonymously().catch(() => {});
-    }
     const snap = await db.collection("liveBookings").get();
-    bookedDates = {};
     snap.forEach(doc => { bookedDates[doc.id] = doc.data(); });
   } catch(e) {
-    console.warn("Could not load bookings from Firestore:", e.message);
-    // Still render the grid — all dates appear open
+    // Firestore read failed (rules) — show all dates as open
     bookedDates = {};
   }
   renderDateGrid();
 }
 
-// ── Render date grid ──────────────────────────────────────────────────────
+// ── Render 30-day date grid ────────────────────────────────────────────────
 function renderDateGrid() {
   const grid = document.getElementById("dateGrid");
   grid.innerHTML = "";
@@ -303,15 +296,16 @@ function renderDateGrid() {
     const d = new Date(today);
     d.setDate(today.getDate() + i);
     const key = dateKey(d);
-    const isBooked = bookedDates[key] && (bookedDates[key].status === "confirmed" || bookedDates[key].status === "pending_payment");
+    const b = bookedDates[key];
+    const isBooked = b && (b.status === "confirmed" || b.status === "pending_payment" || b.status === "payment_clicked");
 
     const card = document.createElement("div");
-    card.className = "date-card" + (isBooked ? " booked" : "") + (i === 0 ? " today" : "");
+    card.className = "date-card" + (isBooked ? " booked" : "");
     card.innerHTML = `
       <div class="date-day">${DAYS[d.getDay()]}</div>
       <div class="date-num">${d.getDate()}</div>
       <div class="date-mon">${MONTHS_SHORT[d.getMonth()]}</div>
-      ${isBooked ? '<div class="booked-tag">BOOKED</div>' : '<div class="avail-tag">OPEN</div>'}`;
+      <div class="${isBooked ? "booked-tag" : "avail-tag"}">${isBooked ? "BOOKED" : "OPEN"}</div>`;
 
     if (!isBooked) card.onclick = () => selectDate(d, card);
     grid.appendChild(card);
@@ -326,94 +320,81 @@ function selectDate(d, card) {
   document.querySelectorAll(".date-card").forEach(c => c.classList.remove("selected"));
   card.classList.add("selected");
   selectedDate = d;
-  const label = d.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+  const label = `${DAYS[d.getDay()]}, ${MONTHS_LONG[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
   document.getElementById("selectedDateLabel").textContent = "📅 " + label;
   document.getElementById("formCard").classList.add("visible");
   document.getElementById("paymentCard").classList.remove("visible");
-  document.getElementById("formCard").scrollIntoView({behavior:"smooth",block:"nearest"});
+  document.getElementById("formCard").scrollIntoView({behavior:"smooth", block:"nearest"});
 }
 
-// ── Submit booking ────────────────────────────────────────────────────────
+// ── Submit booking ─────────────────────────────────────────────────────────
 async function submitBooking() {
-  const company = document.getElementById("fCompany").value.trim();
-  const email = document.getElementById("fEmail").value.trim();
-  const topic = document.getElementById("fTopic").value.trim();
-  const website = document.getElementById("fWebsite").value.trim();
-  const instagram = document.getElementById("fInstagram").value.trim();
-  const tiktok = document.getElementById("fTiktok").value.trim();
-  const twitter = document.getElementById("fTwitter").value.trim();
+  const company  = document.getElementById("fCompany").value.trim();
+  const email    = document.getElementById("fEmail").value.trim();
+  const topic    = document.getElementById("fTopic").value.trim();
+  const website  = document.getElementById("fWebsite").value.trim();
+  const instagram= document.getElementById("fInstagram").value.trim();
+  const tiktok   = document.getElementById("fTiktok").value.trim();
+  const twitter  = document.getElementById("fTwitter").value.trim();
 
   if (!company) { showToast("Please enter your company name","error"); return; }
   if (!email || !email.includes("@")) { showToast("Please enter a valid email","error"); return; }
-  if (!topic) { showToast("Please tell us what you'd like to cover","error"); return; }
+  if (!topic)   { showToast("Please tell us what you want to cover","error"); return; }
   if (!selectedDate) { showToast("Please select a date first","error"); return; }
 
   const key = dateKey(selectedDate);
-
-  // Double-check date isn't taken
-  const existing = await db.collection("liveBookings").doc(key).get();
-  if (existing.exists && (existing.data().status === "confirmed" || existing.data().status === "pending_payment")) {
-    showToast("That date was just booked — please pick another!","error");
-    await loadBookedDates();
-    return;
-  }
+  const dateLabel = `${DAYS[selectedDate.getDay()]}, ${MONTHS_LONG[selectedDate.getMonth()]} ${selectedDate.getDate()}, ${selectedDate.getFullYear()}`;
 
   const btn = document.getElementById("bookBtn");
   btn.disabled = true;
-  btn.textContent = "Reserving…";
+  btn.textContent = "Reserving your date…";
 
-  currentBookingId = key;
+  // Try saving to Firestore — but proceed regardless
   const bookingData = {
     company, email, topic,
     website: website ? "https://"+website : "",
     instagram, tiktok, twitter,
-    date: selectedDate.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"}),
-    dateKey: key,
+    date: dateLabel, dateKey: key,
     status: "pending_payment",
     bookedAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  await db.collection("liveBookings").doc(key).set(bookingData);
-  bookedDates[key] = bookingData;
+  try {
+    await db.collection("liveBookings").doc(key).set(bookingData);
+    bookedDates[key] = bookingData;
+    renderDateGrid();
+  } catch(e) {
+    // Firestore write failed — still proceed to payment
+    console.warn("Firestore write failed:", e.message);
+  }
 
   // Show payment step
   document.getElementById("formCard").classList.remove("visible");
   document.getElementById("paymentCard").classList.add("visible");
   document.getElementById("payCompany").textContent = company;
-  document.getElementById("payDate").textContent = bookingData.date;
+  document.getElementById("payDate").textContent = dateLabel;
   document.getElementById("bookingSummary").innerHTML = `
     <div class="summary-row"><span class="label">Company</span><span class="value">${company}</span></div>
-    <div class="summary-row"><span class="label">Date</span><span class="value">${bookingData.date}</span></div>
+    <div class="summary-row"><span class="label">Date</span><span class="value">${dateLabel}</span></div>
     <div class="summary-row"><span class="label">Contact</span><span class="value">${email}</span></div>
-    <div class="summary-row"><span class="label">Topic</span><span class="value">${topic.substring(0,60)}${topic.length>60?"…":""}</span></div>
+    <div class="summary-row"><span class="label">Topic</span><span class="value">${topic.substring(0,80)}${topic.length>80?"…":""}</span></div>
     <div class="summary-row"><span class="label">Status</span><span class="value" style="color:var(--gold);">⏳ Awaiting Payment</span></div>`;
 
-  // Set Stripe link
+  // Build Stripe link
+  const stripeUrl = STRIPE_PAYMENT_LINK + "?prefilled_email=" + encodeURIComponent(email) + "&client_reference_id=" + encodeURIComponent(key);
   const stripeBtn = document.getElementById("stripeBtn");
-  if (STRIPE_PAYMENT_LINK && STRIPE_PAYMENT_LINK !== "STRIPE_LINK_PLACEHOLDER") {
-    stripeBtn.href = STRIPE_PAYMENT_LINK + "?prefilled_email=" + encodeURIComponent(email) + "&client_reference_id=" + key;
-  } else {
-    stripeBtn.href = "#";
-    stripeBtn.onclick = () => { showToast("Payment link coming soon — we'll email you!",""); return false; };
-  }
+  stripeBtn.href = stripeUrl;
+  stripeBtn.onclick = null;
 
-  document.getElementById("paymentCard").scrollIntoView({behavior:"smooth",block:"nearest"});
-  renderDateGrid();
+  document.getElementById("paymentCard").scrollIntoView({behavior:"smooth", block:"nearest"});
   btn.disabled = false;
   btn.textContent = "🎙️ Reserve This Date & Continue to Payment";
 }
 
-function markPendingPayment() {
-  // When they click pay, mark as payment_clicked in Firestore
-  if (currentBookingId) {
-    db.collection("liveBookings").doc(currentBookingId).update({ status: "payment_clicked", paymentClickedAt: firebase.firestore.FieldValue.serverTimestamp() });
-  }
-}
-
-// ── FAQ ───────────────────────────────────────────────────────────────────
+// ── FAQ ────────────────────────────────────────────────────────────────────
 function toggleFaq(el) { el.closest(".faq-item").classList.toggle("open"); }
 
-// ── Toast ─────────────────────────────────────────────────────────────────
+// ── Toast ──────────────────────────────────────────────────────────────────
 function showToast(msg, type="") {
   const t = document.getElementById("toast");
   t.textContent = msg; t.className = `toast ${type} show`;
@@ -422,6 +403,9 @@ function showToast(msg, type="") {
 
 function toggleMenu() { document.getElementById("mobileNav").classList.toggle("open"); }
 
+// ── Init ───────────────────────────────────────────────────────────────────
+// Render the calendar immediately, then try to load booked dates
+renderDateGrid();
 loadBookedDates();
 </script>
 </body>
