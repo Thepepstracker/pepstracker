@@ -13,11 +13,13 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="icon" type="image/png" href="favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Alerts — PepsTracker</title>
+  <title>My Account — PepsTracker</title>
   <style>
-    :root{--bg:#0d0f14;--surface:#161b25;--card:#1c2230;--border:#2a3347;--blue:#3b9eff;--green:#4de87a;--text:#e8edf5;--muted:#7a8ba8;--gold:#f5c842;--red:#ff5c5c;--radius:12px;}
+    :root{--bg:#0d0f14;--surface:#161b25;--card:#1c2230;--border:#2a3347;--blue:#3b9eff;--green:#4de87a;--text:#e8edf5;--muted:#7a8ba8;--gold:#f5c842;--red:#ff5c5c;--purple:#a78bfa;--orange:#fb923c;--radius:12px;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+    /* ── HEADER ── */
     header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;}
     .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px;}
     .logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;}
@@ -31,17 +33,46 @@
     nav a.active{color:var(--blue);}
     nav a.nav-calc{background:rgba(77,232,122,.1);color:var(--green);border:1px solid rgba(77,232,122,.25);}
     nav a.nav-apply{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);}
+    nav{display:none!important;}
+    .menu-btn{display:flex!important;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);cursor:pointer;padding:8px 14px;font-size:.9rem;font-weight:600;transition:all .2s;}
+    .menu-btn:hover{border-color:var(--blue);color:var(--blue);background:rgba(59,158,255,.08);}
+    .ham-icon{font-size:1.1rem;transition:transform .2s;}
+    .menu-btn.open .ham-icon{transform:rotate(90deg);}
+    .mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);z-index:200;}
+    .mobile-nav.open{display:flex;}
+    .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;transition:all .2s;}
+    .mobile-nav a:hover,.mobile-nav a.active{color:var(--text);background:rgba(255,255,255,.06);}
+    .mobile-nav a.active{color:var(--blue);}
+    .mobile-nav a.nav-calc{background:rgba(77,232,122,.08);color:var(--green);border:1px solid rgba(77,232,122,.2);}
+    @media(min-width:769px){.mobile-nav{position:fixed;top:68px;left:auto;right:16px;width:220px;border-radius:12px;border:1px solid var(--border);box-shadow:0 12px 32px rgba(0,0,0,.5);padding:8px;border-top:1px solid var(--border);}.mobile-nav a{font-size:.88rem;padding:9px 12px;}}
 
-    .page{max-width:900px;margin:0 auto;padding:32px 16px 60px;}
-    .page-header{margin-bottom:28px;}
-    .page-header h1{font-size:1.6rem;font-weight:800;letter-spacing:-.5px;margin-bottom:6px;}
-    .page-header p{color:var(--muted);font-size:.9rem;}
+    /* ── PAGE ── */
+    .page{max-width:900px;margin:0 auto;padding:28px 16px 80px;}
+    .accent-bar{height:3px;background:linear-gradient(90deg,#B22234,#3C3B6E 50%,#4de87a);}
 
+    /* ── TABS ── */
+    .tabs{display:flex;gap:6px;margin-bottom:28px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+    .tabs::-webkit-scrollbar{display:none;}
+    .tab-btn{flex-shrink:0;background:var(--card);border:1.5px solid var(--border);color:var(--muted);padding:10px 18px;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+    .tab-btn:hover{color:var(--text);border-color:rgba(59,158,255,.4);}
+    .tab-btn.active{background:rgba(59,158,255,.12);border-color:var(--blue);color:var(--blue);}
+    .tab-pane{display:none;}
+    .tab-pane.active{display:block;}
+
+    /* ── USER CARD ── */
+    .user-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap;}
+    .user-info{display:flex;align-items:center;gap:12px;}
+    .user-avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--blue);}
+    .user-name{font-weight:700;font-size:1rem;}
+    .user-email{font-size:.78rem;color:var(--muted);}
+    .btn-signout{background:none;border:1.5px solid var(--border);color:var(--muted);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s;}
+    .btn-signout:hover{border-color:var(--red);color:var(--red);}
+
+    /* ── SAVED & ALERTS (existing styles) ── */
     .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
     .empty-state .icon{font-size:3rem;margin-bottom:16px;}
     .empty-state h3{font-size:1.1rem;color:var(--text);margin-bottom:8px;}
     .empty-state a{color:var(--blue);text-decoration:none;font-weight:600;}
-
     .alerts-grid{display:flex;flex-direction:column;gap:10px;}
     .alert-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:16px;transition:border-color .2s;}
     .alert-card:hover{border-color:var(--blue);}
@@ -59,16 +90,12 @@
     .btn-remove{background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:9px 14px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;}
     .btn-remove:hover{border-color:var(--red);color:var(--red);}
     .btn-actions{display:flex;gap:8px;align-items:center;}
-
-    .stats-bar{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;}
+    .stats-bar-sm{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
     .stat-chip{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 16px;font-size:.82rem;}
     .stat-chip span{font-weight:800;color:var(--text);font-size:1rem;display:block;}
     .stat-chip label{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;}
-
     .clear-all{float:right;background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:7px 14px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;}
     .clear-all:hover{border-color:var(--red);color:var(--red);}
-
-    /* ── Saved Listings ── */
     .saves-grid{display:flex;flex-direction:column;gap:10px;}
     .save-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:16px;transition:border-color .2s;}
     .save-card:hover{border-color:var(--gold);}
@@ -81,40 +108,107 @@
     .empty-saves{text-align:center;padding:40px 20px;color:var(--muted);}
     .empty-saves .empty-icon{font-size:2.5rem;margin-bottom:12px;}
 
+    /* ── TRACKER TAB ── */
+    .tracker-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px;}
+    .tstat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+    .tstat-num{font-size:1.6rem;font-weight:800;color:var(--blue);}
+    .tstat-label{font-size:.72rem;color:var(--muted);margin-top:3px;}
+    @media(max-width:560px){.tracker-stats{grid-template-columns:repeat(2,1fr);}}
+
+    /* calendar */
+    .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .cal-title{font-size:1.15rem;font-weight:800;}
+    .cal-nav-btns{display:flex;gap:6px;}
+    .cal-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:7px 13px;border-radius:9px;cursor:pointer;font-weight:600;font-size:.85rem;transition:background .15s;}
+    .cal-btn:hover{background:var(--card);}
+    .cal-btn.today-btn{background:rgba(59,158,255,.1);color:var(--blue);border-color:rgba(59,158,255,.3);}
+    .cal-grid{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:24px;}
+    .cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);}
+    .cal-day-name{padding:9px;text-align:center;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+    .cal-cells{display:grid;grid-template-columns:repeat(7,1fr);}
+    .cal-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:82px;padding:7px;cursor:pointer;transition:background .15s;position:relative;}
+    .cal-cell:nth-child(7n){border-right:none;}
+    .cal-cell:hover{background:rgba(59,158,255,.06);}
+    .cal-cell.empty{cursor:default;background:rgba(0,0,0,.12);}
+    .cal-cell.empty:hover{background:rgba(0,0,0,.12);}
+    .cal-cell.today .cell-date{background:var(--blue);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+    .cell-date{font-size:.8rem;font-weight:600;margin-bottom:5px;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;}
+    .cell-dots{display:flex;flex-wrap:wrap;gap:3px;}
+    .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+    .cell-count{font-size:.65rem;color:var(--muted);margin-top:3px;}
+    @media(max-width:500px){.cal-cell{min-height:52px;padding:4px;}.cell-date{font-size:.7rem;}.dot{width:5px;height:5px;}}
+
+    /* ── REMINDERS ── */
+    .reminder-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:22px;margin-bottom:24px;}
+    .reminder-card h3{font-size:1rem;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+    .reminder-card p{font-size:.85rem;color:var(--muted);margin-bottom:18px;line-height:1.5;}
+    .reminder-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding:14px 16px;background:var(--surface);border-radius:12px;border:1px solid var(--border);}
+    .toggle-label{font-weight:600;font-size:.9rem;}
+    .toggle-sub{font-size:.78rem;color:var(--muted);margin-top:2px;}
+    .toggle-switch{position:relative;width:48px;height:26px;flex-shrink:0;}
+    .toggle-switch input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:26px;cursor:pointer;transition:.3s;}
+    .toggle-slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s;}
+    .toggle-switch input:checked + .toggle-slider{background:var(--blue);}
+    .toggle-switch input:checked + .toggle-slider:before{transform:translateX(22px);}
+    .freq-label{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+    .freq-options{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;}
+    .freq-btn{background:var(--surface);border:1.5px solid var(--border);color:var(--muted);padding:10px 6px;border-radius:10px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
+    .freq-btn:hover{border-color:rgba(59,158,255,.5);color:var(--text);}
+    .freq-btn.selected{background:rgba(59,158,255,.12);border-color:var(--blue);color:var(--blue);}
+    @media(max-width:420px){.freq-options{grid-template-columns:repeat(2,1fr);}}
+    .notif-btn{width:100%;padding:12px;background:rgba(59,158,255,.1);border:1.5px solid rgba(59,158,255,.4);border-radius:10px;color:var(--blue);font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+    .notif-btn:hover{background:rgba(59,158,255,.18);}
+    .notif-btn.granted{background:rgba(77,232,122,.1);border-color:rgba(77,232,122,.4);color:var(--green);}
+    .notif-btn.denied{background:rgba(255,92,92,.1);border-color:rgba(255,92,92,.4);color:var(--red);cursor:default;}
+    .reminder-status{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:.82rem;background:var(--surface);border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+    .reminder-status .label{color:var(--muted);}
+    .reminder-status .value{font-weight:700;color:var(--text);}
+
+    /* ── PANEL ── */
+    .panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;}
+    .panel-overlay.open{opacity:1;pointer-events:all;}
+    .panel{position:fixed;right:0;top:0;bottom:0;width:min(480px,100vw);background:var(--surface);border-left:1px solid var(--border);z-index:201;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden;}
+    .panel.open{transform:translateX(0);}
+    .panel-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .panel-date-title{font-size:1rem;font-weight:800;}
+    .panel-close{background:var(--card);border:1px solid var(--border);color:var(--text);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;}
+    .panel-body{flex:1;overflow-y:auto;padding:18px 22px;}
+    .entries-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+    .entry-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 15px;position:relative;}
+    .entry-top{display:flex;align-items:center;gap:9px;margin-bottom:5px;}
+    .entry-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+    .entry-peptide{font-weight:700;font-size:.9rem;}
+    .entry-time{margin-left:auto;font-size:.75rem;color:var(--muted);}
+    .entry-details{font-size:.82rem;color:var(--muted);display:flex;flex-direction:column;gap:3px;padding-left:18px;}
+    .entry-detail{display:flex;gap:6px;}
+    .entry-detail strong{color:var(--text);min-width:48px;}
+    .entry-del{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;padding:3px 6px;border-radius:5px;}
+    .entry-del:hover{background:rgba(255,92,92,.15);color:var(--red);}
+    .empty-day{text-align:center;padding:28px 0;color:var(--muted);font-size:.88rem;}
+    .add-form-toggle{width:100%;padding:11px;background:rgba(59,158,255,.08);border:1px dashed rgba(59,158,255,.4);border-radius:11px;color:var(--blue);font-size:.88rem;font-weight:600;cursor:pointer;transition:background .2s;}
+    .add-form-toggle:hover{background:rgba(59,158,255,.15);}
+    .add-form{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px;margin-top:10px;display:none;}
+    .add-form.visible{display:block;}
+    .form-row{margin-bottom:12px;}
+    .form-label{display:block;font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+    .form-input,.form-select,.form-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text);padding:9px 11px;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .2s;}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--blue);}
+    .form-select option{background:var(--surface);}
+    .form-textarea{resize:vertical;min-height:74px;}
+    .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+    .btn-log{width:100%;padding:11px;background:var(--blue);border:none;border-radius:9px;color:#fff;font-size:.9rem;font-weight:800;cursor:pointer;margin-top:2px;transition:opacity .2s;}
+    .btn-log:hover{opacity:.88;}
+    .btn-cancel-form{width:100%;padding:9px;background:none;border:1px solid var(--border);border-radius:9px;color:var(--muted);font-size:.84rem;cursor:pointer;margin-top:5px;}
+
+    /* toast */
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 20px;font-size:.88rem;font-weight:600;z-index:999;transition:transform .3s;box-shadow:0 8px 24px rgba(0,0,0,.4);white-space:nowrap;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    .toast.success{border-color:rgba(77,232,122,.5);color:var(--green);}
+    .toast.error{border-color:rgba(255,92,92,.5);color:var(--red);}
+
     footer{border-top:1px solid var(--border);padding:20px 16px;text-align:center;color:var(--muted);font-size:.8rem;}
     footer a{color:var(--blue);text-decoration:none;}
-
-    /* Hamburger */
-    
-    .menu-btn:hover{color:var(--text);border-color:var(--blue);}
-    .mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);}
-    .mobile-nav.open{display:flex;}
-    .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.95rem;font-weight:600;padding:10px 14px;border-radius:10px;transition:all .2s;}
-    .mobile-nav a:hover,.mobile-nav a.active{color:var(--text);background:rgba(255,255,255,.06);}
-    .mobile-nav a.active{color:var(--blue);}
-    .mobile-nav a.nav-calc{background:rgba(77,232,122,.08);color:var(--green);border:1px solid rgba(77,232,122,.2);}
-    .mobile-nav a.nav-apply{background:rgba(245,200,66,.08);color:var(--gold);border:1px solid rgba(245,200,66,.2);}
-    
-  
-    /* Hamburger on ALL screens */
-    nav { display: none !important; }
-    .menu-btn { display: flex !important; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; color: var(--text); cursor: pointer; padding: 8px 14px; font-size: .9rem; font-weight: 600; transition: all .2s; }
-    .menu-btn:hover { border-color: var(--blue); color: var(--blue); background: rgba(59,158,255,.08); }
-    .menu-btn .ham-icon { font-size: 1.1rem; transition: transform .2s; }
-    .menu-btn.open .ham-icon { transform: rotate(90deg); }
-    /* Mobile: full-width drawer */
-    .mobile-nav { display: none; flex-direction: column; gap: 4px; padding: 12px 16px 16px; border-top: 1px solid var(--border); background: var(--surface); z-index: 200; }
-    .mobile-nav.open { display: flex; }
-    .mobile-nav a { color: var(--muted); text-decoration: none; font-size: .95rem; font-weight: 600; padding: 10px 14px; border-radius: 10px; transition: all .2s; }
-    .mobile-nav a:hover, .mobile-nav a.active { color: var(--text); background: rgba(255,255,255,.06); }
-    .mobile-nav a.active { color: var(--blue); }
-    .mobile-nav a.nav-calc { background: rgba(77,232,122,.08); color: var(--green); border: 1px solid rgba(77,232,122,.2); }
-    .mobile-nav a.nav-apply { background: rgba(245,200,66,.08); color: var(--gold); border: 1px solid rgba(245,200,66,.2); }
-    /* Desktop: floating dropdown panel */
-    @media(min-width:769px) {
-      .mobile-nav { position: fixed; top: 68px; right: 16px; width: 220px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 12px 32px rgba(0,0,0,.5); padding: 8px; border-top: 1px solid var(--border); }
-      .mobile-nav a { font-size: .88rem; padding: 9px 12px; }
-    }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -148,58 +242,186 @@
     <nav>
       <a href="index.html">Price Tracker</a>
       <a href="vendors.html">🏪 Vendors</a>
-      <a href="dictionary.html">📖 Dictionary</a>
       <a href="blog.html">📝 Blog</a>
-      <a href="quiz.html">🧬 Quiz</a>
       <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
-      <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
-      <a href="advertise.html" style="background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);border-radius:8px;padding:6px 10px;font-size:.82rem;font-weight:600;text-decoration:none;white-space:nowrap;">📣 Advertise</a>
-      <a href="disclaimer.html">Disclaimer</a>
       <a href="account.html" class="active">👤 Account</a>
     </nav>
     <button class="menu-btn" id="menuBtn" aria-label="Menu" onclick="toggleMenu()"><span class="ham-icon">☰</span> Menu</button>
   </div>
   <div class="mobile-nav" id="mobileNav">
     <a href="index.html" onclick="toggleMenu()">🏠 Price Tracker</a>
-  <a href="vendors.html" onclick="toggleMenu()">🏪 Vendors</a>
+    <a href="vendors.html" onclick="toggleMenu()">🏪 Vendors</a>
     <a href="dictionary.html" onclick="toggleMenu()">📖 Dictionary</a>
     <a href="blog.html" onclick="toggleMenu()">📝 Blog</a>
     <a href="quiz.html" onclick="toggleMenu()">🧬 Quiz</a>
     <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
-    <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
+    <a href="vendor-apply.html" onclick="toggleMenu()">📋 Vendor Apply</a>
     <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
     <a href="account.html" class="active" onclick="toggleMenu()">👤 My Account</a>
   </div>
 </header>
 
-<div style="height:3px;background:linear-gradient(90deg,#B22234,#3C3B6E 50%,#4de87a);"></div>
+<div class="accent-bar"></div>
 
 <div class="page">
-  <div class="page-header">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+
+  <!-- user card (shown when logged in) -->
+  <div id="userCard" style="display:none;" class="user-card">
+    <div class="user-info">
+      <img class="user-avatar" id="userAvatar" src="" alt=""/>
       <div>
-        <h1 style="font-size:1.6rem;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;">👤 My Account</h1>
-        <p style="color:var(--muted);font-size:.88rem;">Your personalized peptide profile and price alerts.</p>
+        <div class="user-name" id="userName"></div>
+        <div class="user-email" id="userEmail"></div>
       </div>
-      <a href="onboarding.html" style="display:inline-block;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.85rem;padding:10px 20px;border-radius:10px;text-decoration:none;">🧬 Build My Profile →</a>
+    </div>
+    <button class="btn-signout" onclick="doSignOut()">Sign out</button>
+  </div>
+
+  <!-- login prompt (shown when logged out) -->
+  <div id="loginPrompt" style="background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;text-align:center;">
+    <div style="font-size:2rem;margin-bottom:10px;">🔐</div>
+    <div style="font-weight:700;margin-bottom:6px;">Sign in to unlock your account</div>
+    <div style="color:var(--muted);font-size:.85rem;margin-bottom:16px;">Access your tracker, saved listings, price alerts, and reminders.</div>
+    <button onclick="doSignIn()" style="background:var(--blue);color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:10px;">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Continue with Google
+    </button>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs" id="mainTabs" style="display:none;">
+    <button class="tab-btn active" onclick="switchTab('tracker')">📅 My Tracker</button>
+    <button class="tab-btn" onclick="switchTab('profile')">🧬 Profile</button>
+    <button class="tab-btn" onclick="switchTab('saved')">⭐ Saved</button>
+    <button class="tab-btn" onclick="switchTab('alerts')">🔔 Alerts</button>
+  </div>
+
+  <!-- ══ TAB: TRACKER ══ -->
+  <div class="tab-pane active" id="tab-tracker">
+    <div class="tracker-stats">
+      <div class="tstat"><div class="tstat-num" id="statStreak">—</div><div class="tstat-label">🔥 Streak (days)</div></div>
+      <div class="tstat"><div class="tstat-num" id="statMonth">—</div><div class="tstat-label">📅 Days This Month</div></div>
+      <div class="tstat"><div class="tstat-num" id="statTotal">—</div><div class="tstat-label">💉 Total Entries</div></div>
+      <div class="tstat"><div class="tstat-num" id="statUnique">—</div><div class="tstat-label">🧬 Unique Peptides</div></div>
+    </div>
+
+    <div class="cal-header">
+      <div class="cal-title" id="calTitle"></div>
+      <div class="cal-nav-btns">
+        <button class="cal-btn today-btn" onclick="goToday()">Today</button>
+        <button class="cal-btn" onclick="changeMonth(-1)">‹</button>
+        <button class="cal-btn" onclick="changeMonth(1)">›</button>
+      </div>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-days-header">
+        <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div>
+        <div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div>
+      </div>
+      <div class="cal-cells" id="calCells"></div>
+    </div>
+
+    <!-- REMINDERS -->
+    <div class="reminder-card">
+      <h3>🔔 Protocol Reminders</h3>
+      <p>Get browser notifications reminding you to log your peptides. Pick how often you want to be reminded.</p>
+
+      <div class="reminder-toggle-row">
+        <div>
+          <div class="toggle-label">Enable reminders</div>
+          <div class="toggle-sub" id="reminderStatusText">Off — turn on to get notified</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="reminderToggle" onchange="onReminderToggle()"/>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div id="reminderOptions" style="display:none;">
+        <div class="freq-label">Remind me every…</div>
+        <div class="freq-options">
+          <button class="freq-btn selected" data-days="1" onclick="selectFreq(this)">Daily</button>
+          <button class="freq-btn" data-days="2" onclick="selectFreq(this)">2 Days</button>
+          <button class="freq-btn" data-days="3" onclick="selectFreq(this)">3 Days</button>
+          <button class="freq-btn" data-days="7" onclick="selectFreq(this)">Weekly</button>
+        </div>
+
+        <button class="notif-btn" id="notifPermBtn" onclick="requestNotifPermission()">
+          🔔 Allow Browser Notifications
+        </button>
+
+        <div class="reminder-status" id="reminderStatus" style="display:none;">
+          <div><div class="label">Last logged</div><div class="value" id="lastLoggedDisplay">—</div></div>
+          <div><div class="label">Next reminder</div><div class="value" id="nextReminderDisplay">—</div></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div id="profileSection"></div>
-
-  <div class="page-header">
-    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px;">⭐ My Saved Listings</h2>
-    <p style="color:var(--muted);font-size:.85rem;">Go to <a href="index.html" style="color:var(--blue);">Price Tracker →</a> and click ☆ on any vendor card to save it here.</p>
+  <!-- ══ TAB: PROFILE ══ -->
+  <div class="tab-pane" id="tab-profile">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+      <div>
+        <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px;">🧬 My Peptide Profile</h2>
+        <p style="color:var(--muted);font-size:.85rem;">Personalized recommendations based on your goals.</p>
+      </div>
+      <a href="onboarding.html" style="display:inline-block;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.85rem;padding:10px 20px;border-radius:10px;text-decoration:none;">🧬 Build My Profile →</a>
+    </div>
+    <div id="profileSection"></div>
   </div>
-  <div id="savedListingsSection"></div>
 
-  <div class="page-header" style="margin-top:24px;">
-    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px;">🔔 My Price Alerts</h2>
-    <p style="color:var(--muted);font-size:.85rem;">Go to <a href="index.html" style="color:var(--blue);">Price Tracker →</a> and click 🔔 Alert on any vendor card to add more.</p>
+  <!-- ══ TAB: SAVED ══ -->
+  <div class="tab-pane" id="tab-saved">
+    <div style="margin-bottom:16px;">
+      <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px;">⭐ My Saved Listings</h2>
+      <p style="color:var(--muted);font-size:.85rem;">Go to <a href="index.html" style="color:var(--blue);">Price Tracker →</a> and click ☆ on any vendor card to save it here.</p>
+    </div>
+    <div id="savedListingsSection"></div>
   </div>
 
-  <div id="mainContent"></div>
+  <!-- ══ TAB: ALERTS ══ -->
+  <div class="tab-pane" id="tab-alerts">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+      <div>
+        <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px;">🔔 My Price Alerts</h2>
+        <p style="color:var(--muted);font-size:.85rem;">Go to <a href="index.html" style="color:var(--blue);">Price Tracker →</a> and click 🔔 Alert on any vendor card.</p>
+      </div>
+    </div>
+    <div id="mainContent"></div>
+  </div>
+
+</div><!-- end .page -->
+
+<!-- ── SLIDE PANEL ── -->
+<div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <div class="panel-date-title" id="panelDate"></div>
+    <button class="panel-close" onclick="closePanel()">✕</button>
+  </div>
+  <div class="panel-body">
+    <div class="entries-list" id="entriesList"></div>
+    <button class="add-form-toggle" id="addFormToggle" onclick="toggleAddForm()">+ Log a peptide</button>
+    <div class="add-form" id="addForm">
+      <div class="form-row">
+        <label class="form-label">Peptide</label>
+        <select class="form-select" id="fPeptide"></select>
+      </div>
+      <div class="form-row-2">
+        <div><label class="form-label">Dosage</label><input class="form-input" id="fDosage" placeholder="e.g. 250mcg"/></div>
+        <div><label class="form-label">Time</label><input class="form-input" type="time" id="fTime"/></div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">How did you feel?</label>
+        <textarea class="form-textarea" id="fNotes" placeholder="Energy, side effects, mood…"></textarea>
+      </div>
+      <button class="btn-log" onclick="saveEntry()">💉 Log Entry</button>
+      <button class="btn-cancel-form" onclick="toggleAddForm()">Cancel</button>
+    </div>
+  </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <footer>
   <p>PepsTracker — Price comparison only. We do not sell or distribute any products.</p>
@@ -207,7 +429,7 @@
 </footer>
 
 <script>
-// Firebase for profile
+// ── Firebase ──────────────────────────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
   authDomain: "pepstracker.firebaseapp.com",
@@ -216,86 +438,428 @@ const firebaseConfig = {
   messagingSenderId: "575079448915",
   appId: "1:575079448915:web:4937336ccc15a6764ca1a6"
 };
-if (!window.firebase) {
-  // Firebase not loaded on this page - skip
-} else {
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  auth.onAuthStateChanged(async user => {
-    if (!user) {
-      document.getElementById('profileSection').innerHTML = `
-        <div style="background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;text-align:center;">
-          <div style="font-size:2rem;margin-bottom:10px;">🧬</div>
-          <div style="font-weight:700;margin-bottom:6px;">No profile yet</div>
-          <div style="color:var(--muted);font-size:.85rem;margin-bottom:16px;">Complete the onboarding quiz to get personalized peptide recommendations with dosage guidance.</div>
-          <a href="onboarding.html" style="display:inline-block;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.88rem;padding:10px 24px;border-radius:10px;text-decoration:none;">Build My Profile →</a>
-        </div>`;
-      return;
-    }
-    const snap = await db.collection('users').doc(user.uid).get();
-    const data = snap.exists ? snap.data() : null;
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-    // ── Render Saved Listings ──
-    const saved = data?.savedListings || [];
-    const savesEl = document.getElementById('savedListingsSection');
-    if (!saved.length) {
-      savesEl.innerHTML = `<div class="empty-saves"><div class="empty-icon">☆</div><div style="font-weight:700;margin-bottom:6px;">No saved listings yet</div><div style="font-size:.85rem;">Hit the ☆ star on any vendor card on the <a href="index.html" style="color:var(--blue);">Price Tracker</a> to save it here.</div></div>`;
-    } else {
-      savesEl.innerHTML = `<div class="saves-grid">${saved.map(s => `
-        <div class="save-card">
-          <div>
-            <div class="save-vendor">⭐ ${s.vendorName}</div>
-            <div class="save-peptide">${s.peptide}</div>
-          </div>
-          <div class="save-price-block">
-            <div class="save-price">$${Number(s.price).toFixed(2)}</div>
-            ${s.code ? `<div class="save-code">Code: <span>${s.code}</span></div>` : ''}
-          </div>
-          <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
-            <a href="index.html?peptide=${encodeURIComponent(s.peptide)}" class="btn-go">Shop →</a>
-            <button class="btn-remove" onclick="removeSaved('${s.key}', this)">✕ Remove</button>
-          </div>
-        </div>`).join('')}
-      </div>`;
+// ── Peptides ──────────────────────────────────────────────────────────────
+const PEPTIDES = ["Semaglutide","Tirzepatide","Retatrutide","Cagrilintide","Survodutide","BPC-157","TB-500","BPC-157 + TB-500 Blend","Ipamorelin","CJC-1295 (with DAC)","CJC-1295 (No DAC)","CJC/Ipa Blend","Sermorelin","Tesamorelin","Tesamorelin/Ipamorelin Blend","GHRP-2","GHRP-6","Hexarelin","GHK-Cu","AHK-Cu","Epithalon","MOTS-c","NAD+","Kisspeptin","Humanin","Semax","N-Acetyl Semax","Selank","N-Acetyl Selank","Semax/Selank Blend","Adamax","DSIP","KPV","ARA-290","AOD-9604","LL-37","PE-22-28","PNC-27","Thymosin Alpha-1","Thymalin","Melanotan II","Melanotan I","PT-141 (Bremelanotide)","Oxytocin","IGF-1 LR3","PEG-MGF","5-Amino-1MQ","SLU-PP-332","Tesofensine","HCG","Methylene Blue","Snap-8","FOXO4-DRI","VIP","SS-31","Klow Blend","Glow Blend","Glutathione","Lipo-C","Bacteriostatic Water","Retacagri Blend","Cartalax","Dihexa","Pinealon","Cardiogen","Testagen","Vesugen","Vilon","Ovagen","Pancragen","Crystagen"];
+
+const PEPTIDE_COLORS = {
+  "#3b9eff":["Semaglutide","Tirzepatide","Retatrutide","Cagrilintide","Survodutide","Retacagri Blend"],
+  "#4de87a":["BPC-157","TB-500","BPC-157 + TB-500 Blend","ARA-290","KPV","PE-22-28","PNC-27","LL-37","AOD-9604"],
+  "#fb923c":["Ipamorelin","CJC-1295 (with DAC)","CJC-1295 (No DAC)","CJC/Ipa Blend","Sermorelin","Tesamorelin","Tesamorelin/Ipamorelin Blend","GHRP-2","GHRP-6","Hexarelin","IGF-1 LR3","PEG-MGF"],
+  "#a78bfa":["Epithalon","MOTS-c","NAD+","Humanin","Kisspeptin","5-Amino-1MQ","SLU-PP-332","SS-31","FOXO4-DRI","Dihexa"],
+  "#f5c842":["GHK-Cu","AHK-Cu","Melanotan II","Melanotan I","PT-141 (Bremelanotide)","Oxytocin","Snap-8","Glow Blend","Klow Blend","Glutathione","Lipo-C"],
+  "#ff5c5c":["Semax","N-Acetyl Semax","Selank","N-Acetyl Selank","Semax/Selank Blend","Adamax","DSIP","VIP","Methylene Blue"],
+  "#22d3ee":["Thymosin Alpha-1","Thymalin","Cardiogen","Testagen","Cartalax","Vesugen","Vilon","Ovagen","Pancragen","Crystagen","Pinealon"],
+};
+
+function getPeptideColor(name) {
+  for (const [color, list] of Object.entries(PEPTIDE_COLORS)) {
+    if (list.includes(name)) return color;
+  }
+  return "#7a8ba8";
+}
+
+// ── State ─────────────────────────────────────────────────────────────────
+let currentUser = null;
+let logsCache = {};
+let reminderPrefs = { enabled: false, remindEvery: 1 };
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+let panelDate = null;
+let addFormOpen = false;
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+function doSignIn() {
+  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => showToast(e.message, "error"));
+}
+function doSignOut() {
+  auth.signOut();
+}
+
+auth.onAuthStateChanged(async user => {
+  currentUser = user;
+  if (user) {
+    document.getElementById("loginPrompt").style.display = "none";
+    document.getElementById("userCard").style.display = "flex";
+    document.getElementById("mainTabs").style.display = "flex";
+    document.getElementById("userAvatar").src = user.photoURL || "";
+    document.getElementById("userName").textContent = user.displayName || "Peptide User";
+    document.getElementById("userEmail").textContent = user.email || "";
+
+    const snap = await db.collection("users").doc(user.uid).get();
+    const data = snap.exists ? snap.data() : {};
+
+    // Load tracker logs
+    await loadAllLogs();
+    renderCalendar();
+    updateStats();
+
+    // Load reminder prefs
+    if (data.reminderPrefs) {
+      reminderPrefs = data.reminderPrefs;
+      applyReminderPrefs();
     }
-    if (data && data.recommendations && data.recommendations.length > 0) {
-      const p = data.profile || {};
-      document.getElementById('profileSection').innerHTML = `
-        <div style="background:var(--card);border:1.5px solid var(--green);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-            <div style="font-weight:800;font-size:.95rem;">🧬 My Peptide Profile</div>
-            <a href="onboarding.html" style="font-size:.75rem;color:var(--blue);text-decoration:none;">Update Profile →</a>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px;">
-            ${p.age ? `<div style="background:var(--surface);border-radius:8px;padding:10px 12px;"><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Age</div><div style="font-weight:700;">${p.age} yrs</div></div>` : ''}
-            ${p.weight ? `<div style="background:var(--surface);border-radius:8px;padding:10px 12px;"><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Weight</div><div style="font-weight:700;">${p.weight} ${p.weightUnit||'lbs'}</div></div>` : ''}
-            ${p.goals && p.goals.length ? `<div style="background:var(--surface);border-radius:8px;padding:10px 12px;"><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Top Goal</div><div style="font-weight:700;text-transform:capitalize;">${p.goals[0]}</div></div>` : ''}
-            ${p.experience ? `<div style="background:var(--surface);border-radius:8px;padding:10px 12px;"><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Level</div><div style="font-weight:700;text-transform:capitalize;">${p.experience}</div></div>` : ''}
-          </div>
-          <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Recommended Peptides</div>
-          ${data.recommendations.map(r => `
-            <div style="background:var(--surface);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-              <div>
-                <div style="font-weight:700;font-size:.9rem;">${r.emoji} ${r.name}</div>
-                <div style="font-size:.75rem;color:var(--blue);margin-top:2px;">${r.dose} · ${r.frequency}</div>
-              </div>
-              <a href="index.html?peptide=${encodeURIComponent(r.name)}" style="display:inline-block;background:linear-gradient(135deg,var(--green),#2bb858);color:#0d0f14;font-weight:800;font-size:.78rem;padding:7px 14px;border-radius:7px;text-decoration:none;white-space:nowrap;">Compare Prices →</a>
-            </div>`).join('')}
-        </div>`;
-    } else {
-      document.getElementById('profileSection').innerHTML = `
-        <div style="background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;text-align:center;">
-          <div style="font-size:2rem;margin-bottom:10px;">🧬</div>
-          <div style="font-weight:700;margin-bottom:6px;">No profile yet</div>
-          <div style="color:var(--muted);font-size:.85rem;margin-bottom:16px;">Complete the onboarding quiz to get personalized peptide recommendations with dosage guidance.</div>
-          <a href="onboarding.html" style="display:inline-block;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.88rem;padding:10px 24px;border-radius:10px;text-decoration:none;">Build My Profile →</a>
-        </div>`;
+
+    // Check if reminder is due
+    checkReminderDue(data);
+
+    // Load profile + saved + alerts
+    renderProfile(data);
+    renderSaved(data.savedListings || []);
+    renderAlerts();
+
+  } else {
+    document.getElementById("loginPrompt").style.display = "block";
+    document.getElementById("userCard").style.display = "none";
+    document.getElementById("mainTabs").style.display = "none";
+    logsCache = {};
+  }
+});
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll(".tab-btn").forEach((b,i) => b.classList.toggle("active", ["tracker","profile","saved","alerts"][i] === name));
+  document.querySelectorAll(".tab-pane").forEach(p => p.classList.toggle("active", p.id === "tab-"+name));
+}
+
+// ── CALENDAR ─────────────────────────────────────────────────────────────
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function renderCalendar() {
+  document.getElementById("calTitle").textContent = `${MONTHS[calMonth]} ${calYear}`;
+  const cells = document.getElementById("calCells");
+  cells.innerHTML = "";
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const now = new Date();
+  const todayStr = ds(now.getFullYear(), now.getMonth(), now.getDate());
+
+  for (let i = 0; i < firstDay; i++) {
+    const e = document.createElement("div"); e.className = "cal-cell empty"; cells.appendChild(e);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = ds(calYear, calMonth, d);
+    const entries = logsCache[key] || [];
+    const cell = document.createElement("div");
+    cell.className = "cal-cell" + (entries.length ? " has-logs" : "") + (key === todayStr ? " today" : "");
+    if (!currentUser) cell.style.cursor = "default";
+    else cell.onclick = () => openPanel(key);
+
+    const dateDiv = document.createElement("div");
+    dateDiv.className = "cell-date";
+    dateDiv.textContent = d;
+    cell.appendChild(dateDiv);
+
+    if (entries.length) {
+      const dots = document.createElement("div"); dots.className = "cell-dots";
+      entries.slice(0, 8).forEach(e => {
+        const dot = document.createElement("div");
+        dot.className = "dot"; dot.style.background = getPeptideColor(e.peptide);
+        dots.appendChild(dot);
+      });
+      cell.appendChild(dots);
+      const cnt = document.createElement("div"); cnt.className = "cell-count";
+      cnt.textContent = entries.length + " logged"; cell.appendChild(cnt);
     }
+    cells.appendChild(cell);
+  }
+}
+
+function ds(y, m, d) { return `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`; }
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+}
+function goToday() { const n = new Date(); calYear = n.getFullYear(); calMonth = n.getMonth(); renderCalendar(); }
+
+// ── FIRESTORE LOGS ────────────────────────────────────────────────────────
+async function loadAllLogs() {
+  if (!currentUser) return;
+  const snap = await db.collection("users").doc(currentUser.uid).collection("peptideLogs").get();
+  logsCache = {};
+  snap.forEach(doc => { logsCache[doc.id] = doc.data().entries || []; });
+}
+
+async function saveDayLogs(dateStr, entries) {
+  if (!currentUser) return;
+  await db.collection("users").doc(currentUser.uid).collection("peptideLogs").doc(dateStr).set({ entries });
+  logsCache[dateStr] = entries;
+
+  // Update lastLogged in user doc for reminder tracking
+  const lastLogged = Object.keys(logsCache).filter(k => (logsCache[k]||[]).length > 0).sort().pop();
+  await db.collection("users").doc(currentUser.uid).set({ lastLogged }, { merge: true });
+
+  updateStats();
+  renderCalendar();
+  if (panelDate === dateStr) renderPanel(dateStr);
+}
+
+// ── PANEL ─────────────────────────────────────────────────────────────────
+function openPanel(key) {
+  if (!currentUser) return;
+  panelDate = key;
+  addFormOpen = false;
+  document.getElementById("addForm").classList.remove("visible");
+  document.getElementById("addFormToggle").textContent = "+ Log a peptide";
+
+  const [y,m,d] = key.split("-").map(Number);
+  document.getElementById("panelDate").textContent = new Date(y,m-1,d).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+
+  const sel = document.getElementById("fPeptide");
+  sel.innerHTML = PEPTIDES.map(p => `<option value="${p}">${p}</option>`).join("");
+  const now = new Date();
+  document.getElementById("fTime").value = `${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+  document.getElementById("fDosage").value = "";
+  document.getElementById("fNotes").value = "";
+
+  renderPanel(key);
+  document.getElementById("panelOverlay").classList.add("open");
+  document.getElementById("panel").classList.add("open");
+}
+
+function closePanel() {
+  document.getElementById("panelOverlay").classList.remove("open");
+  document.getElementById("panel").classList.remove("open");
+}
+
+function renderPanel(key) {
+  const entries = logsCache[key] || [];
+  const list = document.getElementById("entriesList");
+  list.innerHTML = "";
+  if (!entries.length) {
+    list.innerHTML = `<div class="empty-day">💉 Nothing logged — add your first entry below.</div>`;
+    return;
+  }
+  entries.forEach((e, i) => {
+    const card = document.createElement("div"); card.className = "entry-card";
+    card.innerHTML = `
+      <div class="entry-top">
+        <div class="entry-dot" style="background:${getPeptideColor(e.peptide)}"></div>
+        <div class="entry-peptide">${e.peptide}</div>
+        ${e.time ? `<div class="entry-time">${fmtTime(e.time)}</div>` : ""}
+      </div>
+      <div class="entry-details">
+        ${e.dosage ? `<div class="entry-detail"><strong>Dose:</strong>${e.dosage}</div>` : ""}
+        ${e.notes ? `<div class="entry-detail"><strong>Notes:</strong>${e.notes}</div>` : ""}
+      </div>
+      <button class="entry-del" onclick="deleteEntry(${i})">✕</button>`;
+    list.appendChild(card);
   });
 }
 
-const PRICES = {
+function fmtTime(t) {
+  if (!t) return "";
+  const [h, m] = t.split(":").map(Number);
+  return `${h%12||12}:${String(m).padStart(2,"0")} ${h>=12?"PM":"AM"}`;
+}
+
+function toggleAddForm() {
+  addFormOpen = !addFormOpen;
+  document.getElementById("addForm").classList.toggle("visible", addFormOpen);
+  document.getElementById("addFormToggle").textContent = addFormOpen ? "↑ Cancel" : "+ Log a peptide";
+}
+
+async function saveEntry() {
+  const peptide = document.getElementById("fPeptide").value;
+  const dosage = document.getElementById("fDosage").value.trim();
+  const time = document.getElementById("fTime").value;
+  const notes = document.getElementById("fNotes").value.trim();
+  if (!peptide) { showToast("Pick a peptide first", "error"); return; }
+  const entry = { peptide, dosage, time, notes, id: Date.now().toString() };
+  await saveDayLogs(panelDate, [...(logsCache[panelDate]||[]), entry]);
+  document.getElementById("fDosage").value = "";
+  document.getElementById("fNotes").value = "";
+  addFormOpen = false;
+  document.getElementById("addForm").classList.remove("visible");
+  document.getElementById("addFormToggle").textContent = "+ Log a peptide";
+  showToast(`${peptide} logged! 💉`, "success");
+}
+
+async function deleteEntry(index) {
+  const entries = [...(logsCache[panelDate]||[])];
+  entries.splice(index, 1);
+  await saveDayLogs(panelDate, entries);
+  showToast("Entry removed", "");
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────
+function updateStats() {
+  const today = new Date();
+  const todayStr = ds(today.getFullYear(), today.getMonth(), today.getDate());
+  let streak = 0, check = new Date(today);
+  while (true) {
+    const k = ds(check.getFullYear(), check.getMonth(), check.getDate());
+    if ((logsCache[k]||[]).length > 0) { streak++; check.setDate(check.getDate()-1); }
+    else break;
+  }
+  const prefix = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}`;
+  const monthDays = Object.keys(logsCache).filter(k => k.startsWith(prefix) && (logsCache[k]||[]).length > 0).length;
+  const total = Object.values(logsCache).reduce((s,e) => s+e.length, 0);
+  const unique = new Set(Object.values(logsCache).flat().map(e => e.peptide)).size;
+  document.getElementById("statStreak").textContent = streak;
+  document.getElementById("statMonth").textContent = monthDays;
+  document.getElementById("statTotal").textContent = total;
+  document.getElementById("statUnique").textContent = unique;
+}
+
+// ── REMINDERS ────────────────────────────────────────────────────────────
+function applyReminderPrefs() {
+  document.getElementById("reminderToggle").checked = reminderPrefs.enabled;
+  document.getElementById("reminderOptions").style.display = reminderPrefs.enabled ? "block" : "none";
+  document.getElementById("reminderStatusText").textContent = reminderPrefs.enabled
+    ? `On — every ${reminderPrefs.remindEvery === 1 ? "day" : reminderPrefs.remindEvery + " days"}`
+    : "Off — turn on to get notified";
+
+  // Highlight selected frequency
+  document.querySelectorAll(".freq-btn").forEach(b => {
+    b.classList.toggle("selected", parseInt(b.dataset.days) === reminderPrefs.remindEvery);
+  });
+
+  updateNotifBtn();
+  updateReminderStatus();
+}
+
+async function onReminderToggle() {
+  const enabled = document.getElementById("reminderToggle").checked;
+  reminderPrefs.enabled = enabled;
+  document.getElementById("reminderOptions").style.display = enabled ? "block" : "none";
+  document.getElementById("reminderStatusText").textContent = enabled
+    ? `On — every ${reminderPrefs.remindEvery === 1 ? "day" : reminderPrefs.remindEvery + " days"}`
+    : "Off — turn on to get notified";
+
+  if (enabled && Notification.permission === "default") {
+    await requestNotifPermission();
+  }
+  await saveReminderPrefs();
+}
+
+function selectFreq(btn) {
+  document.querySelectorAll(".freq-btn").forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+  reminderPrefs.remindEvery = parseInt(btn.dataset.days);
+  document.getElementById("reminderStatusText").textContent = `On — every ${reminderPrefs.remindEvery === 1 ? "day" : reminderPrefs.remindEvery + " days"}`;
+  updateReminderStatus();
+  saveReminderPrefs();
+}
+
+async function requestNotifPermission() {
+  if (!("Notification" in window)) { showToast("Notifications not supported in this browser", "error"); return; }
+  const perm = await Notification.requestPermission();
+  updateNotifBtn();
+  if (perm === "granted") showToast("🔔 Notifications enabled!", "success");
+  else if (perm === "denied") showToast("Notifications blocked — check your browser settings", "error");
+}
+
+function updateNotifBtn() {
+  const btn = document.getElementById("notifPermBtn");
+  if (!("Notification" in window)) { btn.textContent = "⚠️ Not supported in this browser"; btn.className = "notif-btn denied"; return; }
+  if (Notification.permission === "granted") { btn.textContent = "✅ Notifications enabled"; btn.className = "notif-btn granted"; }
+  else if (Notification.permission === "denied") { btn.textContent = "🚫 Notifications blocked — enable in browser settings"; btn.className = "notif-btn denied"; }
+  else { btn.textContent = "🔔 Allow Browser Notifications"; btn.className = "notif-btn"; }
+}
+
+function updateReminderStatus() {
+  const statusEl = document.getElementById("reminderStatus");
+  const allDates = Object.keys(logsCache).filter(k => (logsCache[k]||[]).length > 0).sort();
+  if (!allDates.length) { statusEl.style.display = "none"; return; }
+  statusEl.style.display = "flex";
+  const lastDate = allDates[allDates.length - 1];
+  const [y,m,d] = lastDate.split("-").map(Number);
+  const lastDateObj = new Date(y, m-1, d);
+  const nextDate = new Date(lastDateObj);
+  nextDate.setDate(nextDate.getDate() + reminderPrefs.remindEvery);
+  document.getElementById("lastLoggedDisplay").textContent = lastDateObj.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+  document.getElementById("nextReminderDisplay").textContent = nextDate <= new Date() ? "Due now!" : nextDate.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+}
+
+async function saveReminderPrefs() {
+  if (!currentUser) return;
+  await db.collection("users").doc(currentUser.uid).set({ reminderPrefs }, { merge: true });
+}
+
+function checkReminderDue(data) {
+  if (!reminderPrefs.enabled) return;
+  if (Notification.permission !== "granted") return;
+  const lastLogged = data.lastLogged;
+  if (!lastLogged) return;
+  const lastDate = typeof lastLogged === "string" ? new Date(lastLogged) : lastLogged.toDate?.() || new Date(lastLogged);
+  const daysSince = (Date.now() - lastDate.getTime()) / 86400000;
+  if (daysSince >= reminderPrefs.remindEvery) {
+    const days = Math.floor(daysSince);
+    new Notification("PepsTracker 💉 Protocol Reminder", {
+      body: `It's been ${days} day${days !== 1 ? "s" : ""} since your last log. Time to check in on your protocol!`,
+      icon: "/favicon.png",
+      badge: "/favicon.png",
+      tag: "peps-reminder"
+    });
+  }
+}
+
+// ── PROFILE ──────────────────────────────────────────────────────────────
+function renderProfile(data) {
+  const el = document.getElementById("profileSection");
+  if (data && data.recommendations && data.recommendations.length > 0) {
+    const p = data.profile || {};
+    el.innerHTML = `
+      <div style="background:var(--card);border:1.5px solid var(--green);border-radius:var(--radius);padding:20px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:16px;">
+          ${p.age ? `<div style="background:var(--surface);border-radius:8px;padding:10px 12px;"><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;">Age</div><div style="font-weight:700;">${p.age} yrs</div></div>` : ""}
+          ${p.weight ? `<div style="background:var(--surface);border-radius:8px;padding:10px 12px;"><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;">Weight</div><div style="font-weight:700;">${p.weight} ${p.weightUnit||"lbs"}</div></div>` : ""}
+          ${p.goals&&p.goals.length ? `<div style="background:var(--surface);border-radius:8px;padding:10px 12px;"><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;">Top Goal</div><div style="font-weight:700;text-transform:capitalize;">${p.goals[0]}</div></div>` : ""}
+          ${p.experience ? `<div style="background:var(--surface);border-radius:8px;padding:10px 12px;"><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;">Level</div><div style="font-weight:700;text-transform:capitalize;">${p.experience}</div></div>` : ""}
+        </div>
+        <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Recommended Peptides</div>
+        ${data.recommendations.map(r => `
+          <div style="background:var(--surface);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div><div style="font-weight:700;font-size:.9rem;">${r.emoji} ${r.name}</div><div style="font-size:.75rem;color:var(--blue);margin-top:2px;">${r.dose} · ${r.frequency}</div></div>
+            <a href="index.html?peptide=${encodeURIComponent(r.name)}" style="display:inline-block;background:linear-gradient(135deg,var(--green),#2bb858);color:#0d0f14;font-weight:800;font-size:.78rem;padding:7px 14px;border-radius:7px;text-decoration:none;white-space:nowrap;">Compare Prices →</a>
+          </div>`).join("")}
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <div style="background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;text-align:center;">
+        <div style="font-size:2rem;margin-bottom:10px;">🧬</div>
+        <div style="font-weight:700;margin-bottom:6px;">No profile yet</div>
+        <div style="color:var(--muted);font-size:.85rem;margin-bottom:16px;">Complete the onboarding quiz for personalized recommendations.</div>
+        <a href="onboarding.html" style="display:inline-block;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.88rem;padding:10px 24px;border-radius:10px;text-decoration:none;">Build My Profile →</a>
+      </div>`;
+  }
+}
+
+// ── SAVED LISTINGS ───────────────────────────────────────────────────────
+function renderSaved(saved) {
+  const el = document.getElementById("savedListingsSection");
+  if (!saved.length) {
+    el.innerHTML = `<div class="empty-saves"><div class="empty-icon">☆</div><div style="font-weight:700;margin-bottom:6px;">No saved listings yet</div><div style="font-size:.85rem;">Hit ☆ on any vendor card on the <a href="index.html" style="color:var(--blue);">Price Tracker</a>.</div></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="saves-grid">${saved.map(s => `
+    <div class="save-card">
+      <div><div class="save-vendor">⭐ ${s.vendorName}</div><div class="save-peptide">${s.peptide}</div></div>
+      <div class="save-price-block"><div class="save-price">$${Number(s.price).toFixed(2)}</div>${s.code ? `<div class="save-code">Code: <span>${s.code}</span></div>` : ""}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+        <a href="index.html?peptide=${encodeURIComponent(s.peptide)}" class="btn-go">Shop →</a>
+        <button class="btn-remove" onclick="removeSaved('${s.key}', this)">✕ Remove</button>
+      </div>
+    </div>`).join("")}</div>`;
+}
+
+async function removeSaved(key, btn) {
+  if (!currentUser) return;
+  btn.closest(".save-card").style.opacity = ".4";
+  const snap = await db.collection("users").doc(currentUser.uid).get();
+  const saved = (snap.data()?.savedListings || []).filter(s => s.key !== key);
+  await db.collection("users").doc(currentUser.uid).set({ savedListings: saved }, { merge: true });
+  renderSaved(saved);
+}
+
+// ── PRICE ALERTS ──────────────────────────────────────────────────────────
+const PRICES_ALERTS = {
   "Semaglutide":{ascension:{price:65.00,mg:5,oos:true},atomik:{price:99.00,mg:10},lapeptides:{price:64.99,mg:5},glacier:{price:74.99,mg:15},milehigh:{price:69.99,mg:10},ezpeptides:{price:48.00,mg:10},ion:{price:39.00,mg:5},nura:{price:69.00,mg:10}},
   "Tirzepatide":{atomik:{price:99.00,mg:10},lapeptides:{price:99.99,mg:15},glacier:{price:68.99,mg:10},milehigh:{price:89.99,mg:10},ezpeptides:{price:53.00,mg:10},labsourced:{price:109.00,mg:30},ion:{price:49.00,mg:10},nura:{price:69.00,mg:10}},
   "BPC-157":{atomik:{price:65.00,mg:10},lapeptides:{price:59.99,mg:10},glacier:{price:45.99,mg:10},milehigh:{price:49.99,mg:10},ezpeptides:{price:44.00,mg:10},amp:{price:44.00,mg:10},labsourced:{price:49.00,mg:10},ion:{price:29.00,mg:10},nura:{price:65.00,mg:10}},
@@ -304,64 +868,25 @@ const PRICES = {
   "Melanotan II":{atomik:{price:29.00,mg:10},lapeptides:{price:44.99,mg:10},glacier:{price:33.99,mg:10},milehigh:{price:39.99,mg:10},ezpeptides:{price:44.00,mg:10},amp:{price:44.00,mg:10},labsourced:{price:49.00,mg:10},ion:{price:35.00,mg:10},nura:{price:30.00,mg:10}},
   "Semax":{lapeptides:{price:39.99,mg:10},glacier:{price:40.99,mg:10},milehigh:{price:39.99,mg:10},ezpeptides:{price:44.00,mg:10},labsourced:{price:69.00,mg:10},ion:{price:32.90,mg:10},nura:{price:45.00,mg:10}},
   "Selank":{atomik:{price:35.00,mg:10},lapeptides:{price:39.99,mg:10},glacier:{price:40.99,mg:10},milehigh:{price:39.99,mg:10},ezpeptides:{price:44.00,mg:10},amp:{price:44.00,mg:10},labsourced:{price:49.00,mg:10},ion:{price:25.00,mg:5},nura:{price:45.00,mg:10}},
-  "Adamax":{labsourced:{price:49.00,mg:10},ion:{price:69.00,mg:10}},
   "KPV":{atomik:{price:55.00,mg:10},lapeptides:{price:59.99,mg:10},glacier:{price:51.99,mg:10},milehigh:{price:49.99,mg:10},ezpeptides:{price:44.00,mg:10},amp:{price:44.00,mg:10},labsourced:{price:49.00,mg:10},ion:{price:49.00,mg:10},nura:{price:45.00,mg:10}},
 };
+const DISCOUNTS={ascension:0.50,atomik:0.15,lapeptides:0.10,glacier:0.10,milehigh:0.10,ezpeptides:0.10,amp:0.10,labsourced:0.15,ion:0.15,retaone:0.05,nura:0.15};
+function getCurPrice(vid, pep) { const p=PRICES_ALERTS[pep]; if(!p||!p[vid])return null; return p[vid].price*(1-(DISCOUNTS[vid]||0)); }
+function loadAlerts() { try{return JSON.parse(localStorage.getItem("pepstracker_alerts")||"{}");}catch(e){return{};} }
+function saveAlerts(d) { localStorage.setItem("pepstracker_alerts",JSON.stringify(d)); }
+function removeAlert(key) { const d=loadAlerts(); delete d[key]; saveAlerts(d); renderAlerts(); }
+function clearAll() { if(confirm("Remove all price alerts?")){ localStorage.removeItem("pepstracker_alerts"); renderAlerts(); } }
 
-const DISCOUNTS = {ascension:0.50,atomik:0.15,lapeptides:0.10,glacier:0.10,milehigh:0.10,ezpeptides:0.10,amp:0.10,labsourced:0.15,ion:0.15,retaone:0.05,nura:0.15};
-
-function getCurrentPrice(vendorId, peptide) {
-  const p = PRICES[peptide];
-  if (!p || !p[vendorId]) return null;
-  const disc = DISCOUNTS[vendorId] || 0;
-  return p[vendorId].price * (1 - disc);
-}
-
-function loadAlerts() {
-  try { return JSON.parse(localStorage.getItem('pepstracker_alerts') || '{}'); } catch(e) { return {}; }
-}
-
-function saveAlerts(data) {
-  localStorage.setItem('pepstracker_alerts', JSON.stringify(data));
-}
-
-function removeAlert(key) {
-  const data = loadAlerts();
-  delete data[key];
-  saveAlerts(data);
-  render();
-}
-
-function clearAll() {
-  if (confirm('Remove all price alerts?')) {
-    localStorage.removeItem('pepstracker_alerts');
-    render();
-  }
-}
-
-function render() {
-  const alerts = loadAlerts();
-  const keys = Object.keys(alerts);
-  const container = document.getElementById('mainContent');
-
-  if (keys.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="icon">🔔</div>
-        <h3>No price alerts yet</h3>
-        <p>Go to the <a href="index.html">Price Tracker</a>, search for a peptide, and click <strong>🔔 Alert</strong> on any vendor card to set a target price.</p>
-      </div>`;
+function renderAlerts() {
+  const alerts = loadAlerts(); const keys = Object.keys(alerts);
+  const container = document.getElementById("mainContent");
+  if (!keys.length) {
+    container.innerHTML = `<div class="empty-state"><div class="icon">🔔</div><h3>No price alerts yet</h3><p>Go to the <a href="index.html">Price Tracker</a>, search a peptide, and click <strong>🔔 Alert</strong> on any vendor card.</p></div>`;
     return;
   }
-
-  const triggered = keys.filter(k => {
-    const a = alerts[k];
-    const current = getCurrentPrice(a.vendorId, a.peptide);
-    return current !== null && current <= a.targetPrice;
-  });
-
+  const triggered = keys.filter(k => { const a=alerts[k]; const c=getCurPrice(a.vendorId,a.peptide); return c!==null&&c<=a.targetPrice; });
   container.innerHTML = `
-    <div class="stats-bar">
+    <div class="stats-bar-sm">
       <div class="stat-chip"><span>${keys.length}</span><label>Total Alerts</label></div>
       <div class="stat-chip"><span style="color:var(--green)">${triggered.length}</span><label>Triggered Now</label></div>
     </div>
@@ -370,56 +895,37 @@ function render() {
       <button class="clear-all" onclick="clearAll()">🗑️ Clear All</button>
     </div>
     <div class="alerts-grid">
-      ${keys.sort((a,b) => {
-        const aTriggered = getCurrentPrice(alerts[a].vendorId, alerts[a].peptide) <= alerts[a].targetPrice;
-        const bTriggered = getCurrentPrice(alerts[b].vendorId, alerts[b].peptide) <= alerts[b].targetPrice;
-        return bTriggered - aTriggered;
-      }).map(key => {
-        const a = alerts[key];
-        const current = getCurrentPrice(a.vendorId, a.peptide);
-        const isTriggered = current !== null && current <= a.targetPrice;
-        return `
-        <div class="alert-card ${isTriggered ? 'triggered' : ''}">
-          <div>
-            <div class="alert-vendor">
-              ${a.vendorName}
-              ${isTriggered ? '<span class="triggered-badge">✅ Price Hit!</span>' : ''}
-            </div>
-            <div class="alert-peptide">${a.peptide}</div>
-          </div>
-          <div class="alert-prices">
-            <div class="alert-target-label">Alert below</div>
-            <div class="alert-target">$${parseFloat(a.targetPrice).toFixed(2)}</div>
-            ${current !== null ? `<div class="alert-current ${isTriggered ? 'below' : ''}">Current: $${current.toFixed(2)}</div>` : ''}
-          </div>
-          <div class="btn-actions">
-            <a class="btn-go" href="index.html?peptide=${encodeURIComponent(a.peptide)}">View Prices →</a>
-            <button class="btn-remove" onclick="removeAlert('${key}')">✕</button>
-          </div>
+      ${keys.sort((a,b)=>{const aT=getCurPrice(alerts[a].vendorId,alerts[a].peptide)<=alerts[a].targetPrice;const bT=getCurPrice(alerts[b].vendorId,alerts[b].peptide)<=alerts[b].targetPrice;return bT-aT;}).map(key=>{
+        const a=alerts[key]; const c=getCurPrice(a.vendorId,a.peptide); const hit=c!==null&&c<=a.targetPrice;
+        return `<div class="alert-card ${hit?"triggered":""}">
+          <div><div class="alert-vendor">${a.vendorName}${hit?'<span class="triggered-badge">✅ Price Hit!</span>':""}</div><div class="alert-peptide">${a.peptide}</div></div>
+          <div class="alert-prices"><div class="alert-target-label">Alert below</div><div class="alert-target">$${parseFloat(a.targetPrice).toFixed(2)}</div>${c!==null?`<div class="alert-current ${hit?"below":""}">Current: $${c.toFixed(2)}</div>`:""}</div>
+          <div class="btn-actions"><a class="btn-go" href="index.html?peptide=${encodeURIComponent(a.peptide)}">View →</a><button class="btn-remove" onclick="removeAlert('${key}')">✕</button></div>
         </div>`;
-      }).join('')}
+      }).join("")}
     </div>`;
 }
 
-render();
-</script>
-<script>
-function toggleMenu() {
-  const nav = document.getElementById('mobileNav');
-  const btn = document.getElementById('menuBtn');
-  const open = nav.classList.toggle('open');
-  btn.classList.toggle('open', open);
-  btn.querySelector('.ham-icon').textContent = open ? '✕' : '☰';
-  btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+// ── UTILS ─────────────────────────────────────────────────────────────────
+function showToast(msg, type="") {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove("show"), 3000);
 }
-document.addEventListener('click', function(e) {
-  const nav = document.getElementById('mobileNav');
-  const btn = document.getElementById('menuBtn');
-  if (nav && nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
-    nav.classList.remove('open');
-    btn.textContent = '☰';
-  }
+function toggleMenu() {
+  const nav=document.getElementById("mobileNav"), btn=document.getElementById("menuBtn");
+  const open=nav.classList.toggle("open");
+  btn.classList.toggle("open",open);
+  btn.querySelector(".ham-icon").textContent=open?"✕":"☰";
+}
+document.addEventListener("click", e => {
+  const nav=document.getElementById("mobileNav"), btn=document.getElementById("menuBtn");
+  if(nav&&nav.classList.contains("open")&&!nav.contains(e.target)&&!btn.contains(e.target)){nav.classList.remove("open");btn.querySelector(".ham-icon").textContent="☰";}
 });
+
+// Initial render (logged-out state shows empty calendar)
+renderCalendar();
+renderAlerts();
 </script>
 </body>
 </html>
