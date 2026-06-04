@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Live Bookings Admin — PepsTracker</title>
+<link rel="icon" type="image/png" href="favicon.png"/>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#0d0f14;--surface:#161b25;--card:#1c2230;--border:#2a3347;--blue:#3b9eff;--green:#4de87a;--text:#e8edf5;--muted:#7a8ba8;--gold:#f5c842;--red:#ff5c5c;--radius:12px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-size:1.1rem;font-weight:800;text-decoration:none;color:var(--text);}
+.logo span:first-child{color:var(--blue);}
+.logo span:last-child{color:var(--green);}
+.admin-badge{background:rgba(255,92,92,.15);border:1px solid rgba(255,92,92,.35);color:var(--red);border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;}
+.page{max-width:1000px;margin:0 auto;padding:28px 20px 80px;}
+h1{font-size:1.5rem;font-weight:800;margin-bottom:4px;}
+.subtitle{color:var(--muted);font-size:.88rem;margin-bottom:24px;}
+
+/* login wall */
+#loginWall{max-width:420px;margin:60px auto;background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:36px;text-align:center;}
+#loginWall h2{margin-bottom:8px;}
+#loginWall p{color:var(--muted);font-size:.9rem;margin-bottom:24px;}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;}
+
+/* stats */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
+.stat-num{font-size:1.8rem;font-weight:800;}
+.stat-label{font-size:.75rem;color:var(--muted);margin-top:4px;}
+@media(max-width:560px){.stats-row{grid-template-columns:repeat(2,1fr);}}
+
+/* filters */
+.filter-bar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.filter-btn{background:var(--card);border:1.5px solid var(--border);color:var(--muted);padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.filter-btn:hover,.filter-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(59,158,255,.08);}
+
+/* booking cards */
+.bookings-list{display:flex;flex-direction:column;gap:12px;}
+.booking-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:20px;transition:border-color .2s;}
+.booking-card.confirmed{border-color:rgba(77,232,122,.4);}
+.booking-card.pending_payment{border-color:rgba(245,200,66,.3);}
+.booking-card.payment_clicked{border-color:rgba(59,158,255,.4);}
+.booking-card.cancelled{opacity:.5;border-color:var(--border);}
+.booking-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px;}
+.booking-company{font-size:1.05rem;font-weight:800;}
+.booking-date{font-size:.88rem;color:var(--blue);font-weight:700;margin-top:2px;}
+.status-badge{padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
+.status-confirmed{background:rgba(77,232,122,.15);color:var(--green);border:1px solid rgba(77,232,122,.35);}
+.status-pending_payment{background:rgba(245,200,66,.12);color:var(--gold);border:1px solid rgba(245,200,66,.3);}
+.status-payment_clicked{background:rgba(59,158,255,.12);color:var(--blue);border:1px solid rgba(59,158,255,.3);}
+.status-cancelled{background:rgba(255,92,92,.1);color:var(--red);border:1px solid rgba(255,92,92,.3);}
+.booking-details{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:14px;}
+.detail{background:var(--surface);border-radius:8px;padding:10px 12px;}
+.detail-label{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;}
+.detail-value{font-size:.85rem;font-weight:600;word-break:break-all;}
+.detail-value a{color:var(--blue);text-decoration:none;}
+.topic-box{background:var(--surface);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:.88rem;color:var(--muted);line-height:1.5;}
+.topic-box strong{color:var(--text);display:block;margin-bottom:4px;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;}
+.booking-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.btn-confirm{background:rgba(77,232,122,.15);border:1px solid rgba(77,232,122,.4);color:var(--green);padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-confirm:hover{background:rgba(77,232,122,.25);}
+.btn-cancel{background:rgba(255,92,92,.1);border:1px solid rgba(255,92,92,.3);color:var(--red);padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;}
+.btn-email{background:rgba(59,158,255,.1);border:1px solid rgba(59,158,255,.3);color:var(--blue);padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.booked-at{font-size:.72rem;color:var(--muted);margin-top:10px;}
+.empty{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty .icon{font-size:3rem;margin-bottom:12px;}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:.9rem;font-weight:600;z-index:999;transition:transform .3s;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.success{border-color:rgba(77,232,122,.5);color:var(--green);}
+.toast.error{border-color:rgba(255,92,92,.5);color:var(--red);}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="index.html"><span>Peps</span><span>Tracker</span></a>
+  <div class="admin-badge">🔐 Admin</div>
+</header>
+
+<!-- Login wall -->
+<div id="loginWall" style="display:none;">
+  <h2>🔐 Admin Access</h2>
+  <p>Sign in with your PepsTracker admin account to view bookings.</p>
+  <button class="btn-google" onclick="signIn()">
+    <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+    Sign in with Google
+  </button>
+</div>
+
+<div id="accessDenied" style="display:none;max-width:400px;margin:80px auto;text-align:center;color:var(--muted);">
+  <div style="font-size:3rem;margin-bottom:12px;">🚫</div>
+  <h2 style="margin-bottom:8px;color:var(--text);">Access Denied</h2>
+  <p>This page is for PepsTracker admins only.</p>
+  <button onclick="auth.signOut()" style="margin-top:16px;background:var(--card);border:1px solid var(--border);color:var(--muted);padding:10px 20px;border-radius:8px;cursor:pointer;">Sign out</button>
+</div>
+
+<div id="adminPanel" style="display:none;">
+<div class="page">
+  <h1>🎙️ Live Bookings</h1>
+  <div class="subtitle">All "Be a Part of the Live" booking requests — manage, confirm, and cancel.</div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num" id="sTotal" style="color:var(--blue);">—</div><div class="stat-label">Total Bookings</div></div>
+    <div class="stat"><div class="stat-num" id="sConfirmed" style="color:var(--green);">—</div><div class="stat-label">Confirmed</div></div>
+    <div class="stat"><div class="stat-num" id="sPending" style="color:var(--gold);">—</div><div class="stat-label">Pending Payment</div></div>
+    <div class="stat"><div class="stat-num" id="sCancelled" style="color:var(--red);">—</div><div class="stat-label">Cancelled</div></div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" data-filter="confirmed" onclick="setFilter('confirmed',this)">✅ Confirmed</button>
+    <button class="filter-btn" data-filter="pending_payment" onclick="setFilter('pending_payment',this)">⏳ Pending Payment</button>
+    <button class="filter-btn" data-filter="payment_clicked" onclick="setFilter('payment_clicked',this)">💳 Payment Clicked</button>
+    <button class="filter-btn" data-filter="cancelled" onclick="setFilter('cancelled',this)">❌ Cancelled</button>
+  </div>
+
+  <div class="bookings-list" id="bookingsList"></div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ADMIN_EMAILS = ["jonahszedertuba@gmail.com"]; // ← add admin emails here
+
+const firebaseConfig={apiKey:"AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",authDomain:"pepstracker.firebaseapp.com",projectId:"pepstracker",storageBucket:"pepstracker.firebasestorage.app",messagingSenderId:"575079448915",appId:"1:575079448915:web:4937336ccc15a6764ca1a6"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.firestore();
+
+let allBookings=[];
+let currentFilter="all";
+
+function signIn(){auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());}
+
+auth.onAuthStateChanged(async user=>{
+  document.getElementById("loginWall").style.display="none";
+  document.getElementById("adminPanel").style.display="none";
+  document.getElementById("accessDenied").style.display="none";
+  if(!user){document.getElementById("loginWall").style.display="block";return;}
+  if(!ADMIN_EMAILS.includes(user.email)){document.getElementById("accessDenied").style.display="block";return;}
+  document.getElementById("adminPanel").style.display="block";
+  await loadBookings();
+});
+
+async function loadBookings(){
+  const snap=await db.collection("liveBookings").orderBy("bookedAt","desc").get();
+  allBookings=[];
+  snap.forEach(doc=>allBookings.push({id:doc.id,...doc.data()}));
+  renderStats();
+  renderBookings();
+}
+
+function renderStats(){
+  const confirmed=allBookings.filter(b=>b.status==="confirmed").length;
+  const pending=allBookings.filter(b=>b.status==="pending_payment"||b.status==="payment_clicked").length;
+  const cancelled=allBookings.filter(b=>b.status==="cancelled").length;
+  document.getElementById("sTotal").textContent=allBookings.length;
+  document.getElementById("sConfirmed").textContent=confirmed;
+  document.getElementById("sPending").textContent=pending;
+  document.getElementById("sCancelled").textContent=cancelled;
+}
+
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  renderBookings();
+}
+
+function renderBookings(){
+  const list=document.getElementById("bookingsList");
+  const filtered=currentFilter==="all"?allBookings:allBookings.filter(b=>b.status===currentFilter);
+  if(!filtered.length){list.innerHTML=`<div class="empty"><div class="icon">📭</div><p>No bookings found</p></div>`;return;}
+
+  list.innerHTML=filtered.map(b=>{
+    const bookedAt=b.bookedAt?.toDate?.()?.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"})||"—";
+    const socials=[
+      b.instagram?`<a href="https://instagram.com/${b.instagram}" target="_blank">@${b.instagram} (IG)</a>`:"",
+      b.tiktok?`<a href="https://tiktok.com/@${b.tiktok}" target="_blank">@${b.tiktok} (TT)</a>`:"",
+      b.twitter?`<a href="https://x.com/${b.twitter}" target="_blank">@${b.twitter} (X)</a>`:"",
+    ].filter(Boolean).join(" &nbsp; ");
+
+    return `<div class="booking-card ${b.status}">
+      <div class="booking-top">
+        <div>
+          <div class="booking-company">${b.company||"—"}</div>
+          <div class="booking-date">📅 ${b.date||b.id}</div>
+        </div>
+        <span class="status-badge status-${b.status}">${statusLabel(b.status)}</span>
+      </div>
+      <div class="booking-details">
+        <div class="detail"><div class="detail-label">Email</div><div class="detail-value"><a href="mailto:${b.email}">${b.email||"—"}</a></div></div>
+        <div class="detail"><div class="detail-label">Website</div><div class="detail-value">${b.website?`<a href="${b.website}" target="_blank">${b.website.replace("https://","")}</a>`:"—"}</div></div>
+        <div class="detail"><div class="detail-label">Socials</div><div class="detail-value">${socials||"—"}</div></div>
+      </div>
+      ${b.topic?`<div class="topic-box"><strong>What they want to cover</strong>${b.topic}</div>`:""}
+      <div class="booking-actions">
+        ${b.status!=="confirmed"?`<button class="btn-confirm" onclick="updateStatus('${b.id}','confirmed')">✅ Confirm Booking</button>`:""}
+        ${b.status!=="cancelled"?`<button class="btn-cancel" onclick="updateStatus('${b.id}','cancelled')">❌ Cancel</button>`:""}
+        <a class="btn-email" href="mailto:${b.email}?subject=PepsTracker Live — ${encodeURIComponent(b.date||b.id)}&body=Hi ${encodeURIComponent(b.company||'')}," target="_blank">✉️ Email Them</a>
+      </div>
+      <div class="booked-at">Submitted: ${bookedAt}</div>
+    </div>`;
+  }).join("");
+}
+
+function statusLabel(s){
+  return {confirmed:"✅ Confirmed",pending_payment:"⏳ Pending Payment",payment_clicked:"💳 Payment Clicked",cancelled:"❌ Cancelled"}[s]||s;
+}
+
+async function updateStatus(id,status){
+  await db.collection("liveBookings").doc(id).update({status,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  const b=allBookings.find(x=>x.id===id);
+  if(b)b.status=status;
+  renderStats();
+  renderBookings();
+  showToast(status==="confirmed"?"✅ Booking confirmed!":"❌ Booking cancelled","success");
+}
+
+function showToast(msg,type=""){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.className=`toast ${type} show`;
+  setTimeout(()=>t.classList.remove("show"),3000);
+}
+</script>
+</body>
+</html>
