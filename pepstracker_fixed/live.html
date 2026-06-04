@@ -276,13 +276,19 @@ const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct
 
 // ── Load booked dates from Firestore ──────────────────────────────────────
 async function loadBookedDates() {
-  // Sign in anonymously so Firestore allows the read
-  if (!auth.currentUser) {
-    await auth.signInAnonymously().catch(() => {});
+  try {
+    // Sign in anonymously so Firestore allows the read
+    if (!auth.currentUser) {
+      await auth.signInAnonymously().catch(() => {});
+    }
+    const snap = await db.collection("liveBookings").get();
+    bookedDates = {};
+    snap.forEach(doc => { bookedDates[doc.id] = doc.data(); });
+  } catch(e) {
+    console.warn("Could not load bookings from Firestore:", e.message);
+    // Still render the grid — all dates appear open
+    bookedDates = {};
   }
-  const snap = await db.collection("liveBookings").get();
-  bookedDates = {};
-  snap.forEach(doc => { bookedDates[doc.id] = doc.data(); });
   renderDateGrid();
 }
 
