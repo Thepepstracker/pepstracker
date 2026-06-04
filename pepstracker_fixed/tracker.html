@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peptide Tracker — Log Your Protocol | PepsTracker</title>
+  <meta name="description" content="Track your peptide protocol with PepsTracker's calendar. Log peptides, dosages, and how you feel — synced across all your devices." />
+  <link rel="icon" href="favicon.ico" />
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    :root {
+      --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
+      --border:#2a3347; --blue:#3b9eff; --green:#4de87a;
+      --text:#e8edf5; --muted:#7a8ba8; --gold:#f5c842;
+      --red:#ff5c5c; --purple:#a78bfa; --orange:#fb923c;
+      --radius:12px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+
+    /* ── NAV ── */
+    header{position:sticky;top:0;z-index:50;background:rgba(13,15,20,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;}
+    .logo{display:flex;align-items:center;gap:8px;text-decoration:none;font-weight:800;font-size:1.2rem;color:var(--text);}
+    .logo img{height:28px;}
+    nav{display:flex;align-items:center;gap:4px;}
+    nav a{color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;padding:6px 10px;border-radius:8px;transition:color .15s,background .15s;white-space:nowrap;}
+    nav a:hover{color:var(--text);background:rgba(255,255,255,.05);}
+    nav a.active{color:var(--blue);background:rgba(59,158,255,.1);}
+    nav a.nav-calc{background:rgba(77,232,122,.08);color:var(--green);border:1px solid rgba(77,232,122,.2);}
+    nav a.nav-apply{background:rgba(245,200,66,.08);color:var(--gold);border:1px solid rgba(245,200,66,.2);}
+    .menu-btn{display:none;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;}
+    .mobile-nav{display:none;position:fixed;top:60px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;flex-direction:column;gap:4px;z-index:99;}
+    .mobile-nav.open{display:flex;}
+    .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:600;padding:10px 12px;border-radius:8px;}
+    @media(min-width:769px){.mobile-nav{position:fixed;top:68px;left:auto;right:16px;width:220px;border-radius:12px;border:1px solid var(--border);box-shadow:0 12px 32px rgba(0,0,0,.5);padding:8px;}}
+    @media(max-width:768px){nav{display:none;}.menu-btn{display:flex;align-items:center;gap:6px;}}
+
+    /* ── HERO ── */
+    .page-hero{max-width:900px;margin:0 auto;padding:40px 20px 24px;text-align:center;}
+    .page-hero h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;margin-bottom:10px;}
+    .page-hero p{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto;}
+
+    /* ── LOGIN WALL ── */
+    #loginWall{max-width:460px;margin:40px auto;padding:0 20px;}
+    .login-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:40px 32px;text-align:center;}
+    .login-card h2{font-size:1.4rem;margin-bottom:10px;}
+    .login-card p{color:var(--muted);font-size:.95rem;margin-bottom:28px;line-height:1.6;}
+    .login-perks{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;text-align:left;}
+    .perk{display:flex;align-items:center;gap:12px;font-size:.9rem;color:var(--muted);}
+    .perk span:first-child{font-size:1.2rem;}
+    .perk strong{color:var(--text);}
+    .btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s;}
+    .btn-google:hover{opacity:.88;}
+    .btn-google svg{width:20px;height:20px;}
+
+    /* ── TRACKER APP ── */
+    #trackerApp{display:none;max-width:960px;margin:0 auto;padding:0 20px 60px;}
+
+    /* stats bar */
+    .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;}
+    .stat-num{font-size:1.8rem;font-weight:800;color:var(--blue);}
+    .stat-label{font-size:.78rem;color:var(--muted);margin-top:4px;}
+    @media(max-width:600px){.stats-bar{grid-template-columns:repeat(2,1fr);}}
+
+    /* calendar header */
+    .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+    .cal-title{font-size:1.25rem;font-weight:700;}
+    .cal-nav{display:flex;gap:8px;}
+    .cal-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;transition:background .15s;}
+    .cal-btn:hover{background:var(--card);}
+    .today-btn{background:rgba(59,158,255,.1);color:var(--blue);border-color:rgba(59,158,255,.3);}
+
+    /* calendar grid */
+    .cal-grid{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;}
+    .cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);}
+    .cal-day-name{padding:10px;text-align:center;font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+    .cal-cells{display:grid;grid-template-columns:repeat(7,1fr);}
+    .cal-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:90px;padding:8px;cursor:pointer;transition:background .15s;position:relative;}
+    .cal-cell:nth-child(7n){border-right:none;}
+    .cal-cell:hover{background:rgba(59,158,255,.06);}
+    .cal-cell.empty{cursor:default;background:rgba(0,0,0,.15);}
+    .cal-cell.empty:hover{background:rgba(0,0,0,.15);}
+    .cal-cell.today .cell-date{background:var(--blue);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;}
+    .cal-cell.has-logs{background:rgba(77,232,122,.03);}
+    .cell-date{font-size:.85rem;font-weight:600;margin-bottom:6px;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;}
+    .cell-dots{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
+    .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+    .cell-count{font-size:.7rem;color:var(--muted);margin-top:4px;}
+    @media(max-width:600px){.cal-cell{min-height:58px;padding:5px;}.cell-date{font-size:.75rem;}.dot{width:5px;height:5px;}}
+
+    /* ── SIDE PANEL ── */
+    .panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;}
+    .panel-overlay.open{opacity:1;pointer-events:all;}
+    .panel{position:fixed;right:0;top:0;bottom:0;width:min(480px,100vw);background:var(--surface);border-left:1px solid var(--border);z-index:201;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden;}
+    .panel.open{transform:translateX(0);}
+    .panel-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .panel-date{font-size:1.1rem;font-weight:700;}
+    .panel-close{background:var(--card);border:1px solid var(--border);color:var(--text);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;}
+    .panel-body{flex:1;overflow-y:auto;padding:20px 24px;}
+    .panel-foot{padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;}
+
+    /* entries list */
+    .entries-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+    .entry-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;position:relative;}
+    .entry-top{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+    .entry-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+    .entry-peptide{font-weight:700;font-size:.95rem;}
+    .entry-time{margin-left:auto;font-size:.78rem;color:var(--muted);}
+    .entry-details{font-size:.84rem;color:var(--muted);display:flex;flex-direction:column;gap:3px;padding-left:20px;}
+    .entry-detail{display:flex;gap:6px;}<br>
+    .entry-detail strong{color:var(--text);min-width:52px;}
+    .entry-del{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:4px 6px;border-radius:6px;}
+    .entry-del:hover{background:rgba(255,92,92,.15);color:var(--red);}
+    .empty-day{text-align:center;padding:32px 0;color:var(--muted);font-size:.9rem;}
+    .empty-day .emoji{font-size:2rem;margin-bottom:8px;}
+
+    /* add form */
+    .add-form-toggle{width:100%;padding:12px;background:rgba(59,158,255,.1);border:1px dashed rgba(59,158,255,.4);border-radius:12px;color:var(--blue);font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;}
+    .add-form-toggle:hover{background:rgba(59,158,255,.18);}
+    .add-form{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-top:10px;display:none;}
+    .add-form.visible{display:block;}
+    .form-row{margin-bottom:14px;}
+    .form-label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
+    .form-input, .form-select, .form-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:.9rem;font-family:inherit;outline:none;transition:border-color .2s;}
+    .form-input:focus, .form-select:focus, .form-textarea:focus{border-color:var(--blue);}
+    .form-select option{background:var(--surface);}
+    .form-textarea{resize:vertical;min-height:80px;}
+    .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .btn-add-entry{width:100%;padding:12px;background:var(--blue);border:none;border-radius:10px;color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:4px;transition:opacity .2s;}
+    .btn-add-entry:hover{opacity:.88;}
+    .btn-cancel{width:100%;padding:10px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:.88rem;cursor:pointer;margin-top:6px;}
+
+    /* user bar */
+    .user-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 18px;margin-bottom:24px;}
+    .user-info{display:flex;align-items:center;gap:10px;}
+    .user-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;}
+    .user-name{font-size:.9rem;font-weight:600;}
+    .btn-signout{background:none;border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.82rem;}
+    .btn-signout:hover{border-color:var(--red);color:var(--red);}
+
+    /* toast */
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:.9rem;font-weight:600;z-index:999;transition:transform .3s;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    .toast.success{border-color:rgba(77,232,122,.4);color:var(--green);}
+    .toast.error{border-color:rgba(255,92,92,.4);color:var(--red);}
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">
+    <img src="logo.png" alt="PepsTracker" onerror="this.style.display='none'"/>
+    PepsTracker
+  </a>
+  <nav>
+    <a href="index.html">🏠 Price Tracker</a>
+    <a href="vendors.html">🏪 Vendors</a>
+    <a href="blog.html">📝 Blog</a>
+    <a href="tracker.html" class="active">📅 My Tracker</a>
+    <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
+    <a href="quiz.html">🧬 Quiz</a>
+    <a href="vendor-apply.html" class="nav-apply">📋 Apply</a>
+    <a href="account.html">👤 Account</a>
+  </nav>
+  <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+</header>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html" onclick="toggleMenu()">🏠 Price Tracker</a>
+  <a href="vendors.html" onclick="toggleMenu()">🏪 Vendors</a>
+  <a href="blog.html" onclick="toggleMenu()">📝 Blog</a>
+  <a href="tracker.html" class="active" onclick="toggleMenu()">📅 My Tracker</a>
+  <a href="calculators.html" onclick="toggleMenu()" style="color:var(--green);">🧮 Calculators</a>
+  <a href="quiz.html" onclick="toggleMenu()">🧬 Quiz</a>
+  <a href="vendor-apply.html" onclick="toggleMenu()" style="color:var(--gold);">📋 Apply</a>
+  <a href="account.html" onclick="toggleMenu()">👤 Account</a>
+</div>
+
+<div class="page-hero">
+  <h1>📅 Peptide Tracker</h1>
+  <p>Log your peptides, track your protocol, and see how you feel — synced across all your devices.</p>
+</div>
+
+<!-- LOGIN WALL -->
+<div id="loginWall">
+  <div class="login-card">
+    <h2>Sign in to start tracking</h2>
+    <p>Your peptide logs are saved securely to your account and synced across every device you use.</p>
+    <div class="login-perks">
+      <div class="perk"><span>📅</span><div><strong>Calendar view</strong> — see your full protocol at a glance</div></div>
+      <div class="perk"><span>💉</span><div><strong>Log peptide, dose & notes</strong> — track exactly how you feel</div></div>
+      <div class="perk"><span>🔥</span><div><strong>Streak tracking</strong> — stay consistent with your protocol</div></div>
+      <div class="perk"><span>☁️</span><div><strong>Syncs everywhere</strong> — phone, tablet, desktop</div></div>
+    </div>
+    <button class="btn-google" onclick="signIn()">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Continue with Google
+    </button>
+  </div>
+</div>
+
+<!-- TRACKER APP -->
+<div id="trackerApp">
+  <div class="user-bar">
+    <div class="user-info">
+      <img class="user-avatar" id="userAvatar" src="" alt=""/>
+      <div>
+        <div class="user-name" id="userName"></div>
+        <div style="font-size:.78rem;color:var(--muted);">Synced to your account</div>
+      </div>
+    </div>
+    <button class="btn-signout" onclick="signOut()">Sign out</button>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-card"><div class="stat-num" id="statStreak">0</div><div class="stat-label">🔥 Day Streak</div></div>
+    <div class="stat-card"><div class="stat-num" id="statMonth">0</div><div class="stat-label">📅 Days Logged This Month</div></div>
+    <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-label">💉 Total Entries</div></div>
+    <div class="stat-card"><div class="stat-num" id="statPeptides">0</div><div class="stat-label">🧬 Unique Peptides Used</div></div>
+  </div>
+
+  <div class="cal-header">
+    <div class="cal-title" id="calTitle"></div>
+    <div class="cal-nav">
+      <button class="cal-btn today-btn" onclick="goToday()">Today</button>
+      <button class="cal-btn" onclick="changeMonth(-1)">‹</button>
+      <button class="cal-btn" onclick="changeMonth(1)">›</button>
+    </div>
+  </div>
+
+  <div class="cal-grid">
+    <div class="cal-days-header">
+      <div class="cal-day-name">Sun</div>
+      <div class="cal-day-name">Mon</div>
+      <div class="cal-day-name">Tue</div>
+      <div class="cal-day-name">Wed</div>
+      <div class="cal-day-name">Thu</div>
+      <div class="cal-day-name">Fri</div>
+      <div class="cal-day-name">Sat</div>
+    </div>
+    <div class="cal-cells" id="calCells"></div>
+  </div>
+</div>
+
+<!-- SIDE PANEL -->
+<div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <div class="panel-date" id="panelDate"></div>
+    <button class="panel-close" onclick="closePanel()">✕</button>
+  </div>
+  <div class="panel-body">
+    <div class="entries-list" id="entriesList"></div>
+    <button class="add-form-toggle" id="addFormToggle" onclick="toggleAddForm()">+ Log a peptide for this day</button>
+    <div class="add-form" id="addForm">
+      <div class="form-row">
+        <label class="form-label">Peptide</label>
+        <select class="form-select" id="fPeptide"></select>
+      </div>
+      <div class="form-row-2">
+        <div class="form-row" style="margin:0">
+          <label class="form-label">Dosage</label>
+          <input class="form-input" id="fDosage" placeholder="e.g. 250mcg, 2mg"/>
+        </div>
+        <div class="form-row" style="margin:0">
+          <label class="form-label">Time</label>
+          <input class="form-input" type="time" id="fTime"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">How did you feel? (notes)</label>
+        <textarea class="form-textarea" id="fNotes" placeholder="Energy levels, side effects, anything worth noting..."></textarea>
+      </div>
+      <button class="btn-add-entry" onclick="saveEntry()">💉 Log Entry</button>
+      <button class="btn-cancel" onclick="toggleAddForm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Firebase ──────────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
+  authDomain: "pepstracker.firebaseapp.com",
+  projectId: "pepstracker",
+  storageBucket: "pepstracker.firebasestorage.app",
+  messagingSenderId: "575079448915",
+  appId: "1:575079448915:web:4937336ccc15a6764ca1a6"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ── Peptide list ──────────────────────────────────────────────────────────
+const PEPTIDES = ["Semaglutide","Tirzepatide","Retatrutide","Cagrilintide","Survodutide","Retacagri Blend","BPC-157","TB-500","BPC-157 + TB-500 Blend","Ipamorelin","CJC-1295 (with DAC)","CJC-1295 (No DAC)","CJC/Ipa Blend","Sermorelin","Tesamorelin","Tesamorelin/Ipamorelin Blend","GHRP-2","GHRP-6","Hexarelin","GHK-Cu","AHK-Cu","Epithalon","MOTS-c","NAD+","Kisspeptin","Humanin","Semax","N-Acetyl Semax","Selank","N-Acetyl Selank","Semax/Selank Blend","Adamax","DSIP","KPV","ARA-290","AOD-9604","LL-37","PE-22-28","PNC-27","Thymosin Alpha-1","Thymalin","Cardiogen","Testagen","Cartalax","Vesugen","Vilon","Ovagen","Pancragen","Crystagen","Dihexa","Pinealon","Melanotan II","Melanotan I","PT-141 (Bremelanotide)","Oxytocin","IGF-1 LR3","PEG-MGF","5-Amino-1MQ","SLU-PP-332","Tesofensine","HCG","Methylene Blue","Snap-8","PDA","FOXO4-DRI","VIP","SS-31","Klow Blend","Glow Blend","Glutathione","Lipo-C","Bacteriostatic Water"];
+
+// Peptide color mapping by category
+const PEPTIDE_COLORS = {
+  glp1: { color:"#3b9eff", peptides:["Semaglutide","Tirzepatide","Retatrutide","Cagrilintide","Survodutide","Retacagri Blend"] },
+  repair: { color:"#4de87a", peptides:["BPC-157","TB-500","BPC-157 + TB-500 Blend","ARA-290","KPV","PE-22-28","PNC-27","LL-37","AOD-9604"] },
+  growth: { color:"#fb923c", peptides:["Ipamorelin","CJC-1295 (with DAC)","CJC-1295 (No DAC)","CJC/Ipa Blend","Sermorelin","Tesamorelin","Tesamorelin/Ipamorelin Blend","GHRP-2","GHRP-6","Hexarelin","IGF-1 LR3","PEG-MGF"] },
+  longevity: { color:"#a78bfa", peptides:["Epithalon","MOTS-c","NAD+","Humanin","Kisspeptin","5-Amino-1MQ","SLU-PP-332","SS-31","FOXO4-DRI","Dihexa"] },
+  skin: { color:"#f5c842", peptides:["GHK-Cu","AHK-Cu","Melanotan II","Melanotan I","PT-141 (Bremelanotide)","Oxytocin","Snap-8","Glow Blend","Klow Blend","Glutathione","Lipo-C"] },
+  neuro: { color:"#ff5c5c", peptides:["Semax","N-Acetyl Semax","Selank","N-Acetyl Selank","Semax/Selank Blend","Adamax","DSIP","VIP","Methylene Blue","PDA"] },
+  thymus: { color:"#22d3ee", peptides:["Thymosin Alpha-1","Thymalin","Cardiogen","Testagen","Cartalax","Vesugen","Vilon","Ovagen","Pancragen","Crystagen","Pinealon"] },
+};
+
+function getPeptideColor(name) {
+  for (const cat of Object.values(PEPTIDE_COLORS)) {
+    if (cat.peptides.includes(name)) return cat.color;
+  }
+  return "#7a8ba8";
+}
+
+// ── State ─────────────────────────────────────────────────────────────────
+let currentUser = null;
+let currentYear = new Date().getFullYear();
+let currentMonth = new Date().getMonth();
+let logsCache = {}; // { "YYYY-MM-DD": [{peptide,dosage,time,notes,id}] }
+let panelDate = null;
+let addFormOpen = false;
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+function signIn() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(e => showToast(e.message, "error"));
+}
+function signOut() {
+  auth.signOut();
+}
+
+auth.onAuthStateChanged(async user => {
+  currentUser = user;
+  if (user) {
+    document.getElementById("loginWall").style.display = "none";
+    document.getElementById("trackerApp").style.display = "block";
+    document.getElementById("userAvatar").src = user.photoURL || "";
+    document.getElementById("userName").textContent = user.displayName || user.email;
+    await loadAllLogs();
+    renderCalendar();
+  } else {
+    document.getElementById("loginWall").style.display = "block";
+    document.getElementById("trackerApp").style.display = "none";
+    logsCache = {};
+  }
+});
+
+// ── Firestore ─────────────────────────────────────────────────────────────
+async function loadAllLogs() {
+  if (!currentUser) return;
+  const snap = await db.collection("users").doc(currentUser.uid)
+    .collection("peptideLogs").get();
+  logsCache = {};
+  snap.forEach(doc => { logsCache[doc.id] = doc.data().entries || []; });
+  updateStats();
+}
+
+async function saveDayLogs(dateStr, entries) {
+  if (!currentUser) return;
+  await db.collection("users").doc(currentUser.uid)
+    .collection("peptideLogs").doc(dateStr).set({ entries });
+  logsCache[dateStr] = entries;
+  updateStats();
+  renderCalendar();
+  renderPanel(dateStr);
+}
+
+// ── Calendar ──────────────────────────────────────────────────────────────
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function renderCalendar() {
+  const title = document.getElementById("calTitle");
+  title.textContent = `${MONTHS[currentMonth]} ${currentYear}`;
+
+  const cells = document.getElementById("calCells");
+  cells.innerHTML = "";
+
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const today = new Date();
+  const todayStr = dateStr(today.getFullYear(), today.getMonth(), today.getDate());
+
+  // Empty cells before first day
+  for (let i = 0; i < firstDay; i++) {
+    const empty = document.createElement("div");
+    empty.className = "cal-cell empty";
+    cells.appendChild(empty);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = dateStr(currentYear, currentMonth, d);
+    const entries = logsCache[ds] || [];
+    const cell = document.createElement("div");
+    cell.className = "cal-cell" + (entries.length ? " has-logs" : "") + (ds === todayStr ? " today" : "");
+    cell.onclick = () => openPanel(ds);
+
+    const dateDiv = document.createElement("div");
+    dateDiv.className = "cell-date";
+    dateDiv.textContent = d;
+    cell.appendChild(dateDiv);
+
+    if (entries.length) {
+      const dots = document.createElement("div");
+      dots.className = "cell-dots";
+      const shown = entries.slice(0, 8);
+      shown.forEach(e => {
+        const dot = document.createElement("div");
+        dot.className = "dot";
+        dot.style.background = getPeptideColor(e.peptide);
+        dot.title = e.peptide;
+        dots.appendChild(dot);
+      });
+      cell.appendChild(dots);
+      if (entries.length > 1) {
+        const count = document.createElement("div");
+        count.className = "cell-count";
+        count.textContent = `${entries.length} logged`;
+        cell.appendChild(count);
+      }
+    }
+    cells.appendChild(cell);
+  }
+}
+
+function dateStr(y, m, d) {
+  return `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+}
+
+function changeMonth(dir) {
+  currentMonth += dir;
+  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  renderCalendar();
+}
+
+function goToday() {
+  const now = new Date();
+  currentYear = now.getFullYear();
+  currentMonth = now.getMonth();
+  renderCalendar();
+}
+
+// ── Panel ─────────────────────────────────────────────────────────────────
+function openPanel(ds) {
+  panelDate = ds;
+  addFormOpen = false;
+  document.getElementById("addForm").classList.remove("visible");
+  document.getElementById("addFormToggle").textContent = "+ Log a peptide for this day";
+
+  // Set panel date display
+  const [y,m,d] = ds.split("-").map(Number);
+  const dateObj = new Date(y, m-1, d);
+  document.getElementById("panelDate").textContent = dateObj.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+
+  // Populate peptide select
+  const sel = document.getElementById("fPeptide");
+  sel.innerHTML = PEPTIDES.map(p => `<option value="${p}">${p}</option>`).join("");
+
+  // Set default time to now
+  const now = new Date();
+  document.getElementById("fTime").value = `${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+  document.getElementById("fDosage").value = "";
+  document.getElementById("fNotes").value = "";
+
+  renderPanel(ds);
+  document.getElementById("panelOverlay").classList.add("open");
+  document.getElementById("panel").classList.add("open");
+}
+
+function closePanel() {
+  document.getElementById("panelOverlay").classList.remove("open");
+  document.getElementById("panel").classList.remove("open");
+  panelDate = null;
+}
+
+function renderPanel(ds) {
+  const entries = logsCache[ds] || [];
+  const list = document.getElementById("entriesList");
+  list.innerHTML = "";
+
+  if (!entries.length) {
+    list.innerHTML = `<div class="empty-day"><div class="emoji">💉</div>Nothing logged yet — add your first entry below.</div>`;
+    return;
+  }
+
+  entries.forEach((e, i) => {
+    const card = document.createElement("div");
+    card.className = "entry-card";
+    const color = getPeptideColor(e.peptide);
+    card.innerHTML = `
+      <div class="entry-top">
+        <div class="entry-dot" style="background:${color}"></div>
+        <div class="entry-peptide">${e.peptide}</div>
+        ${e.time ? `<div class="entry-time">${formatTime(e.time)}</div>` : ""}
+      </div>
+      <div class="entry-details">
+        ${e.dosage ? `<div class="entry-detail"><strong>Dose:</strong>${e.dosage}</div>` : ""}
+        ${e.notes ? `<div class="entry-detail"><strong>Notes:</strong>${e.notes}</div>` : ""}
+      </div>
+      <button class="entry-del" onclick="deleteEntry(${i})" title="Delete">✕</button>`;
+    list.appendChild(card);
+  });
+}
+
+function formatTime(t) {
+  if (!t) return "";
+  const [h, m] = t.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  return `${h % 12 || 12}:${String(m).padStart(2,"0")} ${ampm}`;
+}
+
+function toggleAddForm() {
+  addFormOpen = !addFormOpen;
+  document.getElementById("addForm").classList.toggle("visible", addFormOpen);
+  document.getElementById("addFormToggle").textContent = addFormOpen ? "↑ Cancel" : "+ Log a peptide for this day";
+}
+
+async function saveEntry() {
+  const peptide = document.getElementById("fPeptide").value;
+  const dosage = document.getElementById("fDosage").value.trim();
+  const time = document.getElementById("fTime").value;
+  const notes = document.getElementById("fNotes").value.trim();
+
+  if (!peptide) { showToast("Please select a peptide", "error"); return; }
+
+  const entry = { peptide, dosage, time, notes, id: Date.now().toString() };
+  const entries = [...(logsCache[panelDate] || []), entry];
+  await saveDayLogs(panelDate, entries);
+
+  // Reset form
+  document.getElementById("fDosage").value = "";
+  document.getElementById("fNotes").value = "";
+  addFormOpen = false;
+  document.getElementById("addForm").classList.remove("visible");
+  document.getElementById("addFormToggle").textContent = "+ Log a peptide for this day";
+  showToast(`${peptide} logged! 💉`, "success");
+}
+
+async function deleteEntry(index) {
+  const entries = [...(logsCache[panelDate] || [])];
+  entries.splice(index, 1);
+  await saveDayLogs(panelDate, entries);
+  showToast("Entry deleted", "");
+}
+
+// ── Stats ─────────────────────────────────────────────────────────────────
+function updateStats() {
+  const today = new Date();
+  const todayStr = dateStr(today.getFullYear(), today.getMonth(), today.getDate());
+
+  // Streak
+  let streak = 0;
+  let check = new Date(today);
+  while (true) {
+    const ds = dateStr(check.getFullYear(), check.getMonth(), check.getDate());
+    if (logsCache[ds] && logsCache[ds].length > 0) {
+      streak++;
+      check.setDate(check.getDate() - 1);
+    } else break;
+  }
+
+  // Days logged this month
+  const monthPrefix = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}`;
+  const monthDays = Object.keys(logsCache).filter(k => k.startsWith(monthPrefix) && logsCache[k].length > 0).length;
+
+  // Total entries
+  const totalEntries = Object.values(logsCache).reduce((sum, e) => sum + e.length, 0);
+
+  // Unique peptides
+  const allPeptides = new Set(Object.values(logsCache).flat().map(e => e.peptide));
+
+  document.getElementById("statStreak").textContent = streak;
+  document.getElementById("statMonth").textContent = monthDays;
+  document.getElementById("statTotal").textContent = totalEntries;
+  document.getElementById("statPeptides").textContent = allPeptides.size;
+}
+
+// ── Nav ───────────────────────────────────────────────────────────────────
+function toggleMenu() {
+  document.getElementById("mobileNav").classList.toggle("open");
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+function showToast(msg, type = "") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+</script>
+</body>
+</html>
