@@ -9,6 +9,7 @@
 <meta name="description" content="Book a spot on the PepsTracker Live. Answer questions from our audience, showcase your brand, and connect with the peptide community."/>
 <link rel="icon" type="image/png" href="favicon.png"/>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <style>
 :root{--bg:#0d0f14;--surface:#161b25;--card:#1c2230;--border:#2a3347;--blue:#3b9eff;--green:#4de87a;--text:#e8edf5;--muted:#7a8ba8;--gold:#f5c842;--red:#ff5c5c;--purple:#a78bfa;--radius:12px;}
@@ -259,6 +260,7 @@ footer a{color:var(--blue);text-decoration:none;}
 // ── Firebase ──────────────────────────────────────────────────────────────
 const firebaseConfig={apiKey:"AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",authDomain:"pepstracker.firebaseapp.com",projectId:"pepstracker",storageBucket:"pepstracker.firebasestorage.app",messagingSenderId:"575079448915",appId:"1:575079448915:web:4937336ccc15a6764ca1a6"};
 if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
 const db=firebase.firestore();
 
 // ── CONFIG — update this when you have the Stripe link ───────────────────
@@ -274,6 +276,10 @@ const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct
 
 // ── Load booked dates from Firestore ──────────────────────────────────────
 async function loadBookedDates() {
+  // Sign in anonymously so Firestore allows the read
+  if (!auth.currentUser) {
+    await auth.signInAnonymously().catch(() => {});
+  }
   const snap = await db.collection("liveBookings").get();
   bookedDates = {};
   snap.forEach(doc => { bookedDates[doc.id] = doc.data(); });
