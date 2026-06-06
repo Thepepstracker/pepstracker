@@ -1914,7 +1914,7 @@ function renderResults() {
     .map(v => {
       const d = Array.isArray(priceMap[v.id]) ? priceMap[v.id][0] : priceMap[v.id];
       const sizes = Array.isArray(priceMap[v.id]) ? priceMap[v.id] : [priceMap[v.id]];
-      return { vendor:v, price:d.price, mg:d.mg, listing:d.listing, oos:d.oos===true, sizes };
+      return { vendor:v, price:d.price, mg:d.mg, listing:d.listing, oos:d.oos===true, sizes, bogo:d.bogo===true, originalPrice:d.originalPrice||d.price };
     });
 
   const inStock = rows.filter(r => !r.oos);
@@ -1965,7 +1965,7 @@ function renderResults() {
       <div class="price-block">
         ${r.sizes && r.sizes.length > 1 ? `<div class="size-pills"><label>Size:</label>${r.sizes.map((s,i)=>`<button class="size-pill-btn ${i===0?'active':''}" onclick="selectSizePill(this,'${r.vendor.id}','${currentPeptide}',${i},${r.vendor.discount})">${s.mg}mg</button>`).join('')}</div>` : ''}
         <div class="price-original ${isBest?'best-price':''}" id="price-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${afterDisc.toFixed(2)}</div>
-        <div class="price-reg" id="pricereg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">${isBogo ? `<span class="bogo-full-price">Buy 1 Get 1 Free · Full price <span class="price-original-strike">$${(r.originalPrice*(1-r.vendor.discount)).toFixed(2)}</span></span>` : `Reg. <span class="price-original-strike">$${r.price.toFixed(2)}</span> · ${discPct}% off`}</div>
+        <div class="price-reg" id="pricereg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">${isBogo ? '<span class="bogo-full-price">🎁 Buy 1 Get 1 Free — you pay for 1, get 2! &nbsp;<span class="bogo-orig">Full price: <s>$'+(r.originalPrice*(1-r.vendor.discount)).toFixed(2)+'</s></span></span>' : 'Reg. <span class="price-original-strike">$'+r.price.toFixed(2)+'</span> · '+discPct+'% off'}</div>
         <div class="price-per-mg" id="permg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${(afterDisc/r.mg).toFixed(2)}/${currentPeptide==='Bacteriostatic Water'?'mL':'mg'}</div>
       </div>
       <div class="code-block">
