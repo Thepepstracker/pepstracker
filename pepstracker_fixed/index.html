@@ -359,6 +359,7 @@
       .mobile-nav a { font-size: .88rem; padding: 9px 12px; }
     }
   
+        .bogo-full-price{font-size:.78rem;color:var(--gold);font-weight:600;}
     .bogo-badge{background:linear-gradient(135deg,#f5c842,#fb923c);color:#0d0f14;font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em;vertical-align:middle;margin-right:4px;}
     .bogo-orig{text-decoration:line-through;color:var(--muted);font-size:.82rem;margin-right:3px;}
     </style>
@@ -1963,7 +1964,7 @@ function renderResults() {
       <div class="price-block">
         ${r.sizes && r.sizes.length > 1 ? `<div class="size-pills"><label>Size:</label>${r.sizes.map((s,i)=>`<button class="size-pill-btn ${i===0?'active':''}" onclick="selectSizePill(this,'${r.vendor.id}','${currentPeptide}',${i},${r.vendor.discount})">${s.mg}mg</button>`).join('')}</div>` : ''}
         <div class="price-original ${isBest?'best-price':''}" id="price-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${afterDisc.toFixed(2)}</div>
-        <div class="price-reg" id="pricereg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">Reg. <span class="price-original-strike">$${r.price.toFixed(2)}</span> · ${discPct}% off</div>
+        <div class="price-reg" id="pricereg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">${isBogo ? `<span class="bogo-full-price">Buy 1 Get 1 Free · Full price <span class="price-original-strike">$${(r.originalPrice*(1-r.vendor.discount)).toFixed(2)}</span></span>` : `Reg. <span class="price-original-strike">$${r.price.toFixed(2)}</span> · ${discPct}% off`}</div>
         <div class="price-per-mg" id="permg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${(afterDisc/r.mg).toFixed(2)}/${currentPeptide==='Bacteriostatic Water'?'mL':'mg'}</div>
       </div>
       <div class="code-block">
