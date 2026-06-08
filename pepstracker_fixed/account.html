@@ -224,6 +224,11 @@
     .auth-error.show{display:block;}
     .auth-success{background:rgba(77,232,122,.1);border:1px solid rgba(77,232,122,.3);border-radius:8px;padding:10px 12px;color:var(--green);font-size:.84rem;display:none;}
     .auth-success.show{display:block;}
+
+    .pw-wrap{position:relative;}
+    .pw-wrap .auth-input{padding-right:44px;}
+    .pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;display:flex;align-items:center;transition:color .2s;}
+    .pw-toggle:hover{color:var(--text);}
     .forgot-link{text-align:right;font-size:.8rem;color:var(--blue);cursor:pointer;text-decoration:underline;background:none;border:none;padding:0;}
     .btn-google-auth{width:100%;padding:12px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:.9rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:border-color .2s;}
     .btn-google-auth:hover{border-color:var(--blue);}
@@ -320,7 +325,15 @@
     <div class="auth-form" id="authFormFields">
       <input class="auth-input" type="email" id="authEmail" placeholder="Email address" autocomplete="email"/>
       <div>
-        <input class="auth-input" type="password" id="authPassword" placeholder="Password" autocomplete="current-password"/>
+        <div class="pw-wrap">
+          <input class="auth-input" type="password" id="authPassword" placeholder="Password" autocomplete="current-password"/>
+          <button class="pw-toggle" type="button" onclick="togglePwVisibility()" id="pwToggleBtn" title="Show/hide password">
+            <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
         <div style="text-align:right;margin-top:6px;" id="forgotRow">
           <button class="forgot-link" onclick="sendPasswordReset()">Forgot password?</button>
         </div>
@@ -543,6 +556,16 @@ function switchAuthTab(mode) {
   clearAuthMessages();
 }
 
+
+function togglePwVisibility() {
+  const input = document.getElementById('authPassword');
+  const icon  = document.getElementById('eyeIcon');
+  const show  = input.type === 'password';
+  input.type  = show ? 'text' : 'password';
+  icon.innerHTML = show
+    ? '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+}
 function clearAuthMessages() {
   document.getElementById('authError').classList.remove('show');
   document.getElementById('authSuccess').classList.remove('show');
