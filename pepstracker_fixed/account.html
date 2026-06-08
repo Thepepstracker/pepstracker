@@ -238,6 +238,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 </head>
 <body>
 
@@ -424,6 +425,76 @@
 
   <!-- ══ TAB: PROFILE ══ -->
   <div class="tab-pane" id="tab-profile">
+
+    <!-- Account Settings -->
+    <div class="profile-editor">
+      <h3>👤 Account Settings</h3>
+
+      <!-- Avatar -->
+      <div class="avatar-section">
+        <div class="avatar-upload" onclick="document.getElementById('avatarFileInput').click()" title="Click to change photo">
+          <img id="profileAvatarImg" src="" alt="Avatar" style="display:none;"/>
+          <div id="profileAvatarInitials" class="avatar-initials">?</div>
+          <div class="avatar-overlay">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+        </div>
+        <input type="file" id="avatarFileInput" accept="image/*" onchange="uploadAvatar(this)"/>
+        <div class="avatar-hint">
+          <strong>Profile Photo</strong>
+          Click to upload a new photo<br/>
+          <span id="avatarUploadStatus" style="color:var(--blue);font-size:.75rem;"></span>
+        </div>
+      </div>
+
+      <!-- Name & Email -->
+      <div class="profile-fields">
+        <div class="profile-field">
+          <label>Display Name</label>
+          <input type="text" id="editDisplayName" placeholder="Your name"/>
+        </div>
+        <div class="profile-field">
+          <label>Email Address</label>
+          <input type="email" id="editEmail" placeholder="your@email.com"/>
+        </div>
+      </div>
+      <div class="profile-msg" id="profileMsg"></div>
+      <button class="btn-save-profile" onclick="saveProfileChanges()">Save Changes</button>
+
+      <div class="profile-divider"></div>
+
+      <!-- Change Password -->
+      <div class="pw-section">
+        <h4>🔒 Change Password</h4>
+        <div class="pw-fields">
+          <div class="pw-field">
+            <label>Current Password</label>
+            <div class="pw-field-wrap">
+              <input type="password" id="pwCurrent" placeholder="Current password"/>
+              <button class="pw-eye" type="button" onclick="toggleField('pwCurrent',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+          </div>
+          <div class="pw-field">
+            <label>New Password</label>
+            <div class="pw-field-wrap">
+              <input type="password" id="pwNew" placeholder="New password (6+ chars)"/>
+              <button class="pw-eye" type="button" onclick="toggleField('pwNew',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+          </div>
+          <div class="pw-field">
+            <label>Confirm New Password</label>
+            <div class="pw-field-wrap">
+              <input type="password" id="pwConfirm" placeholder="Confirm new password"/>
+              <button class="pw-eye" type="button" onclick="toggleField('pwConfirm',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+          </div>
+        </div>
+        <div class="profile-msg" id="pwMsg"></div>
+        <button class="btn-update-pw" onclick="updatePassword()">Update Password</button>
+      </div>
+    </div>
+
+    <!-- Peptide Profile -->
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
       <div>
         <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px;">🧬 My Peptide Profile</h2>
@@ -649,6 +720,7 @@ auth.onAuthStateChanged(async user => {
     document.getElementById("mainTabs").style.display = "flex";
     document.getElementById("userAvatar").src = user.photoURL || "";
     document.getElementById("userName").textContent = user.displayName || "Peptide User";
+    loadProfileEditor(user);
     document.getElementById("userEmail").textContent = user.email || "";
 
     const snap = await db.collection("users").doc(user.uid).get();
@@ -963,6 +1035,122 @@ function checkReminderDue(data) {
 }
 
 // ── PROFILE ──────────────────────────────────────────────────────────────
+
+// ── Profile editor ────────────────────────────────────────────────────────
+const storage = firebase.storage();
+
+function loadProfileEditor(user) {
+  // Avatar
+  const img = document.getElementById('profileAvatarImg');
+  const initials = document.getElementById('profileAvatarInitials');
+  if (user.photoURL) {
+    img.src = user.photoURL;
+    img.style.display = 'block';
+    initials.style.display = 'none';
+  } else {
+    img.style.display = 'none';
+    initials.style.display = 'flex';
+    const name = user.displayName || user.email || '?';
+    initials.textContent = name.charAt(0).toUpperCase();
+  }
+  // Fields
+  document.getElementById('editDisplayName').value = user.displayName || '';
+  document.getElementById('editEmail').value = user.email || '';
+}
+
+async function uploadAvatar(input) {
+  const file = input.files[0];
+  if (!file || !currentUser) return;
+  const status = document.getElementById('avatarUploadStatus');
+  status.textContent = 'Uploading…';
+  try {
+    const ref = storage.ref(`users/${currentUser.uid}/avatar`);
+    await ref.put(file);
+    const url = await ref.getDownloadURL();
+    await currentUser.updateProfile({ photoURL: url });
+    // Update all avatar displays on page
+    document.getElementById('userAvatar').src = url;
+    const img = document.getElementById('profileAvatarImg');
+    img.src = url; img.style.display = 'block';
+    document.getElementById('profileAvatarInitials').style.display = 'none';
+    status.textContent = '✅ Photo updated!';
+    setTimeout(() => status.textContent = '', 3000);
+  } catch(e) {
+    status.textContent = '❌ Upload failed — ' + e.message;
+  }
+}
+
+async function saveProfileChanges() {
+  if (!currentUser) return;
+  const name  = document.getElementById('editDisplayName').value.trim();
+  const email = document.getElementById('editEmail').value.trim();
+  const msg   = document.getElementById('profileMsg');
+  msg.className = 'profile-msg'; msg.textContent = '';
+
+  try {
+    const updates = {};
+    if (name !== (currentUser.displayName || '')) updates.displayName = name;
+    if (Object.keys(updates).length) await currentUser.updateProfile(updates);
+    if (email && email !== currentUser.email) await currentUser.updateEmail(email);
+    // Refresh UI
+    document.getElementById('userName').textContent = name || currentUser.email;
+    const initials = document.getElementById('profileAvatarInitials');
+    if (initials && !currentUser.photoURL) initials.textContent = (name || currentUser.email).charAt(0).toUpperCase();
+    msg.textContent = '✅ Profile updated successfully!';
+    msg.className = 'profile-msg success';
+  } catch(e) {
+    const errs = {
+      'auth/requires-recent-login': 'Please sign out and sign in again to change your email.',
+      'auth/email-already-in-use': 'That email is already in use by another account.',
+      'auth/invalid-email': 'Please enter a valid email address.',
+    };
+    msg.textContent = errs[e.code] || e.message;
+    msg.className = 'profile-msg error';
+  }
+}
+
+async function updatePassword() {
+  if (!currentUser) return;
+  const current  = document.getElementById('pwCurrent').value;
+  const newPw    = document.getElementById('pwNew').value;
+  const confirm  = document.getElementById('pwConfirm').value;
+  const msg      = document.getElementById('pwMsg');
+  msg.className  = 'profile-msg'; msg.textContent = '';
+
+  if (!current) { msg.textContent = 'Enter your current password.'; msg.className = 'profile-msg error'; return; }
+  if (newPw.length < 6) { msg.textContent = 'New password must be at least 6 characters.'; msg.className = 'profile-msg error'; return; }
+  if (newPw !== confirm) { msg.textContent = 'New passwords do not match.'; msg.className = 'profile-msg error'; return; }
+
+  try {
+    // Re-authenticate first
+    const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, current);
+    await currentUser.reauthenticateWithCredential(cred);
+    await currentUser.updatePassword(newPw);
+    msg.textContent = '✅ Password updated successfully!';
+    msg.className = 'profile-msg success';
+    document.getElementById('pwCurrent').value = '';
+    document.getElementById('pwNew').value = '';
+    document.getElementById('pwConfirm').value = '';
+  } catch(e) {
+    const errs = {
+      'auth/wrong-password': 'Current password is incorrect.',
+      'auth/invalid-credential': 'Current password is incorrect.',
+      'auth/too-many-requests': 'Too many attempts. Please wait a moment.',
+      'auth/weak-password': 'New password must be at least 6 characters.',
+    };
+    msg.textContent = errs[e.code] || e.message;
+    msg.className = 'profile-msg error';
+  }
+}
+
+function toggleField(id, btn) {
+  const input = document.getElementById(id);
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  btn.innerHTML = show
+    ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+    : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+}
 function renderProfile(data) {
   const el = document.getElementById("profileSection");
   if (data && data.recommendations && data.recommendations.length > 0) {
