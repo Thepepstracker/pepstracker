@@ -9,12 +9,7 @@
   <title>Testagen — Peptide Dictionary | PepsTracker</title>
   <meta name="description" content="A testes-derived tetrapeptide bioregulator that may support male gonadal function and testosterone levels." />
   <style>
-    :root {
-      --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
-      --border:#2a3347; --blue:#3b9eff; --green:#4de87a;
-      --text:#e8edf5; --muted:#7a8ba8; --gold:#f5c842;
-      --red:#ff5c5c; --radius:12px;
-    }
+    :root {--bg:#0d0f14;--surface:#161b25;--card:#1c2230;--border:#2a3347;--blue:#3b9eff;--green:#4de87a;--text:#e8edf5;--muted:#7a8ba8;--gold:#f5c842;--red:#ff5c5c;--radius:12px;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
     header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:100;}
@@ -30,6 +25,16 @@
     nav a.active{color:var(--blue);}
     nav a.nav-calc{background:rgba(77,232,122,.1);color:var(--green);border:1px solid rgba(77,232,122,.25);}
     nav a.nav-apply{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);}
+    
+    .menu-btn{display:none;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);cursor:pointer;padding:7px 13px;font-size:.88rem;font-weight:600;}
+    .mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);}
+    .mobile-nav.open{display:flex;}
+    .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:600;padding:9px 12px;border-radius:8px;}
+    .mobile-nav a.active{color:var(--blue);}
+    .mobile-nav a.nav-calc{background:rgba(77,232,122,.08);color:var(--green);border:1px solid rgba(77,232,122,.2);}
+    .mobile-nav a.nav-apply{background:rgba(245,200,66,.08);color:var(--gold);border:1px solid rgba(245,200,66,.2);}
+    @media(max-width:768px){nav{display:none;}.menu-btn{display:flex;}}
+    @media(min-width:769px){.mobile-nav{position:fixed;top:76px;left:auto;right:16px;width:220px;border-radius:12px;border:1px solid var(--border);box-shadow:0 12px 32px rgba(0,0,0,.5);padding:8px;}}
     .page{max-width:1100px;margin:0 auto;padding:32px 24px 60px;}
     .breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:28px;font-size:.85rem;color:var(--muted);}
     .breadcrumb a{color:var(--muted);text-decoration:none;transition:color .2s;}
@@ -114,8 +119,19 @@
       <a href="../vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="../disclaimer.html">Disclaimer</a>
     </nav>
+    <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
   </div>
 </header>
+<div class="mobile-nav" id="mobileNav">
+    <a href="../index.html" onclick="toggleMenu()">🏠 Price Tracker</a>
+    <a href="../dictionary.html" class="active" onclick="toggleMenu()">📖 Dictionary</a>
+    <a href="../calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
+    <a href="../vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
+    <a href="../live.html" onclick="toggleMenu()" style="color:var(--gold);">🎙️ Book the Live</a>
+    <a href="../advertise.html" onclick="toggleMenu()">📣 Advertise</a>
+    <a href="../disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
+    <a href="../account.html" onclick="toggleMenu()">👤 Account</a>
+  </div>
 
 <div style="height:3px;background:linear-gradient(90deg,#3b9eff,#4de87a 50%,#f5c842);"></div>
 
@@ -204,5 +220,8 @@
   <p style="margin-top:8px;"><a href="../index.html">Price Tracker</a> &nbsp;|&nbsp; <a href="../dictionary.html">Dictionary</a> &nbsp;|&nbsp; <a href="../calculators.html">Calculators</a> &nbsp;|&nbsp; <a href="../disclaimer.html">Disclaimer</a></p>
   <p style="margin-top:8px;">© 2026 PepsTracker — For research purposes only.</p>
 </footer>
+<script>
+function toggleMenu(){document.getElementById('mobileNav').classList.toggle('open');}
+document.addEventListener('click',function(e){var n=document.getElementById('mobileNav');if(n&&n.classList.contains('open')&&!n.contains(e.target)&&!e.target.closest('.menu-btn')){n.classList.remove('open');}});</script>
 </body>
 </html>
