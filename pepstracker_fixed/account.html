@@ -670,7 +670,9 @@ async function submitEmailAuth() {
   try {
     if (authMode === 'signup') {
       const cred = await auth.createUserWithEmailAndPassword(email, password);
-      if (displayName) await cred.user.updateProfile({ displayName });
+      // Use email username as name if they didn't provide one
+    const derivedName = displayName || email.split('@')[0].replace(/[._-]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    await cred.user.updateProfile({ displayName: derivedName });
       // Send verification email
       await cred.user.sendEmailVerification();
       showAuthSuccess('✅ Account created! Check your email to verify your address.');
@@ -719,7 +721,8 @@ auth.onAuthStateChanged(async user => {
     document.getElementById("userCard").style.display = "flex";
     document.getElementById("mainTabs").style.display = "flex";
     document.getElementById("userAvatar").src = user.photoURL || "";
-    document.getElementById("userName").textContent = user.displayName || "Peptide User";
+    const friendlyName = user.displayName || user.email?.split('@')[0]?.replace(/[._-]/g,' ')?.replace(/\b\w/g,c=>c.toUpperCase()) || 'User';
+    document.getElementById("userName").textContent = friendlyName;
     loadProfileEditor(user);
     document.getElementById("userEmail").textContent = user.email || "";
 
@@ -1050,11 +1053,11 @@ function loadProfileEditor(user) {
   } else {
     img.style.display = 'none';
     initials.style.display = 'flex';
-    const name = user.displayName || user.email || '?';
+    const name = user.displayName || user.email?.split('@')[0] || '?';
     initials.textContent = name.charAt(0).toUpperCase();
   }
   // Fields
-  document.getElementById('editDisplayName').value = user.displayName || '';
+  document.getElementById('editDisplayName').value = user.displayName || user.email?.split('@')[0]?.replace(/[._-]/g,' ')?.replace(/\b\w/g,c=>c.toUpperCase()) || '';
   document.getElementById('editEmail').value = user.email || '';
 }
 
