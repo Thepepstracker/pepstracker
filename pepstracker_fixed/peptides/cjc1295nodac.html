@@ -1,96 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <link rel="icon" type="image/svg+xml" href="../favicon.svg"/>
-  <link rel="icon" type="image/png" href="../favicon.png"/>
-  <link rel="apple-touch-icon" href="../favicon.png"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="icon" type="image/png" href="../favicon.png" />
+  <link rel="apple-touch-icon" href="../favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CJC-1295 (No DAC) — Peptide Dictionary | PepsTracker</title>
-  <meta name="description" content="A GHRH analogue with a shorter half-life, typically paired with a GHRP for pulsatile GH release."/>
+  <meta name="description" content="A GHRH analogue with a 30-minute half-life, typically paired with a GHRP to create synergistic pulsatile GH release." />
   <style>
-    :root{--bg:#0d0f14;--surface:#161b25;--card:#1c2230;--border:#2a3347;--blue:#3b9eff;--green:#4de87a;--text:#e8edf5;--muted:#7a8ba8;--gold:#f5c842;--red:#ff5c5c;--radius:12px;}
+    :root {
+      --bg:#0d0f14; --surface:#161b25; --card:#1c2230;
+      --border:#2a3347; --blue:#3b9eff; --green:#4de87a;
+      --text:#e8edf5; --muted:#7a8ba8; --gold:#f5c842;
+      --red:#ff5c5c; --radius:12px;
+    }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
     header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:100;}
-    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px;}
-    .logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
-    .logo-text{font-size:1.35rem;font-weight:800;letter-spacing:-.5px;}
+    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px;}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+    .logo-icon{width:42px;height:42px;}
+    .logo-text{font-size:1.5rem;font-weight:800;letter-spacing:-.5px;}
     .logo-text span:first-child{color:var(--blue);}
     .logo-text span:last-child{color:var(--green);}
-    .menu-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600;}
-    .mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px;border-top:1px solid var(--border);background:var(--surface);}
-    .mobile-nav.open{display:flex;}
-    .mobile-nav a{color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:600;padding:9px 12px;border-radius:8px;}
-    @media(min-width:769px){.mobile-nav{position:fixed;top:68px;left:auto;right:16px;width:220px;border-radius:12px;border:1px solid var(--border);box-shadow:0 12px 32px rgba(0,0,0,.5);padding:8px;}}
-    .page{max-width:900px;margin:0 auto;padding:32px 20px 80px;}
-    .breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:24px;font-size:.84rem;color:var(--muted);flex-wrap:wrap;}
+    nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+    nav a{color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:600;padding:6px 12px;border-radius:8px;transition:all .2s;white-space:nowrap;}
+    nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    nav a.active{color:var(--blue);}
+    nav a.nav-calc{background:rgba(77,232,122,.1);color:var(--green);border:1px solid rgba(77,232,122,.25);}
+    nav a.nav-apply{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);}
+    .page{max-width:1100px;margin:0 auto;padding:32px 24px 60px;}
+    .breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:28px;font-size:.85rem;color:var(--muted);}
     .breadcrumb a{color:var(--muted);text-decoration:none;transition:color .2s;}
     .breadcrumb a:hover{color:var(--blue);}
-    .pep-name{font-size:2.2rem;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;}
-    .alias{font-size:.9rem;color:var(--muted);margin-bottom:12px;}
-    .cat-badge{display:inline-block;font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;background:rgba(251,146,60,.15);color:#fb923c;border:1px solid #fb923c44;margin-bottom:16px;}
-    .tagline{font-size:1.05rem;color:var(--muted);line-height:1.6;margin-bottom:28px;max-width:700px;}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px;}
-    .card h2{font-size:1rem;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-    .card p{font-size:.92rem;color:var(--muted);line-height:1.7;}
-    .use-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
-    .use-chip{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:600;}
-    .btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px;}
-    .btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.92rem;padding:12px 22px;border-radius:10px;text-decoration:none;}
-    .btn-secondary{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);color:var(--text);font-weight:600;font-size:.88rem;padding:12px 20px;border-radius:10px;text-decoration:none;}
-    .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:600;margin-bottom:24px;}
-    .back-link:hover{color:var(--blue);}
-    footer{border-top:1px solid var(--border);padding:20px;text-align:center;color:var(--muted);font-size:.8rem;}
+    .breadcrumb span{color:var(--muted);}
+    .hero-row{display:flex;align-items:flex-start;gap:24px;margin-bottom:32px;flex-wrap:wrap;}
+    .hero-left{flex:1;min-width:280px;}
+    .name-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+    .pep-name{font-size:2rem;font-weight:800;letter-spacing:-.5px;}
+    .cat-badge{font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;background:rgba(251,146,60,.15);color:#fb923c;border:1px solid rgba(251,146,60,.35);}
+    .tagline{font-size:1.05rem;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+    .hero-btns{display:flex;gap:10px;flex-wrap:wrap;}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;font-weight:700;font-size:.9rem;padding:11px 22px;border-radius:8px;text-decoration:none;transition:opacity .2s;}
+    .btn-primary:hover{opacity:.88;}
+    .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--muted);font-weight:600;font-size:.9rem;padding:11px 22px;border-radius:8px;text-decoration:none;transition:all .2s;}
+    .btn-secondary:hover{border-color:var(--blue);color:var(--blue);}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;min-width:260px;}
+    .stat-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;}
+    .stat-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+    .stat-value{font-size:1rem;font-weight:700;color:var(--text);}
+    .divider{height:1px;background:var(--border);margin:8px 0 28px;}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    .section-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;}
+    .section-card h3{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;}
+    .section-card p{font-size:.92rem;color:var(--text);line-height:1.7;}
+    .uses-list{display:flex;flex-direction:column;gap:8px;}
+    .use-item{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--text);}
+    .use-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;}
+    .storage-row{display:flex;gap:16px;flex-wrap:wrap;}
+    .storage-item{display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--text);}
+    .storage-icon{font-size:1.1rem;}
+    .notes-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:16px;}
+    .notes-card h3{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;}
+    .notes-card p{font-size:.92rem;color:var(--text);line-height:1.7;margin-bottom:10px;}
+    .notes-card p:last-child{margin-bottom:0;}
+    .cta-bar{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+    .cta-text h4{font-size:1rem;font-weight:700;margin-bottom:4px;}
+    .cta-text p{font-size:.85rem;color:var(--muted);}
+    .also-section{margin-top:32px;}
+    .also-section h3{font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;}
+    .also-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+    .also-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;text-decoration:none;color:inherit;transition:border-color .2s,transform .15s;display:block;}
+    .also-card:hover{border-color:var(--blue);transform:translateY(-1px);}
+    .also-name{font-size:.9rem;font-weight:700;margin-bottom:4px;}
+    .also-cat{font-size:.7rem;color:var(--muted);}
+    footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:.82rem;}
     footer a{color:var(--blue);text-decoration:none;}
+    @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
   </style>
 </head>
 <body>
 <header>
   <div class="header-inner">
-    <a class="logo" href="../index.html"><div class="logo-text"><span>Peps</span><span>Tracker</span></div></a>
-    <button class="menu-btn" onclick="document.getElementById('mn').classList.toggle('open')">☰ Menu</button>
-  </div>
-  <div class="mobile-nav" id="mn">
-    <a href="../index.html">🏠 Price Tracker</a>
-    <a href="../vendors.html">🏪 Vendors</a>
-    <a href="../dictionary.html">📖 Dictionary</a>
-    <a href="../blog.html">📝 Blog</a>
-    <a href="../calculators.html">🧮 Calculators</a>
-    <a href="../account.html">👤 Account</a>
+    <a class="logo" href="../index.html">
+      <svg class="logo-icon" viewBox="0 0 44 44" fill="none">
+        <defs>
+          <linearGradient id="g1" x1="4" y1="28" x2="40" y2="8" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1a7fe8"/>
+            <stop offset="50%" stop-color="#00e5cc"/>
+            <stop offset="100%" stop-color="#4de87a"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="4" y1="32" x2="40" y2="32" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1a7fe8"/>
+            <stop offset="100%" stop-color="#4de87a"/>
+          </linearGradient>
+        </defs>
+        <path d="M4 30 Q22 42 40 26" fill="none" stroke="url(#g2)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="4" y1="28" x2="18" y2="18" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="18" y1="18" x2="28" y2="23" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="28" y1="23" x2="38" y2="10" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round"/>
+        <polygon points="40,8 33,10 38,15" fill="#4de87a"/>
+        <circle cx="4" cy="28" r="4" fill="#1a7fe8"/>
+        <circle cx="18" cy="18" r="4" fill="#00e5cc"/>
+        <circle cx="28" cy="23" r="4" fill="#4de87a"/>
+      </svg>
+      <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
+    </a>
+    <nav>
+      <a href="../index.html">Price Tracker</a>
+      <a href="../dictionary.html" class="active">📖 Dictionary</a>
+      <a href="../calculators.html" class="nav-calc">🧮 Calculators</a>
+      <a href="../vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
+      <a href="../disclaimer.html">Disclaimer</a>
+    </nav>
   </div>
 </header>
+
+<div style="height:3px;background:linear-gradient(90deg,#3b9eff,#4de87a 50%,#f5c842);"></div>
+
 <div class="page">
-  <a class="back-link" href="../dictionary.html">← Back to Dictionary</a>
-  <div class="breadcrumb"><a href="../index.html">PepsTracker</a> › <a href="../dictionary.html">Dictionary</a> › CJC-1295 (No DAC)</div>
-  <div class="pep-name">CJC-1295 (No DAC)</div>
-  <div class="alias">Also known as: CJC No DAC / Mod GRF 1-29</div>
-  <div class="cat-badge">Growth</div>
-  <p class="tagline">A GHRH analogue with a shorter half-life, typically paired with a GHRP for pulsatile GH release.</p>
-
-  <div class="card">
-    <h2>📋 Overview</h2>
-    <p>CJC-1295 without DAC (also called Modified GRF 1-29) is a growth hormone releasing hormone analogue with a half-life of around 30 minutes. It is usually paired with a GHRP such as Ipamorelin to create a synergistic, pulsatile GH release that mimics the body's natural rhythm.</p>
+  <div class="breadcrumb">
+    <a href="../dictionary.html">← Dictionary</a>
+    <span>/</span>
+    <span>CJC-1295 (No DAC)</span>
   </div>
 
-  <div class="card">
-    <h2>🔬 Common Research Uses</h2>
-    <div class="use-chips"><div class="use-chip">GH pulse stimulation</div><div class="use-chip">Recovery</div><div class="use-chip">Body composition</div></div>
+  <div class="hero-row">
+    <div class="hero-left">
+      <div class="name-row">
+        <h1 class="pep-name">CJC-1295 (No DAC)</h1>
+        <span class="cat-badge">Growth</span>
+      </div>
+      <p class="tagline">A GHRH analogue with a 30-minute half-life, typically paired with a GHRP to create synergistic pulsatile GH release.</p>
+      <div class="hero-btns">
+        <a class="btn-primary" href="../index.html?peptide=CJC-1295+No+DAC">💰 Compare Prices</a>
+        <a class="btn-secondary" href="../dictionary.html">← Back to Dictionary</a>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Half-life</div><div class="stat-value">~30 minutes</div></div>
+      <div class="stat-card"><div class="stat-label">Research dose</div><div class="stat-value">100–300mcg/dose</div></div>
+      <div class="stat-card"><div class="stat-label">Frequency</div><div class="stat-value">2–3× daily</div></div>
+      <div class="stat-card"><div class="stat-label">Routes</div><div class="stat-value">SubQ injection</div></div>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>⚠️ Research Use Only</h2>
-    <p>All peptides listed on PepsTracker are sold strictly for laboratory research purposes. They are not approved for human consumption, therapeutic, or diagnostic use. Always consult a licensed healthcare professional before considering any peptide compound.</p>
+  <div class="divider"></div>
+
+  <div class="two-col">
+    <div class="section-card">
+      <h3>How it works</h3>
+      <p>Binds pituitary GHRH receptors to stimulate growth hormone secretion. The short half-life without DAC mirrors the natural GHRH pulse and must be dosed multiple times daily or combined with a GHRP (e.g., Ipamorelin) to amplify GH release at the pituitary. The combination acts on complementary receptors for synergistic output.</p>
+    </div>
+    <div class="section-card">
+      <h3>Research uses</h3>
+      <div class="uses-list">
+        <div class="use-item"><div class="use-dot"></div>GH pulse stimulation</div>
+        <div class="use-item"><div class="use-dot"></div>GHRH/GHRP combination stacks</div>
+        <div class="use-item"><div class="use-dot"></div>Recovery research</div>
+        <div class="use-item"><div class="use-dot"></div>Sleep quality studies</div>
+        <div class="use-item"><div class="use-dot"></div>Body composition research</div>
+      </div>
+    </div>
   </div>
 
-  <div class="btn-row">
-    <a class="btn-primary" href="../index.html?peptide=CJC-1295+(No+DAC)">💊 Compare Prices for CJC-1295 (No DAC) →</a>
-    <a class="btn-secondary" href="../dictionary.html">📖 Full Dictionary</a>
+  <div class="notes-card">
+    <h3>Research notes</h3>
+    <p>CJC-1295 without DAC is also called Modified GRF 1-29 (Mod GRF). The 'no DAC' designation distinguishes it from CJC-1295 with Drug Affinity Complex, which has a much longer half-life.</p>
+    <p>Most protocols pair Mod GRF with Ipamorelin or another GHRP in a 1:1 ratio, administered before sleep or after training to leverage the synergistic GH pulse with minimal cortisol or prolactin elevation.</p>
+  </div>
+
+  <div class="section-card" style="margin-bottom:16px;">
+    <h3>Storage</h3>
+    <div class="storage-row">
+      <div class="storage-item"><span class="storage-icon">❄️</span>Freeze lyophilized powder</div>
+      <div class="storage-item"><span class="storage-icon">🌡️</span>Refrigerate once reconstituted</div>
+      <div class="storage-item"><span class="storage-icon">📅</span>Use within 3 weeks</div>
+    </div>
+  </div>
+
+  <div class="cta-bar">
+    <div class="cta-text">
+      <h4>Ready to compare CJC-1295 (No DAC) prices?</h4>
+      <p>Real-time prices across 14 vendors with discount codes already applied.</p>
+    </div>
+    <a class="btn-primary" href="../index.html?peptide=CJC-1295+No+DAC">Compare Prices →</a>
+  </div>
+
+  <div class="also-section">
+    <h3>Also in the dictionary</h3>
+    <div class="also-grid">
+      <a class="also-card" href="cjc1295dac.html"><div class="also-name">CJC-1295 (with DAC)</div><div class="also-cat">Growth</div></a>
+      <a class="also-card" href="ipamorelin.html"><div class="also-name">Ipamorelin</div><div class="also-cat">Growth</div></a>
+      <a class="also-card" href="sermorelin.html"><div class="also-name">Sermorelin</div><div class="also-cat">Growth</div></a>
+      <a class="also-card" href="ghrp2.html"><div class="also-name">GHRP-2</div><div class="also-cat">Growth</div></a>
+    </div>
   </div>
 </div>
+
 <footer>
-  <p>PepsTracker — Research purposes only. Not medical advice.</p>
-  <p style="margin-top:8px;"><a href="../index.html">Price Tracker</a> | <a href="../vendors.html">Vendors</a> | <a href="../dictionary.html">Dictionary</a></p>
+  <p>PepsTracker is a price comparison service only. All content is for informational and research purposes only.</p>
+  <p style="margin-top:8px;"><a href="../index.html">Price Tracker</a> &nbsp;|&nbsp; <a href="../dictionary.html">Dictionary</a> &nbsp;|&nbsp; <a href="../calculators.html">Calculators</a> &nbsp;|&nbsp; <a href="../disclaimer.html">Disclaimer</a></p>
+  <p style="margin-top:8px;">© 2026 PepsTracker — For research purposes only.</p>
 </footer>
 </body>
 </html>
