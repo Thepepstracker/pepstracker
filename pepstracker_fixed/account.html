@@ -616,6 +616,81 @@
     footer{border-top:1px solid var(--border);padding:24px 16px;text-align:center;color:var(--muted);font-size:.78rem;line-height:1.8;}
     footer a{color:var(--blue);text-decoration:none;}
     footer a:hover{text-decoration:underline;}
+
+    /* ══ CORRECT CLASS NAME OVERRIDES ════════════ */
+
+    /* Stats grid */
+    .tracker-stats{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;
+    }
+    @media(max-width:500px){.tracker-stats{grid-template-columns:repeat(2,1fr);}}
+    .tstat{
+      background:var(--card);border:1px solid var(--border2);border-radius:16px;
+      padding:18px 14px;text-align:center;position:relative;overflow:hidden;
+      transition:border-color .2s, transform .15s;cursor:default;
+    }
+    .tstat:hover{border-color:rgba(59,158,255,.3);transform:translateY(-2px);}
+    .tstat::after{
+      content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--blue),var(--green));
+      opacity:0;transition:opacity .2s;
+    }
+    .tstat:hover::after{opacity:1;}
+    .tstat-num{
+      font-size:2rem;font-weight:900;letter-spacing:-1.5px;line-height:1;margin-bottom:6px;
+      background:linear-gradient(135deg,#60b8ff,var(--green));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .tstat-label{font-size:.65rem;font-weight:700;color:var(--muted);line-height:1.4;}
+
+    /* Calendar nav buttons */
+    .cal-title{font-size:1.15rem;font-weight:800;letter-spacing:-.3px;}
+    .cal-btn{
+      background:var(--card);border:1px solid var(--border2);color:var(--text);
+      height:32px;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600;
+      padding:0 12px;display:inline-flex;align-items:center;justify-content:center;
+      transition:all .2s;
+    }
+    .cal-btn:hover{border-color:var(--blue);color:var(--blue);}
+    .today-btn{
+      background:rgba(59,158,255,.1);border-color:rgba(59,158,255,.25);color:var(--blue);
+      font-weight:700;font-size:.78rem;
+    }
+    .today-btn:hover{background:rgba(59,158,255,.2);}
+
+    /* Calendar day names */
+    .cal-day-name{
+      text-align:center;padding:11px 0;font-size:.68rem;font-weight:800;
+      color:var(--muted);text-transform:uppercase;letter-spacing:.6px;
+    }
+
+    /* Protocol reminders card */
+    .reminder-card{
+      background:linear-gradient(135deg,rgba(245,200,66,.07) 0%,var(--card) 70%);
+      border:1px solid rgba(245,200,66,.18);border-radius:14px;
+      padding:20px;margin-top:20px;
+    }
+    .reminder-card h3{font-size:.95rem;font-weight:800;margin-bottom:6px;}
+    .reminder-card p{font-size:.82rem;color:var(--muted);line-height:1.5;margin-bottom:16px;}
+    .toggle-label{font-size:.88rem;font-weight:700;}
+    .toggle-sub{font-size:.74rem;color:var(--muted);margin-top:2px;}
+    .freq-label{font-size:.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px;}
+    .freq-options{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+    .notif-btn{
+      display:inline-flex;align-items:center;gap:8px;
+      background:linear-gradient(135deg,rgba(245,200,66,.15),rgba(245,200,66,.05));
+      border:1px solid rgba(245,200,66,.25);color:var(--gold);
+      padding:10px 18px;border-radius:10px;font-size:.85rem;font-weight:700;
+      cursor:pointer;transition:all .2s;
+    }
+    .notif-btn:hover{background:rgba(245,200,66,.2);}
+    .reminder-status{
+      display:flex;gap:20px;background:var(--surface);border:1px solid var(--border);
+      border-radius:10px;padding:12px 16px;margin-top:12px;
+    }
+    .reminder-status .label{font-size:.7rem;color:var(--muted);margin-bottom:3px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+    .reminder-status .value{font-size:.88rem;font-weight:700;}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
