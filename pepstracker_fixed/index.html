@@ -362,7 +362,56 @@
         .bogo-full-price{font-size:.78rem;color:var(--gold);font-weight:600;}
     .bogo-badge{background:linear-gradient(135deg,#f5c842,#fb923c);color:#0d0f14;font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em;vertical-align:middle;margin-right:4px;}
     .bogo-orig{text-decoration:line-through;color:var(--muted);font-size:.82rem;margin-right:3px;}
-    </style>
+    
+    /* ── Mobile price card improvements ─────────────────── */
+    @media(max-width:600px){
+      .price-card { padding: 14px 12px; }
+
+      /* Header row: rank + vendor name + badges */
+      .card-header { gap: 6px; }
+      .vendor-name { font-size: .92rem; }
+
+      /* Size buttons row */
+      .size-btns { gap: 5px; margin-bottom: 8px; flex-wrap: wrap; }
+      .size-btn  { padding: 5px 10px; font-size: .78rem; }
+
+      /* Price row: stack price + reg + per-mg vertically */
+      .price-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 10px;
+      }
+      .price-main { font-size: 1.5rem; }
+      .price-reg  { font-size: .78rem; white-space: nowrap; }
+      .price-per-mg { font-size: .82rem; font-weight: 700; margin-left: auto; }
+
+      /* BOGO text: keep compact on mobile */
+      .bogo-full-price {
+        font-size: .72rem;
+        display: block;
+        margin-top: 2px;
+        line-height: 1.4;
+      }
+      .bogo-orig { white-space: nowrap; }
+
+      /* Discount code block */
+      .code-block { padding: 8px 10px; gap: 6px; }
+      .code-label { font-size: .72rem; }
+      .code-value { font-size: .82rem; padding: 3px 8px; }
+      .copy-btn   { font-size: .72rem; padding: 4px 10px; }
+      .discount-pct { font-size: .72rem; }
+
+      /* Shop + action buttons */
+      .btn-shop   { font-size: .88rem; padding: 12px; }
+      .btn-save-peptide { font-size: .82rem; }
+      .btn-alert  { font-size: .82rem; }
+
+      /* Sorted-by bar */
+      .sort-bar { flex-wrap: wrap; gap: 6px; font-size: .78rem; }
+      .sort-btn  { font-size: .75rem; padding: 5px 10px; }
+    }
+  </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
