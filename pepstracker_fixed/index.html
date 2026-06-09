@@ -702,6 +702,7 @@ const VENDORS = [
   { id:"puratek",    name:"Puratek Peptides",     domain:"puratekpeptides.com",    url:"https://puratekpeptides.com/ref/85/",            code:"pepstracker", discount:0.00 },
   { id:"nura",       name:"NuraPeptide",          domain:"nurapeptide.com",        url:"https://nurapeptide.com/?ref=pepstracker",           code:"pepstracker", discount:0.15 },
   { id:"innoamino",  name:"Inno Amino",           domain:"innoamino.com",          url:"https://innoamino.com/?ref=pepstracker",             code:"pepstracker", discount:0.15 },
+  { id:"glp1lab",    name:"GLP-1 Research Lab",  domain:"glp1researchlab.com",    url:"https://glp1researchlab.com/?aff=99",            code:"",            discount:0.00 },
 ];
 const vMap = {};
 VENDORS.forEach(v => vMap[v.id] = v);
@@ -799,6 +800,8 @@ const PRICES = {
     nura:[{price:69.00,mg:10,listing:"Tirzepatide 10mg"}],
     fusion:[{price:50.49,originalPrice:100.99,bogo:true,mg:10,listing:"GLP-2 10mg",url:"https://fusionpeptide.com/product/glp-2/?ref=pepstracker"}],
     innoamino:[{price:79.0,mg:10,listing:"Tirzepatide 10mg"}],
+  ,
+    glp1lab:[{price:70.00,mg:10,listing:"Tirzepatide 10mg",url:"https://glp1researchlab.com/?aff=99"}]
   },
   "Retatrutide": {
     ascension:[{price:95.00,mg:10,listing:"Retatrutide 10mg",oos:true}],
