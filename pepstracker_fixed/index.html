@@ -1939,7 +1939,7 @@ function renderResults() {
   const outOfStock = rows.filter(r => r.oos);
   rows = [...inStock, ...outOfStock];
 
-  const bestAfterDisc = inStock.length > 0 ? Math.min(...inStock.map(r => r.price*(1-r.vendor.discount))) : null;
+  const bestAfterDisc = inStock.length > 0 ? Math.min(...inStock.map(r => r.bogo ? r.price : r.price*(1-r.vendor.discount))) : null;
 
   const html = rows.map((r, i) => {
     const afterDisc = r.bogo ? r.price : r.price * (1 - r.vendor.discount);
