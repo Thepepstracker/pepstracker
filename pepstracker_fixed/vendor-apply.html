@@ -125,6 +125,18 @@
       .mobile-nav { position: fixed; top: 68px; right: 16px; width: 220px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 12px 32px rgba(0,0,0,.5); padding: 8px; border-top: 1px solid var(--border); }
       .mobile-nav a { font-size: .88rem; padding: 9px 12px; }
     }
+  
+    .menu-btn{display:flex!important;align-items:center;gap:6px;background:#141b27;border:1px solid #263347;border-radius:10px;color:#e8edf5;cursor:pointer;padding:8px 14px;font-size:.88rem;font-weight:600;transition:all .2s;}
+    .menu-btn:hover{border-color:#3b9eff;color:#3b9eff;}
+  
+    @media(max-width:600px){
+      .vendor-hero{padding:24px 14px 20px;}
+      .vendor-stats{grid-template-columns:repeat(2,1fr);}
+      .price-table td,.price-table th{padding:8px 6px;font-size:.78rem;}
+      .price-table{font-size:.78rem;}
+      .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+      h1{font-size:1.5rem;}
+    }
   </style>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
