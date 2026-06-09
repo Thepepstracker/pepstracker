@@ -1876,7 +1876,9 @@ const PRICES = {
 };
 
 function getShopUrl(vid, peptide) {
-  return PRICES[vid]?.[peptide] || VENDORS.find(v=>v.id===vid)?.url;
+  const entry = PRICES[peptide]?.[vid];
+  const url = Array.isArray(entry) && entry[0]?.url ? entry[0].url : null;
+  return url || VENDORS.find(v=>v.id===vid)?.url || '#';
 }
 
 let currentPeptide = null;
