@@ -234,6 +234,297 @@
     .btn-google-auth:hover{border-color:var(--blue);}
   footer{border-top:1px solid var(--border);padding:20px 16px;text-align:center;color:var(--muted);font-size:.8rem;}
     footer a{color:var(--blue);text-decoration:none;}
+  
+    /* ═══════════════════════════════════════════════
+       VISUAL REDESIGN — ACCOUNT PAGE
+    ═══════════════════════════════════════════════ */
+
+    /* Page background subtle gradient */
+    body{background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(59,158,255,.07) 0%,var(--bg) 60%);}
+
+    /* ── User Card ─────────────────────────────── */
+    .user-card{
+      background:linear-gradient(135deg,rgba(59,158,255,.08) 0%,rgba(28,34,48,1) 60%);
+      border:1.5px solid rgba(59,158,255,.25);
+      box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.04);
+      padding:20px 24px;
+    }
+    #userAvatar{
+      width:52px;height:52px;border-radius:50%;border:2px solid var(--blue);
+      box-shadow:0 0 0 4px rgba(59,158,255,.15);
+    }
+    #userAvatarInitials{
+      width:52px;height:52px;border-radius:50%;border:2px solid var(--blue);
+      box-shadow:0 0 0 4px rgba(59,158,255,.15);
+      font-size:1.4rem;
+    }
+    #userName{font-size:1.05rem;font-weight:800;letter-spacing:-.2px;}
+    #userEmail{font-size:.8rem;color:var(--muted);}
+    .btn-signout{
+      background:transparent;border:1.5px solid var(--border);color:var(--muted);
+      padding:8px 18px;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer;
+      transition:all .2s;
+    }
+    .btn-signout:hover{border-color:var(--red);color:var(--red);}
+
+    /* ── Tabs ───────────────────────────────────── */
+    .tabs{
+      display:flex;gap:0;margin-bottom:28px;
+      border-bottom:2px solid var(--border);padding-bottom:0;
+    }
+    .tab-btn{
+      flex-shrink:0;background:transparent;border:none;border-bottom:3px solid transparent;
+      color:var(--muted);padding:10px 20px;border-radius:0;font-size:.88rem;font-weight:700;
+      cursor:pointer;transition:all .2s;margin-bottom:-2px;white-space:nowrap;
+    }
+    .tab-btn:hover{color:var(--text);}
+    .tab-btn.active{
+      color:var(--blue);border-bottom:3px solid var(--blue);
+      background:transparent;
+    }
+
+    /* ── Stats bar ─────────────────────────────── */
+    .stats-bar{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;
+    }
+    .stat-box{
+      background:var(--card);border:1.5px solid var(--border);border-radius:14px;
+      padding:16px 14px;text-align:center;transition:border-color .2s;
+      position:relative;overflow:hidden;
+    }
+    .stat-box::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,var(--blue),var(--green));
+      opacity:0;transition:opacity .2s;
+    }
+    .stat-box:hover{border-color:rgba(59,158,255,.35);}
+    .stat-box:hover::before{opacity:1;}
+    .stat-num{
+      font-size:1.8rem;font-weight:900;letter-spacing:-1px;
+      background:linear-gradient(135deg,var(--blue),var(--green));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;line-height:1;margin-bottom:5px;
+    }
+    .stat-label{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+
+    /* ── Calendar ───────────────────────────────── */
+    .cal-header{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:16px;
+    }
+    .cal-month-label{font-size:1.2rem;font-weight:800;letter-spacing:-.3px;}
+    .cal-nav-btn{
+      background:var(--card);border:1.5px solid var(--border);color:var(--text);
+      width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:1rem;
+      display:flex;align-items:center;justify-content:center;transition:all .2s;
+    }
+    .cal-nav-btn:hover{border-color:var(--blue);color:var(--blue);}
+    .btn-today{
+      background:rgba(59,158,255,.1);border:1.5px solid rgba(59,158,255,.3);
+      color:var(--blue);padding:6px 14px;border-radius:8px;font-size:.8rem;
+      font-weight:700;cursor:pointer;transition:all .2s;
+    }
+    .btn-today:hover{background:rgba(59,158,255,.2);}
+    .cal-grid{
+      background:var(--card);border:1.5px solid var(--border);border-radius:16px;
+      overflow:hidden;
+    }
+    .cal-days-header{
+      display:grid;grid-template-columns:repeat(7,1fr);
+      border-bottom:1px solid var(--border);
+    }
+    .cal-day-label{
+      text-align:center;padding:10px 0;font-size:.72rem;font-weight:700;
+      color:var(--muted);text-transform:uppercase;letter-spacing:.5px;
+    }
+    .cal-cells{display:grid;grid-template-columns:repeat(7,1fr);}
+    .cal-cell{
+      min-height:68px;padding:8px 6px;border-right:1px solid rgba(42,51,71,.5);
+      border-bottom:1px solid rgba(42,51,71,.5);cursor:pointer;
+      transition:background .15s;position:relative;
+    }
+    .cal-cell:hover{background:rgba(59,158,255,.06);}
+    .cal-cell:nth-child(7n){border-right:none;}
+    .cal-cell.other-month .cell-date{color:rgba(122,139,168,.35);}
+    .cal-cell.today{background:rgba(59,158,255,.08);}
+    .cell-date{
+      font-size:.85rem;font-weight:700;color:var(--muted);line-height:1;
+      margin-bottom:6px;
+    }
+    .cal-cell.today .cell-date{
+      background:var(--blue);color:#fff;width:24px;height:24px;
+      border-radius:50%;display:flex;align-items:center;justify-content:center;
+      font-size:.8rem;
+    }
+    .cal-cell.has-logs{background:rgba(77,232,122,.04);}
+    .cell-dots{display:flex;flex-wrap:wrap;gap:3px;}
+    .dot{width:7px;height:7px;border-radius:50%;}
+    .cell-count{font-size:.65rem;color:var(--muted);margin-top:4px;}
+
+    /* ── Day Panel ──────────────────────────────── */
+    #panel{
+      background:var(--surface);border-left:1px solid var(--border);
+      width:min(380px,100vw);
+    }
+    .panel-header{
+      background:linear-gradient(135deg,rgba(59,158,255,.12),rgba(77,232,122,.06));
+      border-bottom:1px solid var(--border);padding:18px 20px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .panel-date-title{font-size:1rem;font-weight:800;}
+    .btn-close-panel{
+      background:var(--card);border:1.5px solid var(--border);color:var(--muted);
+      width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem;
+      display:flex;align-items:center;justify-content:center;transition:all .2s;
+    }
+    .btn-close-panel:hover{border-color:var(--red);color:var(--red);}
+    .panel-body{padding:16px;overflow-y:auto;flex:1;}
+
+    /* ── Log form ───────────────────────────────── */
+    .add-form-toggle{
+      width:100%;padding:12px;background:linear-gradient(135deg,rgba(59,158,255,.15),rgba(77,232,122,.08));
+      border:1.5px dashed rgba(59,158,255,.35);border-radius:12px;
+      color:var(--blue);font-weight:700;font-size:.88rem;cursor:pointer;
+      transition:all .2s;margin-bottom:12px;
+    }
+    .add-form-toggle:hover{background:rgba(59,158,255,.2);border-style:solid;}
+    .add-form{
+      background:var(--card);border:1.5px solid var(--border);border-radius:14px;
+      padding:16px;display:none;flex-direction:column;gap:12px;margin-bottom:12px;
+    }
+    .add-form.visible{display:flex;}
+    .form-label{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px;}
+    .form-select,.form-input,.form-textarea{
+      width:100%;background:var(--surface);border:1.5px solid var(--border);
+      border-radius:10px;color:var(--text);padding:10px 13px;font-size:.88rem;
+      font-family:inherit;outline:none;transition:border-color .2s;
+    }
+    .form-select:focus,.form-input:focus,.form-textarea:focus{border-color:var(--blue);}
+    .form-textarea{resize:vertical;min-height:70px;}
+    .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .btn-log{
+      background:linear-gradient(135deg,var(--blue),#1e6fcf);color:#fff;
+      border:none;padding:12px;border-radius:10px;font-size:.9rem;font-weight:700;
+      cursor:pointer;transition:opacity .2s;
+    }
+    .btn-log:hover{opacity:.88;}
+    .btn-cancel-form{
+      background:transparent;border:1.5px solid var(--border);color:var(--muted);
+      padding:10px;border-radius:10px;font-size:.85rem;font-weight:600;cursor:pointer;
+      transition:all .2s;
+    }
+    .btn-cancel-form:hover{border-color:var(--red);color:var(--red);}
+
+    /* ── Entry cards ────────────────────────────── */
+    .entry-card{
+      background:var(--surface);border:1px solid var(--border);border-radius:10px;
+      padding:12px 14px;margin-bottom:8px;position:relative;
+      transition:border-color .2s;
+    }
+    .entry-card:hover{border-color:rgba(59,158,255,.3);}
+    .entry-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .entry-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+    .entry-peptide{font-weight:800;font-size:.92rem;}
+    .entry-time{margin-left:auto;font-size:.75rem;color:var(--muted);background:var(--card);padding:2px 8px;border-radius:20px;}
+    .entry-details{display:flex;flex-wrap:wrap;gap:6px;}
+    .entry-detail{font-size:.78rem;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 9px;}
+    .entry-del{
+      position:absolute;top:10px;right:10px;background:none;border:none;
+      color:var(--border);cursor:pointer;font-size:.9rem;width:22px;height:22px;
+      border-radius:6px;display:flex;align-items:center;justify-content:center;
+      transition:all .2s;
+    }
+    .entry-del:hover{background:rgba(255,92,92,.15);color:var(--red);}
+    .empty-day{
+      text-align:center;padding:32px 16px;color:var(--muted);font-size:.88rem;
+      border:1.5px dashed var(--border);border-radius:12px;line-height:1.6;
+    }
+
+    /* ── Saved / Alerts sections ───────────────── */
+    .saved-card{
+      background:var(--card);border:1.5px solid var(--border);border-radius:12px;
+      padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;
+      gap:14px;transition:border-color .2s;
+    }
+    .saved-card:hover{border-color:rgba(59,158,255,.3);}
+
+    /* ── Protocol Reminders toggle ─────────────── */
+    .alert-section-header{
+      background:linear-gradient(135deg,rgba(245,200,66,.08),rgba(28,34,48,1));
+      border:1.5px solid rgba(245,200,66,.2);border-radius:14px;
+      padding:18px 20px;margin-bottom:16px;
+    }
+    .alert-section-header h3{font-size:1rem;font-weight:800;margin-bottom:4px;}
+    .alert-section-header p{font-size:.83rem;color:var(--muted);line-height:1.5;}
+
+    /* ── Reminder form in log panel ─────────────── */
+    .reminder-form{
+      background:linear-gradient(135deg,rgba(59,158,255,.06),rgba(77,232,122,.03));
+      border:1.5px solid rgba(59,158,255,.2);border-radius:12px;
+      padding:14px;gap:12px;
+    }
+    .freq-btn{
+      padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);
+      background:var(--surface);color:var(--muted);font-size:.78rem;font-weight:700;
+      cursor:pointer;transition:all .2s;
+    }
+    .freq-btn:hover{border-color:var(--blue);color:var(--blue);}
+    .freq-btn.active{
+      border-color:var(--blue);background:rgba(59,158,255,.15);color:var(--blue);
+    }
+
+    /* ── Profile editor ─────────────────────────── */
+    .profile-editor{
+      background:linear-gradient(135deg,rgba(59,158,255,.06) 0%,var(--card) 60%);
+      border:1.5px solid rgba(59,158,255,.2);
+    }
+    .btn-save-profile{
+      background:linear-gradient(135deg,var(--blue),#1e6fcf);
+      box-shadow:0 4px 14px rgba(59,158,255,.3);
+    }
+    .btn-save-profile:hover{opacity:.9;box-shadow:0 6px 20px rgba(59,158,255,.4);}
+
+    /* ── Login prompt redesign ───────────────────── */
+    #loginPrompt{
+      background:linear-gradient(135deg,rgba(59,158,255,.08) 0%,var(--card) 70%);
+      border:1.5px solid rgba(59,158,255,.2);
+      box-shadow:0 8px 32px rgba(0,0,0,.3);
+    }
+    .auth-tabs{background:var(--surface);border-radius:12px;padding:4px;}
+    .auth-tab.active{
+      background:linear-gradient(135deg,rgba(59,158,255,.2),rgba(59,158,255,.1));
+      color:var(--blue);box-shadow:none;
+    }
+    .btn-auth{
+      background:linear-gradient(135deg,var(--blue),#1e6fcf);
+      box-shadow:0 4px 14px rgba(59,158,255,.3);border-radius:12px;
+      padding:13px;font-size:.95rem;
+    }
+    .btn-google-auth{
+      border-radius:12px;padding:13px;
+    }
+    .btn-google-auth:hover{background:rgba(255,255,255,.05);}
+    .auth-input{border-radius:12px;padding:12px 14px;}
+    .pw-wrap .auth-input{padding-right:44px;}
+
+    /* ── Toast ──────────────────────────────────── */
+    .toast{
+      position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+      background:var(--card);border:1.5px solid var(--border);
+      border-radius:12px;padding:12px 22px;font-size:.88rem;font-weight:600;
+      z-index:999;opacity:0;transition:all .3s;pointer-events:none;
+      box-shadow:0 8px 32px rgba(0,0,0,.4);
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+    .toast.success{border-color:rgba(77,232,122,.4);color:var(--green);}
+    .toast.error{border-color:rgba(255,92,92,.4);color:var(--red);}
+
+    /* ── Scrollbar ──────────────────────────────── */
+    ::-webkit-scrollbar{width:5px;height:5px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:20px;}
+    ::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -290,6 +581,7 @@
 
 <div class="accent-bar"></div>
 
+<div style="height:3px;background:linear-gradient(90deg,#3b9eff,#4de87a 50%,#f5c842);"></div>
 <div class="page">
 
   <!-- user card (shown when logged in) -->
