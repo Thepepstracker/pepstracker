@@ -365,51 +365,47 @@
     
     /* ── Mobile price card improvements ─────────────────── */
     @media(max-width:600px){
-      .price-card { padding: 14px 12px; }
+      .result-card { padding: 14px 12px; gap: 8px; }
 
-      /* Header row: rank + vendor name + badges */
-      .card-header { gap: 6px; }
-      .vendor-name { font-size: .92rem; }
+      /* Vendor name */
+      .vendor-name { font-size: .88rem; }
+      .vendor-listing { font-size: .68rem; }
 
-      /* Size buttons row */
-      .size-btns { gap: 5px; margin-bottom: 8px; flex-wrap: wrap; }
-      .size-btn  { padding: 5px 10px; font-size: .78rem; }
+      /* Size pills */
+      .size-pills { gap: 5px; flex-wrap: wrap; }
+      .size-pill-btn { padding: 4px 9px; font-size: .75rem; }
 
-      /* Price row: stack price + reg + per-mg vertically */
-      .price-row {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 4px 10px;
+      /* Price block: allow wrapping */
+      .price-block { min-width: 0; }
+      .price-original { font-size: 1.2rem; }
+
+      /* Reg + BOGO text: ALLOW wrapping, never overflow */
+      .price-reg {
+        font-size: .7rem;
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.5;
       }
-      .price-main { font-size: 1.5rem; }
-      .price-reg  { font-size: .78rem; white-space: nowrap; }
-      .price-per-mg { font-size: .82rem; font-weight: 700; margin-left: auto; }
+      .price-per-mg { font-size: .75rem; }
 
-      /* BOGO text: keep compact on mobile */
-      .bogo-full-price {
-        font-size: .72rem;
-        display: block;
-        margin-top: 2px;
-        line-height: 1.4;
-      }
+      /* BOGO: shorten text on mobile using CSS */
+      .bogo-full-price { font-size: .7rem; line-height: 1.5; display: block; }
+      .bogo-full-price .bogo-long { display: none; }
+      .bogo-full-price .bogo-short { display: inline; }
       .bogo-orig { white-space: nowrap; }
 
-      /* Discount code block */
-      .code-block { padding: 8px 10px; gap: 6px; }
-      .code-label { font-size: .72rem; }
-      .code-value { font-size: .82rem; padding: 3px 8px; }
-      .copy-btn   { font-size: .72rem; padding: 4px 10px; }
-      .discount-pct { font-size: .72rem; }
+      /* Code block */
+      .code-block { min-width: 90px; padding: 8px 8px; }
+      .code-badge { font-size: .78rem; padding: 4px 8px; letter-spacing: .3px; }
+      .btn-copy { font-size: .7rem; padding: 4px 8px; }
+      .discount-pct { font-size: .68rem; }
 
-      /* Shop + action buttons */
-      .btn-shop   { font-size: .88rem; padding: 12px; }
-      .btn-save-peptide { font-size: .82rem; }
-      .btn-alert  { font-size: .82rem; }
+      /* Shop button */
+      .btn-shop { font-size: .88rem; }
 
       /* Sorted-by bar */
-      .sort-bar { flex-wrap: wrap; gap: 6px; font-size: .78rem; }
-      .sort-btn  { font-size: .75rem; padding: 5px 10px; }
+      .sort-bar { flex-wrap: wrap; gap: 6px; }
+      .sort-btn  { font-size: .73rem; padding: 5px 10px; }
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -2031,7 +2027,7 @@ function renderResults() {
       <div class="price-block">
         ${r.sizes && r.sizes.length > 1 ? `<div class="size-pills"><label>Size:</label>${r.sizes.map((s,i)=>`<button class="size-pill-btn ${i===0?'active':''}" onclick="selectSizePill(this,'${r.vendor.id}','${currentPeptide}',${i},${r.vendor.discount})">${s.mg}mg</button>`).join('')}</div>` : ''}
         <div class="price-original ${isBest?'best-price':''}" id="price-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${afterDisc.toFixed(2)}</div>
-        <div class="price-reg" id="pricereg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">${isBogo ? '<span class="bogo-full-price">🎁 Buy 1 Get 1 Free — you pay for 1, get 2! &nbsp;<span class="bogo-orig">Full price: <s>$'+(r.originalPrice).toFixed(2)+'</s></span></span>' : 'Reg. <span class="price-original-strike">$'+r.price.toFixed(2)+'</span> · '+discPct+'% off'}</div>
+        <div class="price-reg" id="pricereg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">${isBogo ? '<span class="bogo-full-price"><span class="bogo-long">🎁 Buy 1 Get 1 Free — you pay for 1, get 2!&nbsp;</span><span class="bogo-short">🎁 BOGO&nbsp;</span><span class="bogo-orig">Full price: <s>$'+(r.originalPrice).toFixed(2)+'</s></span></span>' : 'Reg. <span class="price-original-strike">$'+r.price.toFixed(2)+'</span> · '+discPct+'% off'}</div>
         <div class="price-per-mg" id="permg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${(afterDisc/r.mg).toFixed(2)}/${currentPeptide==='Bacteriostatic Water'?'mL':'mg'}</div>
       </div>
       <div class="code-block">
