@@ -1942,7 +1942,7 @@ function renderResults() {
   const bestAfterDisc = inStock.length > 0 ? Math.min(...inStock.map(r => r.price*(1-r.vendor.discount))) : null;
 
   const html = rows.map((r, i) => {
-    const afterDisc = r.price * (1 - r.vendor.discount);
+    const afterDisc = r.bogo ? r.price : r.price * (1 - r.vendor.discount);
     const isBest = bestAfterDisc !== null && !r.oos && Math.abs(afterDisc - bestAfterDisc) < 0.01;
     const isBogo = r.bogo === true;
     const discPct = Math.round(r.vendor.discount * 100);
@@ -1982,7 +1982,7 @@ function renderResults() {
       <div class="price-block">
         ${r.sizes && r.sizes.length > 1 ? `<div class="size-pills"><label>Size:</label>${r.sizes.map((s,i)=>`<button class="size-pill-btn ${i===0?'active':''}" onclick="selectSizePill(this,'${r.vendor.id}','${currentPeptide}',${i},${r.vendor.discount})">${s.mg}mg</button>`).join('')}</div>` : ''}
         <div class="price-original ${isBest?'best-price':''}" id="price-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${afterDisc.toFixed(2)}</div>
-        <div class="price-reg" id="pricereg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">${isBogo ? '<span class="bogo-full-price">🎁 Buy 1 Get 1 Free — you pay for 1, get 2! &nbsp;<span class="bogo-orig">Full price: <s>$'+(r.originalPrice*(1-r.vendor.discount)).toFixed(2)+'</s></span></span>' : 'Reg. <span class="price-original-strike">$'+r.price.toFixed(2)+'</span> · '+discPct+'% off'}</div>
+        <div class="price-reg" id="pricereg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">${isBogo ? '<span class="bogo-full-price">🎁 Buy 1 Get 1 Free — you pay for 1, get 2! &nbsp;<span class="bogo-orig">Full price: <s>$'+(r.originalPrice).toFixed(2)+'</s></span></span>' : 'Reg. <span class="price-original-strike">$'+r.price.toFixed(2)+'</span> · '+discPct+'% off'}</div>
         <div class="price-per-mg" id="permg-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}">$${(afterDisc/r.mg).toFixed(2)}/${currentPeptide==='Bacteriostatic Water'?'mL':'mg'}</div>
       </div>
       <div class="code-block">
