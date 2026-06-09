@@ -550,6 +550,41 @@
         <label class="form-label">How did you feel?</label>
         <textarea class="form-textarea" id="fNotes" placeholder="Energy, side effects, mood…"></textarea>
       </div>
+      <!-- Reminder toggle -->
+      <div class="reminder-toggle-row">
+        <span class="reminder-bell-icon">🔔</span>
+        <span class="reminder-toggle-label">Set a recurring reminder</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="reminderToggle" onchange="toggleReminderForm()"/>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="reminder-form" id="reminderForm">
+        <div>
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Repeat Every</div>
+          <div class="reminder-freq" id="freqBtns">
+            <button class="freq-btn active" data-freq="daily" onclick="selectFreq(this)">Daily</button>
+            <button class="freq-btn" data-freq="2days" onclick="selectFreq(this)">Every 2 Days</button>
+            <button class="freq-btn" data-freq="3days" onclick="selectFreq(this)">Every 3 Days</button>
+            <button class="freq-btn" data-freq="weekly" onclick="selectFreq(this)">Weekly</button>
+            <button class="freq-btn" data-freq="biweekly" onclick="selectFreq(this)">Bi-weekly</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Event Label</div>
+          <input class="reminder-label-input" id="reminderLabel" placeholder="e.g. Semaglutide dose"/>
+        </div>
+        <div class="reminder-dates">
+          <div class="reminder-date-field">
+            <label>Starting</label>
+            <input type="date" id="reminderStart"/>
+          </div>
+          <div class="reminder-date-field">
+            <label>Until (optional)</label>
+            <input type="date" id="reminderEnd" placeholder="No end date"/>
+          </div>
+        </div>
+      </div>
       <button class="btn-log" onclick="saveEntry()">💉 Log Entry</button>
       <button class="btn-cancel-form" onclick="toggleAddForm()">Cancel</button>
     </div>
@@ -901,6 +936,80 @@ function toggleAddForm() {
   document.getElementById("addFormToggle").textContent = addFormOpen ? "↑ Cancel" : "+ Log a peptide";
 }
 
+
+// ── REMINDERS ─────────────────────────────────────────────────────────────
+let remindersCache = {};  // { id: reminderObj }
+let selectedFreq = 'daily';
+
+function toggleReminderForm() {
+  const on = document.getElementById('reminderToggle').checked;
+  document.getElementById('reminderForm').classList.toggle('open', on);
+  if (on) {
+    // Pre-fill label from selected peptide
+    const pep = document.getElementById('fPeptide').value;
+    const freqLabel = { daily:'Daily', '2days':'Every 2 Days', '3days':'Every 3 Days', weekly:'Weekly', biweekly:'Bi-weekly' };
+    if (pep) document.getElementById('reminderLabel').value = `${pep} dose`;
+    // Pre-fill start date from panel date
+    document.getElementById('reminderStart').value = panelDate || new Date().toISOString().slice(0,10);
+  }
+}
+
+function selectFreq(btn) {
+  document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedFreq = btn.dataset.freq;
+}
+
+async function saveReminder(peptide, dosage) {
+  if (!currentUser) return;
+  const label = document.getElementById('reminderLabel').value.trim() || `${peptide} dose`;
+  const startDate = document.getElementById('reminderStart').value || panelDate;
+  const endDate = document.getElementById('reminderEnd').value || null;
+  const reminder = {
+    id: Date.now().toString(),
+    peptide, dosage, label,
+    frequency: selectedFreq,
+    startDate, endDate,
+    createdAt: new Date().toISOString()
+  };
+  await db.collection('users').doc(currentUser.uid).collection('reminders').doc(reminder.id).set(reminder);
+  remindersCache[reminder.id] = reminder;
+  renderCalendar();
+  showToast(`🔔 Reminder set — ${label} (${selectedFreq})`, 'success');
+}
+
+async function loadReminders() {
+  if (!currentUser) return;
+  const snap = await db.collection('users').doc(currentUser.uid).collection('reminders').get();
+  remindersCache = {};
+  snap.forEach(doc => { remindersCache[doc.id] = doc.data(); });
+}
+
+async function deleteReminder(id) {
+  if (!currentUser) return;
+  await db.collection('users').doc(currentUser.uid).collection('reminders').doc(id).delete();
+  delete remindersCache[id];
+  renderCalendar();
+  renderDayPanel(panelDate);
+  showToast('Reminder removed', '');
+}
+
+function reminderOccursOn(reminder, dateStr) {
+  if (!reminder.startDate) return false;
+  if (dateStr < reminder.startDate) return false;
+  if (reminder.endDate && dateStr > reminder.endDate) return false;
+  const start = new Date(reminder.startDate + 'T12:00:00');
+  const target = new Date(dateStr + 'T12:00:00');
+  const diffDays = Math.round((target - start) / 86400000);
+  if (diffDays < 0) return false;
+  const freqDays = { daily: 1, '2days': 2, '3days': 3, weekly: 7, biweekly: 14 };
+  const freq = freqDays[reminder.frequency] || 7;
+  return diffDays % freq === 0;
+}
+
+function getRemindersForDate(dateStr) {
+  return Object.values(remindersCache).filter(r => reminderOccursOn(r, dateStr));
+}
 async function saveEntry() {
   const peptide = document.getElementById("fPeptide").value;
   const dosage = document.getElementById("fDosage").value.trim();
@@ -909,6 +1018,12 @@ async function saveEntry() {
   if (!peptide) { showToast("Pick a peptide first", "error"); return; }
   const entry = { peptide, dosage, time, notes, id: Date.now().toString() };
   await saveDayLogs(panelDate, [...(logsCache[panelDate]||[]), entry]);
+  // Save reminder if toggled on
+  if (document.getElementById('reminderToggle')?.checked) {
+    await saveReminder(peptide, dosage);
+    document.getElementById('reminderToggle').checked = false;
+    document.getElementById('reminderForm').classList.remove('open');
+  }
   document.getElementById("fDosage").value = "";
   document.getElementById("fNotes").value = "";
   addFormOpen = false;
