@@ -540,7 +540,7 @@
     <div class="add-form" id="addForm">
       <div class="form-row">
         <label class="form-label">Peptide</label>
-        <select class="form-select" id="fPeptide"></select>
+        <select class="form-select" id="fPeptide" onchange="if(document.getElementById('reminderToggle')?.checked){document.getElementById('reminderLabel').value=this.value+' dose';}"></select>
       </div>
       <div class="form-row-2">
         <div><label class="form-label">Dosage</label><input class="form-input" id="fDosage" placeholder="e.g. 250mcg"/></div>
@@ -836,6 +836,19 @@ function renderCalendar() {
       const cnt = document.createElement("div"); cnt.className = "cell-count";
       cnt.textContent = entries.length + " logged"; cell.appendChild(cnt);
     }
+    // Add reminder dot if reminders exist for this day
+    const dayReminders = getRemindersForDate(key);
+    if (dayReminders.length > 0) {
+      let dots = cell.querySelector('.cell-dots');
+      if (!dots) { dots = document.createElement('div'); dots.className = 'cell-dots'; cell.appendChild(dots); }
+      const rdot = document.createElement('div'); rdot.className = 'dot dot-reminder';
+      dots.appendChild(rdot);
+      if (!entries.length) {
+        const cnt = document.createElement('div'); cnt.className = 'cell-count';
+        cnt.textContent = dayReminders.length + ' reminder' + (dayReminders.length > 1 ? 's' : '');
+        cell.appendChild(cnt);
+      }
+    }
     cells.appendChild(cell);
   }
 }
@@ -903,10 +916,26 @@ function renderPanel(key) {
   const entries = logsCache[key] || [];
   const list = document.getElementById("entriesList");
   list.innerHTML = "";
-  if (!entries.length) {
+  // Show reminder cards at top
+  const dayReminders = getRemindersForDate(key);
+  if (dayReminders.length > 0) {
+    const freqLabels = {daily:'Daily','2days':'Every 2 days','3days':'Every 3 days',weekly:'Weekly',biweekly:'Bi-weekly'};
+    dayReminders.forEach(r => {
+      const el = document.createElement('div'); el.className = 'reminder-entry';
+      el.innerHTML = `<div class="reminder-bell">🔔</div>
+        <div style="flex:1">
+          <div class="reminder-entry-label">${r.label}</div>
+          <div class="reminder-entry-sub">${r.dosage ? r.dosage + ' · ' : ''}${freqLabels[r.frequency]||r.frequency} reminder</div>
+        </div>
+        <button class="reminder-entry-del" onclick="deleteReminder('${r.id}')" title="Remove reminder">✕</button>`;
+      list.appendChild(el);
+    });
+  }
+  if (!entries.length && !dayReminders.length) {
     list.innerHTML = `<div class="empty-day">💉 Nothing logged — add your first entry below.</div>`;
     return;
   }
+  if (!entries.length) return;
   entries.forEach((e, i) => {
     const card = document.createElement("div"); card.className = "entry-card";
     card.innerHTML = `
@@ -990,7 +1019,7 @@ async function deleteReminder(id) {
   await db.collection('users').doc(currentUser.uid).collection('reminders').doc(id).delete();
   delete remindersCache[id];
   renderCalendar();
-  renderDayPanel(panelDate);
+  renderPanel(panelDate);
   showToast('Reminder removed', '');
 }
 
