@@ -75,25 +75,63 @@
 <header>
   <div class="header-inner">
     <a class="logo" href="index.html">
-      <svg class="logo-icon" viewBox="0 0 42 42" fill="none">
-        <circle cx="7"  cy="30" r="4" fill="#3b9eff"/>
-        <circle cx="19" cy="22" r="4" fill="#3bb8ff"/>
-        <circle cx="31" cy="14" r="4" fill="#4de87a"/>
-        <line x1="7" y1="30" x2="19" y2="22" stroke="#3b9eff" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="19" y1="22" x2="31" y2="14" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/>
-        <polyline points="28,8 35,8 35,15" stroke="#4de87a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        <defs><linearGradient id="g1" x1="19" y1="22" x2="31" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3b9eff"/><stop offset="100%" stop-color="#4de87a"/></linearGradient></defs>
+      <svg class="logo-icon" viewBox="0 0 200 200" fill="none">
+        <defs>
+          <linearGradient id="g1" x1="20" y1="130" x2="180" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1a7fe8"/>
+            <stop offset="50%" stop-color="#00e5cc"/>
+            <stop offset="100%" stop-color="#4de87a"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="20" y1="150" x2="180" y2="150" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1a7fe8"/>
+            <stop offset="100%" stop-color="#4de87a"/>
+          </linearGradient>
+        </defs>
+        <path d="M20 140 Q100 195 180 120" fill="none" stroke="url(#g2)" stroke-width="10" stroke-linecap="round"/>
+        <line x1="20" y1="128" x2="82" y2="82" stroke="url(#g1)" stroke-width="10" stroke-linecap="round"/>
+        <line x1="82" y1="82" x2="128" y2="105" stroke="url(#g1)" stroke-width="10" stroke-linecap="round"/>
+        <line x1="128" y1="105" x2="168" y2="48" stroke="#4de87a" stroke-width="10" stroke-linecap="round"/>
+        <polygon points="178,38 152,46 168,64" fill="#4de87a"/>
+        <circle cx="20" cy="128" r="18" fill="#1a7fe8"/>
+        <circle cx="82" cy="82" r="18" fill="#00e5cc"/>
+        <circle cx="128" cy="105" r="18" fill="#4de87a"/>
       </svg>
       <div class="logo-text"><span>Peps</span><span>Tracker</span></div>
     </a>
+
+    <!-- Desktop nav -->
     <nav>
-      <a href="index.html">Price Tracker</a>
+      <a href="index.html" class="active">Price Tracker</a>
       <a href="vendors.html">🏪 Vendors</a>
+      <a href="dictionary.html" style="color:var(--blue);">📖 Dictionary</a>
+      <a href="blog.html">📝 Blog</a>
+      <a href="quiz.html">🧬 Quiz</a>
+      <a href="tracker.html">📅 My Tracker</a>
       <a href="calculators.html" class="nav-calc">🧮 Calculators</a>
       <a href="vendor-apply.html" class="nav-apply">📋 Vendor Apply</a>
       <a href="advertise.html" style="background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);border-radius:8px;padding:6px 10px;font-size:.82rem;font-weight:600;text-decoration:none;white-space:nowrap;">📣 Advertise</a>
-      <a href="disclaimer.html" class="active">Disclaimer</a>
+      <a href="disclaimer.html">Disclaimer</a>
+      <a href="account.html" class="nav-account">👤 Account</a>
     </nav>
+
+    <!-- Hamburger -->
+    <button class="menu-btn" id="menuBtn" aria-label="Menu" onclick="toggleMenu()"><span class="ham-icon">☰</span> Menu</button>
+  </div>
+
+  <!-- Mobile nav drawer -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html" class="active" onclick="toggleMenu()">🏠 Price Tracker</a>
+    <a href="vendors.html" onclick="toggleMenu()">🏪 Vendors</a>
+    <a href="dictionary.html" style="color:var(--blue);" onclick="toggleMenu()">📖 Dictionary</a>
+    <a href="blog.html" onclick="toggleMenu()">📝 Blog</a>
+    <a href="quiz.html" onclick="toggleMenu()">🧬 Quiz</a>
+    <a href="tracker.html" onclick="toggleMenu()">📅 My Tracker</a>
+    <a href="calculators.html" class="nav-calc" onclick="toggleMenu()">🧮 Calculators</a>
+    <a href="vendor-apply.html" class="nav-apply" onclick="toggleMenu()">📋 Vendor Apply</a>
+    <a href="advertise.html" onclick="toggleMenu()" style="background:rgba(245,200,66,.08);color:var(--gold);border:1px solid rgba(245,200,66,.2);border-radius:8px;">📣 Advertise</a>
+    <a href="live.html" onclick="toggleMenu()" style="background:rgba(255,92,92,.08);color:#ff5c5c;border:1px solid rgba(255,92,92,.2);border-radius:8px;">🎙️ Book the Live</a>
+    <a href="disclaimer.html" onclick="toggleMenu()">⚠️ Disclaimer</a>
+    <a href="account.html" class="nav-account" onclick="toggleMenu()">👤 My Account</a>
   </div>
 </header>
 
