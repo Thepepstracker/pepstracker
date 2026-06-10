@@ -161,4 +161,5 @@
   <url><loc>https://pepstracker.com/peptides/vesugen.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://pepstracker.com/peptides/vilon.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://pepstracker.com/peptides/vip.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://pepstracker.com/about.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
 </urlset>
