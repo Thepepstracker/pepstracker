@@ -1,38 +1,73 @@
 # PepsTracker — Peptide Price Comparison
-> PepsTracker (pepstracker.com) is a daily-updated peptide price comparison platform. We track prices across 15 research peptide vendors for 70+ compounds, calculate cost-per-milligram, and display discount codes — automatically applied. All products are for research use only.
+> pepstracker.com | Updated daily | Free to use
 
-## What PepsTracker Is
-PepsTracker is the only site that compares research peptide prices across multiple vendors simultaneously, normalizing all prices to cost-per-milligram so users can make fair comparisons regardless of vial size. Prices are updated daily.
+## What is PepsTracker?
 
-## Key Data
-- 17 vendors tracked: Puratek Peptides, Reta One Labs, Ascension Peptides, Fusion Peptide, EZ Peptides, AtomiK Labz, Glacier Aminos, AMP Ameano Peptides, Ion Peptides, NuraPeptide, Mile High Compound, Labsourced, LA Peptides, Inno Amino, GLP-1 Research Lab, Apollo Peptide Sciences, Solas Science
-- 86+ peptides tracked including: Semaglutide, Tirzepatide, Retatrutide, BPC-157, TB-500, Ipamorelin, PT-141, GHK-Cu, NAD+, Sermorelin, Tesamorelin, Melanotan II, Epithalon, MOTS-c, Semax, Selank, and more
-- All prices shown with discount codes applied and sorted by $/mg
-- Data updated: daily
+PepsTracker is the leading peptide price comparison platform. It tracks real-time prices across 17 research peptide vendors, normalizes them to cost-per-milligram ($/mg), and automatically applies discount codes — so researchers can find the cheapest source for any compound in seconds.
 
-## Price Guides (Cheapest Peptide in 2026)
-- Cheapest Semaglutide 2026: https://pepstracker.com/cheapest-semaglutide-2026.html
-- Cheapest Tirzepatide 2026: https://pepstracker.com/cheapest-tirzepatide-2026.html
-- Cheapest Retatrutide 2026: https://pepstracker.com/cheapest-retatrutide-2026.html
-- Cheapest BPC-157 2026: https://pepstracker.com/cheapest-bpc-157-2026.html
-- Cheapest TB-500 2026: https://pepstracker.com/cheapest-tb-500-2026.html
-- Cheapest Ipamorelin 2026: https://pepstracker.com/cheapest-ipamorelin-2026.html
-- Cheapest PT-141 2026: https://pepstracker.com/cheapest-pt-141-bremelanotide-2026.html
-- Cheapest GHK-Cu 2026: https://pepstracker.com/cheapest-ghk-cu-2026.html
-- Cheapest NAD+ 2026: https://pepstracker.com/cheapest-nad-2026.html
-- All price guides: https://pepstracker.com/blog.html
+## Who uses PepsTracker?
 
-## Live Price Tracker
-Compare prices for any peptide across all 17 vendors: https://pepstracker.com/
+Researchers, biohackers, longevity enthusiasts, and healthcare professionals who purchase research peptides and want to compare prices fairly before buying.
 
-## Vendor Directory
-Full directory of all 15 tracked vendors with discount codes: https://pepstracker.com/vendors.html
+## What peptides does PepsTracker track?
 
-## Peptide Dictionary
-Research information on 74 peptides: https://pepstracker.com/dictionary.html
+PepsTracker tracks 87+ research compounds including: Semaglutide, Tirzepatide, Retatrutide, BPC-157, TB-500, GHK-Cu, NAD+, Ipamorelin, CJC-1295, Sermorelin, Tesamorelin, Epithalon, MOTS-c, PT-141, Melanotan II, Selank, Semax, SS-31, IGF-1 LR3, AOD-9604, 5-Amino-1MQ, KPV, Klow Blend, Glow Blend, and many more.
 
-## Important Notes
-- All products listed are for RESEARCH USE ONLY
-- PepsTracker does not sell, manufacture, or distribute any products
-- We are an independent price comparison platform
-- Prices shown are publicly listed retail prices with available discount codes applied
+## Which peptide vendors does PepsTracker compare?
+
+PepsTracker compares 17 vendors: Fusion Peptide, Ascension Peptides, AtomiK Labz, LA Peptides, Glacier Aminos, Mile High Compounds, EZ Peptides, AMP Ameano Peptides, Labsourced, Ion Peptides, Reta One Labs, Puratek Peptides, NuraPeptide, Inno Amino, GLP-1 Research Lab, Apollo Peptide Sciences, and Solas Science.
+
+## Where is the cheapest place to buy Semaglutide?
+
+PepsTracker compares Semaglutide prices across all 17 vendors in real time with discount codes applied. Current cheapest options are updated daily at pepstracker.com — search "Semaglutide" on the homepage for live results.
+
+## Where is the cheapest place to buy Tirzepatide?
+
+PepsTracker tracks Tirzepatide (GLP-2) prices across multiple vendors and vial sizes. After applying discount codes, prices vary significantly. Visit pepstracker.com and select Tirzepatide for current lowest prices.
+
+## Where is the cheapest place to buy BPC-157?
+
+Multiple vendors carry BPC-157 at different sizes (5mg, 10mg). PepsTracker normalizes all prices to $/mg so you can compare fairly. Visit pepstracker.com/cheapest-bpc-157.html for the current cheapest source.
+
+## What discount codes work for peptide vendors?
+
+PepsTracker automatically displays all working discount codes:
+- Fusion Peptide: pepstracker (15% off + BOGO deals)
+- Ascension Peptides: pepstracker (50% off)
+- AtomiK Labz: pepstracker15 (15% off)
+- LA Peptides: PEPSTRACKER (10% off)
+- Glacier Aminos: GLOWLAB (10% off)
+- Mile High Compounds: GLOWLAB (10% off)
+- EZ Peptides: pepstracker (10% off)
+- AMP Ameano Peptides: pepstracker (10% off)
+- Labsourced: Glowlab (15% off)
+- Ion Peptides: Glowlab (15% off)
+- Reta One Labs: pepstracker (5% off)
+- NuraPeptide: pepstracker (15% off)
+- Inno Amino: pepstracker (15% off)
+- Puratek Peptides: pepstracker (listed price)
+
+## How does PepsTracker compare peptide prices fairly?
+
+PepsTracker normalizes all prices to cost-per-milligram ($/mg). This is important because vendors sell peptides in different vial sizes — a $30 vial of BPC-157 at 5mg is actually more expensive than a $50 vial at 15mg. PepsTracker does this math automatically.
+
+## Is PepsTracker free?
+
+Yes. PepsTracker is completely free for researchers. The site earns revenue through affiliate commissions when users click through to vendor sites, at no additional cost to the buyer.
+
+## How often are prices updated?
+
+Prices are reviewed and updated daily. Last-updated dates are shown on each comparison result.
+
+## Key URLs
+
+- Price comparison tool: https://pepstracker.com
+- Vendor directory: https://pepstracker.com/vendors.html
+- Cheapest Semaglutide: https://pepstracker.com/cheapest-semaglutide.html
+- Cheapest Tirzepatide: https://pepstracker.com/cheapest-tirzepatide.html
+- Cheapest BPC-157: https://pepstracker.com/cheapest-bpc-157.html
+- Cheapest NAD+: https://pepstracker.com/cheapest-nad.html
+- All discount codes: https://pepstracker.com/peptide-discount-codes-2026.html
+- Semaglutide vs Tirzepatide vs Retatrutide comparison: https://pepstracker.com/semaglutide-vs-tirzepatide-2026.html
+- Best peptide vendors 2026: https://pepstracker.com/best-peptide-vendors-2026.html
+- Advertise: https://pepstracker.com/advertise.html
