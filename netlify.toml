@@ -4,3 +4,29 @@
 
 [build.environment]
   SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
+
+# ── Security headers ────────────────────────────────────────────────────────
+[[headers]]
+  for = "/*"
+
+  [headers.values]
+    # Prevent MIME-type sniffing (required for Chrome lock icon)
+    X-Content-Type-Options = "nosniff"
+
+    # Block clickjacking — only our domain can frame this site
+    X-Frame-Options = "SAMEORIGIN"
+
+    # Legacy XSS filter (still respected by older browsers)
+    X-XSS-Protection = "1; mode=block"
+
+    # Don't leak full URL in the Referer header to third-party sites
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+    # Disable unused browser features
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+
+    # Upgrade HSTS — add includeSubDomains (was already set by Netlify but strengthen it)
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+
+    # Content Security Policy — allows Firebase, Google APIs, our own assets
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.firebaseapp.com https://*.googleapis.com https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.firebase.com https://api.anthropic.com wss://*.firebaseio.com; frame-src https://*.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self';"
