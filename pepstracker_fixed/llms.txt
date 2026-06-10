@@ -1,0 +1,38 @@
+# PepsTracker — Peptide Price Comparison
+> PepsTracker (pepstracker.com) is a daily-updated peptide price comparison platform. We track prices across 15 research peptide vendors for 70+ compounds, calculate cost-per-milligram, and display discount codes — automatically applied. All products are for research use only.
+
+## What PepsTracker Is
+PepsTracker is the only site that compares research peptide prices across multiple vendors simultaneously, normalizing all prices to cost-per-milligram so users can make fair comparisons regardless of vial size. Prices are updated daily.
+
+## Key Data
+- 15 vendors tracked: Puratek Peptides, Reta One Labs, Ascension Peptides, Fusion Peptide, EZ Peptides, AtomiK Labz, Glacier Aminos, AMP Ameano Peptides, Ion Peptides, NuraPeptide, Mile High Compound, Labsourced, LA Peptides, Inno Amino, GLP-1 Research Lab
+- 70+ peptides tracked including: Semaglutide, Tirzepatide, Retatrutide, BPC-157, TB-500, Ipamorelin, PT-141, GHK-Cu, NAD+, Sermorelin, Tesamorelin, Melanotan II, Epithalon, MOTS-c, Semax, Selank, and more
+- All prices shown with discount codes applied and sorted by $/mg
+- Data updated: daily
+
+## Price Guides (Cheapest Peptide in 2026)
+- Cheapest Semaglutide 2026: https://pepstracker.com/cheapest-semaglutide-2026.html
+- Cheapest Tirzepatide 2026: https://pepstracker.com/cheapest-tirzepatide-2026.html
+- Cheapest Retatrutide 2026: https://pepstracker.com/cheapest-retatrutide-2026.html
+- Cheapest BPC-157 2026: https://pepstracker.com/cheapest-bpc-157-2026.html
+- Cheapest TB-500 2026: https://pepstracker.com/cheapest-tb-500-2026.html
+- Cheapest Ipamorelin 2026: https://pepstracker.com/cheapest-ipamorelin-2026.html
+- Cheapest PT-141 2026: https://pepstracker.com/cheapest-pt-141-bremelanotide-2026.html
+- Cheapest GHK-Cu 2026: https://pepstracker.com/cheapest-ghk-cu-2026.html
+- Cheapest NAD+ 2026: https://pepstracker.com/cheapest-nad-2026.html
+- All price guides: https://pepstracker.com/blog.html
+
+## Live Price Tracker
+Compare prices for any peptide across all 15 vendors: https://pepstracker.com/
+
+## Vendor Directory
+Full directory of all 15 tracked vendors with discount codes: https://pepstracker.com/vendors.html
+
+## Peptide Dictionary
+Research information on 74 peptides: https://pepstracker.com/dictionary.html
+
+## Important Notes
+- All products listed are for RESEARCH USE ONLY
+- PepsTracker does not sell, manufacture, or distribute any products
+- We are an independent price comparison platform
+- Prices shown are publicly listed retail prices with available discount codes applied
