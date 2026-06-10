@@ -5,8 +5,8 @@
 PepsTracker is the only site that compares research peptide prices across multiple vendors simultaneously, normalizing all prices to cost-per-milligram so users can make fair comparisons regardless of vial size. Prices are updated daily.
 
 ## Key Data
-- 15 vendors tracked: Puratek Peptides, Reta One Labs, Ascension Peptides, Fusion Peptide, EZ Peptides, AtomiK Labz, Glacier Aminos, AMP Ameano Peptides, Ion Peptides, NuraPeptide, Mile High Compound, Labsourced, LA Peptides, Inno Amino, GLP-1 Research Lab
-- 70+ peptides tracked including: Semaglutide, Tirzepatide, Retatrutide, BPC-157, TB-500, Ipamorelin, PT-141, GHK-Cu, NAD+, Sermorelin, Tesamorelin, Melanotan II, Epithalon, MOTS-c, Semax, Selank, and more
+- 17 vendors tracked: Puratek Peptides, Reta One Labs, Ascension Peptides, Fusion Peptide, EZ Peptides, AtomiK Labz, Glacier Aminos, AMP Ameano Peptides, Ion Peptides, NuraPeptide, Mile High Compound, Labsourced, LA Peptides, Inno Amino, GLP-1 Research Lab, Apollo Peptide Sciences, Solas Science
+- 86+ peptides tracked including: Semaglutide, Tirzepatide, Retatrutide, BPC-157, TB-500, Ipamorelin, PT-141, GHK-Cu, NAD+, Sermorelin, Tesamorelin, Melanotan II, Epithalon, MOTS-c, Semax, Selank, and more
 - All prices shown with discount codes applied and sorted by $/mg
 - Data updated: daily
 
@@ -23,7 +23,7 @@ PepsTracker is the only site that compares research peptide prices across multip
 - All price guides: https://pepstracker.com/blog.html
 
 ## Live Price Tracker
-Compare prices for any peptide across all 15 vendors: https://pepstracker.com/
+Compare prices for any peptide across all 17 vendors: https://pepstracker.com/
 
 ## Vendor Directory
 Full directory of all 15 tracked vendors with discount codes: https://pepstracker.com/vendors.html
