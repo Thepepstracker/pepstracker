@@ -61,7 +61,7 @@
       --red:#ff5c5c; --radius:12px;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    body{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
     /* ── Modal ── */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -297,8 +297,8 @@
     .alert-confirmation small{color:var(--muted);font-size:.8rem;}
     /* ── Size Pills ── */
     .size-pills{display:flex;align-items:center;gap:6px;margin:7px 0 5px;flex-wrap:wrap;}
-    .size-pills label{font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;margin-right:4px;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;}
-    .size-pill-btn{background:var(--surface);border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 12px;font-size:.78rem;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;cursor:pointer;transition:all .18s ease;white-space:nowrap;letter-spacing:.2px;line-height:1.4;}
+    .size-pills label{font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;margin-right:4px;font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;}
+    .size-pill-btn{background:var(--surface);border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 12px;font-size:.78rem;font-weight:700;font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;cursor:pointer;transition:all .18s ease;white-space:nowrap;letter-spacing:.2px;line-height:1.4;}
     .size-pill-btn:hover{border-color:var(--blue);color:var(--blue);background:rgba(59,158,255,.07);transform:translateY(-1px);}
     .size-pill-btn.active{border-color:var(--blue);background:rgba(59,158,255,.15);color:var(--blue);box-shadow:0 0 0 1px rgba(59,158,255,.2);}
     /* ── Save button ── */
@@ -409,10 +409,33 @@
       .sort-bar { flex-wrap: wrap; gap: 6px; }
       .sort-btn  { font-size: .73rem; padding: 5px 10px; }
     }
+  
+    /* UI/UX Pro Max: Fira Code for data values — makes prices feel precise */
+    .price-original, .price-per-mg, #permg-,
+    [id^='price-'], [id^='permg-'],
+    .mock-price, .plan-price,
+    .stat-num, .kit-num, .aud-stat { font-family: 'Fira Code', 'Courier New', monospace !important; }
+    /* UI/UX Pro Max: Micro-interactions — smooth tactile feedback */
+    .result-card, .vendor-card, .price-card {
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .result-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(59,158,255,.15); }
+    .btn-shop { transition: filter 0.15s ease, transform 0.1s ease; }
+    .btn-shop:hover { filter: brightness(1.12); transform: translateY(-1px); }
+    .size-pill-btn, .size-btn { transition: all 0.1s ease; }
+    .size-pill-btn:hover:not(.active) { background: rgba(59,158,255,.15) !important; }
+    .code-badge { transition: background 0.15s ease; letter-spacing: .5px; }
+    /* Plus Jakarta Sans — slightly tighten heading letter-spacing */
+    h1, h2, h3, .vendor-name, .plan-price { letter-spacing: -0.3px; }
+    /* Improve font rendering */
+    * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 </head>
 <body>
 
