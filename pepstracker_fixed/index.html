@@ -470,6 +470,14 @@
     h1, h2, h3, .vendor-name, .plan-price { letter-spacing: -0.3px; }
     /* Improve font rendering */
     * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  
+    .also-compare{margin:24px 0 0;padding:18px;background:var(--card);border:1px solid var(--border);border-radius:12px}
+    .also-compare-lbl{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;font-weight:700}
+    .also-pills{display:flex;flex-wrap:wrap;gap:8px}
+    .also-pill{background:rgba(59,158,255,.08);border:1px solid rgba(59,158,255,.2);color:var(--blue);padding:5px 14px;border-radius:20px;cursor:pointer;font-size:.8rem;transition:background .15s;font-family:inherit}
+    .also-pill:hover{background:rgba(59,158,255,.18)}
+    .btn-share{background:rgba(77,232,122,.1);border:1px solid rgba(77,232,122,.25);color:var(--green);padding:6px 13px;border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:700;font-family:inherit;transition:background .15s;display:inline-flex;align-items:center;gap:5px;vertical-align:middle;margin-left:10px}
+    .btn-share:hover{background:rgba(77,232,122,.2)}
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -2308,6 +2316,83 @@ function updateSaveButtons() {
     btn.classList.toggle('saved', isSaved);
   });
 }
+
+// ── Phase 2 UX: Also-Compare + Share ─────────────────────────────────────
+var RELATED_PEPTIDES = {
+  'Semaglutide':['Tirzepatide','Retatrutide','Cagrilintide'],
+  'Tirzepatide':['Semaglutide','Retatrutide','Cagrilintide'],
+  'Retatrutide':['Tirzepatide','Semaglutide','Cagrilintide'],
+  'Cagrilintide':['Tirzepatide','Semaglutide','Retatrutide'],
+  'BPC-157':['TB-500','BPC-157 + TB-500 Blend','GHK-Cu'],
+  'TB-500':['BPC-157','BPC-157 + TB-500 Blend','Ipamorelin'],
+  'GHK-Cu':['BPC-157','SS-31','NAD+'],
+  'NAD+':['MOTS-c','GHK-Cu','Epithalon'],
+  'Ipamorelin':['CJC-1295 (with DAC)','Sermorelin','Tesamorelin'],
+  'CJC-1295 (with DAC)':['Ipamorelin','Sermorelin','Tesamorelin'],
+  'PT-141 (Bremelanotide)':['Melanotan II','Kisspeptin'],
+  'Melanotan II':['PT-141 (Bremelanotide)','Kisspeptin'],
+  'Semax':['Selank','N-Acetyl Semax','DSIP'],
+  'Selank':['Semax','N-Acetyl Selank','DSIP'],
+  'Epithalon':['MOTS-c','NAD+','GHK-Cu'],
+  'MOTS-c':['Epithalon','NAD+','SS-31'],
+  'Klow Blend':['Glow Blend','BPC-157','GHK-Cu'],
+  'Glow Blend':['Klow Blend','GHK-Cu','BPC-157'],
+  'SS-31':['GHK-Cu','MOTS-c','Epithalon'],
+  'Kisspeptin':['PT-141 (Bremelanotide)','Melanotan II'],
+  'Sermorelin':['Ipamorelin','CJC-1295 (with DAC)','Tesamorelin'],
+  'Tesamorelin':['Sermorelin','Ipamorelin','CJC-1295 (with DAC)']
+};
+
+function showAlsoCompare(peptide) {
+  var old = document.getElementById('also-compare-box');
+  if (old) old.remove();
+  var related = RELATED_PEPTIDES[peptide];
+  if (!related || !related.length) return;
+  var anchor = document.getElementById('results') || document.querySelector('.result-card');
+  if (!anchor) return;
+  var box = document.createElement('div');
+  box.id = 'also-compare-box';
+  box.className = 'also-compare';
+  box.innerHTML = '<div class="also-compare-lbl">People also compare</div><div class="also-pills">' +
+    related.map(function(p){
+      return '<button class="also-pill" onclick="jumpTo('+JSON.stringify(p)+')">'+p+'</button>';
+    }).join('') + '</div>';
+  var parent = anchor.parentNode;
+  if (parent) parent.insertBefore(box, anchor.nextSibling);
+}
+
+function jumpTo(peptide) {
+  var sel = document.querySelector('select');
+  if (sel) { sel.value = peptide; sel.dispatchEvent(new Event('change')); }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function addShareBtn(peptide) {
+  var old = document.getElementById('peptracker-share-btn');
+  if (old) old.remove();
+  var h = document.querySelector('.results-meta, .result-header, [class*="sorted-by"], [class*="results-header"]');
+  if (!h) return;
+  var btn = document.createElement('button');
+  btn.id = 'peptracker-share-btn';
+  btn.className = 'btn-share';
+  btn.innerHTML = '🔗 Share';
+  btn.onclick = function() {
+    navigator.clipboard.writeText(location.origin+'/?peptide='+encodeURIComponent(peptide))
+      .then(function(){ btn.innerHTML='✅ Copied!'; setTimeout(function(){btn.innerHTML='🔗 Share';},2500); });
+  };
+  h.appendChild(btn);
+}
+
+// Hook into the existing scroll-to-results call
+var _origScroll = Element.prototype.scrollIntoView;
+Element.prototype.scrollIntoView = function(opts) {
+  _origScroll.call(this, opts);
+  if (this.id === 'results' || (this.className && this.className.indexOf('result-card') >= 0)) {
+    var sel = document.querySelector('select');
+    var pep = sel ? sel.value : '';
+    if (pep) { showAlsoCompare(pep); addShareBtn(pep); }
+  }
+};
 </script>
 <div class="toast" id="toast"></div>
 
