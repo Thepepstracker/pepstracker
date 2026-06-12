@@ -2177,8 +2177,17 @@ function renderResults() {
   document.getElementById('resultTitle').textContent = currentPeptide;
   const scrapeDate = typeof SCRAPE_DATE !== "undefined" ? SCRAPE_DATE : null;
   document.getElementById('lastUpdated').textContent = scrapeDate || new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-  document.getElementById('resultList').innerHTML = html;
-  setTimeout(() => { updateSaveButtons(); updateAlertButtons(); }, 0);
+  // Flash result title animation
+  const titleEl = document.getElementById('resultTitle');
+  if (titleEl) { titleEl.style.animation='none'; void titleEl.offsetWidth; titleEl.style.animation=''; }
+  // Skeleton flash (1 frame) then real content
+  const listEl = document.getElementById('resultList');
+  listEl.innerHTML = Array(Math.min(rows.length,5)).fill(0).map(()=>'<div class="pt-skeleton"></div>').join('');
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    listEl.innerHTML = html;
+    // Re-trigger save/alert buttons
+    setTimeout(() => { updateSaveButtons(); updateAlertButtons(); }, 0);
+  }));
 }
 const firebaseConfig = {
   apiKey: "AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
