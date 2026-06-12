@@ -2478,6 +2478,66 @@ function addShareBtn(peptide) {
 
   <script src="/advisor-widget.js" defer></script>
   <script src="/polished.js" defer></script>
-  <script src="/premium.js" defer></script>
+  <script src="/premium.js" defer>
+// ── Price Alert System ────────────────────────────────────────────
+function openAlertModal(vendorId, peptide, vendorName, currentPrice) {
+  var old = document.getElementById('pt-alert-overlay');
+  if (old) old.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'pt-alert-overlay';
+  overlay.className = 'alert-modal-overlay';
+  overlay.innerHTML = '<div class="alert-modal" role="dialog">'
+    + '<h3>🔔 Price Drop Alert</h3>'
+    + '<p>We'll email you when this drops below your target price.</p>'
+    + '<div class="alert-vendor"><div>'
+    + '<span>' + vendorName + '</span><br>'
+    + '<small>' + peptide + ' &nbsp;·&nbsp; Now $' + currentPrice.toFixed(2) + '</small>'
+    + '</div></div>'
+    + '<div class="alert-price-row"><div style="flex:1">'
+    + '<label style="font-size:.75rem;font-weight:700;color:#6b7fa0;display:block;margin-bottom:5px">Alert me when price drops below</label>'
+    + '<input class="alert-price-input" id="pt-alert-price" type="number" step="0.01" min="0.01"'
+    + ' value="' + (currentPrice * 0.9).toFixed(2) + '" placeholder="Target price" />'
+    + '</div></div>'
+    + '<input class="alert-email-input" id="pt-alert-email" type="email" placeholder="your@email.com" />'
+    + '<button class="alert-submit" id="pt-alert-submit" onclick="submitAlert('' + vendorId + '','' + peptide.replace(/'/g,"\\'") + '','' + vendorName + '',' + currentPrice + ')">Set Alert</button>'
+    + '<button class="alert-cancel" onclick="document.getElementById('pt-alert-overlay').remove()">Cancel</button>'
+    + '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
+  setTimeout(function(){ var el=document.getElementById('pt-alert-email'); if(el) el.focus(); }, 50);
+}
+
+function submitAlert(vendorId, peptide, vendorName, currentPrice) {
+  var emailEl = document.getElementById('pt-alert-email');
+  var priceEl = document.getElementById('pt-alert-price');
+  var email   = (emailEl ? emailEl.value : '').trim();
+  var target  = parseFloat(priceEl ? priceEl.value : 0);
+  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+    if (emailEl) { emailEl.style.borderColor='#ff5c5c'; emailEl.focus(); }
+    return;
+  }
+  if (!target || target <= 0) {
+    if (priceEl) { priceEl.style.borderColor='#ff5c5c'; priceEl.focus(); }
+    return;
+  }
+  var btn = document.getElementById('pt-alert-submit');
+  if (btn) { btn.textContent = 'Saving…'; btn.disabled = true; }
+  db.collection('priceAlerts').add({
+    email: email, vendorId: vendorId, vendorName: vendorName,
+    peptide: peptide, currentPrice: currentPrice, targetPrice: target,
+    createdAt: firebase.firestore.Timestamp.now(), triggered: false
+  }).then(function() {
+    var modal = document.querySelector('#pt-alert-overlay .alert-modal');
+    if (modal) modal.innerHTML = '<div class="alert-success">'
+      + '<div class="alert-success-icon">✅</div><h4>Alert set!</h4>'
+      + '<p>We'll email <strong style="color:#edf2ff">' + email + '</strong><br>'
+      + 'when ' + vendorName + ' drops ' + peptide + ' below <strong style="color:#4de87a">$' + target.toFixed(2) + '</strong></p>'
+      + '</div><button class="alert-cancel" onclick="document.getElementById('pt-alert-overlay').remove()" style="margin-top:16px;width:100%">Done</button>';
+  }).catch(function(err) {
+    if (btn) { btn.textContent = 'Set Alert'; btn.disabled = false; }
+    if (window.ptToast) ptToast('Error saving. Please try again.');
+  });
+}
+</script>
 </body>
 </html>
