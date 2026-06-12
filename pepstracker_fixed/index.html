@@ -2264,9 +2264,21 @@ function confirmAlert() {
   if (!pendingAlert) return;
   const price = parseFloat(document.getElementById('alertPriceInput').value);
   if (!price || price <= 0) { document.getElementById('alertPriceInput').style.borderColor='var(--red)'; return; }
-  
-  alertData[pendingAlert.key] = { ...pendingAlert, targetPrice: price };
+  const email = document.getElementById('alertEmailInput')?.value?.trim() || '';
+
+  alertData[pendingAlert.key] = { ...pendingAlert, targetPrice: price, email };
   localStorage.setItem('pepstracker_alerts', JSON.stringify(alertData));
+
+  // Save to Firebase for email notification
+  if (email && db) {
+    const alertDoc = {
+      email, vendor: pendingAlert.vendorId, vendorName: pendingAlert.vendorName,
+      peptide: pendingAlert.peptide, targetPrice: price,
+      currentPrice: pendingAlert.currentPrice, createdAt: new Date().toISOString(),
+      notified: false
+    };
+    db.collection('price_alerts').add(alertDoc).catch(err => console.log('Alert save err:', err));
+  }
   
   // Show confirmation inside modal
   document.getElementById('alertModal').innerHTML = `
@@ -2440,6 +2452,12 @@ function addShareBtn(peptide) {
     <div class="alert-input-row">
       <span>$</span>
       <input type="number" id="alertPriceInput" placeholder="0.00" step="0.01" min="0" />
+    </div>
+    <div style="margin-top:12px;">
+      <label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:5px;">EMAIL FOR NOTIFICATION</label>
+      <input type="email" id="alertEmailInput" placeholder="your@email.com"
+        style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:9px 12px;font-size:.88rem;font-family:inherit;outline:none;"
+        onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"/>
     </div>
     <div class="alert-modal-btns">
       <button class="btn-alert-cancel" onclick="closeAlertModal()">Cancel</button>
