@@ -43,7 +43,7 @@
   }
 
   // ── Stagger result card animations ───────────────────────
-  var resultsEl = document.getElementById('results');
+  var resultsEl = document.getElementById('resultList') || document.getElementById('results');
   if (resultsEl) {
     var cardObserver = new MutationObserver(function(mutations) {
       mutations.forEach(function(m) {
