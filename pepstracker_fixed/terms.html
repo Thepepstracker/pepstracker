@@ -29,6 +29,7 @@
     .meta{font-size:.8rem;color:var(--muted);margin-bottom:32px;}
     footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:.78rem;}
     footer a{color:var(--blue);text-decoration:none;}</style>
+  <link rel="stylesheet" href="/polished.css"/>
 </head>
 <body>
 <div class="ab"></div>
@@ -85,5 +86,6 @@
 <script>
 document.addEventListener('click',function(e){const mn=document.getElementById('mn');if(mn&&mn.classList.contains('open')&&!mn.contains(e.target)&&!e.target.closest('.menu-btn')){mn.classList.remove('open');mn.style.display='none';}});
 </script>
+  <script src="/polished.js" defer></script>
 </body>
 </html>
