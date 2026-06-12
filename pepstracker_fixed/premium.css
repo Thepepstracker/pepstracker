@@ -72,7 +72,7 @@ header {
   font-size: clamp(1rem, 2vw, 1.15rem) !important;
   color: var(--muted) !important;
   max-width: 520px !important;
-  margin: 0 auto 28px !important;
+  margin: 0 auto 16px !important;
   line-height: 1.65 !important;
 }
 
