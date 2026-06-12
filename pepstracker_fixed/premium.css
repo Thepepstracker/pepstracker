@@ -211,7 +211,7 @@ header {
 /* ── Result cards — financial terminal feel ──────────────────────── */
 .result-card {
   background: var(--card) !important;
-  border: 1px solid var(--border) !important;
+  border: 1px solid rgba(59,158,255,0.12) !important;
   border-radius: var(--radius) !important;
   padding: 16px 20px !important;
   grid-template-columns: 52px 1fr auto auto auto !important;
@@ -262,9 +262,9 @@ header {
   border-radius: 12px !important;
   font-weight: 900 !important;
   font-size: 0.85rem !important;
-  background: rgba(255,255,255,0.04) !important;
-  border: 1px solid rgba(255,255,255,0.06) !important;
-  color: var(--muted) !important;
+  background: rgba(59,158,255,0.1) !important;
+  border: 1px solid rgba(59,158,255,0.22) !important;
+  color: var(--blue-hi) !important;
   letter-spacing: -0.5px !important;
 }
 .rank.first {
@@ -387,9 +387,13 @@ header {
   box-shadow: 0 3px 12px rgba(59,158,255,0.3) !important;
 }
 .btn-shop.secondary {
-  background: rgba(255,255,255,0.04) !important;
-  border: 1px solid rgba(255,255,255,0.08) !important;
-  color: var(--muted) !important;
+  background: rgba(59,158,255,0.08) !important;
+  border: 1px solid rgba(59,158,255,0.28) !important;
+  color: var(--blue-hi) !important;
+}
+.btn-shop.secondary:hover {
+  background: rgba(59,158,255,0.16) !important;
+  border-color: rgba(59,158,255,0.5) !important;
 }
 .result-card.best .btn-shop:not(.secondary) {
   background: linear-gradient(135deg, var(--green) 0%, #35c463 100%) !important;
@@ -475,6 +479,19 @@ header {
 ::selection {
   background: rgba(59,158,255,0.3);
   color: var(--text);
+}
+
+
+/* ── All cards: price stays bright regardless of rank ───────────── */
+.result-card .price-original,
+.result-card .price-per-mg {
+  color: var(--text) !important;
+}
+.result-card.best .price-original,
+.result-card.best .price-per-mg,
+.result-card .best-price {
+  color: var(--green) !important;
+  text-shadow: 0 0 20px rgba(77,232,122,0.25) !important;
 }
 
 /* ── MOBILE ── */
