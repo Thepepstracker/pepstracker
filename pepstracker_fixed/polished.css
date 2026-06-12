@@ -1,0 +1,217 @@
+/* ═══════════════════════════════════════════════════════════
+   PepsTracker Polish Layer — Quality at your fingertips
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Smooth scroll ──────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+/* ── Cursor pointers everywhere they're missing ─────────── */
+.btn-search, .btn-shop, .btn-copy, .btn-alert, .modal-accept,
+.pill, .quick-pill, .menu-btn, .also-pill, .btn-share,
+select, button, [role="button"] { cursor: pointer; }
+
+/* ── Scroll progress bar ─────────────────────────────────── */
+#pt-progress {
+  position: fixed; top: 0; left: 0; width: 0%; height: 2px;
+  z-index: 1001; pointer-events: none;
+  background: linear-gradient(90deg, #3b9eff 0%, #4de87a 60%, #f5c842 100%);
+  transition: width 0.08s linear;
+}
+
+/* ── Result cards ─────────────────────────────────────────── */
+.result-card {
+  transition: transform 0.22s cubic-bezier(0.4,0,0.2,1),
+              box-shadow 0.22s cubic-bezier(0.4,0,0.2,1),
+              border-color 0.22s ease !important;
+  will-change: transform;
+}
+.result-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 32px rgba(59,158,255,0.13) !important;
+  border-color: rgba(59,158,255,0.35) !important;
+}
+.result-card.animate-in {
+  animation: ptSlideUp 0.32s cubic-bezier(0.4,0,0.2,1) both;
+}
+@keyframes ptSlideUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── Featured/best card special glow ────────────────────── */
+.result-card:first-child:hover,
+.featured-highlight:hover {
+  box-shadow: 0 10px 36px rgba(77,232,122,0.15) !important;
+  border-color: rgba(77,232,122,0.35) !important;
+}
+
+/* ── Best deal badge pulse ───────────────────────────────── */
+.best-badge {
+  animation: ptPulse 2.8s ease-in-out infinite !important;
+}
+@keyframes ptPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(77,232,122,0.5); }
+  50%     { box-shadow: 0 0 0 6px rgba(77,232,122,0); }
+}
+
+/* ── Search button ──────────────────────────────────────── */
+.btn-search {
+  transition: transform 0.15s ease, box-shadow 0.18s ease,
+              background 0.15s ease !important;
+}
+.btn-search:hover {
+  box-shadow: 0 4px 18px rgba(59,158,255,0.38) !important;
+  transform: translateY(-1px) !important;
+}
+.btn-search:active { transform: scale(0.96) translateY(0) !important; }
+
+/* ── Shop + copy buttons ─────────────────────────────────── */
+.btn-shop {
+  transition: transform 0.15s ease, opacity 0.15s ease,
+              box-shadow 0.15s ease !important;
+}
+.btn-shop:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(59,158,255,0.25) !important;
+}
+.btn-shop:active, .btn-copy:active,
+.modal-accept:active { transform: scale(0.96) !important; }
+
+.btn-copy {
+  transition: background 0.15s ease, transform 0.12s ease,
+              color 0.15s ease !important;
+}
+
+/* ── Select/input focus glow ─────────────────────────────── */
+.select-wrap {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+.select-wrap:focus-within {
+  border-color: rgba(59,158,255,0.5) !important;
+  box-shadow: 0 0 0 3px rgba(59,158,255,0.12) !important;
+}
+.select-wrap select:focus { outline: none !important; }
+
+/* ── Pills ──────────────────────────────────────────────── */
+.pill, .quick-pill, .also-pill {
+  transition: background 0.15s ease, border-color 0.15s ease,
+              transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+.pill:hover, .quick-pill:hover, .also-pill:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(59,158,255,0.2) !important;
+}
+.pill:active, .quick-pill:active { transform: scale(0.96) !important; }
+
+/* ── Hero entrance ──────────────────────────────────────── */
+@keyframes ptHeroIn {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:none; }
+}
+.hero > * {
+  animation: ptHeroIn 0.5s cubic-bezier(0.4,0,0.2,1) both;
+}
+.hero > *:nth-child(1) { animation-delay: 0.05s; }
+.hero > *:nth-child(2) { animation-delay: 0.12s; }
+.hero > *:nth-child(3) { animation-delay: 0.19s; }
+.hero > *:nth-child(4) { animation-delay: 0.26s; }
+.stats-row { animation: ptHeroIn 0.5s cubic-bezier(0.4,0,0.2,1) 0.3s both; }
+
+/* ── Stat items hover ───────────────────────────────────── */
+.stat-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  cursor: default;
+}
+.stat-item:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 16px rgba(59,158,255,0.1) !important;
+}
+
+/* ── Scroll fade-up ─────────────────────────────────────── */
+.pt-fade {
+  opacity: 0; transform: translateY(18px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.pt-fade.pt-visible { opacity: 1; transform: none; }
+
+/* ── Toast notifications ────────────────────────────────── */
+.pt-toast {
+  position: fixed; bottom: 90px; left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(14,18,28,0.97);
+  border: 1px solid rgba(77,232,122,0.35);
+  color: #4de87a; padding: 9px 22px; border-radius: 100px;
+  font-size: 13px; font-weight: 700;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  opacity: 0; z-index: 9998; pointer-events: none;
+  white-space: nowrap;
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+.pt-toast.pt-show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Modal polish ───────────────────────────────────────── */
+.modal-overlay {
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+}
+.modal-accept {
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+              background 0.15s ease !important;
+}
+.modal-accept:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(59,158,255,0.3) !important;
+}
+
+/* ── Logo hover shimmer ──────────────────────────────────── */
+.logo:hover .logo-text, .logo:hover .logo {
+  filter: brightness(1.1);
+  transition: filter 0.2s ease;
+}
+
+/* ── Smooth nav menu ─────────────────────────────────────── */
+.mobile-nav {
+  transition: opacity 0.18s ease, transform 0.18s ease !important;
+}
+
+/* ── Discount badge ─────────────────────────────────────── */
+.discount-pct, .code-badge {
+  transition: transform 0.15s ease !important;
+}
+.result-card:hover .discount-pct,
+.result-card:hover .code-badge {
+  transform: scale(1.05) !important;
+}
+
+/* ── GLP banner ─────────────────────────────────────────── */
+.glp-banner {
+  transition: box-shadow 0.2s ease !important;
+}
+.glp-banner:hover {
+  box-shadow: 0 4px 20px rgba(59,158,255,0.12) !important;
+}
+
+/* ── Results header sort buttons ────────────────────────── */
+.filter-label {
+  transition: color 0.15s ease, border-color 0.15s ease !important;
+  cursor: pointer;
+}
+.filter-label.active {
+  transition: all 0.15s ease !important;
+}
+
+/* ── Reduced motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .result-card.animate-in { animation: none !important; }
+  .best-badge { animation: none !important; }
+  html { scroll-behavior: auto !important; }
+}
