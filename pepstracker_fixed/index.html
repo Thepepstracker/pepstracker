@@ -2119,7 +2119,7 @@ function renderResults() {
 
     if (r.oos) {
       return `
-      <div class="result-card" style="opacity:0.55;border-color:var(--red);">
+      <div class="result-card animate-in" style="animation-delay:${i*45}ms;opacity:0.55;border-color:var(--red);">
         <div class="rank" style="color:var(--red);">—</div>
         <div>
           <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><img class="vendor-favicon" src="https://www.google.com/s2/favicons?domain=${r.vendor.domain}&sz=64" width="28" height="28" style="width:28px;height:28px;object-fit:contain;" alt="" onerror="this.style.display='none'" />${r.vendor.name}</div>
@@ -2142,7 +2142,7 @@ function renderResults() {
 
     const rank = inStock.indexOf(r);
     return `
-    <div class="result-card ${isBest?'best':''}">
+    <div class="result-card ${isBest?'best':''} animate-in" style="animation-delay:${i*45}ms">
       <div class="rank ${rank===0?'first':''}">${rank===0?'🥇':'#'+(rank+1)}</div>
       <div>
         <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><img class="vendor-favicon" src="https://www.google.com/s2/favicons?domain=${r.vendor.domain}&sz=64" width="28" height="28" style="width:28px;height:28px;object-fit:contain;" alt="" onerror="this.style.display='none'" />${r.vendor.name}${isBogo?'<span class="bogo-badge">🎁 BOGO</span>':''}${isBest?'<span class="best-badge">Best Value</span>':''}</div>
