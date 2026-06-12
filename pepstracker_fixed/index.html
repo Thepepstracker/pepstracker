@@ -575,7 +575,7 @@
 
   <!-- Stats -->
   <div class="stats-row">
-    <div class="stat-item"><div class="stat-num">18</div><div class="stat-label">Vendors</div></div>
+    <div class="stat-item"><div class="stat-num">19</div><div class="stat-label">Vendors</div></div>
     <div class="stat-item"><div class="stat-num">87</div><div class="stat-label">Peptides</div></div>
     <div class="stat-item"><div class="stat-num">Daily</div><div class="stat-label">Updates</div></div>
   </div>
@@ -674,6 +674,7 @@
         </optgroup>
         <optgroup label="Metabolic">
           <option>SLU-PP-332</option>
+          <option>Mazdutide</option>
           <option>Tesofensine</option>
           <option>5-Amino-1MQ</option>
         </optgroup>
@@ -835,6 +836,7 @@ const VENDORS = [
   { id:"apollo",       name:"Apollo Peptide Sciences", domain:"apollopeptidescience.com",   url:"https://apollopeptidescience.com/?rfsn=9159258.af92b92",          code:"",           discount:0.00 },
   { id:"solas",       name:"Solas Science",           domain:"solasscience.shop",        url:"https://solasscience.shop/ref/23/",                   code:"",           discount:0.00 },
   { id:"swisschems", name:"SwissChems",        domain:"swisschems.is",          url:"https://swisschems.is/ref/6822/",                                code:"",             discount:0.00 },
+  { id:"hydro",       name:"Hydro Research",       domain:"hydroresearchpeptides.com", url:"https://hydroresearchpeptides.com/?ref=PepsTracker",             code:"PepsTracker15", discount:0.15 },
 ];
 const vMap = {};
 VENDORS.forEach(v => vMap[v.id] = v);
@@ -903,7 +905,8 @@ const PRICES = {
     fusion:[{price:72.99,mg:5,listing:"GLP-1 (BOGO)",url:"https://fusionpeptide.com/product/glp-1/?ref=pepstracker",bogo:true}],
     innoamino:[{price:79.99,mg:10,listing:"INNO-1 S 10mg",url:"https://innoamino.com/product/inno-1-s?ref=pepstracker"}],
     glp1lab:[{price:70.0,mg:10,listing:"GLP-1 10mg",url:"https://glp1researchlab.com/product/glp-1/?aff=99"}],
-    apollo:[{price:79.99,mg:5,listing:"GLP-1 S 5mg",url:"https://apollopeptidesciences.com/product/glp-1s-5mg/?rfsn=9159258.af92b92"},{price:99.99,mg:10,listing:"GLP-1 S 10mg",url:"https://apollopeptidesciences.com/product/glp-1s-10mg/?rfsn=9159258.af92b92"},{price:119.99,mg:15,listing:"GLP-1 S 15mg",url:"https://apollopeptidesciences.com/product/glp-1s-15mg/?rfsn=9159258.af92b92"}]
+    apollo:[{price:79.99,mg:5,listing:"GLP-1 S 5mg",url:"https://apollopeptidesciences.com/product/glp-1s-5mg/?rfsn=9159258.af92b92"},{price:99.99,mg:10,listing:"GLP-1 S 10mg",url:"https://apollopeptidesciences.com/product/glp-1s-10mg/?rfsn=9159258.af92b92"},{price:119.99,mg:15,listing:"GLP-1 S 15mg",url:"https://apollopeptidesciences.com/product/glp-1s-15mg/?rfsn=9159258.af92b92"}],
+    hydro:[{price:65,mg:5,listing:"H-(S) 5mg",url:"https://hydroresearchpeptides.com/product/h-s-5-mg/?ref=PepsTracker"},{price:100,mg:10,listing:"H-(S) 10mg",url:"https://hydroresearchpeptides.com/product/h-s-10-mg/?ref=PepsTracker"}]
   },
   "Kisspeptin": {
     ascension:[{price:65.0,mg:10,listing:"Kisspeptin 10mg",url:"https://ascensionpeptides.com/product/kisspeptin-10mg/?ref=partnerships@pepstracker.com"}],
@@ -920,7 +923,8 @@ const PRICES = {
     nura:null,
     fusion:[{price:37.99,mg:10,listing:"Kp-10 (BOGO)",url:"https://fusionpeptide.com/product/kp-10/?ref=pepstracker",bogo:true}],
     innoamino:[{price:59.99,mg:10,listing:"Kisspeptin 10mg",url:"https://innoamino.com/product/kisspeptin10?ref=pepstracker"}],
-    swisschems:[{price:59.99,mg:10,listing:"Kisspeptin 10mg",url:"https://swisschems.is/product/kisspeptin-10-5mg-price-is-per-kit/?ref=6822"}]
+    swisschems:[{price:59.99,mg:10,listing:"Kisspeptin 10mg",url:"https://swisschems.is/product/kisspeptin-10-5mg-price-is-per-kit/?ref=6822"}],
+    hydro:[{price:65,mg:10,listing:"Kisspeptin 10mg",url:"https://hydroresearchpeptides.com/product/kisspeptin-10mg/?ref=PepsTracker"}]
   }, "Tirzepatide": {
     ascension:[{price:69.5,mg:10,listing:"T-10 Tirzepatide 10mg",url:"https://ascensionpeptides.com/product/t-10/?ref=partnerships@pepstracker.com"}],
     atomik:[{price:99.00,mg:10,listing:"Tirzepatide 10mg",url:"https://atomiklabz.com/product/peptide-2-t-10mg/?aff=499"}],
@@ -938,7 +942,8 @@ const PRICES = {
     glp1lab:[{price:70.0,mg:10,listing:"GLP-2 10mg",url:"https://glp1researchlab.com/product/glp-2/?aff=99"}],
     apollo:[{price:109.99,mg:15,listing:"GLP-2 T 15mg",url:"https://apollopeptidesciences.com/product/glp-2t-15m/?rfsn=9159258.af92b92"},{price:150.99,mg:30,listing:"GLP-2 T 30mg",url:"https://apollopeptidesciences.com/product/glp-2t-30mg/?rfsn=9159258.af92b92"},{price:259.99,mg:60,listing:"GLP-2 T 60mg",url:"https://apollopeptidesciences.com/product/glp-2-t-60mg/?rfsn=9159258.af92b92"}],
     solas:[{price:65.00,mg:30,listing:"GLP-TZ 30mg",url:"https://solasscience.shop/product/glp-tz/"},{price:98.00,mg:60,listing:"GLP-TZ 60mg",url:"https://solasscience.shop/product/glp-tz/"}],
-    puratek:[{price:39.95,mg:15,listing:"PUR-2T 15mg",url:"https://puratekpeptides.com/product/pur-2t/"},{price:59.95,mg:30,listing:"PUR-2T 30mg",url:"https://puratekpeptides.com/product/pur-2t/"},{price:89.95,mg:60,listing:"PUR-2T 60mg",url:"https://puratekpeptides.com/product/pur-2t/"}]
+    puratek:[{price:39.95,mg:15,listing:"PUR-2T 15mg",url:"https://puratekpeptides.com/product/pur-2t/"},{price:59.95,mg:30,listing:"PUR-2T 30mg",url:"https://puratekpeptides.com/product/pur-2t/"},{price:89.95,mg:60,listing:"PUR-2T 60mg",url:"https://puratekpeptides.com/product/pur-2t/"}],
+    hydro:[{price:45,mg:5,listing:"H-(T) 5mg",url:"https://hydroresearchpeptides.com/product/h-t-5-mg/?ref=PepsTracker"},{price:90,mg:10,listing:"H-(T) 10mg",url:"https://hydroresearchpeptides.com/product/h-t-10-mg/?ref=PepsTracker"},{price:130,mg:15,listing:"H-(T) 15mg",url:"https://hydroresearchpeptides.com/product/h-t-15-mg/?ref=PepsTracker"},{price:170,mg:20,listing:"H-(T) 20mg",url:"https://hydroresearchpeptides.com/product/h-t-20-mg/?ref=PepsTracker"},{price:230,mg:30,listing:"H-(T) 30mg",url:"https://hydroresearchpeptides.com/product/h-t-30-mg/?ref=PepsTracker"},{price:260,mg:60,listing:"H-(T) 60mg",url:"https://hydroresearchpeptides.com/product/t60/?ref=PepsTracker"}]
   },
   "Retatrutide": {
     ascension:[{price:100.0,mg:10,listing:"R-10 Retatrutide 10mg",url:"https://ascensionpeptides.com/product/r-10/?ref=partnerships@pepstracker.com"}],
@@ -959,7 +964,8 @@ const PRICES = {
     apollo:[{price:135.99,mg:10,listing:"GLP-3 R 10mg",url:"https://apollopeptidesciences.com/product/glp-3r-10mg/?rfsn=9159258.af92b92"},{price:150.99,mg:15,listing:"GLP-3 R 15mg",url:"https://apollopeptidesciences.com/product/glp-3r-15mg/?rfsn=9159258.af92b92"},{price:210.99,mg:30,listing:"GLP-3 R 30mg",url:"https://apollopeptidesciences.com/product/glp-3-r-30mg/?rfsn=9159258.af92b92"},{price:309.99,mg:60,listing:"GLP-3 R 60mg",url:"https://apollopeptidesciences.com/product/glp-3-r-60mg/?rfsn=9159258.af92b92"}],
     apollo:[{price:59.99,mg:10,listing:"BPC157 10mg",url:"https://apollopeptidescience.com/product/bpc157-10mg/?rfsn=9159258.af92b92"}],
     apollo:[{price:135.99,mg:10,listing:"GLP-3 R 10mg",url:"https://apollopeptidescience.com/product/glp-3r-10mg/?rfsn=9159258.af92b92"},{price:150.99,mg:15,listing:"GLP-3 R 15mg",url:"https://apollopeptidescience.com/product/glp-3r-15mg/?rfsn=9159258.af92b92"},{price:210.99,mg:30,listing:"GLP-3 R 30mg",url:"https://apollopeptidescience.com/product/glp-3-r-30mg/?rfsn=9159258.af92b92"},{price:309.99,mg:60,listing:"GLP-3 R 60mg",url:"https://apollopeptidescience.com/product/glp-3-r-60mg/?rfsn=9159258.af92b92"}],
-    solas:[{price:70.00,mg:15,listing:"GLP-RT 15mg",url:"https://solasscience.shop/product/glp-rt/"},{price:90.00,mg:20,listing:"GLP-RT 20mg",url:"https://solasscience.shop/product/glp-rt/"},{price:120.00,mg:30,listing:"GLP-RT 30mg",url:"https://solasscience.shop/product/glp-rt/"}]
+    solas:[{price:70.00,mg:15,listing:"GLP-RT 15mg",url:"https://solasscience.shop/product/glp-rt/"},{price:90.00,mg:20,listing:"GLP-RT 20mg",url:"https://solasscience.shop/product/glp-rt/"},{price:120.00,mg:30,listing:"GLP-RT 30mg",url:"https://solasscience.shop/product/glp-rt/"}],
+    hydro:[{price:65,mg:5,listing:"H-(R) 5mg",url:"https://hydroresearchpeptides.com/product/h-r-5-mg/?ref=PepsTracker"},{price:130,mg:10,listing:"H-(R) 10mg",url:"https://hydroresearchpeptides.com/product/h-r-10-mg/?ref=PepsTracker"},{price:200,mg:20,listing:"H-(R) 20mg",url:"https://hydroresearchpeptides.com/product/h-r-20-mg/?ref=PepsTracker"},{price:350,mg:40,listing:"H-(R) 40mg",url:"https://hydroresearchpeptides.com/product/r40/?ref=PepsTracker"},{price:530,mg:60,listing:"H-(R) 60mg",url:"https://hydroresearchpeptides.com/product/h-r-60-mg/?ref=PepsTracker"}]
   },
   "BPC-157": {
     ascension:[{price:53.0,mg:10,listing:"BPC-157 10mg",url:"https://ascensionpeptides.com/product/bpc-157-10mg/?ref=partnerships@pepstracker.com"}],
@@ -977,7 +983,8 @@ const PRICES = {
     puratek:[{price:29.95,mg:10,listing:"BPC-157 10mg",url:"https://puratekpeptides.com/product/bpc-157/"}],
     innoamino:[{price:49.99,mg:10,listing:"BPC-157 10mg",url:"https://innoamino.com/product/bpc-157?ref=pepstracker"}],
     apollo:[{price:59.99,mg:10,listing:"BPC157 10mg",url:"https://apollopeptidesciences.com/product/bpc157-10mg/?rfsn=9159258.af92b92"}],
-    swisschems:[{price:39.99,mg:5,listing:"BPC-157 Arg Salt 5mg",url:"https://swisschems.is/product/bpc-157-with-arginine-salt/?ref=6822"},{price:369.99,mg:50,listing:"BPC-157 5mg Kit 10-vials",url:"https://swisschems.is/product/bpc-157-5mg-kit/?ref=6822"}]
+    swisschems:[{price:39.99,mg:5,listing:"BPC-157 Arg Salt 5mg",url:"https://swisschems.is/product/bpc-157-with-arginine-salt/?ref=6822"},{price:369.99,mg:50,listing:"BPC-157 5mg Kit 10-vials",url:"https://swisschems.is/product/bpc-157-5mg-kit/?ref=6822"}],
+    hydro:[{price:30,mg:5,listing:"BPC-157 5mg",url:"https://hydroresearchpeptides.com/product/bpc-157-5mg/?ref=PepsTracker"},{price:55,mg:10,listing:"BPC-157 10mg",url:"https://hydroresearchpeptides.com/product/bpc-157-10mg/?ref=PepsTracker"}]
   },
   "TB-500": {
     ascension:[{price:60.0,mg:5,listing:"TB-500 5mg",url:"https://ascensionpeptides.com/product/tb-500-5mg/?ref=partnerships@pepstracker.com"}],
@@ -1013,7 +1020,8 @@ const PRICES = {
     fusion:[{price:80.99,mg:20,listing:"BPC/TB Blend (BOGO)",url:"https://fusionpeptide.com/product/bpc-157-tb-500-blend/?ref=pepstracker",bogo:true}],
     innoamino:[{price:94.99,mg:20,listing:"Wolverine Stack 20mg",url:"https://innoamino.com/product/bpc-157-tb-500-wolverine-stack?ref=pepstracker"}],
     puratek:[{price:51.95,mg:20,listing:"BPC/TB Blend 20mg",url:"https://puratekpeptides.com/product/bpc-157-tb-500-blend/"}],
-    swisschems:[{price:132.95,mg:10,listing:"BPC/TB Blend 10mg",url:"https://swisschems.is/product/bpc-157-5mg-tb-500-5mg-blend/?ref=6822"}]
+    swisschems:[{price:132.95,mg:10,listing:"BPC/TB Blend 10mg",url:"https://swisschems.is/product/bpc-157-5mg-tb-500-5mg-blend/?ref=6822"}],
+    hydro:[{price:59,mg:10,listing:"BPC157/TB500 10mg",url:"https://hydroresearchpeptides.com/product/bpc157-tb500/?ref=PepsTracker"}]
   },
   "Ipamorelin": {
     ascension:[{price:50.0,mg:5,listing:"Ipamorelin 5mg",url:"https://ascensionpeptides.com/product/ipamorelin-5mg/?ref=partnerships@pepstracker.com"}],
@@ -1030,7 +1038,8 @@ const PRICES = {
     fusion:[{price:27.0,originalPrice:53.99,bogo:true,mg:5,listing:"Ipamorelin (in CJC/Ipa Blend)",url:"https://fusionpeptide.com/product/cjc-1295-no-dac-ipamorelin/?ref=pepstracker"}],
     puratek:[{price:37.95,mg:10,listing:"Ipamorelin 10mg",url:"https://puratekpeptides.com/product/ipamorelin/"}],
     glp1lab:null,
-    swisschems:[{price:17.95,mg:2,listing:"Ipamorelin 2mg",url:"https://swisschems.is/product/ipamorelin-2mg-price-is-per-vial/?ref=6822"}]
+    swisschems:[{price:17.95,mg:2,listing:"Ipamorelin 2mg",url:"https://swisschems.is/product/ipamorelin-2mg-price-is-per-vial/?ref=6822"}],
+    hydro:[{price:40,mg:5,listing:"Ipamorelin 5mg",url:"https://hydroresearchpeptides.com/product/ipamorelin-5-mg/?ref=PepsTracker"}]
   },
   "CJC-1295 (with DAC)": {
     ascension:null,
@@ -1062,7 +1071,8 @@ const PRICES = {
     retaone:null,
     nura:[{price:45.00,mg:5,listing:"Sermorelin 5mg",url:"https://nurapeptide.com/product/sermorelin-5mg/?ref=pepstracker"}],
     fusion:[{price:19.0,originalPrice:37.99,bogo:true,mg:5,listing:"GHRH 1-29 5mg",url:"https://fusionpeptide.com/product/ghrh-1-29/?ref=pepstracker"}],
-    swisschems:[{price:25.95,mg:2,listing:"Sermorelin 2mg",url:"https://swisschems.is/product/sermorelin-2mg-price-is-per-vial/?ref=6822"}]
+    swisschems:[{price:25.95,mg:2,listing:"Sermorelin 2mg",url:"https://swisschems.is/product/sermorelin-2mg-price-is-per-vial/?ref=6822"}],
+    hydro:[{price:65,mg:10,listing:"Sermorelin 10mg",url:"https://hydroresearchpeptides.com/product/sermorelin-10mg/?ref=PepsTracker"}]
   },
   "Tesamorelin": {
     ascension:[{price:85.0,mg:5,listing:"Tesamorelin 5mg",url:"https://ascensionpeptides.com/product/tesamorelin-5mg/?ref=partnerships@pepstracker.com"}],
@@ -1081,7 +1091,8 @@ const PRICES = {
     innoamino:[{price:76.99,mg:10,listing:"Tesamorelin 10mg",url:"https://innoamino.com/product/tesamorelin/?ref=pepstracker"}],
     glp1lab:null,
     solas:[{price:70.00,mg:10,listing:"TESSA 10mg",url:"https://solasscience.shop/product/tesm-10-mg/"}],
-    swisschems:[{price:27.95,mg:2,listing:"Tesamorelin 2mg",url:"https://swisschems.is/product/tesamorelin-2mg-price-is-per-vial/?ref=6822"}]
+    swisschems:[{price:27.95,mg:2,listing:"Tesamorelin 2mg",url:"https://swisschems.is/product/tesamorelin-2mg-price-is-per-vial/?ref=6822"}],
+    hydro:[{price:80,mg:10,listing:"Tesamorelin 10mg",url:"https://hydroresearchpeptides.com/product/tesamorelin-10mg/?ref=PepsTracker"}]
   },
   "Melanotan II": {
     ascension:[{price:40.0,mg:10,listing:"Melanotan II 10mg",url:"https://ascensionpeptides.com/product/melanotan-ii-10mg/?ref=partnerships@pepstracker.com"}],
@@ -1100,7 +1111,8 @@ const PRICES = {
     innoamino:[{price:43.99,mg:10,listing:"Melanotan II 10mg",url:"https://innoamino.com/product/mt-2/?ref=pepstracker"}],
     glp1lab:null,
     solas:[{price:42.00,mg:10,listing:"MT2 10mg",url:"https://solasscience.shop/product/mt2-10/"}],
-    swisschems:[{price:34.95,mg:10,listing:"Melanotan II 10mg",url:"https://swisschems.is/product/melanotan-ii-10mg-price-is-per-vial/?ref=6822"}]
+    swisschems:[{price:34.95,mg:10,listing:"Melanotan II 10mg",url:"https://swisschems.is/product/melanotan-ii-10mg-price-is-per-vial/?ref=6822"}],
+    hydro:[{price:50,mg:10,listing:"Melanotan 2 10mg",url:"https://hydroresearchpeptides.com/product/melanotan-2/?ref=PepsTracker"}]
   },
   "PT-141 (Bremelanotide)": {
     ascension:[{price:48.0,mg:10,listing:"PT-141 10mg",url:"https://ascensionpeptides.com/product/pt-141-10mg/?ref=partnerships@pepstracker.com"}],
@@ -1119,7 +1131,8 @@ const PRICES = {
     glp1lab:[{price:46.0,mg:10,listing:"PT-141 10mg",url:"https://glp1researchlab.com/?aff=99"}],
     apollo:[{price:50.00,mg:50,listing:"GHK-CU 50mg",url:"https://apollopeptidescience.com/product/ghk-cu/?rfsn=9159258.af92b92"}],
     puratek:[{price:34.95,mg:10,listing:"PT-141 10mg",url:"https://puratekpeptides.com/product/pt-141/"}],
-    swisschems:[{price:49.99,mg:10,listing:"PT-141 10mg",url:"https://swisschems.is/product/pt-141-10mg-price-is-per-vial/?ref=6822"}]
+    swisschems:[{price:49.99,mg:10,listing:"PT-141 10mg",url:"https://swisschems.is/product/pt-141-10mg-price-is-per-vial/?ref=6822"}],
+    hydro:[{price:50,mg:10,listing:"PT-141 10mg",url:"https://hydroresearchpeptides.com/product/pt-141-10mg/?ref=PepsTracker"}]
   },
   "GHK-Cu": {
     ascension:[{price:79.0,mg:100,listing:"GHK-Cu 100mg",url:"https://ascensionpeptides.com/product/ghk-cu-100mg/?ref=partnerships@pepstracker.com"}],
@@ -1139,7 +1152,8 @@ const PRICES = {
     glp1lab:null,
     apollo:[{price:50.0,mg:50,listing:"GHK-CU 50mg",url:"https://apollopeptidesciences.com/product/ghk-cu/?rfsn=9159258.af92b92"}],
     solas:[{price:50.00,mg:100,listing:"GHK-Cu 100mg",url:"https://solasscience.shop/product/ghkcu-100/"}],
-    swisschems:[{price:68.95,mg:50,listing:"GHK-Cu 50mg",url:"https://swisschems.is/product/ghk-cu-copper-peptide/?ref=6822"}]
+    swisschems:[{price:68.95,mg:50,listing:"GHK-Cu 50mg",url:"https://swisschems.is/product/ghk-cu-copper-peptide/?ref=6822"}],
+    hydro:[{price:85,mg:100,listing:"GHK-CU 100mg",url:"https://hydroresearchpeptides.com/product/ghk-cu-100-mg/?ref=PepsTracker"}]
   },
   "Epithalon": {
     ascension:[{price:50.0,mg:10,listing:"Epithalon 10mg",url:"https://ascensionpeptides.com/product/epithalon-10mg/?ref=partnerships@pepstracker.com"}],
@@ -1157,7 +1171,8 @@ const PRICES = {
     puratek:[{price:26.95,mg:10,listing:"Epithalon 10mg",url:"https://puratekpeptides.com/product/epithalon/"}],
     innoamino:[{price:47.99,mg:10,listing:"Epitalon 10mg",url:"https://innoamino.com/product/epitalon-10mg?ref=pepstracker"}],
     apollo:[{price:139.99,mg:50,listing:"Epithalon 50mg",url:"https://apollopeptidesciences.com/product/epithalon-50mg/?rfsn=9159258.af92b92"}],
-    swisschems:[{price:23.16,mg:10,listing:"Epitalon 10mg",url:"https://swisschems.is/product/epitalon-10mg-price-is-per-vial/?ref=6822"}]
+    swisschems:[{price:23.16,mg:10,listing:"Epitalon 10mg",url:"https://swisschems.is/product/epitalon-10mg-price-is-per-vial/?ref=6822"}],
+    hydro:[{price:45,mg:10,listing:"Epithalon 10mg",url:"https://hydroresearchpeptides.com/product/epithalon/?ref=PepsTracker"}]
   },
   "MOTS-c": {
     ascension:[{price:89.99,mg:10,listing:"MOTS-c 10mg",url:"https://ascensionpeptides.com/product/mots-c-10mg/?ref=partnerships@pepstracker.com"}],
@@ -1176,7 +1191,8 @@ const PRICES = {
     glp1lab:null,
     apollo:[{price:69.99,mg:500,listing:"NAD+ 500mg",url:"https://apollopeptidescience.com/product/nad/?rfsn=9159258.af92b92"}],
     puratek:[{price:29.95,mg:10,listing:"MOTS-c 10mg",url:"https://puratekpeptides.com/product/mots-c/"},{price:69.95,mg:40,listing:"MOTS-c 40mg",url:"https://puratekpeptides.com/product/mots-c/"}],
-    swisschems:[{price:69.95,mg:10,listing:"MOTS-C 10mg",url:"https://swisschems.is/product/mots-c-10mg-price-is-per-vial/?ref=6822"}]
+    swisschems:[{price:69.95,mg:10,listing:"MOTS-C 10mg",url:"https://swisschems.is/product/mots-c-10mg-price-is-per-vial/?ref=6822"}],
+    hydro:[{price:35,mg:10,listing:"MOTS-C 10mg",url:"https://hydroresearchpeptides.com/product/mots-c-10-mg/?ref=PepsTracker"}]
   },
   "NAD+": {
     ascension:[{price:150.0,mg:1000,listing:"NAD+ 1000mg",url:"https://ascensionpeptides.com/product/nad-1000mg/?ref=partnerships@pepstracker.com"}],
@@ -1195,7 +1211,8 @@ const PRICES = {
     innoamino:[{price:89.99,mg:500,listing:"NAD+ 500mg",url:"https://innoamino.com/product/nad?ref=pepstracker"}],
     glp1lab:null,
     apollo:[{price:69.99,mg:500,listing:"NAD+ 500mg",url:"https://apollopeptidesciences.com/product/nad/?rfsn=9159258.af92b92"}],
-    solas:[{price:40.00,mg:500,listing:"NAD+ 500mg",url:"https://solasscience.shop/product/nad-500mg-buffered/"}]
+    solas:[{price:40.00,mg:500,listing:"NAD+ 500mg",url:"https://solasscience.shop/product/nad-500mg-buffered/"}],
+    hydro:[{price:50,mg:500,listing:"NAD+ 500mg",url:"https://hydroresearchpeptides.com/product/nad-500-mg/?ref=PepsTracker"},{price:90,mg:1000,listing:"NAD+ 1000mg",url:"https://hydroresearchpeptides.com/product/nad-1000mg/?ref=PepsTracker"}]
   },
   "Vitamin B12": {
     ascension:null,
@@ -1214,7 +1231,8 @@ const PRICES = {
     innoamino:null,
     glp1lab:null,
     apollo:null,
-    solas:null
+    solas:null,
+    hydro:[{price:25,mg:10,listing:"B12 10mL",url:"https://hydroresearchpeptides.com/product/b12-10ml/?ref=PepsTracker"}]
   },
   "Semax": {
     ascension:[{price:55.0,mg:10,listing:"Semax 10mg",url:"https://ascensionpeptides.com/product/semax-10mg/?ref=partnerships@pepstracker.com"}],
@@ -1231,7 +1249,8 @@ const PRICES = {
     fusion:[{price:19.0,originalPrice:37.99,bogo:true,mg:10,listing:"ACTH 4-7 10mg",url:"https://fusionpeptide.com/product/acth-4-7-pro-gly-pro/?ref=pepstracker"}],
     puratek:[{price:32.95,mg:10,listing:"Semax 10mg",url:"https://puratekpeptides.com/product/semax/"}],
     solas:[{price:38.00,mg:10,listing:"Semax 10mg",url:"https://solasscience.shop/product/semax-10/"}],
-    swisschems:[{price:73.95,mg:30,listing:"Semax 30mg",url:"https://swisschems.is/product/semax-30mg-price-is-per-vial/?ref=6822"}]
+    swisschems:[{price:73.95,mg:30,listing:"Semax 30mg",url:"https://swisschems.is/product/semax-30mg-price-is-per-vial/?ref=6822"}],
+    hydro:[{price:55,mg:10,listing:"Semax 10mg",url:"https://hydroresearchpeptides.com/product/semax-10mg/?ref=PepsTracker"}]
   },
   "Selank": {
     ascension:[{price:55.0,mg:10,listing:"Selank 10mg",url:"https://ascensionpeptides.com/product/selank-10mg/?ref=partnerships@pepstracker.com"}],
@@ -1248,7 +1267,8 @@ const PRICES = {
     fusion:[{price:27.0,originalPrice:53.99,bogo:true,mg:10,listing:"TP-7 10mg",url:"https://fusionpeptide.com/product/tp-7/?ref=pepstracker"}],
     puratek:[{price:32.95,mg:10,listing:"Selank 10mg",url:"https://puratekpeptides.com/product/selank/"}],
     solas:[{price:38.00,mg:10,listing:"Selank 10mg",url:"https://solasscience.shop/product/selank-10/"}],
-    swisschems:[{price:25.95,mg:5,listing:"Selank 5mg",url:"https://swisschems.is/product/selank-5mg-price-is-per-vial/?ref=6822"}]
+    swisschems:[{price:25.95,mg:5,listing:"Selank 5mg",url:"https://swisschems.is/product/selank-5mg-price-is-per-vial/?ref=6822"}],
+    hydro:[{price:40,mg:5,listing:"Selank 5mg",url:"https://hydroresearchpeptides.com/product/selank-5mg/?ref=PepsTracker"}]
   },
   "DSIP": {
     ascension:[{price:75.0,mg:10,listing:"DSIP 10mg",url:"https://ascensionpeptides.com/product/dsip-10mg/?ref=partnerships@pepstracker.com"}],
@@ -1265,7 +1285,8 @@ const PRICES = {
     fusion:[{price:32.99,mg:5,listing:"DSIP (BOGO)",url:"https://fusionpeptide.com/product/dsip/?ref=pepstracker",bogo:true}],
     innoamino:[{price:39.99,mg:5,listing:"DSIP 5mg",url:"https://innoamino.com/product/dsip-5mg?ref=pepstracker"},{price:48.99,mg:10,listing:"DSIP 10mg",url:"https://innoamino.com/product/dsip-10mg?ref=pepstracker"}],
     puratek:[{price:34.95,mg:10,listing:"DSIP 10mg",url:"https://puratekpeptides.com/product/dsip-10mg/"}],
-    swisschems:[{price:24.95,mg:2,listing:"DSIP 2mg",url:"https://swisschems.is/product/dsip-2mg-price-is-per-vial/?ref=6822"}]
+    swisschems:[{price:24.95,mg:2,listing:"DSIP 2mg",url:"https://swisschems.is/product/dsip-2mg-price-is-per-vial/?ref=6822"}],
+    hydro:[{price:45,mg:5,listing:"DSIP 5mg",url:"https://hydroresearchpeptides.com/product/dsip/?ref=PepsTracker"}]
   },
   "Adamax": {
     ascension:null,
@@ -1297,7 +1318,8 @@ const PRICES = {
     nura:[{price:45.00,mg:10,listing:"KPV 10mg",url:"https://nurapeptide.com/product/kpv-10mg/?ref=pepstracker"}],
     fusion:[{price:37.99,mg:10,listing:"KPV (BOGO)",url:"https://fusionpeptide.com/product/kpv/?ref=pepstracker",bogo:true}],
     puratek:[{price:34.95,mg:10,listing:"KPV 10mg",url:"https://puratekpeptides.com/product/kpv/"}],
-    swisschems:[{price:139.95,mg:15,listing:"KPV 250mcg/60caps",url:"https://swisschems.is/product/kpv-lysine-proline-valine-250mcg-60caps/?ref=6822"}]
+    swisschems:[{price:139.95,mg:15,listing:"KPV 250mcg/60caps",url:"https://swisschems.is/product/kpv-lysine-proline-valine-250mcg-60caps/?ref=6822"}],
+    hydro:[{price:45,mg:10,listing:"KPV 10mg",url:"https://hydroresearchpeptides.com/product/kpv-10-mg/?ref=PepsTracker"}]
   },
   "ARA-290": {
     ascension:[{price:74.99,mg:10,listing:"ARA-290 10mg",url:"https://ascensionpeptides.com/product/ara-290-10mg/?ref=partnerships@pepstracker.com"}],
@@ -1325,6 +1347,7 @@ const PRICES = {
     retaone:null,
     nura:[{price:40.00,mg:5,listing:"AOD-9604 5mg",url:"https://nurapeptide.com/product/aod-9604-5mg/?ref=pepstracker"}],
     fusion:null,
+    hydro:[{price:35,mg:5,listing:"AOD-9604 5mg",url:"https://hydroresearchpeptides.com/product/aod-9604-5-mg/?ref=PepsTracker",oos:true}]
   },
   "Klow Blend": {
     ascension:[{price:185.0,mg:80,listing:"Klow Blend 80mg",url:"https://ascensionpeptides.com/product/klow-ghk-cu-bpc-157-thymosin-beta4-kpv/?ref=partnerships@pepstracker.com"}],
@@ -1340,7 +1363,8 @@ const PRICES = {
     nura:[{price:135.00,mg:80,listing:"Klow Blend 80mg",url:"https://nurapeptide.com/product/klow-bpc-157-ghk-cu-tb-500-kpv-blend/?ref=pepstracker"}],
     fusion:[{price:160.99,mg:80,listing:"KLOW (BOGO)",url:"https://fusionpeptide.com/product/klow/?ref=pepstracker",bogo:true}],
     solas:[{price:85.00,mg:80,listing:"KLOW 80mg",url:"https://solasscience.shop/product/klow-80/"}],
-    innoamino:[{price:129.99,mg:80,listing:"KLOW 80mg",url:"https://innoamino.com/product/klow?ref=pepstracker"}]
+    innoamino:[{price:129.99,mg:80,listing:"KLOW 80mg",url:"https://innoamino.com/product/klow?ref=pepstracker"}],
+    hydro:[{price:120,mg:80,listing:"KLOW 80mg",url:"https://hydroresearchpeptides.com/product/klow/?ref=PepsTracker"}]
   },
   "5-Amino-1MQ": {
     ascension:null,
@@ -1359,7 +1383,8 @@ const PRICES = {
     fusion:[{price:22.0,originalPrice:43.99,bogo:true,mg:50,listing:"5-Amino-1MQ 50mg",url:"https://fusionpeptide.com/product/5-amino/?ref=pepstracker"}],
     solas:[{price:85.00,mg:80,listing:"KLOW 80mg",url:"https://solasscience.shop/product/klow-80/"}],
     innoamino:[{price:64.99,mg:50,listing:"5-Amino-1MQ 50mg",url:"https://innoamino.com/product/5-amino-1mq?ref=pepstracker"}],
-    swisschems:[{price:119.99,mg:3000,listing:"5-Amino-1MQ 50mg/60caps",url:"https://swisschems.is/product/5-amino-1mq-3000-mg-60-caps-50-mg-1-capsule/?ref=6822"}]
+    swisschems:[{price:119.99,mg:3000,listing:"5-Amino-1MQ 50mg/60caps",url:"https://swisschems.is/product/5-amino-1mq-3000-mg-60-caps-50-mg-1-capsule/?ref=6822"}],
+    hydro:[{price:190,mg:6000,listing:"5-Amino-1MQ 50mg×120tabs",url:"https://hydroresearchpeptides.com/product/5-amino-1mq-50mg/?ref=PepsTracker"}]
   },
   "Cagrilintide": {
     ascension:[{price:115.0,mg:10,listing:"Cagrilintide 10mg",url:"https://ascensionpeptides.com/product/c-10/?ref=partnerships@pepstracker.com"}],
@@ -1376,7 +1401,8 @@ const PRICES = {
     puratek:[{price:45.95,mg:5,listing:"Cagrilintide 5mg",url:"https://puratekpeptides.com/product/cagrilintide/"},{price:72.95,mg:10,listing:"Cagrilintide 10mg",url:"https://puratekpeptides.com/product/cagrilintide/"}],
     nura:null,
     fusion:[{price:85.99,mg:10,listing:"AM833 (BOGO)",url:"https://fusionpeptide.com/product/am833/?ref=pepstracker",bogo:true}],
-    glp1lab:null
+    glp1lab:null,
+    hydro:[{price:110,mg:5,listing:"H-(C) 5mg",url:"https://hydroresearchpeptides.com/product/cagrilintide-5-mg/?ref=PepsTracker"}]
   },
   "CJC-1295 (No DAC)": {
     ascension:null,
@@ -1393,7 +1419,8 @@ const PRICES = {
     nura:null,
     fusion:[{price:42.99,mg:2,listing:"CJC-1295 No DAC (BOGO)",url:"https://fusionpeptide.com/product/cjc-1295-without-dac/?ref=pepstracker",bogo:true}],
     apollo:[{price:79.99,mg:1,listing:"IGF-1LR3 1mg",url:"https://apollopeptidescience.com/product/igf-1lr3/?rfsn=9159258.af92b92"}],
-    swisschems:[{price:42.95,mg:2,listing:"CJC-1295 No DAC 2mg",url:"https://swisschems.is/product/cjc-1295-without-dac-2mg-price-is-per-vial/?ref=6822"}]
+    swisschems:[{price:42.95,mg:2,listing:"CJC-1295 No DAC 2mg",url:"https://swisschems.is/product/cjc-1295-without-dac-2mg-price-is-per-vial/?ref=6822"}],
+    hydro:[{price:30,mg:5,listing:"CJC No DAC 5mg",url:"https://hydroresearchpeptides.com/product/cjc-1295-no-dac-5-mg/?ref=PepsTracker"}]
   },
   "CJC/Ipa Blend": {
     ascension:null,
@@ -1412,7 +1439,8 @@ const PRICES = {
     fusion:[{price:80.99,mg:10,listing:"CJC No DAC+Ipa (BOGO)",url:"https://fusionpeptide.com/product/cjc-1295-no-dac-ipamorelin/?ref=pepstracker",bogo:true}],
     apollo:[{price:50.0,mg:10,listing:"CJC1295/Ipa (No DAC)",url:"https://apollopeptidesciences.com/product/cjc1295-ipamorelin/?rfsn=9159258.af92b92"}],
     solas:[{price:63.0,mg:10,listing:"CJC/Ipa No DAC 5/5mg",url:"https://solasscience.shop/product/cjc-ipa-no-dac-5-5mg/"}],
-    innoamino:[{price:69.99,mg:10,listing:"CJC No DAC/Ipa 10mg",url:"https://innoamino.com/product/cjcnodacipa?ref=pepstracker"}]
+    innoamino:[{price:69.99,mg:10,listing:"CJC No DAC/Ipa 10mg",url:"https://innoamino.com/product/cjcnodacipa?ref=pepstracker"}],
+    hydro:[{price:60,mg:10,listing:"CJC/Ipa 10mg",url:"https://hydroresearchpeptides.com/product/cjc-1295-ipamorelin/?ref=PepsTracker"}]
   },
   "IGF-1 LR3": {
     ascension:null,
@@ -1431,7 +1459,8 @@ const PRICES = {
     glp1lab:null,
     apollo:[{price:79.99,mg:1,listing:"IGF-1LR3 1mg",url:"https://apollopeptidesciences.com/product/igf-1lr3/?rfsn=9159258.af92b92"}],
     innoamino:[{price:79.99,mg:1,listing:"IGF-1 LR3 1mg",url:"https://innoamino.com/product/igf-1-lr3?ref=pepstracker"}],
-    swisschems:[{price:59.96,mg:1,listing:"IGF-1 LR3 1mg",url:"https://swisschems.is/product/igf-1-lr3-1mg-price-is-per-vial/?ref=6822"}]
+    swisschems:[{price:59.96,mg:1,listing:"IGF-1 LR3 1mg",url:"https://swisschems.is/product/igf-1-lr3-1mg-price-is-per-vial/?ref=6822"}],
+    hydro:[{price:80,mg:1,listing:"IGF-1 LR3 1mg",url:"https://hydroresearchpeptides.com/product/igf-1-lr3/?ref=PepsTracker"}]
   },
   "Kisspeptin": {
     ascension:null,
@@ -1448,6 +1477,12 @@ const PRICES = {
     puratek:[{price:59.95,mg:10,listing:"Kisspeptin 10mg",url:"https://puratekpeptides.com/product/kisspeptin-10mg/"}],
     nura:null,
   },
+  "Mazdutide": {
+    hydro:[{price:81.00,mg:6,listing:"Mazdu 6mg",url:"https://hydroresearchpeptides.com/product/mazdu-6mg/?ref=PepsTracker"}],
+    swisschems:null, ascension:null, atomik:null, lapeptides:null, glacier:null,
+    milehigh:null, ezpeptides:null, amp:null, labsourced:null, ion:null, retaone:null,
+    puratek:null, nura:null, fusion:null, innoamino:null, glp1lab:null, apollo:null, solas:null
+  },
   "Melanotan I": {
     ascension:[{price:40.0,mg:10,listing:"Melanotan I 10mg",url:"https://ascensionpeptides.com/product/melanotan-i-10mg/?ref=partnerships@pepstracker.com"}],
     atomik:null,
@@ -1462,6 +1497,7 @@ const PRICES = {
     puratek:[{price:32.95,mg:10,listing:"Melanotan-1 10mg",url:"https://puratekpeptides.com/product/melanotan-1/"}],
     nura:null,
     fusion:[{price:48.99,mg:10,listing:"Melanotan 1 (BOGO)",url:"https://fusionpeptide.com/product/melanotan-1/?ref=pepstracker",bogo:true}],
+    hydro:[{price:50,mg:10,listing:"Melanotan 1 10mg",url:"https://hydroresearchpeptides.com/product/melanotan-1/?ref=PepsTracker"}]
   },
   "VIP": {
     ascension:null,
@@ -1510,7 +1546,8 @@ const PRICES = {
     nura:null,
     fusion:[{price:40.99,mg:5,listing:"Thymosin Alpha-1 (BOGO)",url:"https://fusionpeptide.com/product/thymosin-alpha-1/?ref=pepstracker",bogo:true}],
     glp1lab:null,
-    swisschems:[{price:63.99,mg:5,listing:"Thymosin Alpha 1 5mg",url:"https://swisschems.is/product/thymosin-alpha-1/?ref=6822"}]
+    swisschems:[{price:63.99,mg:5,listing:"Thymosin Alpha 1 5mg",url:"https://swisschems.is/product/thymosin-alpha-1/?ref=6822"}],
+    hydro:[{price:90,mg:10,listing:"TA1 10mg",url:"https://hydroresearchpeptides.com/product/thymosin-alpha-1-10mg/?ref=PepsTracker"}]
   },
   "Orforglipron": {
     swisschems:[{price:198.95,mg:540,listing:"Orforglipron 6mg/90caps",url:"https://swisschems.is/product/orforglipron-6mg-90caps/?ref=6822"}],
@@ -1548,7 +1585,8 @@ const PRICES = {
     puratek:null,
     nura:null,
     fusion:[{price:53.99,mg:10,listing:"SNAP-8 (BOGO)",url:"https://fusionpeptide.com/product/snap-8/?ref=pepstracker",bogo:true}],
-    apollo:[{price:45.0,mg:10,listing:"SNAP-8 10mg",url:"https://apollopeptidesciences.com/product/snap-8/?rfsn=9159258.af92b92"}]
+    apollo:[{price:45.0,mg:10,listing:"SNAP-8 10mg",url:"https://apollopeptidesciences.com/product/snap-8/?rfsn=9159258.af92b92"}],
+    hydro:[{price:54,mg:20,listing:"Snap-8 20mg",url:"https://hydroresearchpeptides.com/product/snap-8-20mg/?ref=PepsTracker"}]
   },
   "LL-37": {
     ascension:[{price:110.0,mg:10,listing:"LL-37 10mg",url:"https://ascensionpeptides.com/product/ll37-10mg/?ref=partnerships@pepstracker.com"}],
@@ -1649,7 +1687,8 @@ const PRICES = {
     nura:null,
     fusion:[{price:80.99,mg:1,listing:"SLU-PP-332 (BOGO)",url:"https://fusionpeptide.com/product/slu-pp-332/?ref=pepstracker",bogo:true}],
     innoamino:[{price:59.99,mg:1,listing:"SLU-PP-332 1mg",url:"https://innoamino.com/product/slupp322?ref=pepstracker"}],
-    swisschems:[{price:196.95,mg:6000,listing:"SLU-PP-332 100mg/60caps",url:"https://swisschems.is/product/slu-pp-332-100mg-capsule-60-capsules/?ref=6822"}]
+    swisschems:[{price:196.95,mg:6000,listing:"SLU-PP-332 100mg/60caps",url:"https://swisschems.is/product/slu-pp-332-100mg-capsule-60-capsules/?ref=6822"}],
+    hydro:[{price:80,mg:1,listing:"SLU-PP-332 1mg",url:"https://hydroresearchpeptides.com/product/slu-pp-332/?ref=PepsTracker"}]
   },
   "PEG-MGF": {
     ascension:null,
@@ -1772,7 +1811,8 @@ const PRICES = {
     puratek:null,
     nura:null,
     fusion:[{price:106.99,mg:10,listing:"Tesofensine (BOGO)",url:"https://fusionpeptide.com/product/tesofensine/?ref=pepstracker",bogo:true}],
-    swisschems:[{price:120.99,mg:15,listing:"Tesofensine 0.25mg/60caps",url:"https://swisschems.is/product/tesofensine-0-25mg-1-capsule/?ref=6822"}]
+    swisschems:[{price:120.99,mg:15,listing:"Tesofensine 0.25mg/60caps",url:"https://swisschems.is/product/tesofensine-0-25mg-1-capsule/?ref=6822"}],
+    hydro:[{price:60,mg:6,listing:"Tesofensine 100mcg/60caps",url:"https://hydroresearchpeptides.com/product/tesofensine-100mcg/?ref=PepsTracker"}]
   },
   "Methylene Blue": {
     ascension:null,
@@ -1803,6 +1843,7 @@ const PRICES = {
     puratek:null,
     nura:[{price:90.00,mg:15,listing:"GLP-3R/CAG 12.5/2.5mg",url:"https://nurapeptide.com/product/glp-3r-cag-12-5mg-2-5mg/?ref=pepstracker"}],
     fusion:null,
+    hydro:[{price:150,mg:11,listing:"H-(C-R) 1/10mg",url:"https://hydroresearchpeptides.com/product/cagri-reta-blend/?ref=PepsTracker"}]
   },
   "GHRP-2": {
     ascension:null,
@@ -2031,7 +2072,8 @@ const PRICES = {
     nura:[{price:112.00,mg:70,listing:"GLOW 70mg",url:"https://nurapeptide.com/product/glow-bpc-157-ghk-cu-tb-500-blend/?ref=pepstracker"}],
     fusion:[{price:128.99,mg:70,listing:"GLOW (BOGO)",url:"https://fusionpeptide.com/product/glow/?ref=pepstracker",bogo:true}],
     innoamino:[{price:118.99,mg:70,listing:"GLOW Blend 70mg",url:"https://innoamino.com/product/glow-blend?ref=pepstracker"}],
-    puratek:[{price:59.95,mg:70,listing:"GLOW 70mg",url:"https://puratekpeptides.com/product/glow-70mg/"}]
+    puratek:[{price:59.95,mg:70,listing:"GLOW 70mg",url:"https://puratekpeptides.com/product/glow-70mg/"}],
+    hydro:[{price:95,mg:70,listing:"GLOW 70mg",url:"https://hydroresearchpeptides.com/product/glow/?ref=PepsTracker",oos:true}]
   },
   "Glutathione": {
     ascension:[{price:149.99,mg:1500,listing:"Glutathione 1500mg",url:"https://ascensionpeptides.com/product/glutathione-1200mg/?ref=partnerships@pepstracker.com"}],
@@ -2048,7 +2090,8 @@ const PRICES = {
     fusion:[{price:106.99,mg:1500,listing:"Glutathione (BOGO)",url:"https://fusionpeptide.com/product/glutathione/?ref=pepstracker",bogo:true}],
     innoamino:[{price:78.99,mg:1500,listing:"Glutathione 1500mg",url:"https://innoamino.com/product/glutathione-1500mg?ref=pepstracker"}],
     puratek:[{price:51.95,mg:1500,listing:"Glutathione 1500mg",url:"https://puratekpeptides.com/product/glutathione-1500mg/"}],
-    swisschems:[{price:29.95,mg:600,listing:"Glutathione 600mg",url:"https://swisschems.is/product/injectable-glutathione-600mg/?ref=6822"}]
+    swisschems:[{price:29.95,mg:600,listing:"Glutathione 600mg",url:"https://swisschems.is/product/injectable-glutathione-600mg/?ref=6822"}],
+    hydro:[{price:95,mg:1500,listing:"Glutathione 1500mg",url:"https://hydroresearchpeptides.com/product/glutathione-1500mg/?ref=PepsTracker"}]
   },
   "Lipo-C": {
     ascension:null,
@@ -2063,6 +2106,7 @@ const PRICES = {
     retaone:null,
     nura:null,
     fusion:[{price:64.99,mg:10,listing:"LIPO-C (BOGO)",url:"https://fusionpeptide.com/product/lipo-c/?ref=pepstracker",bogo:true}],
+    hydro:[{price:75,mg:10,listing:"Lipo-C 10mL",url:"https://hydroresearchpeptides.com/product/lipo-c-10ml/?ref=PepsTracker"}]
   },
   "SS-31": {
     ascension:[{price:74.99,mg:10,listing:"SS-31 10mg",url:"https://ascensionpeptides.com/product/ss-31-10mg/?ref=partnerships@pepstracker.com"}],
@@ -2078,6 +2122,7 @@ const PRICES = {
     nura:[{price:145.00,mg:50,listing:"SS-31 50mg",url:"https://nurapeptide.com/product/ss-31-50mg/?ref=pepstracker"}],
     fusion:[{price:48.99,mg:10,listing:"SS-31 (BOGO)",url:"https://fusionpeptide.com/product/ss-31/?ref=pepstracker",bogo:true}],
     innoamino:[{price:59.99,mg:10,listing:"SS-31 10mg",url:"https://innoamino.com/product/inno-ss?ref=pepstracker"}],
+    hydro:[{price:85,mg:50,listing:"SS-31 50mg",url:"https://hydroresearchpeptides.com/product/ss-31-50-mg/?ref=PepsTracker"}]
   },
   "Tesamorelin/Ipamorelin Blend": {
     ascension:null,
@@ -2093,7 +2138,8 @@ const PRICES = {
     nura:[{price:49.00,mg:13,listing:"Tesamorelin/Ipamorelin 13mg/3mg",url:"https://nurapeptide.com/product/tesamorelin-10mg/?ref=pepstracker"}],
     fusion:null,
     puratek:[{price:74.95,mg:13,listing:"Tesa/Ipa 10/3 Blend",url:"https://puratekpeptides.com/product/tesa-ipa-10-3-blend/"}],
-    innoamino:[{price:119.99,mg:20,listing:"Tesa/Ipa 20mg",url:"https://innoamino.com/product/tesamorelin-ipamorelin-blend-10mg-10mg?ref=pepstracker"}]
+    innoamino:[{price:119.99,mg:20,listing:"Tesa/Ipa 20mg",url:"https://innoamino.com/product/tesamorelin-ipamorelin-blend-10mg-10mg?ref=pepstracker"}],
+    hydro:[{price:90,mg:9,listing:"Tesa/Ipa 9mg blend",url:"https://hydroresearchpeptides.com/product/tesamorelin-6-98-mg-ipamorelin-2-mg/?ref=PepsTracker"}]
   },
 };
 
