@@ -215,3 +215,28 @@ select, button, [role="button"] { cursor: pointer; }
   .best-badge { animation: none !important; }
   html { scroll-behavior: auto !important; }
 }
+
+/* ── Skeleton shimmer ───────────────────────────────────── */
+.pt-skeleton {
+  background: linear-gradient(90deg,
+    var(--card) 25%, rgba(59,158,255,0.06) 50%, var(--card) 75%);
+  background-size: 200% 100%;
+  animation: ptShimmer 1.2s ease-in-out infinite;
+  border-radius: var(--radius, 12px);
+  border: 1.5px solid var(--border);
+  height: 72px;
+  margin-bottom: 8px;
+}
+@keyframes ptShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Peptide name change flash ───────────────────────────── */
+@keyframes ptNameFlash {
+  0%   { opacity:0; transform:translateY(-4px); }
+  100% { opacity:1; transform:none; }
+}
+#resultTitle {
+  animation: ptNameFlash 0.25s ease both;
+}
