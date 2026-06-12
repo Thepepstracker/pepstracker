@@ -1,0 +1,478 @@
+/* ═══════════════════════════════════════════════════════════════════
+   PepsTracker — Premium Design Layer
+   "Quality at your fingertips. Million dollar feel."
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Deep premium palette override ─────────────────────────────── */
+:root {
+  --bg:       #07090f;
+  --surface:  #0d1018;
+  --card:     #111620;
+  --card-2:   #161d2a;
+  --border:   #1f2d42;
+  --border-hi:#2e4060;
+  --blue:     #3b9eff;
+  --blue-hi:  #60afff;
+  --green:    #4de87a;
+  --green-hi: #6ef598;
+  --gold:     #f5c842;
+  --text:     #edf2ff;
+  --muted:    #6b7fa0;
+  --radius:   14px;
+}
+
+body {
+  background: var(--bg);
+  font-feature-settings: "tnum" on,"lnum" on;
+}
+
+/* ── Premium header ─────────────────────────────────────────────── */
+header {
+  background: rgba(7,9,15,0.92) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(59,158,255,0.1) !important;
+}
+
+/* Logo pulse on hover */
+.logo:hover { filter: brightness(1.15); transition: filter 0.2s ease; }
+
+/* ── Hero — complete redesign ───────────────────────────────────── */
+.hero {
+  padding: 56px 20px 44px !important;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,158,255,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(77,232,122,0.05) 0%, transparent 60%),
+    var(--bg) !important;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle grid background */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(59,158,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,158,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.6rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: -1.5px !important;
+  line-height: 1.1 !important;
+  margin-bottom: 16px !important;
+}
+
+.hero p {
+  font-size: clamp(1rem, 2vw, 1.15rem) !important;
+  color: var(--muted) !important;
+  max-width: 520px !important;
+  margin: 0 auto 28px !important;
+  line-height: 1.65 !important;
+}
+
+/* ── Live proof chips ───────────────────────────────────────────── */
+.hero-proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+.proof-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(77,232,122,0.07);
+  border: 1px solid rgba(77,232,122,0.2);
+  color: var(--green);
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  animation: ptChipIn 0.5s cubic-bezier(0.4,0,0.2,1) both;
+}
+.proof-chip:nth-child(1) { animation-delay: 0.35s; }
+.proof-chip:nth-child(2) { animation-delay: 0.45s; }
+.proof-chip:nth-child(3) { animation-delay: 0.55s; }
+@keyframes ptChipIn {
+  from { opacity:0; transform:scale(0.9) translateY(4px); }
+  to   { opacity:1; transform:none; }
+}
+
+/* Live dot */
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 0 rgba(77,232,122,0.5);
+  animation: ptLivePulse 2s ease-in-out infinite;
+}
+@keyframes ptLivePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(77,232,122,0.5); }
+  50%     { box-shadow: 0 0 0 8px rgba(77,232,122,0); }
+}
+
+/* ── Stats row — premium ────────────────────────────────────────── */
+.stats-row {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  max-width: 480px !important;
+  margin: 0 auto 0 !important;
+  background: rgba(255,255,255,0.025) !important;
+  border: 1px solid rgba(59,158,255,0.12) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  box-shadow: 0 0 40px rgba(59,158,255,0.06) !important;
+}
+.stat-item {
+  flex: 1 !important;
+  padding: 16px 8px !important;
+  position: relative !important;
+  border-right: 1px solid rgba(59,158,255,0.08) !important;
+}
+.stat-item:last-child { border-right: none !important; }
+.stat-num {
+  font-size: 1.7rem !important;
+  font-weight: 900 !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -0.5px !important;
+  background: linear-gradient(135deg, var(--blue), var(--green)) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  line-height: 1 !important;
+  margin-bottom: 3px !important;
+}
+.stat-label {
+  font-size: 0.64rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+  color: var(--muted) !important;
+  font-weight: 700 !important;
+}
+
+/* ── Search bar — premium ────────────────────────────────────────── */
+.search-wrap {
+  position: relative;
+}
+.select-wrap {
+  background: var(--card) !important;
+  border: 1.5px solid var(--border-hi) !important;
+  border-radius: 14px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3) !important;
+}
+.select-wrap:focus-within {
+  border-color: var(--blue) !important;
+  box-shadow: 0 0 0 3px rgba(59,158,255,0.14), 0 4px 24px rgba(0,0,0,0.3) !important;
+}
+.select-wrap select {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: var(--text) !important;
+}
+
+.btn-search {
+  background: linear-gradient(135deg, var(--blue) 0%, #1a6fd8 100%) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-size: 0.95rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.3px !important;
+  box-shadow: 0 4px 20px rgba(59,158,255,0.35) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+.btn-search:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 28px rgba(59,158,255,0.5) !important;
+}
+.btn-search:active { transform: scale(0.97) !important; }
+
+/* ── Result cards — financial terminal feel ──────────────────────── */
+.result-card {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  padding: 16px 20px !important;
+  grid-template-columns: 52px 1fr auto auto auto !important;
+  gap: 16px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+/* Left accent bar */
+.result-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--border);
+  border-radius: 0 2px 2px 0;
+  transition: background 0.2s ease;
+}
+.result-card:hover::before { background: var(--blue); }
+.result-card.best::before  { background: linear-gradient(180deg, var(--blue), var(--green)); }
+
+/* Hover lift */
+.result-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(59,158,255,0.15) !important;
+  border-color: rgba(59,158,255,0.25) !important;
+}
+
+/* Best card special treatment */
+.result-card.best {
+  background: linear-gradient(135deg, rgba(59,158,255,0.07), rgba(77,232,122,0.04)) !important;
+  border-color: rgba(59,158,255,0.3) !important;
+  box-shadow: 0 0 0 1px rgba(59,158,255,0.15), 0 8px 32px rgba(59,158,255,0.1) !important;
+}
+.result-card.best:hover {
+  box-shadow: 0 16px 48px rgba(59,158,255,0.18), 0 0 0 1px rgba(77,232,122,0.3) !important;
+  border-color: rgba(77,232,122,0.35) !important;
+}
+
+/* ── Rank badge ──────────────────────────────────────────────────── */
+.rank {
+  width: 44px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 12px !important;
+  font-weight: 900 !important;
+  font-size: 0.85rem !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+  color: var(--muted) !important;
+  letter-spacing: -0.5px !important;
+}
+.rank.first {
+  background: linear-gradient(135deg, rgba(59,158,255,0.2), rgba(77,232,122,0.15)) !important;
+  border-color: rgba(77,232,122,0.3) !important;
+  font-size: 1.2rem !important;
+}
+
+/* ── Vendor name ─────────────────────────────────────────────────── */
+.vendor-name {
+  font-size: 0.95rem !important;
+  font-weight: 800 !important;
+  color: var(--text) !important;
+  letter-spacing: -0.2px !important;
+}
+.vendor-listing {
+  font-size: 0.75rem !important;
+  color: var(--muted) !important;
+  margin-top: 3px !important;
+}
+.vendor-favicon {
+  border-radius: 6px !important;
+  width: 22px !important;
+  height: 22px !important;
+}
+
+/* ── Price block — $/mg is the hero ─────────────────────────────── */
+.price-block {
+  text-align: right !important;
+  min-width: 90px !important;
+}
+.price-per-mg {
+  font-size: 1.15rem !important;
+  font-weight: 900 !important;
+  color: var(--text) !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -0.5px !important;
+  line-height: 1 !important;
+  margin-top: 4px !important;
+}
+.best-price .price-per-mg,
+.result-card.best .price-per-mg {
+  color: var(--green) !important;
+}
+.price-original {
+  font-size: 1.3rem !important;
+  font-weight: 900 !important;
+  color: var(--text) !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -0.5px !important;
+}
+.best-price {
+  color: var(--green) !important;
+  text-shadow: 0 0 24px rgba(77,232,122,0.3) !important;
+}
+.price-reg {
+  font-size: 0.7rem !important;
+  color: var(--muted) !important;
+  margin-top: 3px !important;
+}
+
+/* ── Price bar (new — injected via JS) ──────────────────────────── */
+.pt-price-bar-wrap {
+  grid-column: 1 / -1;
+  height: 3px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 100px;
+  overflow: hidden;
+  margin: 4px 0 0;
+}
+.pt-price-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  transition: width 0.7s cubic-bezier(0.4,0,0.2,1);
+  width: 0%;
+}
+.result-card.best .pt-price-bar-fill {
+  background: linear-gradient(90deg, var(--green), var(--blue-hi));
+}
+
+/* ── Code block ─────────────────────────────────────────────────── */
+.code-badge {
+  background: rgba(59,158,255,0.1) !important;
+  border: 1px solid rgba(59,158,255,0.2) !important;
+  color: var(--blue-hi) !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  padding: 3px 9px !important;
+  border-radius: 6px !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: 0.3px !important;
+}
+.discount-pct {
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  color: var(--green) !important;
+  margin-top: 4px !important;
+  letter-spacing: 0.3px !important;
+}
+.btn-copy {
+  font-size: 0.73rem !important;
+  font-weight: 800 !important;
+  padding: 5px 12px !important;
+  border-radius: 8px !important;
+  letter-spacing: 0.3px !important;
+}
+
+/* ── Shop button ─────────────────────────────────────────────────── */
+.btn-shop {
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+  padding: 10px 18px !important;
+  border-radius: 10px !important;
+  letter-spacing: 0.2px !important;
+  white-space: nowrap !important;
+}
+.btn-shop:not(.secondary) {
+  background: linear-gradient(135deg, var(--blue) 0%, #1a6fd8 100%) !important;
+  box-shadow: 0 3px 12px rgba(59,158,255,0.3) !important;
+}
+.btn-shop.secondary {
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  color: var(--muted) !important;
+}
+.result-card.best .btn-shop:not(.secondary) {
+  background: linear-gradient(135deg, var(--green) 0%, #35c463 100%) !important;
+  color: #071210 !important;
+  box-shadow: 0 3px 14px rgba(77,232,122,0.3) !important;
+}
+
+/* ── Best badge ──────────────────────────────────────────────────── */
+.best-badge {
+  background: linear-gradient(135deg, rgba(77,232,122,0.2), rgba(59,158,255,0.15)) !important;
+  border: 1px solid rgba(77,232,122,0.35) !important;
+  color: var(--green) !important;
+  font-size: 0.65rem !important;
+  font-weight: 900 !important;
+  padding: 3px 9px !important;
+  border-radius: 100px !important;
+  letter-spacing: 0.8px !important;
+  text-transform: uppercase !important;
+}
+
+/* ── Results header ──────────────────────────────────────────────── */
+.results-title {
+  font-size: 1.3rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.5px !important;
+}
+.results-header {
+  border-bottom: 1px solid rgba(59,158,255,0.08) !important;
+  padding-bottom: 14px !important;
+  margin-bottom: 16px !important;
+}
+
+/* ── Quick pills ─────────────────────────────────────────────────── */
+.quick-pill {
+  border-radius: 100px !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.2px !important;
+  padding: 7px 16px !important;
+  transition: all 0.18s ease !important;
+}
+
+/* ── GLP banner upgrade ──────────────────────────────────────────── */
+.glp-banner {
+  background: linear-gradient(135deg, rgba(59,158,255,0.08), rgba(77,232,122,0.05)) !important;
+  border: 1px solid rgba(59,158,255,0.18) !important;
+  border-radius: 14px !important;
+}
+
+/* ── Empty state ────────────────────────────────────────────────── */
+.empty {
+  padding: 60px 20px !important;
+}
+.empty-icon {
+  font-size: 3rem !important;
+  margin-bottom: 16px !important;
+  opacity: 0.6 !important;
+}
+
+/* ── Disclaimer modal upgrade ───────────────────────────────────── */
+.modal-box {
+  background: rgba(11,14,22,0.98) !important;
+  border: 1px solid rgba(59,158,255,0.15) !important;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.7) !important;
+}
+.modal-accept {
+  background: linear-gradient(135deg, var(--blue), #1a6fd8) !important;
+  box-shadow: 0 4px 20px rgba(59,158,255,0.35) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.2px !important;
+}
+
+/* ── Scrollbar premium ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--border-hi);
+  border-radius: 100px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+
+/* ── Selection color ─────────────────────────────────────────────── */
+::selection {
+  background: rgba(59,158,255,0.3);
+  color: var(--text);
+}
