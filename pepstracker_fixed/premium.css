@@ -146,11 +146,10 @@ header {
 }
 .stat-item {
   flex: 1 !important;
-  padding: 16px 8px !important;
+  padding: 18px 8px !important;
   position: relative !important;
-  border-right: 1px solid rgba(59,158,255,0.08) !important;
+  border-right: none !important;
 }
-.stat-item:last-child { border-right: none !important; }
 .stat-num {
   font-size: 1.7rem !important;
   font-weight: 900 !important;
