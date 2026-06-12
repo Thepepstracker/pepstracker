@@ -476,3 +476,381 @@ header {
   background: rgba(59,158,255,0.3);
   color: var(--text);
 }
+
+/* ── MOBILE ── */
+/* ═══════════════════════════════════════════════════════════════════
+   PepsTracker — Mobile Premium Layer
+   Every breakpoint. Every element. Million-dollar on any screen.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── iOS font-size zoom prevention ─────────────────────────────── */
+select, input, textarea {
+  font-size: 16px !important;
+}
+
+/* ── Universal touch targets ─────────────────────────────────────── */
+.quick-pill, .also-pill, .btn-search, .btn-shop,
+.btn-copy, .modal-accept, .size-pill-btn, .menu-btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Hero — mobile ───────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .hero {
+    padding: 36px 16px 28px !important;
+  }
+  .hero h1 {
+    font-size: clamp(1.9rem, 8vw, 2.5rem) !important;
+    letter-spacing: -0.8px !important;
+    line-height: 1.15 !important;
+  }
+  .hero p {
+    font-size: 0.92rem !important;
+    margin-bottom: 20px !important;
+  }
+  .hero-eyebrow {
+    font-size: 10px !important;
+    margin-bottom: 14px;
+  }
+  /* Proof chips — smaller, tighter wrap */
+  .hero-proof {
+    gap: 6px !important;
+    margin-bottom: 22px !important;
+  }
+  .proof-chip {
+    font-size: 11px !important;
+    padding: 5px 11px !important;
+  }
+}
+
+/* ── Stats row — mobile ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .stats-row {
+    max-width: 100% !important;
+    border-radius: 12px !important;
+    margin: 0 0 24px !important;
+  }
+  .stat-num {
+    font-size: 1.4rem !important;
+  }
+  .stat-label {
+    font-size: 0.6rem !important;
+  }
+  .stat-item {
+    padding: 14px 6px !important;
+  }
+}
+
+/* ── Search / compare tool — mobile ────────────────────────────── */
+@media (max-width: 640px) {
+  .select-wrap {
+    border-radius: 12px !important;
+  }
+  .select-wrap select {
+    font-size: 16px !important;
+    padding: 14px 16px !important;
+    min-height: 52px;
+  }
+  .btn-search {
+    min-height: 52px !important;
+    font-size: 1rem !important;
+    border-radius: 12px !important;
+    letter-spacing: 0.2px;
+  }
+}
+
+/* ── Quick pills — mobile ───────────────────────────────────────── */
+@media (max-width: 640px) {
+  .quick-pills {
+    gap: 8px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .quick-pills::-webkit-scrollbar { display: none; }
+  .quick-pill {
+    font-size: 0.78rem !important;
+    padding: 8px 14px !important;
+    white-space: nowrap;
+    flex-shrink: 0;
+    border-radius: 100px !important;
+  }
+}
+
+/* ── Result cards — mobile premium ─────────────────────────────── */
+@media (max-width: 640px) {
+
+  /* Left accent bar still shows */
+  .result-card::before {
+    width: 2.5px !important;
+  }
+
+  /* Rank badge */
+  .rank {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 0.8rem !important;
+    border-radius: 10px !important;
+  }
+
+  /* Vendor name */
+  .vendor-name {
+    font-size: 0.9rem !important;
+    font-weight: 800 !important;
+  }
+
+  /* $/mg — HERO number on mobile */
+  .price-per-mg {
+    font-size: 1.1rem !important;
+    font-weight: 900 !important;
+    color: var(--text) !important;
+    letter-spacing: -0.3px !important;
+    margin-top: 0 !important;
+  }
+  .result-card.best .price-per-mg,
+  .best-price .price-per-mg {
+    color: var(--green) !important;
+    text-shadow: 0 0 16px rgba(77,232,122,0.25) !important;
+  }
+
+  /* Price in pill row */
+  .price-original {
+    font-size: 1.1rem !important;
+    font-weight: 900 !important;
+  }
+  .price-reg {
+    font-size: 0.65rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Code block full-width premium */
+  .code-badge {
+    font-size: 0.82rem !important;
+    padding: 5px 11px !important;
+  }
+
+  /* Best badge */
+  .best-badge {
+    font-size: 0.6rem !important;
+    padding: 2px 7px !important;
+  }
+
+  /* BOGO badge */
+  .bogo-badge {
+    font-size: 0.6rem !important;
+  }
+
+  /* Shop button */
+  .btn-shop {
+    font-size: 0.9rem !important;
+    padding: 13px !important;
+    border-radius: 10px !important;
+  }
+
+  /* Price bars */
+  .pt-price-bar-wrap {
+    margin: 6px 0 0 !important;
+  }
+
+  /* Save + alert buttons */
+  .btn-save-peptide, .btn-alert {
+    min-height: 36px;
+    font-size: 0.75rem !important;
+  }
+}
+
+/* ── Results header — mobile ────────────────────────────────────── */
+@media (max-width: 640px) {
+  .results-title {
+    font-size: 1.1rem !important;
+  }
+  .results-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+  .filter-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .filter-label {
+    font-size: 0.72rem !important;
+    padding: 6px 12px !important;
+    min-height: 36px;
+  }
+  .last-updated {
+    font-size: 0.65rem !important;
+  }
+}
+
+/* ── Disclaimer strip — mobile ──────────────────────────────────── */
+@media (max-width: 640px) {
+  .disclaimer-strip {
+    font-size: 0.7rem !important;
+    padding: 10px 14px !important;
+    line-height: 1.5;
+  }
+}
+
+/* ── GLP banner — mobile ────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .glp-banner-inner {
+    flex-direction: column !important;
+    gap: 8px !important;
+    text-align: center;
+  }
+  .glp-banner {
+    border-radius: 12px !important;
+    padding: 14px 16px !important;
+  }
+}
+
+/* ── Also-compare pills — mobile ────────────────────────────────── */
+@media (max-width: 640px) {
+  .also-compare {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .also-compare::-webkit-scrollbar { display: none; }
+  .also-pill {
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 0.75rem !important;
+    padding: 7px 13px !important;
+    min-height: 36px;
+  }
+}
+
+/* ── Modal — mobile ─────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .modal-box {
+    border-radius: 16px 16px 0 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 24px 20px 32px !important;
+  }
+  .modal-overlay {
+    align-items: flex-end !important;
+  }
+  .modal-accept {
+    min-height: 52px !important;
+    font-size: 0.95rem !important;
+    border-radius: 12px !important;
+  }
+}
+
+/* ── Header — mobile ────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .header-inner {
+    height: 56px !important;
+  }
+  .logo-text {
+    font-size: 1.1rem !important;
+  }
+}
+
+/* ── Scroll progress — mobile (thinner) ─────────────────────────── */
+@media (max-width: 640px) {
+  #pt-progress {
+    height: 2px !important;
+  }
+}
+
+/* ── Toast — mobile position ────────────────────────────────────── */
+@media (max-width: 640px) {
+  .pt-toast {
+    bottom: 80px !important;
+    font-size: 12px !important;
+    padding: 8px 18px !important;
+    max-width: calc(100vw - 32px);
+    text-align: center;
+  }
+}
+
+/* ── Size pills (multi-size) — mobile ───────────────────────────── */
+@media (max-width: 640px) {
+  .size-pills {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .size-pills::-webkit-scrollbar { display: none; }
+  .size-pill-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 0.7rem !important;
+    padding: 5px 10px !important;
+    min-height: 32px;
+  }
+}
+
+/* ── Advisor widget — mobile ────────────────────────────────────── */
+@media (max-width: 480px) {
+  #pt-panel {
+    width: calc(100vw - 16px) !important;
+    right: 8px !important;
+    bottom: 78px !important;
+    height: 420px !important;
+    border-radius: 14px !important;
+  }
+  #pt-advisor-fab {
+    bottom: 14px !important;
+    right: 14px !important;
+    width: 50px !important;
+    height: 50px !important;
+  }
+}
+
+/* ── Empty state — mobile ───────────────────────────────────────── */
+@media (max-width: 640px) {
+  .empty {
+    padding: 40px 16px !important;
+  }
+  .empty-icon {
+    font-size: 2.4rem !important;
+  }
+  .empty h3 {
+    font-size: 1rem !important;
+  }
+}
+
+/* ── Featured peptide cards — mobile ───────────────────────────── */
+@media (max-width: 640px) {
+  .featured-section {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .featured-permg {
+    font-size: 1.1rem !important;
+    font-weight: 900 !important;
+  }
+}
+
+/* ── Skeleton shimmer — mobile ──────────────────────────────────── */
+@media (max-width: 640px) {
+  .pt-skeleton {
+    height: 120px !important;
+    border-radius: 12px !important;
+  }
+}
+
+/* ── Reduced motion — always last ───────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .proof-chip { animation: none !important; }
+  .live-dot   { animation: none !important; }
+}
