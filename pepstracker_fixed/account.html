@@ -1083,6 +1083,19 @@ if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// Handle Google redirect sign-in result on page load
+auth.getRedirectResult().then(result => {
+  if (result && result.user) {
+    console.log('Redirect sign-in success:', result.user.email);
+    // onAuthStateChanged will fire automatically and handle the UI
+  }
+}).catch(e => {
+  console.error('Redirect result error:', e.code, e.message);
+  if (e.code && e.code !== 'auth/no-current-user') {
+    setTimeout(() => showToast('Sign-in failed: ' + (e.message || e.code), 'error'), 500);
+  }
+});
+
 // ── Peptides ──────────────────────────────────────────────────────────────
 const PEPTIDES = ["Semaglutide","Tirzepatide","Retatrutide","Cagrilintide","Survodutide","BPC-157","TB-500","BPC-157 + TB-500 Blend","Ipamorelin","CJC-1295 (with DAC)","CJC-1295 (No DAC)","CJC/Ipa Blend","Sermorelin","Tesamorelin","Tesamorelin/Ipamorelin Blend","GHRP-2","GHRP-6","Hexarelin","GHK-Cu","AHK-Cu","Epithalon","MOTS-c","NAD+","Kisspeptin","Humanin","Semax","N-Acetyl Semax","Selank","N-Acetyl Selank","Semax/Selank Blend","Adamax","DSIP","KPV","ARA-290","AOD-9604","LL-37","PE-22-28","PNC-27","Thymosin Alpha-1","Thymalin","Melanotan II","Melanotan I","PT-141 (Bremelanotide)","Oxytocin","IGF-1 LR3","PEG-MGF","5-Amino-1MQ","SLU-PP-332","Tesofensine","HCG","Methylene Blue","Snap-8","FOXO4-DRI","VIP","SS-31","Klow Blend","Glow Blend","Glutathione","Lipo-C","Bacteriostatic Water","Retacagri Blend","Cartalax","Dihexa","Pinealon","Cardiogen","Testagen","Vesugen","Vilon","Ovagen","Pancragen","Crystagen"];
 
@@ -1209,7 +1222,12 @@ async function sendPasswordReset() {
   }
 }
 function doSignIn() {
-  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => showToast(e.message, "error"));
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  auth.signInWithRedirect(provider).catch(e => {
+    console.error('Redirect error:', e.code, e.message);
+    showToast(e.message || 'Sign-in failed. Please try again.', 'error');
+  });
 }
 function doSignOut() {
   auth.signOut();
@@ -1890,7 +1908,5 @@ document.addEventListener("click", e => {
 renderCalendar();
 renderAlerts();
 </script>
-  <script src="/polished.js" defer></script>
-  <script src="/premium.js" defer></script>
 </body>
 </html>
