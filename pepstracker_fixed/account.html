@@ -40,13 +40,6 @@ function renderAccountStack() {
 
 // Re-render when stack updates
 window.addEventListener('stackUpdated', renderAccountStack);
-// Render on tab switch
-const _origSwitchTab = window.switchTab;
-window.switchTab = function(tab) {
-  if (_origSwitchTab) _origSwitchTab(tab);
-  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
-};
-
 </script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -91,14 +84,6 @@ function renderAccountStack() {
 
 // Re-render when stack updates
 window.addEventListener('stackUpdated', renderAccountStack);
-// Render on tab switch
-const _origSwitchTab = window.switchTab;
-window.switchTab = function(tab) {
-  if (_origSwitchTab) _origSwitchTab(tab);
-  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
-};
-
-
 // ── MyStack preview on account page ────────────────────────────────────────
 function renderAccountStack() {
   if (!window.loadStack) return;
@@ -136,13 +121,6 @@ function renderAccountStack() {
 
 // Re-render when stack updates
 window.addEventListener('stackUpdated', renderAccountStack);
-// Render on tab switch
-const _origSwitchTab = window.switchTab;
-window.switchTab = function(tab) {
-  if (_origSwitchTab) _origSwitchTab(tab);
-  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
-};
-
 </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -863,13 +841,6 @@ function renderAccountStack() {
 
 // Re-render when stack updates
 window.addEventListener('stackUpdated', renderAccountStack);
-// Render on tab switch
-const _origSwitchTab = window.switchTab;
-window.switchTab = function(tab) {
-  if (_origSwitchTab) _origSwitchTab(tab);
-  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
-};
-
 </script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js">
 // ── MyStack preview on account page ────────────────────────────────────────
@@ -909,13 +880,6 @@ function renderAccountStack() {
 
 // Re-render when stack updates
 window.addEventListener('stackUpdated', renderAccountStack);
-// Render on tab switch
-const _origSwitchTab = window.switchTab;
-window.switchTab = function(tab) {
-  if (_origSwitchTab) _origSwitchTab(tab);
-  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
-};
-
 </script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
 // ── MyStack preview on account page ────────────────────────────────────────
@@ -955,13 +919,6 @@ function renderAccountStack() {
 
 // Re-render when stack updates
 window.addEventListener('stackUpdated', renderAccountStack);
-// Render on tab switch
-const _origSwitchTab = window.switchTab;
-window.switchTab = function(tab) {
-  if (_origSwitchTab) _origSwitchTab(tab);
-  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
-};
-
 </script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js">
 // ── MyStack preview on account page ────────────────────────────────────────
@@ -1001,13 +958,6 @@ function renderAccountStack() {
 
 // Re-render when stack updates
 window.addEventListener('stackUpdated', renderAccountStack);
-// Render on tab switch
-const _origSwitchTab = window.switchTab;
-window.switchTab = function(tab) {
-  if (_origSwitchTab) _origSwitchTab(tab);
-  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
-};
-
 </script>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
@@ -1593,8 +1543,9 @@ auth.onAuthStateChanged(async user => {
 
 // ── TABS ──────────────────────────────────────────────────────────────────
 function switchTab(name) {
-  document.querySelectorAll(".tab-btn").forEach((b,i) => b.classList.toggle("active", ["tracker","profile","saved","alerts"][i] === name));
+  document.querySelectorAll(".tab-btn").forEach((b,i) => b.classList.toggle("active", ["tracker","profile","saved","alerts","mystack"][i] === name));
   document.querySelectorAll(".tab-pane").forEach(p => p.classList.toggle("active", p.id === "tab-"+name));
+  if (name === "mystack") setTimeout(renderAccountStack, 50);
 }
 
 // ── CALENDAR ─────────────────────────────────────────────────────────────
@@ -2262,13 +2213,6 @@ function renderAccountStack() {
 
 // Re-render when stack updates
 window.addEventListener('stackUpdated', renderAccountStack);
-// Render on tab switch
-const _origSwitchTab = window.switchTab;
-window.switchTab = function(tab) {
-  if (_origSwitchTab) _origSwitchTab(tab);
-  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
-};
-
 </script>
   <script src="/mystack.js"></script>
 </body>
