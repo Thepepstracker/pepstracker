@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>PepsTracker Auth Test</title>
+  <style>
+    body { font-family: sans-serif; background: #111; color: #fff; padding: 40px; }
+    button { padding: 14px 28px; font-size: 16px; cursor: pointer; margin: 10px; border-radius: 8px; }
+    #btn-google { background: #fff; color: #333; border: none; }
+    #status { margin-top: 20px; padding: 16px; border-radius: 8px; font-size: 14px; line-height: 1.6; }
+    .ok  { background: #0d3d0d; border: 1px solid #4de87a; }
+    .err { background: #3d0d0d; border: 1px solid #ff5c5c; }
+    .info{ background: #0d1a3d; border: 1px solid #3b9eff; }
+    pre  { white-space: pre-wrap; word-break: break-all; font-size: 12px; margin: 8px 0 0; }
+  </style>
+</head>
+<body>
+  <h2>🔬 Firebase Auth Isolated Test</h2>
+  <p>Nothing else on this page. Pure Firebase only.</p>
+
+  <div id="status" class="info">Waiting for Firebase to initialize...</div>
+
+  <br>
+  <button id="btn-google" onclick="testGoogle()">▶ Test Google Sign-In</button>
+  <button onclick="testConfig()" style="background:#222;color:#aaa;border:1px solid #444;">Check Config</button>
+  <button onclick="auth.signOut().then(()=>log('Signed out','info'))" style="background:#222;color:#aaa;border:1px solid #444;">Sign Out</button>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script>
+    function log(msg, type) {
+      const el = document.getElementById('status');
+      el.className = 'status ' + (type || 'info');
+      el.innerHTML = msg;
+      console.log('[AUTH TEST]', msg);
+    }
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
+      authDomain: "pepstracker.firebaseapp.com",
+      projectId: "pepstracker",
+      storageBucket: "pepstracker.firebasestorage.app",
+      messagingSenderId: "575079448915",
+      appId: "1:575079448915:web:4937336ccc15a6764ca1a6"
+    };
+
+    try {
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      window.auth = auth;
+      log('✅ Firebase initialized OK<br><small>Auth domain: ' + firebaseConfig.authDomain + '</small>', 'ok');
+
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          log('✅ SIGNED IN!<br><pre>' +
+            'Email: ' + user.email + '\n' +
+            'Name: ' + user.displayName + '\n' +
+            'UID: ' + user.uid + '\n' +
+            'Provider: ' + (user.providerData[0]?.providerId || 'unknown') +
+          '</pre>', 'ok');
+        } else {
+          log('ℹ️ Not signed in. Click the button above to test Google sign-in.', 'info');
+        }
+      });
+    } catch(e) {
+      log('❌ Firebase init FAILED:<br><pre>' + e.message + '</pre>', 'err');
+    }
+
+    function testGoogle() {
+      log('⏳ Opening Google sign-in popup...', 'info');
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      auth.signInWithPopup(provider)
+        .then(r => log('✅ SUCCESS! Signed in as: ' + r.user.email, 'ok'))
+        .catch(e => {
+          log('❌ FAILED<br><pre>' +
+            'Code:    ' + e.code + '\n' +
+            'Message: ' + e.message + '\n' +
+            'Email:   ' + (e.email || 'n/a') + '\n\n' +
+            'Full error:\n' + JSON.stringify(e, null, 2) +
+          '</pre>', 'err');
+        });
+    }
+
+    function testConfig() {
+      log('Config in use:<br><pre>' + JSON.stringify(firebaseConfig, null, 2) + '</pre>', 'info');
+    }
+  </script>
+</body>
+</html>
