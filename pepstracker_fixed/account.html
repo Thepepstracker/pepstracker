@@ -1252,6 +1252,25 @@ window.addEventListener('stackUpdated', renderAccountStack);
     <div id="mainContent"></div>
   </div>
 
+      <!-- MyStack Tab Panel -->
+      <div id="tab-mystack" class="tab-pane">
+        <div style="background:linear-gradient(135deg,rgba(59,158,255,.08),rgba(77,232,122,.04));border:1px solid rgba(59,158,255,.18);border-radius:16px;padding:22px 24px;margin-bottom:16px">
+          <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#3b9eff;margin-bottom:8px">🧬 My Research Stack</div>
+          <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+            <div>
+              <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#6b7fa0;margin-bottom:4px">Monthly Cost</div>
+              <div id="acc-stack-total" style="font-size:2rem;font-weight:900;font-family:'Fira Code',monospace;background:linear-gradient(135deg,#3b9eff,#4de87a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">$0</div>
+            </div>
+            <div id="acc-stack-meta" style="font-size:.78rem;color:#6b7fa0;line-height:1.8;padding-bottom:4px"></div>
+          </div>
+        </div>
+        <div id="acc-stack-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="/mystack.html" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,#3b9eff,#1a6fd8);color:#fff;font-weight:800;padding:12px 20px;border-radius:10px;text-decoration:none;font-size:.85rem;box-shadow:0 3px 14px rgba(59,158,255,.3);min-width:140px">View Full Stack →</a>
+          <a href="/" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:#6b7fa0;font-weight:700;padding:12px 20px;border-radius:10px;text-decoration:none;font-size:.85rem;min-width:140px">+ Add Compounds</a>
+        </div>
+      </div>
+
 </div><!-- end .page -->
 
 <!-- ── SLIDE PANEL ── -->
