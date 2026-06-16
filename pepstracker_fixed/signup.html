@@ -246,7 +246,7 @@
     clearError();
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
-      const cred = await auth.signInWithPopup(provider);
+      const cred = await auth.signInWithRedirect(provider);
       await createUserProfile(cred.user, cred.user.displayName);
       window.location.href = 'account.html?welcome=1';
     } catch (err) {
