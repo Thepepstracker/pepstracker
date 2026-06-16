@@ -337,7 +337,8 @@ let addFormOpen = false;
 // ── Auth ──────────────────────────────────────────────────────────────────
 function signIn() {
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).catch(e => showToast(e.message, "error"));
+  provider.setCustomParameters({prompt:'select_account'});
+  auth.signInWithRedirect(provider).catch(e => showToast(e.message || 'Sign-in failed', 'error'));
 }
 function signOut() {
   auth.signOut();
