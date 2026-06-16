@@ -2,121 +2,120 @@
 <html>
 <head>
   <meta charset="UTF-8"/>
-  <title>PepsTracker Auth Debug v2</title>
+  <title>Auth Debug v3</title>
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:monospace;background:#0d0f14;color:#edf2ff;padding:20px;font-size:13px}
-    h2{color:#3b9eff;margin-bottom:16px;font-size:16px}
-    .btn{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;margin:4px}
-    .log{background:#111620;border:1px solid #1f2d42;border-radius:8px;padding:12px;margin:8px 0;line-height:1.8}
+    h2{color:#3b9eff;margin-bottom:12px}
+    .btn{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;margin:4px;background:#3b9eff;color:#fff}
+    .log{background:#111620;border:1px solid #1f2d42;border-radius:8px;padding:10px 12px;margin:4px 0;line-height:1.7}
     .ok{color:#4de87a}.err{color:#ff5c5c}.warn{color:#f5c842}.info{color:#3b9eff}
-    pre{white-space:pre-wrap;word-break:break-all;font-size:11px;margin-top:6px;color:#aaa}
+    pre{white-space:pre-wrap;word-break:break-all;font-size:11px;margin-top:4px;color:#aaa}
   </style>
 </head>
 <body>
-<h2>🔬 Auth Debug v2 — Isolating the exact failure</h2>
+<h2>🔬 Auth Debug v3 — DOM Level Intercept</h2>
+<button class="btn" onclick="runTest()">▶ Run Full Test</button>
+<button class="btn" style="background:#333;color:#aaa" onclick="document.getElementById('log').innerHTML=''">Clear</button>
+<div id="log" style="margin-top:12px"></div>
 
-<div>
-  <button class="btn" style="background:#3b9eff" onclick="step1()">Step 1: Check Firebase init</button>
-  <button class="btn" style="background:#fb923c" onclick="step2()">Step 2: Test API key (email lookup)</button>
-  <button class="btn" style="background:#a78bfa" onclick="step3()">Step 3: Test Google popup</button>
-  <button class="btn" style="background:#333;color:#aaa" onclick="document.getElementById('log').innerHTML=''">Clear</button>
-</div>
+<script>
+// ── Log helper ───────────────────────────────────────────────
+function log(msg, type) {
+  const d = document.createElement('div');
+  d.className = 'log ' + (type||'info');
+  d.innerHTML = new Date().toISOString().split('T')[1].slice(0,8) + ' ' + msg;
+  document.getElementById('log').appendChild(d);
+  console.log('[AUTH]', msg.replace(/<[^>]+>/g,''));
+}
 
-<div id="log" style="margin-top:16px"></div>
+// ── Intercept window.open ────────────────────────────────────
+const _open = window.open.bind(window);
+window.open = function(url, name, features) {
+  log('🪟 window.open() called<br><small>URL: ' + (url||'').substring(0,100) + '</small>');
+  const popup = _open.apply(window, arguments);
+  if (!popup) {
+    log('<span class="err">❌ window.open() returned NULL — popup was BLOCKED by browser</span>', 'err');
+  } else {
+    log('<span class="ok">✅ window.open() succeeded — popup opened</span>', 'ok');
+  }
+  return popup;
+};
+
+// ── Intercept iframe creation ────────────────────────────────
+const _createElement = document.createElement.bind(document);
+document.createElement = function(tag) {
+  const el = _createElement.apply(document, arguments);
+  if (tag && tag.toLowerCase() === 'iframe') {
+    el.addEventListener('load', function() {
+      log('<span class="ok">✅ IFRAME LOADED: ' + (this.src||'(no src)').substring(0,80) + '</span>', 'ok');
+    });
+    el.addEventListener('error', function(e) {
+      log('<span class="err">❌ IFRAME ERROR (isTrusted:' + e.isTrusted + '): ' + (this.src||'(no src)').substring(0,80) + '</span><br><small>THIS is the source of auth/internal-error</small>', 'err');
+    });
+    // Log when src is set
+    let _src = '';
+    Object.defineProperty(el, 'src', {
+      get: () => _src,
+      set: (v) => {
+        _src = v;
+        log('🖼️ IFRAME src set: ' + (v||'').substring(0,100));
+        el.setAttribute('src', v);
+      },
+      configurable: true
+    });
+  }
+  return el;
+};
+
+// ── Intercept appendChild to catch iframe insertion ──────────
+const _append = Element.prototype.appendChild;
+Element.prototype.appendChild = function(child) {
+  if (child && child.tagName === 'IFRAME') {
+    log('📌 IFRAME appended to DOM (src: ' + (child.src||child.getAttribute('src')||'not yet set') + ')');
+  }
+  return _append.apply(this, arguments);
+};
+
+// ── Intercept global errors ──────────────────────────────────
+window.addEventListener('error', function(e) {
+  log('<span class="err">❌ GLOBAL ERROR (isTrusted:' + e.isTrusted + ')<br>Message: ' + e.message + '<br>Source: ' + e.filename + ':' + e.lineno + '</span>', 'err');
+});
+
+window.addEventListener('unhandledrejection', function(e) {
+  log('<span class="err">❌ UNHANDLED PROMISE: ' + (e.reason?.message || e.reason) + '</span>', 'err');
+});
+
+// ── CSP violation listener ───────────────────────────────────
+document.addEventListener('securitypolicyviolation', function(e) {
+  log('<span class="err">🚨 CSP VIOLATION!<br>Blocked: ' + e.blockedURI + '<br>Directive: ' + e.violatedDirective + '</span>', 'err');
+});
+
+// ── Main test ────────────────────────────────────────────────
+function runTest() {
+  log('<span class="info">━━━ Starting full auth test ━━━</span>');
+
+  if (!firebase.apps.length) firebase.initializeApp({
+    apiKey:"AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
+    authDomain:"pepstracker.firebaseapp.com",
+    projectId:"pepstracker"
+  });
+  const auth = firebase.auth();
+  log('✅ Firebase initialized');
+
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({prompt:'select_account'});
+  log('⏳ Calling signInWithPopup...');
+
+  auth.signInWithPopup(provider)
+    .then(r => log('<span class="ok">✅ SUCCESS: ' + r.user.email + '</span>', 'ok'))
+    .catch(e => {
+      log('<span class="err">❌ FINAL ERROR: ' + e.code + ' — ' + e.message + '</span>', 'err');
+      log('<pre>' + JSON.stringify({code:e.code, customData:e.customData}, null, 2) + '</pre>');
+    });
+}
+</script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script>
-const cfg = {
-  apiKey:"AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
-  authDomain:"pepstracker.firebaseapp.com",
-  projectId:"pepstracker"
-};
-let auth;
-
-function log(msg, type) {
-  const d = document.createElement('div');
-  d.className = 'log ' + (type||'');
-  d.innerHTML = msg;
-  document.getElementById('log').prepend(d);
-}
-
-// Patch XHR to intercept all network requests
-const origOpen = XMLHttpRequest.prototype.open;
-const origSend = XMLHttpRequest.prototype.send;
-XMLHttpRequest.prototype.open = function(method, url) {
-  this._url = url;
-  this._method = method;
-  return origOpen.apply(this, arguments);
-};
-XMLHttpRequest.prototype.send = function() {
-  this.addEventListener('error', function() {
-    log('<span class="err">❌ XHR NETWORK ERROR → ' + this._method + ' ' + this._url + '</span><br><small>This is likely the source of auth/internal-error</small>');
-  });
-  this.addEventListener('load', function() {
-    if (this.status >= 400) {
-      log('<span class="warn">⚠️ XHR ' + this.status + ' → ' + this._url.substring(0,80) + '</span>');
-    } else {
-      log('<span class="ok">✅ XHR ' + this.status + ' → ' + this._url.substring(0,80) + '</span>');
-    }
-  });
-  return origSend.apply(this, arguments);
-};
-
-// Patch fetch too
-const origFetch = window.fetch;
-window.fetch = function(url, opts) {
-  const urlStr = typeof url === 'string' ? url : url.url || String(url);
-  return origFetch.apply(this, arguments).then(r => {
-    if (!r.ok) log('<span class="warn">⚠️ FETCH ' + r.status + ' → ' + urlStr.substring(0,80) + '</span>');
-    else log('<span class="ok">✅ FETCH ' + r.status + ' → ' + urlStr.substring(0,80) + '</span>');
-    return r;
-  }).catch(e => {
-    log('<span class="err">❌ FETCH FAILED → ' + urlStr.substring(0,80) + '<br>' + e.message + '</span>');
-    throw e;
-  });
-};
-
-// Step 1: Firebase init
-function step1() {
-  log('<span class="info">--- Step 1: Firebase initialization ---</span>');
-  try {
-    if (!firebase.apps.length) firebase.initializeApp(cfg);
-    auth = firebase.auth();
-    log('<span class="ok">✅ firebase.apps: ' + firebase.apps.length + '</span>');
-    log('<span class="ok">✅ auth object: ' + typeof auth + '</span>');
-    log('<span class="ok">✅ authDomain: ' + cfg.authDomain + '</span>');
-    log('<span class="ok">✅ currentUser: ' + (auth.currentUser ? auth.currentUser.email : 'null (not signed in)') + '</span>');
-    auth.onAuthStateChanged(u => log('<span class="ok">🔔 onAuthStateChanged: ' + (u ? u.email : 'null') + '</span>'));
-  } catch(e) {
-    log('<span class="err">❌ Init FAILED: ' + e.code + ' — ' + e.message + '</span>');
-  }
-}
-
-// Step 2: Test API key with a simple non-OAuth call
-function step2() {
-  log('<span class="info">--- Step 2: API key test (fetchSignInMethodsForEmail) ---</span>');
-  if (!auth) { log('<span class="warn">Run Step 1 first</span>'); return; }
-  auth.fetchSignInMethodsForEmail('test@pepstracker.com')
-    .then(methods => log('<span class="ok">✅ API key WORKS — methods: [' + methods.join(',') + '] (empty = no account, that is OK)</span>'))
-    .catch(e => log('<span class="err">❌ API key FAILED: ' + e.code + ' — ' + e.message + '</span><pre>' + JSON.stringify(e, null, 2) + '</pre>'));
-}
-
-// Step 3: Google popup
-function step3() {
-  log('<span class="info">--- Step 3: Google signInWithPopup ---</span>');
-  if (!auth) { log('<span class="warn">Run Step 1 first</span>'); return; }
-  const provider = new firebase.auth.GoogleAuthProvider();
-  provider.setCustomParameters({prompt:'select_account'});
-  log('<span class="info">⏳ Opening popup...</span>');
-  auth.signInWithPopup(provider)
-    .then(r => log('<span class="ok">✅ SUCCESS: ' + r.user.email + '</span>'))
-    .catch(e => log('<span class="err">❌ FAILED: ' + e.code + '<br>Message: ' + e.message + '</span><pre>' + JSON.stringify({code:e.code, customData:e.customData, message:e.message}, null, 2) + '</pre>'));
-}
-
-// Auto-run step 1
-window.onload = () => { try { step1(); } catch(e){} };
-</script>
 </body>
 </html>
