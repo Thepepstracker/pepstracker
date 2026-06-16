@@ -2267,6 +2267,7 @@ function renderResults() {
       <a class="btn-shop ${isBest?'':'secondary'}" id="shop-${r.vendor.id}-${currentPeptide.replace(/[^a-z0-9]/gi,'-')}" href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer">Shop →</a>
       <button class="btn-save-peptide" data-key="${r.vendor.id}::${currentPeptide}" onclick="toggleSaveListing('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)}, '${r.vendor.code}')">☆</button>
       <button class="btn-alert" data-alert-key="${r.vendor.id}::${currentPeptide}" onclick="openAlertModal('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)})">🔔 Alert</button>
+      <button class="btn-add-stack" data-peptide="${currentPeptide}" onclick="addToStack('${r.vendor.id}',currentPeptide,'${r.vendor.name}','${r.vendor.url}','${r.vendor.code||''}',${r.vendor.discount||0},${afterDisc.toFixed(2)},${r.mg},'${r.listing}')">+ Stack</button>
     </div>`;
   }).join('');
 
@@ -2588,6 +2589,7 @@ function addShareBtn(peptide) {
   </div>
 
   <script src="/advisor-widget.js" defer></script>
+  <script src="/mystack.js"></script>
   <script src="/polished.js" defer></script>
   <script src="/premium.js" defer>
 // ── Price Alert System ────────────────────────────────────────────
