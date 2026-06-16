@@ -1083,18 +1083,7 @@ if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Handle Google redirect sign-in result on page load
-auth.getRedirectResult().then(result => {
-  if (result && result.user) {
-    console.log('Redirect sign-in success:', result.user.email);
-    // onAuthStateChanged will fire automatically and handle the UI
-  }
-}).catch(e => {
-  console.error('Redirect result error:', e.code, e.message);
-  if (e.code && e.code !== 'auth/no-current-user') {
-    setTimeout(() => showToast('Sign-in failed: ' + (e.message || e.code), 'error'), 500);
-  }
-});
+// Google auth handled by signInWithPopup — see doSignIn()
 
 // ── Peptides ──────────────────────────────────────────────────────────────
 const PEPTIDES = ["Semaglutide","Tirzepatide","Retatrutide","Cagrilintide","Survodutide","BPC-157","TB-500","BPC-157 + TB-500 Blend","Ipamorelin","CJC-1295 (with DAC)","CJC-1295 (No DAC)","CJC/Ipa Blend","Sermorelin","Tesamorelin","Tesamorelin/Ipamorelin Blend","GHRP-2","GHRP-6","Hexarelin","GHK-Cu","AHK-Cu","Epithalon","MOTS-c","NAD+","Kisspeptin","Humanin","Semax","N-Acetyl Semax","Selank","N-Acetyl Selank","Semax/Selank Blend","Adamax","DSIP","KPV","ARA-290","AOD-9604","LL-37","PE-22-28","PNC-27","Thymosin Alpha-1","Thymalin","Melanotan II","Melanotan I","PT-141 (Bremelanotide)","Oxytocin","IGF-1 LR3","PEG-MGF","5-Amino-1MQ","SLU-PP-332","Tesofensine","HCG","Methylene Blue","Snap-8","FOXO4-DRI","VIP","SS-31","Klow Blend","Glow Blend","Glutathione","Lipo-C","Bacteriostatic Water","Retacagri Blend","Cartalax","Dihexa","Pinealon","Cardiogen","Testagen","Vesugen","Vilon","Ovagen","Pancragen","Crystagen"];
@@ -1224,9 +1213,20 @@ async function sendPasswordReset() {
 function doSignIn() {
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
-  auth.signInWithRedirect(provider).catch(e => {
-    console.error('Redirect error:', e.code, e.message);
-    showToast(e.message || 'Sign-in failed. Please try again.', 'error');
+  // Use popup — simpler, no redirect state required
+  auth.signInWithPopup(provider).then(result => {
+    // onAuthStateChanged handles UI — nothing needed here
+    console.log('Google sign-in success:', result.user.email);
+  }).catch(e => {
+    console.error('Google auth error:', e.code, e.message);
+    // Show error prominently inline, not just a disappearing toast
+    const errEl = document.getElementById('authError');
+    if (errEl) {
+      errEl.textContent = 'Google sign-in failed: ' + (e.code || '') + ' — ' + (e.message || 'Unknown error');
+      errEl.classList.add('show');
+      setTimeout(() => errEl.classList.remove('show'), 8000);
+    }
+    showToast('Sign-in error: ' + (e.code || e.message), 'error');
   });
 }
 function doSignOut() {
@@ -1891,7 +1891,8 @@ function renderAlerts() {
 function showToast(msg, type="") {
   const t = document.getElementById("toast");
   t.textContent = msg; t.className = `toast ${type} show`;
-  setTimeout(() => t.classList.remove("show"), 3000);
+  // Longer timeout for errors so user can read them
+  setTimeout(() => t.classList.remove("show"), type === 'error' ? 8000 : 3000);
 }
 function toggleMenu() {
   const nav=document.getElementById("mobileNav"), btn=document.getElementById("menuBtn");
