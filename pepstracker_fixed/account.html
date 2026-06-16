@@ -2,12 +2,147 @@
 <html lang="en">
 <head>
 <!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5GCTD1XQ7X"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5GCTD1XQ7X">
+// ── MyStack preview on account page ────────────────────────────────────────
+function renderAccountStack() {
+  if (!window.loadStack) return;
+  const stack = loadStack();
+  const items = stack.items || [];
+  const totalEl = document.getElementById('acc-stack-total');
+  const metaEl  = document.getElementById('acc-stack-meta');
+  const listEl  = document.getElementById('acc-stack-list');
+  if (!totalEl) return;
+
+  const total = items.reduce((s,i)=>s+(i.price||0), 0);
+  totalEl.textContent = '$' + total.toFixed(2);
+
+  if (!items.length) {
+    metaEl.textContent = 'No compounds yet';
+    listEl.innerHTML = '<div style="text-align:center;padding:24px;color:#6b7fa0;font-size:.85rem">Hit <strong style=\'color:#edf2ff\'>+ Stack</strong> on any result card to build your stack.</div>';
+    return;
+  }
+
+  const vIds = [...new Set(items.map(i=>i.vendorId))];
+  metaEl.innerHTML = items.length + ' compound' + (items.length!==1?'s':'') + '<br>' + vIds.length + ' vendor' + (vIds.length!==1?'s':'');
+
+  listEl.innerHTML = items.map(i => `
+    <div style="background:#0d1018;border:1px solid rgba(59,158,255,.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-size:.88rem;font-weight:800;color:#edf2ff">${i.peptide}</div>
+        <div style="font-size:.72rem;color:#6b7fa0">${i.vendorName}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:.95rem;font-weight:900;font-family:'Fira Code',monospace;color:#edf2ff">$${i.price.toFixed(2)}</div>
+        ${i.code?`<div style="font-size:.65rem;color:#60afff;font-weight:700;margin-top:2px">${i.code}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// Re-render when stack updates
+window.addEventListener('stackUpdated', renderAccountStack);
+// Render on tab switch
+const _origSwitchTab = window.switchTab;
+window.switchTab = function(tab) {
+  if (_origSwitchTab) _origSwitchTab(tab);
+  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
+};
+
+</script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-5GCTD1XQ7X');
+
+// ── MyStack preview on account page ────────────────────────────────────────
+function renderAccountStack() {
+  if (!window.loadStack) return;
+  const stack = loadStack();
+  const items = stack.items || [];
+  const totalEl = document.getElementById('acc-stack-total');
+  const metaEl  = document.getElementById('acc-stack-meta');
+  const listEl  = document.getElementById('acc-stack-list');
+  if (!totalEl) return;
+
+  const total = items.reduce((s,i)=>s+(i.price||0), 0);
+  totalEl.textContent = '$' + total.toFixed(2);
+
+  if (!items.length) {
+    metaEl.textContent = 'No compounds yet';
+    listEl.innerHTML = '<div style="text-align:center;padding:24px;color:#6b7fa0;font-size:.85rem">Hit <strong style=\'color:#edf2ff\'>+ Stack</strong> on any result card to build your stack.</div>';
+    return;
+  }
+
+  const vIds = [...new Set(items.map(i=>i.vendorId))];
+  metaEl.innerHTML = items.length + ' compound' + (items.length!==1?'s':'') + '<br>' + vIds.length + ' vendor' + (vIds.length!==1?'s':'');
+
+  listEl.innerHTML = items.map(i => `
+    <div style="background:#0d1018;border:1px solid rgba(59,158,255,.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-size:.88rem;font-weight:800;color:#edf2ff">${i.peptide}</div>
+        <div style="font-size:.72rem;color:#6b7fa0">${i.vendorName}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:.95rem;font-weight:900;font-family:'Fira Code',monospace;color:#edf2ff">$${i.price.toFixed(2)}</div>
+        ${i.code?`<div style="font-size:.65rem;color:#60afff;font-weight:700;margin-top:2px">${i.code}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// Re-render when stack updates
+window.addEventListener('stackUpdated', renderAccountStack);
+// Render on tab switch
+const _origSwitchTab = window.switchTab;
+window.switchTab = function(tab) {
+  if (_origSwitchTab) _origSwitchTab(tab);
+  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
+};
+
+
+// ── MyStack preview on account page ────────────────────────────────────────
+function renderAccountStack() {
+  if (!window.loadStack) return;
+  const stack = loadStack();
+  const items = stack.items || [];
+  const totalEl = document.getElementById('acc-stack-total');
+  const metaEl  = document.getElementById('acc-stack-meta');
+  const listEl  = document.getElementById('acc-stack-list');
+  if (!totalEl) return;
+
+  const total = items.reduce((s,i)=>s+(i.price||0), 0);
+  totalEl.textContent = '$' + total.toFixed(2);
+
+  if (!items.length) {
+    metaEl.textContent = 'No compounds yet';
+    listEl.innerHTML = '<div style="text-align:center;padding:24px;color:#6b7fa0;font-size:.85rem">Hit <strong style=\'color:#edf2ff\'>+ Stack</strong> on any result card to build your stack.</div>';
+    return;
+  }
+
+  const vIds = [...new Set(items.map(i=>i.vendorId))];
+  metaEl.innerHTML = items.length + ' compound' + (items.length!==1?'s':'') + '<br>' + vIds.length + ' vendor' + (vIds.length!==1?'s':'');
+
+  listEl.innerHTML = items.map(i => `
+    <div style="background:#0d1018;border:1px solid rgba(59,158,255,.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-size:.88rem;font-weight:800;color:#edf2ff">${i.peptide}</div>
+        <div style="font-size:.72rem;color:#6b7fa0">${i.vendorName}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:.95rem;font-weight:900;font-family:'Fira Code',monospace;color:#edf2ff">$${i.price.toFixed(2)}</div>
+        ${i.code?`<div style="font-size:.65rem;color:#60afff;font-weight:700;margin-top:2px">${i.code}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// Re-render when stack updates
+window.addEventListener('stackUpdated', renderAccountStack);
+// Render on tab switch
+const _origSwitchTab = window.switchTab;
+window.switchTab = function(tab) {
+  if (_origSwitchTab) _origSwitchTab(tab);
+  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
+};
+
 </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -690,10 +825,190 @@
     .reminder-status .value{font-size:.88rem;font-weight:700;}
 
 </style>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
+// ── MyStack preview on account page ────────────────────────────────────────
+function renderAccountStack() {
+  if (!window.loadStack) return;
+  const stack = loadStack();
+  const items = stack.items || [];
+  const totalEl = document.getElementById('acc-stack-total');
+  const metaEl  = document.getElementById('acc-stack-meta');
+  const listEl  = document.getElementById('acc-stack-list');
+  if (!totalEl) return;
+
+  const total = items.reduce((s,i)=>s+(i.price||0), 0);
+  totalEl.textContent = '$' + total.toFixed(2);
+
+  if (!items.length) {
+    metaEl.textContent = 'No compounds yet';
+    listEl.innerHTML = '<div style="text-align:center;padding:24px;color:#6b7fa0;font-size:.85rem">Hit <strong style=\'color:#edf2ff\'>+ Stack</strong> on any result card to build your stack.</div>';
+    return;
+  }
+
+  const vIds = [...new Set(items.map(i=>i.vendorId))];
+  metaEl.innerHTML = items.length + ' compound' + (items.length!==1?'s':'') + '<br>' + vIds.length + ' vendor' + (vIds.length!==1?'s':'');
+
+  listEl.innerHTML = items.map(i => `
+    <div style="background:#0d1018;border:1px solid rgba(59,158,255,.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-size:.88rem;font-weight:800;color:#edf2ff">${i.peptide}</div>
+        <div style="font-size:.72rem;color:#6b7fa0">${i.vendorName}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:.95rem;font-weight:900;font-family:'Fira Code',monospace;color:#edf2ff">$${i.price.toFixed(2)}</div>
+        ${i.code?`<div style="font-size:.65rem;color:#60afff;font-weight:700;margin-top:2px">${i.code}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// Re-render when stack updates
+window.addEventListener('stackUpdated', renderAccountStack);
+// Render on tab switch
+const _origSwitchTab = window.switchTab;
+window.switchTab = function(tab) {
+  if (_origSwitchTab) _origSwitchTab(tab);
+  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
+};
+
+</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js">
+// ── MyStack preview on account page ────────────────────────────────────────
+function renderAccountStack() {
+  if (!window.loadStack) return;
+  const stack = loadStack();
+  const items = stack.items || [];
+  const totalEl = document.getElementById('acc-stack-total');
+  const metaEl  = document.getElementById('acc-stack-meta');
+  const listEl  = document.getElementById('acc-stack-list');
+  if (!totalEl) return;
+
+  const total = items.reduce((s,i)=>s+(i.price||0), 0);
+  totalEl.textContent = '$' + total.toFixed(2);
+
+  if (!items.length) {
+    metaEl.textContent = 'No compounds yet';
+    listEl.innerHTML = '<div style="text-align:center;padding:24px;color:#6b7fa0;font-size:.85rem">Hit <strong style=\'color:#edf2ff\'>+ Stack</strong> on any result card to build your stack.</div>';
+    return;
+  }
+
+  const vIds = [...new Set(items.map(i=>i.vendorId))];
+  metaEl.innerHTML = items.length + ' compound' + (items.length!==1?'s':'') + '<br>' + vIds.length + ' vendor' + (vIds.length!==1?'s':'');
+
+  listEl.innerHTML = items.map(i => `
+    <div style="background:#0d1018;border:1px solid rgba(59,158,255,.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-size:.88rem;font-weight:800;color:#edf2ff">${i.peptide}</div>
+        <div style="font-size:.72rem;color:#6b7fa0">${i.vendorName}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:.95rem;font-weight:900;font-family:'Fira Code',monospace;color:#edf2ff">$${i.price.toFixed(2)}</div>
+        ${i.code?`<div style="font-size:.65rem;color:#60afff;font-weight:700;margin-top:2px">${i.code}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// Re-render when stack updates
+window.addEventListener('stackUpdated', renderAccountStack);
+// Render on tab switch
+const _origSwitchTab = window.switchTab;
+window.switchTab = function(tab) {
+  if (_origSwitchTab) _origSwitchTab(tab);
+  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
+};
+
+</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
+// ── MyStack preview on account page ────────────────────────────────────────
+function renderAccountStack() {
+  if (!window.loadStack) return;
+  const stack = loadStack();
+  const items = stack.items || [];
+  const totalEl = document.getElementById('acc-stack-total');
+  const metaEl  = document.getElementById('acc-stack-meta');
+  const listEl  = document.getElementById('acc-stack-list');
+  if (!totalEl) return;
+
+  const total = items.reduce((s,i)=>s+(i.price||0), 0);
+  totalEl.textContent = '$' + total.toFixed(2);
+
+  if (!items.length) {
+    metaEl.textContent = 'No compounds yet';
+    listEl.innerHTML = '<div style="text-align:center;padding:24px;color:#6b7fa0;font-size:.85rem">Hit <strong style=\'color:#edf2ff\'>+ Stack</strong> on any result card to build your stack.</div>';
+    return;
+  }
+
+  const vIds = [...new Set(items.map(i=>i.vendorId))];
+  metaEl.innerHTML = items.length + ' compound' + (items.length!==1?'s':'') + '<br>' + vIds.length + ' vendor' + (vIds.length!==1?'s':'');
+
+  listEl.innerHTML = items.map(i => `
+    <div style="background:#0d1018;border:1px solid rgba(59,158,255,.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-size:.88rem;font-weight:800;color:#edf2ff">${i.peptide}</div>
+        <div style="font-size:.72rem;color:#6b7fa0">${i.vendorName}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:.95rem;font-weight:900;font-family:'Fira Code',monospace;color:#edf2ff">$${i.price.toFixed(2)}</div>
+        ${i.code?`<div style="font-size:.65rem;color:#60afff;font-weight:700;margin-top:2px">${i.code}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// Re-render when stack updates
+window.addEventListener('stackUpdated', renderAccountStack);
+// Render on tab switch
+const _origSwitchTab = window.switchTab;
+window.switchTab = function(tab) {
+  if (_origSwitchTab) _origSwitchTab(tab);
+  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
+};
+
+</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js">
+// ── MyStack preview on account page ────────────────────────────────────────
+function renderAccountStack() {
+  if (!window.loadStack) return;
+  const stack = loadStack();
+  const items = stack.items || [];
+  const totalEl = document.getElementById('acc-stack-total');
+  const metaEl  = document.getElementById('acc-stack-meta');
+  const listEl  = document.getElementById('acc-stack-list');
+  if (!totalEl) return;
+
+  const total = items.reduce((s,i)=>s+(i.price||0), 0);
+  totalEl.textContent = '$' + total.toFixed(2);
+
+  if (!items.length) {
+    metaEl.textContent = 'No compounds yet';
+    listEl.innerHTML = '<div style="text-align:center;padding:24px;color:#6b7fa0;font-size:.85rem">Hit <strong style=\'color:#edf2ff\'>+ Stack</strong> on any result card to build your stack.</div>';
+    return;
+  }
+
+  const vIds = [...new Set(items.map(i=>i.vendorId))];
+  metaEl.innerHTML = items.length + ' compound' + (items.length!==1?'s':'') + '<br>' + vIds.length + ' vendor' + (vIds.length!==1?'s':'');
+
+  listEl.innerHTML = items.map(i => `
+    <div style="background:#0d1018;border:1px solid rgba(59,158,255,.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-size:.88rem;font-weight:800;color:#edf2ff">${i.peptide}</div>
+        <div style="font-size:.72rem;color:#6b7fa0">${i.vendorName}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:.95rem;font-weight:900;font-family:'Fira Code',monospace;color:#edf2ff">$${i.price.toFixed(2)}</div>
+        ${i.code?`<div style="font-size:.65rem;color:#60afff;font-weight:700;margin-top:2px">${i.code}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// Re-render when stack updates
+window.addEventListener('stackUpdated', renderAccountStack);
+// Render on tab switch
+const _origSwitchTab = window.switchTab;
+window.switchTab = function(tab) {
+  if (_origSwitchTab) _origSwitchTab(tab);
+  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
+};
+
+</script>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
   <link rel="apple-touch-icon" href="/favicon.png"/>
@@ -820,6 +1135,7 @@
     <button class="tab-btn" onclick="switchTab('profile')">🧬 Profile</button>
     <button class="tab-btn" onclick="switchTab('saved')">⭐ Saved</button>
     <button class="tab-btn" onclick="switchTab('alerts')">🔔 Alerts</button>
+        <button class="tab-btn" onclick="switchTab('mystack')">🧬 MyStack</button>
   </div>
 
   <!-- ══ TAB: TRACKER ══ -->
@@ -1908,6 +2224,52 @@ document.addEventListener("click", e => {
 // Initial render (logged-out state shows empty calendar)
 renderCalendar();
 renderAlerts();
+
+// ── MyStack preview on account page ────────────────────────────────────────
+function renderAccountStack() {
+  if (!window.loadStack) return;
+  const stack = loadStack();
+  const items = stack.items || [];
+  const totalEl = document.getElementById('acc-stack-total');
+  const metaEl  = document.getElementById('acc-stack-meta');
+  const listEl  = document.getElementById('acc-stack-list');
+  if (!totalEl) return;
+
+  const total = items.reduce((s,i)=>s+(i.price||0), 0);
+  totalEl.textContent = '$' + total.toFixed(2);
+
+  if (!items.length) {
+    metaEl.textContent = 'No compounds yet';
+    listEl.innerHTML = '<div style="text-align:center;padding:24px;color:#6b7fa0;font-size:.85rem">Hit <strong style=\'color:#edf2ff\'>+ Stack</strong> on any result card to build your stack.</div>';
+    return;
+  }
+
+  const vIds = [...new Set(items.map(i=>i.vendorId))];
+  metaEl.innerHTML = items.length + ' compound' + (items.length!==1?'s':'') + '<br>' + vIds.length + ' vendor' + (vIds.length!==1?'s':'');
+
+  listEl.innerHTML = items.map(i => `
+    <div style="background:#0d1018;border:1px solid rgba(59,158,255,.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-size:.88rem;font-weight:800;color:#edf2ff">${i.peptide}</div>
+        <div style="font-size:.72rem;color:#6b7fa0">${i.vendorName}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:.95rem;font-weight:900;font-family:'Fira Code',monospace;color:#edf2ff">$${i.price.toFixed(2)}</div>
+        ${i.code?`<div style="font-size:.65rem;color:#60afff;font-weight:700;margin-top:2px">${i.code}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// Re-render when stack updates
+window.addEventListener('stackUpdated', renderAccountStack);
+// Render on tab switch
+const _origSwitchTab = window.switchTab;
+window.switchTab = function(tab) {
+  if (_origSwitchTab) _origSwitchTab(tab);
+  if (tab === 'mystack') setTimeout(renderAccountStack, 50);
+};
+
 </script>
+  <script src="/mystack.js"></script>
 </body>
 </html>
