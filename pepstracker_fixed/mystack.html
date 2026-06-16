@@ -6,259 +6,245 @@
   <title>MyStack — Build Your Peptide Stack | PepsTracker</title>
   <meta name="description" content="Build your personal peptide stack. PepsTracker automatically finds the cheapest vendor for each compound and calculates your total monthly cost."/>
   <link rel="canonical" href="https://pepstracker.com/mystack"/>
-  <meta property="og:title" content="MyStack — Build Your Peptide Stack | PepsTracker"/>
-  <meta property="og:image" content="https://pepstracker.com/og-image.png"/>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Fira+Code:wght@600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Fira+Code:wght@600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/polished.css"/>
   <link rel="stylesheet" href="/premium.css"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#07090f;color:#edf2ff;-webkit-font-smoothing:antialiased;min-height:100vh}
 
-    /* ── Header ── */
-    header{background:rgba(7,9,15,.92);border-bottom:1px solid rgba(59,158,255,.1);padding:0 16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
-    .hi{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
-    .logo{display:flex;align-items:center;gap:6px;text-decoration:none;font-size:1.2rem;font-weight:800}
-    .logo span:first-child{color:#3b9eff}.logo span:last-child{color:#4de87a}
-    .menu-btn{background:#111620;border:1px solid #1f2d42;color:#edf2ff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600}
+    /* Header */
+    header{background:rgba(7,9,15,.92);border-bottom:1px solid rgba(59,158,255,.1);padding:0 20px;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+    .hi{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .logo{display:flex;align-items:center;gap:4px;text-decoration:none;font-size:1.15rem;font-weight:800}
+    .logo .p1{color:#3b9eff}.logo .p2{color:#4de87a}
+    .back-btn{background:rgba(59,158,255,.1);border:1px solid rgba(59,158,255,.25);color:#3b9eff;padding:8px 16px;border-radius:10px;cursor:pointer;font-size:.82rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .15s}
+    .back-btn:hover{background:rgba(59,158,255,.18)}
 
-    /* ── Page ── */
-    .page{max-width:860px;margin:0 auto;padding:32px 16px 100px}
+    /* Page */
+    .page{max-width:860px;margin:0 auto;padding:36px 16px 120px}
 
-    /* ── Stack hero ── */
-    .stack-hero{background:linear-gradient(135deg,rgba(59,158,255,.08),rgba(77,232,122,.04));border:1px solid rgba(59,158,255,.2);border-radius:18px;padding:28px 28px 24px;margin-bottom:28px}
-    .stack-title{font-size:1.8rem;font-weight:900;letter-spacing:-0.8px;margin-bottom:4px}
-    .stack-title span{color:#3b9eff}
-    .stack-meta{font-size:.85rem;color:#6b7fa0;margin-bottom:20px}
-    .stack-total{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
-    .total-number{font-size:2.8rem;font-weight:900;font-family:'Fira Code',monospace;letter-spacing:-1px;background:linear-gradient(135deg,#3b9eff,#4de87a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
-    .total-label{font-size:.78rem;font-weight:700;color:#6b7fa0;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
-    .vendor-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-    .vendor-pill{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:4px 12px;font-size:.72rem;font-weight:700;color:#6b7fa0}
-    .vendor-pill.active{background:rgba(59,158,255,.1);border-color:rgba(59,158,255,.3);color:#3b9eff}
+    /* Hero banner */
+    .hero-banner{background:linear-gradient(135deg,rgba(59,158,255,.1) 0%,rgba(77,232,122,.06) 100%);border:1px solid rgba(59,158,255,.2);border-radius:20px;padding:32px;margin-bottom:32px;position:relative;overflow:hidden}
+    .hero-banner::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(59,158,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,158,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+    .hero-eyebrow{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#3b9eff;margin-bottom:10px;position:relative}
+    .hero-title{font-size:clamp(2rem,5vw,3rem);font-weight:900;letter-spacing:-1.5px;line-height:1.05;margin-bottom:20px;position:relative}
+    .hero-title .my{color:#3b9eff}.hero-title .stack{color:#edf2ff}
+    .cost-row{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;position:relative}
+    .cost-block{flex:none}
+    .cost-label{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#6b7fa0;margin-bottom:4px}
+    .cost-num{font-size:clamp(2.4rem,6vw,3.8rem);font-weight:900;font-family:'Fira Code',monospace;letter-spacing:-2px;line-height:1;background:linear-gradient(135deg,#3b9eff,#4de87a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .cost-divider{width:1px;height:48px;background:rgba(255,255,255,.08);flex:none}
+    .meta-block{display:flex;flex-direction:column;gap:6px;justify-content:center}
+    .meta-line{font-size:.78rem;color:#6b7fa0;display:flex;align-items:center;gap:6px}
+    .meta-dot{width:6px;height:6px;border-radius:50%;background:#3b9eff;flex:none}
+    .vendor-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;position:relative}
+    .vc{background:rgba(59,158,255,.08);border:1px solid rgba(59,158,255,.2);border-radius:100px;padding:4px 12px;font-size:.72rem;font-weight:700;color:#60afff}
 
-    /* ── Goal presets ── */
-    .section-label{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#6b7fa0;margin-bottom:10px}
-    .goal-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
-    .goal-pill{background:#111620;border:1.5px solid #1f2d42;color:#6b7fa0;padding:8px 16px;border-radius:100px;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .15s ease}
-    .goal-pill:hover{border-color:rgba(59,158,255,.4);color:#3b9eff;transform:translateY(-1px)}
-    .goal-pill.active{background:rgba(59,158,255,.1);border-color:rgba(59,158,255,.4);color:#3b9eff}
+    /* Goal pills */
+    .section-hdr{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#4a5568;margin-bottom:10px}
+    .goal-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+    .goal-pill{background:#111620;border:1.5px solid #1f2d42;color:#6b7fa0;padding:9px 18px;border-radius:100px;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .18s ease;font-family:inherit}
+    .goal-pill:hover{border-color:rgba(59,158,255,.4);color:#3b9eff;transform:translateY(-1px);box-shadow:0 4px 12px rgba(59,158,255,.15)}
 
-    /* ── Stack items ── */
-    .stack-items{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
-    .stack-card{background:#111620;border:1px solid rgba(59,158,255,.12);border-radius:14px;padding:16px 18px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
-    .stack-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#3b9eff,#4de87a);border-radius:0 2px 2px 0}
-    .stack-card:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(59,158,255,.1)}
-    .sc-peptide{font-size:1rem;font-weight:800;color:#edf2ff;margin-bottom:3px}
+    /* Stack cards */
+    .stack-list{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+    .sc{background:#111620;border:1px solid rgba(59,158,255,.12);border-radius:14px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s}
+    .sc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#3b9eff,#4de87a);border-radius:0 3px 3px 0}
+    .sc:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(59,158,255,.1);border-color:rgba(59,158,255,.25)}
+    .sc-left{flex:1;min-width:0}
+    .sc-name{font-size:1rem;font-weight:900;color:#edf2ff;margin-bottom:3px;letter-spacing:-.2px}
     .sc-vendor{font-size:.78rem;color:#6b7fa0;margin-bottom:2px}
-    .sc-listing{font-size:.72rem;color:#4a5568}
-    .sc-right{text-align:right}
-    .sc-price{font-size:1.2rem;font-weight:900;font-family:'Fira Code',monospace;color:#edf2ff}
-    .sc-code{display:inline-block;background:rgba(59,158,255,.1);border:1px solid rgba(59,158,255,.2);color:#60afff;font-size:.7rem;font-weight:800;padding:2px 8px;border-radius:6px;margin-top:3px}
-    .sc-actions{display:flex;gap:6px;margin-top:8px;justify-content:flex-end}
-    .sc-btn{padding:6px 12px;border-radius:7px;font-size:.73rem;font-weight:700;cursor:pointer;border:none;transition:all .15s ease;font-family:inherit}
-    .sc-btn.shop{background:linear-gradient(135deg,#3b9eff,#1a6fd8);color:#fff}
-    .sc-btn.remove{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#6b7fa0}
-    .sc-btn.remove:hover{border-color:rgba(255,90,90,.3);color:#ff5a5a}
-    .sc-btn:active{transform:scale(.96)}
+    .sc-listing{font-size:.7rem;color:#374151}
+    .sc-right{text-align:right;flex-shrink:0}
+    .sc-price{font-size:1.3rem;font-weight:900;font-family:'Fira Code',monospace;color:#edf2ff;letter-spacing:-.5px}
+    .sc-permg{font-size:.68rem;color:#6b7fa0;margin-top:1px}
+    .sc-code{display:inline-block;background:rgba(59,158,255,.1);border:1px solid rgba(59,158,255,.2);color:#60afff;font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:6px;margin-top:4px;letter-spacing:.3px}
+    .sc-btns{display:flex;gap:6px;margin-top:10px;justify-content:flex-end}
+    .sc-btn{padding:7px 14px;border-radius:8px;font-size:.75rem;font-weight:800;cursor:pointer;border:none;transition:all .15s;font-family:inherit}
+    .sc-btn.shop{background:linear-gradient(135deg,#3b9eff,#1a6fd8);color:#fff;box-shadow:0 3px 10px rgba(59,158,255,.25)}
+    .sc-btn.shop:hover{box-shadow:0 4px 16px rgba(59,158,255,.4);transform:translateY(-1px)}
+    .sc-btn.rm{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:#4a5568}
+    .sc-btn.rm:hover{border-color:rgba(239,68,68,.3);color:#ef4444}
+    .sc-btn:active{transform:scale(.96)!important}
 
-    /* ── Shopping list ── */
-    .shopping-section{background:#0d1018;border:1px solid #1f2d42;border-radius:16px;padding:22px 24px}
-    .shopping-title{font-size:1.1rem;font-weight:900;margin-bottom:4px}
-    .shopping-sub{font-size:.8rem;color:#6b7fa0;margin-bottom:20px}
-    .vendor-group{background:#111620;border:1px solid rgba(59,158,255,.1);border-radius:12px;padding:14px 16px;margin-bottom:10px}
-    .vg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-    .vg-name{font-size:.9rem;font-weight:800}
-    .vg-total{font-size:.85rem;font-weight:700;color:#3b9eff}
-    .vg-items{font-size:.75rem;color:#6b7fa0;margin-bottom:10px;line-height:1.7}
-    .vg-code{display:inline-block;background:rgba(77,232,122,.08);border:1px solid rgba(77,232,122,.2);color:#4de87a;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:6px;margin-bottom:10px;cursor:pointer}
-    .vg-shop{display:block;background:linear-gradient(135deg,#3b9eff,#1a6fd8);color:#fff;text-align:center;padding:11px;border-radius:9px;font-weight:800;font-size:.85rem;text-decoration:none;transition:all .15s ease}
-    .vg-shop:hover{box-shadow:0 4px 16px rgba(59,158,255,.3);transform:translateY(-1px)}
+    /* Shopping list */
+    .shop-section{background:linear-gradient(135deg,rgba(59,158,255,.05),rgba(77,232,122,.03));border:1px solid rgba(59,158,255,.15);border-radius:18px;padding:24px}
+    .shop-title{font-size:1.15rem;font-weight:900;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+    .shop-sub{font-size:.8rem;color:#6b7fa0;margin-bottom:20px}
+    .vg{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:16px 18px;margin-bottom:10px}
+    .vg-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+    .vg-name{font-size:.95rem;font-weight:800}
+    .vg-amt{font-size:.95rem;font-weight:800;color:#3b9eff;font-family:'Fira Code',monospace}
+    .vg-items{font-size:.76rem;color:#6b7fa0;margin-bottom:10px;line-height:1.8}
+    .vg-code{display:inline-flex;align-items:center;gap:6px;background:rgba(77,232,122,.07);border:1px solid rgba(77,232,122,.2);color:#4de87a;font-size:.72rem;font-weight:800;padding:4px 12px;border-radius:100px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+    .vg-code:hover{background:rgba(77,232,122,.12)}
+    .vg-shop{display:block;background:linear-gradient(135deg,#3b9eff,#1a6fd8);color:#fff;text-align:center;padding:12px;border-radius:10px;font-weight:800;font-size:.88rem;text-decoration:none;transition:all .15s;box-shadow:0 3px 12px rgba(59,158,255,.25)}
+    .vg-shop:hover{box-shadow:0 5px 20px rgba(59,158,255,.4);transform:translateY(-1px)}
 
-    /* ── Empty state ── */
-    .empty-stack{text-align:center;padding:60px 20px}
-    .empty-icon{font-size:3rem;margin-bottom:16px;opacity:.4}
-    .empty-title{font-size:1.3rem;font-weight:800;margin-bottom:8px}
-    .empty-sub{font-size:.9rem;color:#6b7fa0;max-width:380px;margin:0 auto 24px}
-    .btn-go-compare{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#3b9eff,#1a6fd8);color:#fff;font-weight:800;padding:13px 28px;border-radius:12px;text-decoration:none;font-size:.95rem;box-shadow:0 4px 20px rgba(59,158,255,.3);transition:all .15s ease}
-    .btn-go-compare:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(59,158,255,.4)}
+    /* Empty */
+    .empty{text-align:center;padding:72px 20px}
+    .empty-icon{font-size:3.5rem;margin-bottom:20px;opacity:.35}
+    .empty-title{font-size:1.4rem;font-weight:900;margin-bottom:8px;letter-spacing:-.4px}
+    .empty-sub{font-size:.9rem;color:#6b7fa0;max-width:360px;margin:0 auto 28px;line-height:1.6}
+    .btn-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#3b9eff,#1a6fd8);color:#fff;font-weight:800;padding:14px 30px;border-radius:12px;text-decoration:none;font-size:.95rem;box-shadow:0 4px 20px rgba(59,158,255,.35);transition:all .15s}
+    .btn-cta:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(59,158,255,.45)}
 
-    /* ── Mobile ── */
     @media(max-width:640px){
-      .stack-total{flex-direction:column;gap:4px}
-      .total-number{font-size:2.2rem}
-      .stack-card{grid-template-columns:1fr}
-      .sc-right{text-align:left}
-      .sc-actions{justify-content:flex-start}
-      .stack-hero{padding:20px 16px 18px}
+      .cost-divider{display:none}
+      .cost-num{font-size:2.4rem}
+      .hero-title{font-size:2rem}
+      .sc{flex-wrap:wrap}
+      .sc-right{text-align:left;width:100%}
+      .sc-btns{justify-content:flex-start}
     }
   </style>
 </head>
 <body>
 <header>
   <div class="hi">
-    <a class="logo" href="/"><span>Peps</span><span>Tracker</span></a>
-    <button class="menu-btn" onclick="window.location='/'">← Compare Prices</button>
+    <a class="logo" href="/"><span class="p1">Peps</span><span class="p2">Tracker</span></a>
+    <a class="back-btn" href="/">← Compare Prices</a>
   </div>
 </header>
 
 <div class="page">
-
-  <!-- Stack hero -->
-  <div class="stack-hero">
-    <div class="stack-title"><span>My</span>Stack</div>
-    <div class="stack-meta" id="stackMeta">Build your personal research stack</div>
-    <div class="stack-total">
-      <div>
-        <div class="total-label">Monthly Cost</div>
-        <div class="total-number" id="totalCost">$0</div>
+  <!-- Hero -->
+  <div class="hero-banner">
+    <div class="hero-eyebrow">🧬 Personal Research Stack</div>
+    <div class="hero-title"><span class="my">My</span><span class="stack">Stack</span></div>
+    <div class="cost-row">
+      <div class="cost-block">
+        <div class="cost-label">Monthly Cost</div>
+        <div class="cost-num" id="totalCost">$0</div>
       </div>
+      <div class="cost-divider"></div>
+      <div class="meta-block" id="metaBlock"></div>
     </div>
-    <div class="vendor-pills" id="vendorPills"></div>
+    <div class="vendor-chips" id="vendorChips"></div>
   </div>
 
-  <!-- Goal quick-start -->
-  <div class="section-label">Quick-start with a goal</div>
-  <div class="goal-pills" id="goalPills"></div>
+  <!-- Goal presets -->
+  <div class="section-hdr">Quick-start with a goal</div>
+  <div class="goal-row" id="goalRow"></div>
 
   <!-- Stack items -->
-  <div class="section-label" id="itemsLabel" style="display:none">Your stack</div>
-  <div class="stack-items" id="stackItems"></div>
+  <div class="section-hdr" id="itemsHdr" style="display:none">Your stack</div>
+  <div class="stack-list" id="stackList"></div>
 
   <!-- Shopping list -->
-  <div id="shoppingSection" style="display:none">
-    <div class="shopping-section">
-      <div class="shopping-title">🛒 Ready to order?</div>
-      <div class="shopping-sub">Your stack split by vendor — discount codes pre-applied.</div>
-      <div id="vendorGroups"></div>
+  <div id="shopSection" style="display:none">
+    <div class="shop-section">
+      <div class="shop-title">🛒 Ready to order?</div>
+      <div class="shop-sub">Your stack split by vendor — discount codes pre-applied.</div>
+      <div id="vGroups"></div>
     </div>
   </div>
-
 </div>
 
 <script src="/mystack.js"></script>
-<script src="/polished.js" defer></script>
-<script src="/premium.js" defer></script>
-<script src="/advisor-widget.js" defer></script>
 <script>
-// ── Render goal pills ──────────────────────────────────────
-function renderGoalPills() {
-  const c = document.getElementById('goalPills');
-  Object.keys(STACK_GOALS).forEach(goal => {
-    const btn = document.createElement('button');
-    btn.className = 'goal-pill';
-    btn.textContent = goal;
-    btn.onclick = () => applyGoal(goal, btn);
-    c.appendChild(btn);
+function renderGoals() {
+  const c = document.getElementById('goalRow');
+  Object.keys(STACK_GOALS).forEach(g => {
+    const b = document.createElement('button');
+    b.className = 'goal-pill'; b.textContent = g;
+    b.onclick = () => { if (window.ptToast) ptToast('Browse ' + g + ' compounds and hit + Stack'); };
+    c.appendChild(b);
   });
 }
 
-function applyGoal(goal, btn) {
-  document.querySelectorAll('.goal-pill').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  // Note: goal presets just navigate to the comparison tool
-  // for now — full goal-based suggestion is Phase 2
-  const compounds = STACK_GOALS[goal];
-  if (ptToast) ptToast('Browse ' + goal + ' compounds → add them to your stack');
-  setTimeout(() => window.location = '/?filter=' + encodeURIComponent(goal), 800);
-}
-
-// ── Render stack ───────────────────────────────────────────
-function renderStack() {
+function render() {
   const stack = loadStack();
   const items = stack.items || [];
-  const container = document.getElementById('stackItems');
-  const label = document.getElementById('itemsLabel');
-  const shopping = document.getElementById('shoppingSection');
-  const meta = document.getElementById('stackMeta');
+  const list = document.getElementById('stackList');
+  const shopSec = document.getElementById('shopSection');
+  const hdr = document.getElementById('itemsHdr');
   const totalEl = document.getElementById('totalCost');
-  const pillsEl = document.getElementById('vendorPills');
+  const metaEl = document.getElementById('metaBlock');
+  const chipsEl = document.getElementById('vendorChips');
 
-  container.innerHTML = '';
+  list.innerHTML = '';
 
-  if (items.length === 0) {
-    container.innerHTML = `
-      <div class="empty-stack">
-        <div class="empty-icon">🧬</div>
-        <div class="empty-title">Your stack is empty</div>
-        <div class="empty-sub">Compare prices on the tracker and hit "+ Stack" on any compound to add it here.</div>
-        <a class="btn-go-compare" href="/">Compare Prices →</a>
-      </div>`;
-    label.style.display = 'none';
-    shopping.style.display = 'none';
+  if (!items.length) {
+    list.innerHTML = `<div class="empty">
+      <div class="empty-icon">🧬</div>
+      <div class="empty-title">Your stack is empty</div>
+      <div class="empty-sub">Hit <strong>+ Stack</strong> on any result card while comparing prices to start building.</div>
+      <a class="btn-cta" href="/">Compare Prices →</a>
+    </div>`;
+    hdr.style.display = 'none';
+    shopSec.style.display = 'none';
     totalEl.textContent = '$0';
-    meta.textContent = 'Build your personal research stack';
-    pillsEl.innerHTML = '';
+    metaEl.innerHTML = '';
+    chipsEl.innerHTML = '';
     return;
   }
 
-  // Calc total
-  const total = items.reduce((s, i) => s + (i.price || 0), 0);
+  const total = items.reduce((s,i) => s+(i.price||0), 0);
   totalEl.textContent = '$' + total.toFixed(2);
-  meta.textContent = items.length + ' compound' + (items.length !== 1 ? 's' : '') + ' · optimized across ' +
-    [...new Set(items.map(i => i.vendorId))].length + ' vendors';
-  label.style.display = 'block';
+  const vIds = [...new Set(items.map(i=>i.vendorId))];
+  metaEl.innerHTML =
+    `<div class="meta-line"><span class="meta-dot"></span>${items.length} compound${items.length!==1?'s':''}</div>` +
+    `<div class="meta-line"><span class="meta-dot" style="background:#4de87a"></span>${vIds.length} vendor${vIds.length!==1?'s':''}</div>`;
 
-  // Vendor pills
-  const vendors = [...new Map(items.map(i => [i.vendorId, i.vendorName])).entries()];
-  pillsEl.innerHTML = vendors.map(([id, name]) =>
-    `<span class="vendor-pill active">${name}</span>`).join('');
+  const vendorNames = [...new Map(items.map(i=>[i.vendorId,i.vendorName])).entries()];
+  chipsEl.innerHTML = vendorNames.map(([,n])=>`<span class="vc">${n}</span>`).join('');
 
-  // Compound cards
+  hdr.style.display = 'block';
+
   items.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'stack-card';
-    const perMg = item.mg > 0 ? (item.price / item.mg).toFixed(2) : '—';
-    card.innerHTML = `
-      <div>
-        <div class="sc-peptide">${item.peptide}</div>
+    const perMg = item.mg>0 ? (item.price/item.mg).toFixed(2) : '—';
+    const el = document.createElement('div');
+    el.className = 'sc';
+    el.innerHTML = `
+      <div class="sc-left">
+        <div class="sc-name">${item.peptide}</div>
         <div class="sc-vendor">${item.vendorName}</div>
         <div class="sc-listing">${item.listing}</div>
       </div>
       <div class="sc-right">
         <div class="sc-price">$${item.price.toFixed(2)}</div>
-        <div style="font-size:.68rem;color:#6b7fa0;margin-top:2px">$${perMg}/mg</div>
-        ${item.code ? `<div class="sc-code">${item.code}</div>` : ''}
-        <div class="sc-actions">
+        <div class="sc-permg">$${perMg}/mg</div>
+        ${item.code?`<div class="sc-code">${item.code} ${item.discount>0?'('+Math.round(item.discount*100)+'% off)':''}</div>`:''}
+        <div class="sc-btns">
           <a class="sc-btn shop" href="${item.vendorUrl}" target="_blank" rel="noopener">Shop →</a>
-          <button class="sc-btn remove" onclick="removeFromStack('${item.peptide}');renderStack()">Remove</button>
+          <button class="sc-btn rm" onclick="removeFromStack('${item.peptide}');render()">Remove</button>
         </div>
       </div>`;
-    container.appendChild(card);
+    list.appendChild(el);
   });
 
-  // Shopping list grouped by vendor
-  shopping.style.display = 'block';
+  // Shopping list
+  shopSec.style.display = 'block';
   const groups = {};
   items.forEach(i => {
-    if (!groups[i.vendorId]) groups[i.vendorId] = { name: i.vendorName, url: i.vendorUrl, code: i.code, discount: i.discount, items: [] };
+    if (!groups[i.vendorId]) groups[i.vendorId]={name:i.vendorName,url:i.vendorUrl,code:i.code,discount:i.discount,items:[]};
     groups[i.vendorId].items.push(i);
   });
-
-  const vgEl = document.getElementById('vendorGroups');
-  vgEl.innerHTML = '';
+  const vg = document.getElementById('vGroups');
+  vg.innerHTML = '';
   Object.values(groups).forEach(g => {
-    const subtotal = g.items.reduce((s, i) => s + i.price, 0);
-    const div = document.createElement('div');
-    div.className = 'vendor-group';
-    div.innerHTML = `
-      <div class="vg-header">
-        <div class="vg-name">${g.name}</div>
-        <div class="vg-total">$${subtotal.toFixed(2)}</div>
-      </div>
-      <div class="vg-items">${g.items.map(i => '• ' + i.peptide + ' — $' + i.price.toFixed(2)).join('<br>')}</div>
-      ${g.code ? `<div class="vg-code" onclick="navigator.clipboard.writeText('${g.code}')">Code: ${g.code} ${g.discount > 0 ? '(' + Math.round(g.discount*100) + '% off)' : ''}</div>` : ''}
+    const sub = g.items.reduce((s,i)=>s+i.price,0);
+    const d = document.createElement('div');
+    d.className = 'vg';
+    d.innerHTML = `
+      <div class="vg-top"><div class="vg-name">${g.name}</div><div class="vg-amt">$${sub.toFixed(2)}</div></div>
+      <div class="vg-items">${g.items.map(i=>'• '+i.peptide+' — $'+i.price.toFixed(2)).join('<br>')}</div>
+      ${g.code?`<div class="vg-code" onclick="navigator.clipboard.writeText('${g.code}')">📋 ${g.code} ${g.discount>0?'· '+Math.round(g.discount*100)+'% off':''}</div>`:''}
       <a class="vg-shop" href="${g.url}" target="_blank" rel="noopener">Shop ${g.name} →</a>`;
-    vgEl.appendChild(div);
+    vg.appendChild(d);
   });
 }
 
-// ── Init ──────────────────────────────────────────────────
-renderGoalPills();
-renderStack();
-window.addEventListener('stackUpdated', renderStack);
+renderGoals();
+render();
+window.addEventListener('stackUpdated', render);
 </script>
+<script src="/polished.js" defer></script>
+<script src="/premium.js" defer></script>
+<script src="/advisor-widget.js" defer></script>
 </body>
 </html>
