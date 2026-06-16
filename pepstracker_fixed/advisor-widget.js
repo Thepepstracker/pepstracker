@@ -83,7 +83,7 @@
   panel.id = 'pt-panel';
   panel.innerHTML = '<div class="pt-hdr"><div class="pt-av">P</div>'
     + '<div><div class="pt-hn">Peptide Advisor</div><div class="pt-hs"><span class="pt-dot"></span> PepsTracker AI</div></div>'
-    + '<div style="margin-left:auto;font-size:9.5px;color:#2a3a50;text-align:right;line-height:1.4">17 vendors<br>71 compounds</div></div>'
+    + '<div style="margin-left:auto;font-size:9.5px;color:#2a3a50;text-align:right;line-height:1.4">19 vendors<br>87+ compounds</div></div>'
     + '<div class="pt-msgs" id="pt-msgs"></div>'
     + '<div class="pt-ir"><input class="pt-in" id="pt-in" placeholder="Ask about any compound..."/>'
     + '<button class="pt-sb" id="pt-sb" disabled>&#8593;</button></div>'
