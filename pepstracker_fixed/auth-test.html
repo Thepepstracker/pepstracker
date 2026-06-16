@@ -2,89 +2,121 @@
 <html>
 <head>
   <meta charset="UTF-8"/>
-  <title>PepsTracker Auth Test</title>
+  <title>PepsTracker Auth Debug v2</title>
   <style>
-    body { font-family: sans-serif; background: #111; color: #fff; padding: 40px; }
-    button { padding: 14px 28px; font-size: 16px; cursor: pointer; margin: 10px; border-radius: 8px; }
-    #btn-google { background: #fff; color: #333; border: none; }
-    #status { margin-top: 20px; padding: 16px; border-radius: 8px; font-size: 14px; line-height: 1.6; }
-    .ok  { background: #0d3d0d; border: 1px solid #4de87a; }
-    .err { background: #3d0d0d; border: 1px solid #ff5c5c; }
-    .info{ background: #0d1a3d; border: 1px solid #3b9eff; }
-    pre  { white-space: pre-wrap; word-break: break-all; font-size: 12px; margin: 8px 0 0; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:monospace;background:#0d0f14;color:#edf2ff;padding:20px;font-size:13px}
+    h2{color:#3b9eff;margin-bottom:16px;font-size:16px}
+    .btn{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;margin:4px}
+    .log{background:#111620;border:1px solid #1f2d42;border-radius:8px;padding:12px;margin:8px 0;line-height:1.8}
+    .ok{color:#4de87a}.err{color:#ff5c5c}.warn{color:#f5c842}.info{color:#3b9eff}
+    pre{white-space:pre-wrap;word-break:break-all;font-size:11px;margin-top:6px;color:#aaa}
   </style>
 </head>
 <body>
-  <h2>🔬 Firebase Auth Isolated Test</h2>
-  <p>Nothing else on this page. Pure Firebase only.</p>
+<h2>🔬 Auth Debug v2 — Isolating the exact failure</h2>
 
-  <div id="status" class="info">Waiting for Firebase to initialize...</div>
+<div>
+  <button class="btn" style="background:#3b9eff" onclick="step1()">Step 1: Check Firebase init</button>
+  <button class="btn" style="background:#fb923c" onclick="step2()">Step 2: Test API key (email lookup)</button>
+  <button class="btn" style="background:#a78bfa" onclick="step3()">Step 3: Test Google popup</button>
+  <button class="btn" style="background:#333;color:#aaa" onclick="document.getElementById('log').innerHTML=''">Clear</button>
+</div>
 
-  <br>
-  <button id="btn-google" onclick="testGoogle()">▶ Test Google Sign-In</button>
-  <button onclick="testConfig()" style="background:#222;color:#aaa;border:1px solid #444;">Check Config</button>
-  <button onclick="auth.signOut().then(()=>log('Signed out','info'))" style="background:#222;color:#aaa;border:1px solid #444;">Sign Out</button>
+<div id="log" style="margin-top:16px"></div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script>
-    function log(msg, type) {
-      const el = document.getElementById('status');
-      el.className = 'status ' + (type || 'info');
-      el.innerHTML = msg;
-      console.log('[AUTH TEST]', msg);
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script>
+const cfg = {
+  apiKey:"AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
+  authDomain:"pepstracker.firebaseapp.com",
+  projectId:"pepstracker"
+};
+let auth;
+
+function log(msg, type) {
+  const d = document.createElement('div');
+  d.className = 'log ' + (type||'');
+  d.innerHTML = msg;
+  document.getElementById('log').prepend(d);
+}
+
+// Patch XHR to intercept all network requests
+const origOpen = XMLHttpRequest.prototype.open;
+const origSend = XMLHttpRequest.prototype.send;
+XMLHttpRequest.prototype.open = function(method, url) {
+  this._url = url;
+  this._method = method;
+  return origOpen.apply(this, arguments);
+};
+XMLHttpRequest.prototype.send = function() {
+  this.addEventListener('error', function() {
+    log('<span class="err">❌ XHR NETWORK ERROR → ' + this._method + ' ' + this._url + '</span><br><small>This is likely the source of auth/internal-error</small>');
+  });
+  this.addEventListener('load', function() {
+    if (this.status >= 400) {
+      log('<span class="warn">⚠️ XHR ' + this.status + ' → ' + this._url.substring(0,80) + '</span>');
+    } else {
+      log('<span class="ok">✅ XHR ' + this.status + ' → ' + this._url.substring(0,80) + '</span>');
     }
+  });
+  return origSend.apply(this, arguments);
+};
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyArzH9f9tj-aXftLtGAXowVepaR3u61znc",
-      authDomain: "pepstracker.firebaseapp.com",
-      projectId: "pepstracker",
-      storageBucket: "pepstracker.firebasestorage.app",
-      messagingSenderId: "575079448915",
-      appId: "1:575079448915:web:4937336ccc15a6764ca1a6"
-    };
+// Patch fetch too
+const origFetch = window.fetch;
+window.fetch = function(url, opts) {
+  const urlStr = typeof url === 'string' ? url : url.url || String(url);
+  return origFetch.apply(this, arguments).then(r => {
+    if (!r.ok) log('<span class="warn">⚠️ FETCH ' + r.status + ' → ' + urlStr.substring(0,80) + '</span>');
+    else log('<span class="ok">✅ FETCH ' + r.status + ' → ' + urlStr.substring(0,80) + '</span>');
+    return r;
+  }).catch(e => {
+    log('<span class="err">❌ FETCH FAILED → ' + urlStr.substring(0,80) + '<br>' + e.message + '</span>');
+    throw e;
+  });
+};
 
-    try {
-      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-      window.auth = auth;
-      log('✅ Firebase initialized OK<br><small>Auth domain: ' + firebaseConfig.authDomain + '</small>', 'ok');
+// Step 1: Firebase init
+function step1() {
+  log('<span class="info">--- Step 1: Firebase initialization ---</span>');
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(cfg);
+    auth = firebase.auth();
+    log('<span class="ok">✅ firebase.apps: ' + firebase.apps.length + '</span>');
+    log('<span class="ok">✅ auth object: ' + typeof auth + '</span>');
+    log('<span class="ok">✅ authDomain: ' + cfg.authDomain + '</span>');
+    log('<span class="ok">✅ currentUser: ' + (auth.currentUser ? auth.currentUser.email : 'null (not signed in)') + '</span>');
+    auth.onAuthStateChanged(u => log('<span class="ok">🔔 onAuthStateChanged: ' + (u ? u.email : 'null') + '</span>'));
+  } catch(e) {
+    log('<span class="err">❌ Init FAILED: ' + e.code + ' — ' + e.message + '</span>');
+  }
+}
 
-      auth.onAuthStateChanged(user => {
-        if (user) {
-          log('✅ SIGNED IN!<br><pre>' +
-            'Email: ' + user.email + '\n' +
-            'Name: ' + user.displayName + '\n' +
-            'UID: ' + user.uid + '\n' +
-            'Provider: ' + (user.providerData[0]?.providerId || 'unknown') +
-          '</pre>', 'ok');
-        } else {
-          log('ℹ️ Not signed in. Click the button above to test Google sign-in.', 'info');
-        }
-      });
-    } catch(e) {
-      log('❌ Firebase init FAILED:<br><pre>' + e.message + '</pre>', 'err');
-    }
+// Step 2: Test API key with a simple non-OAuth call
+function step2() {
+  log('<span class="info">--- Step 2: API key test (fetchSignInMethodsForEmail) ---</span>');
+  if (!auth) { log('<span class="warn">Run Step 1 first</span>'); return; }
+  auth.fetchSignInMethodsForEmail('test@pepstracker.com')
+    .then(methods => log('<span class="ok">✅ API key WORKS — methods: [' + methods.join(',') + '] (empty = no account, that is OK)</span>'))
+    .catch(e => log('<span class="err">❌ API key FAILED: ' + e.code + ' — ' + e.message + '</span><pre>' + JSON.stringify(e, null, 2) + '</pre>'));
+}
 
-    function testGoogle() {
-      log('⏳ Opening Google sign-in popup...', 'info');
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: 'select_account' });
-      auth.signInWithPopup(provider)
-        .then(r => log('✅ SUCCESS! Signed in as: ' + r.user.email, 'ok'))
-        .catch(e => {
-          log('❌ FAILED<br><pre>' +
-            'Code:    ' + e.code + '\n' +
-            'Message: ' + e.message + '\n' +
-            'Email:   ' + (e.email || 'n/a') + '\n\n' +
-            'Full error:\n' + JSON.stringify(e, null, 2) +
-          '</pre>', 'err');
-        });
-    }
+// Step 3: Google popup
+function step3() {
+  log('<span class="info">--- Step 3: Google signInWithPopup ---</span>');
+  if (!auth) { log('<span class="warn">Run Step 1 first</span>'); return; }
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({prompt:'select_account'});
+  log('<span class="info">⏳ Opening popup...</span>');
+  auth.signInWithPopup(provider)
+    .then(r => log('<span class="ok">✅ SUCCESS: ' + r.user.email + '</span>'))
+    .catch(e => log('<span class="err">❌ FAILED: ' + e.code + '<br>Message: ' + e.message + '</span><pre>' + JSON.stringify({code:e.code, customData:e.customData, message:e.message}, null, 2) + '</pre>'));
+}
 
-    function testConfig() {
-      log('Config in use:<br><pre>' + JSON.stringify(firebaseConfig, null, 2) + '</pre>', 'info');
-    }
-  </script>
+// Auto-run step 1
+window.onload = () => { try { step1(); } catch(e){} };
+</script>
 </body>
 </html>
