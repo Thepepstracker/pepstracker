@@ -141,7 +141,12 @@ const db=firebase.firestore();
 let allBookings=[];
 let currentFilter="all";
 
-function signIn(){auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());}
+function signIn(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({prompt:'select_account'});
+  auth.signInWithRedirect(provider);
+}
+auth.getRedirectResult().catch(e => { if(e.code && e.code!=='auth/no-current-user') console.error('Auth redirect error:',e.code); });
 
 auth.onAuthStateChanged(async user=>{
   document.getElementById("loginWall").style.display="none";
