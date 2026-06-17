@@ -82,7 +82,7 @@ header {
   flex-wrap: wrap;
   gap: 8px;
   justify-content: center;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 }
 .proof-chip {
   display: inline-flex;
