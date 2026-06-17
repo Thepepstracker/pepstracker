@@ -133,9 +133,9 @@ header {
 /* ── Stats row — premium ────────────────────────────────────────── */
 .stats-row {
   display: flex !important;
-  justify-content: center !important;
-  gap: 0 !important;
-  max-width: 480px !important;
+  justify-content: space-evenly !important;
+  gap: 0;
+  max-width: 680px !important;
   margin: 0 auto 0 !important;
   background: rgba(255,255,255,0.025) !important;
   border: 1px solid rgba(59,158,255,0.12) !important;
