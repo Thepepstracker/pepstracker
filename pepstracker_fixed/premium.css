@@ -39,7 +39,7 @@ header {
 
 /* ── Hero — complete redesign ───────────────────────────────────── */
 .hero {
-  padding: 56px 20px 16px !important;
+  padding: 56px 20px 4px !important;
   background:
     radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,158,255,0.13) 0%, transparent 70%),
     radial-gradient(ellipse 50% 40% at 80% 80%, rgba(77,232,122,0.05) 0%, transparent 60%),
