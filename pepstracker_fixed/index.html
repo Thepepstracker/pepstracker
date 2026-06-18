@@ -2340,7 +2340,7 @@ function renderResults() {
       <div style="grid-column:1/-1;display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap;">
         <button class="btn-save-peptide" data-key="${r.vendor.id}::${currentPeptide}" onclick="toggleSaveListing('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)}, '${r.vendor.code}')">☆</button>
         <button class="btn-alert" data-alert-key="${r.vendor.id}::${currentPeptide}" onclick="openAlertModal('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)})">🔔 Alert</button>
-        <button class="btn-add-stack" data-peptide="${currentPeptide}" onclick="addToStack('${r.vendor.id}',currentPeptide,'${r.vendor.name}','${r.vendor.url}','${r.vendor.code||''}',${r.vendor.discount||0},${afterDisc.toFixed(2)},${r.mg},'${r.listing}')">+ Stack</button>
+        <button class="btn-add-stack" data-peptide="${currentPeptide}" data-vendor="${r.vendor.id}" onclick="addToStack('${r.vendor.id}',currentPeptide,'${r.vendor.name}','${r.vendor.url}','${r.vendor.code||''}',${r.vendor.discount||0},${afterDisc.toFixed(2)},${r.mg},'${r.listing}',this)">+ Stack</button>
       </div>
     </div>`;
   }).join('');
