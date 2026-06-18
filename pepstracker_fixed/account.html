@@ -1113,6 +1113,66 @@ window.addEventListener('stackUpdated', renderAccountStack);
       <div class="cal-cells" id="calCells"></div>
     </div>
 
+    <!-- ACTIVE STACK & REORDER REMINDERS -->
+    <div class="reminder-card" style="margin-top:20px;background:linear-gradient(135deg,rgba(59,158,255,.07) 0%,var(--card) 70%);border-color:rgba(59,158,255,.18);">
+      <h3>📦 Active Stack &amp; Reorder Reminders</h3>
+      <p>Log what you're currently running — dose, vial size, frequency — and PepsTracker calculates exactly when you'll run out and reminds you before you do.</p>
+
+      <div id="activeStackList" style="display:flex;flex-direction:column;gap:10px;margin:16px 0;"></div>
+
+      <button class="notif-btn" id="addStackItemBtn" onclick="openAddStackForm()" style="background:rgba(59,158,255,.1);border-color:rgba(59,158,255,.3);color:var(--blue);">
+        + Add Something You're Taking
+      </button>
+
+      <!-- Add/Edit form (hidden by default) -->
+      <div id="stackItemForm" style="display:none;margin-top:14px;padding:16px;background:rgba(0,0,0,.25);border:1px solid rgba(59,158,255,.15);border-radius:12px;">
+        <div class="form-row-2" style="margin-bottom:10px;">
+          <div>
+            <label class="form-label">Compound</label>
+            <select class="form-select" id="sPeptide"></select>
+          </div>
+          <div>
+            <label class="form-label">Vendor (optional)</label>
+            <input class="form-input" id="sVendor" placeholder="e.g. Ion Peptides"/>
+          </div>
+        </div>
+        <div class="form-row-2" style="margin-bottom:10px;">
+          <div>
+            <label class="form-label">Dose per administration (mg)</label>
+            <input class="form-input" type="number" step="0.01" id="sDose" placeholder="e.g. 0.25"/>
+          </div>
+          <div>
+            <label class="form-label">Total vial size (mg)</label>
+            <input class="form-input" type="number" step="0.01" id="sVialSize" placeholder="e.g. 5"/>
+          </div>
+        </div>
+        <div class="form-row-2" style="margin-bottom:10px;">
+          <div>
+            <label class="form-label">How often?</label>
+            <select class="form-select" id="sFrequency">
+              <option value="1">Daily</option>
+              <option value="2">Every 2 days</option>
+              <option value="3">Every 3 days</option>
+              <option value="7" selected>Weekly</option>
+              <option value="14">Every 2 weeks</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Start date</label>
+            <input class="form-input" type="date" id="sStartDate"/>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px;">
+          <button class="notif-btn" onclick="saveStackItem()" style="background:var(--blue);border-color:var(--blue);color:#fff;flex:1;">Save</button>
+          <button class="notif-btn" onclick="closeStackForm()" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);color:var(--muted);flex:1;">Cancel</button>
+        </div>
+      </div>
+
+      <div id="stackEmailNote" style="font-size:.72rem;color:var(--muted);margin-top:12px;line-height:1.6;">
+        📧 Email + browser reminders fire when you're within 5 days of running out — works automatically whenever you visit PepsTracker.
+      </div>
+    </div>
+
     <!-- REMINDERS -->
     <div class="reminder-card">
       <h3>🔔 Protocol Reminders</h3>
@@ -1547,6 +1607,11 @@ auth.onAuthStateChanged(async user => {
     // Check if reminder is due
     checkReminderDue(data);
 
+    // Load active stack + render + check reorder reminders
+    activeStack = data.activeStack || [];
+    renderActiveStack();
+    checkActiveStackReminders();
+
     // Load profile + saved + alerts
     renderProfile(data);
     renderSaved(data.savedListings || []);
@@ -1931,6 +1996,175 @@ function updateReminderStatus() {
 async function saveReminderPrefs() {
   if (!currentUser) return;
   await db.collection("users").doc(currentUser.uid).set({ reminderPrefs }, { merge: true });
+}
+
+// ── ACTIVE STACK & REORDER REMINDERS ──────────────────────────────────────
+let activeStack = [];
+let editingStackId = null;
+
+function freqLabel(days) {
+  return { "1": "Daily", "2": "Every 2 days", "3": "Every 3 days", "7": "Weekly", "14": "Every 2 weeks" }[String(days)] || days + " days";
+}
+
+function calcStackRunOut(item) {
+  const dosesPerVial = item.vialSize / item.dose;
+  const daysSupply = dosesPerVial * item.frequency;
+  const start = new Date(item.startDate + "T00:00:00");
+  const runOut = new Date(start.getTime() + daysSupply * 86400000);
+  const daysLeft = Math.ceil((runOut.getTime() - Date.now()) / 86400000);
+  return { daysSupply: Math.round(daysSupply), runOut, daysLeft };
+}
+
+function openAddStackForm() {
+  editingStackId = null;
+  const sel = document.getElementById("sPeptide");
+  sel.innerHTML = PEPTIDES.map(p => `<option value="${p}">${p}</option>`).join("");
+  document.getElementById("sVendor").value = "";
+  document.getElementById("sDose").value = "";
+  document.getElementById("sVialSize").value = "";
+  document.getElementById("sFrequency").value = "7";
+  document.getElementById("sStartDate").value = new Date().toISOString().slice(0,10);
+  document.getElementById("stackItemForm").style.display = "block";
+  document.getElementById("addStackItemBtn").style.display = "none";
+}
+
+function closeStackForm() {
+  document.getElementById("stackItemForm").style.display = "none";
+  document.getElementById("addStackItemBtn").style.display = "block";
+  editingStackId = null;
+}
+
+function editStackItem(id) {
+  const item = activeStack.find(i => i.id === id);
+  if (!item) return;
+  editingStackId = id;
+  const sel = document.getElementById("sPeptide");
+  sel.innerHTML = PEPTIDES.map(p => `<option value="${p}" ${p===item.peptide?'selected':''}>${p}</option>`).join("");
+  document.getElementById("sVendor").value = item.vendor || "";
+  document.getElementById("sDose").value = item.dose;
+  document.getElementById("sVialSize").value = item.vialSize;
+  document.getElementById("sFrequency").value = item.frequency;
+  document.getElementById("sStartDate").value = item.startDate;
+  document.getElementById("stackItemForm").style.display = "block";
+  document.getElementById("addStackItemBtn").style.display = "none";
+}
+
+async function saveStackItem() {
+  const peptide = document.getElementById("sPeptide").value;
+  const vendor  = document.getElementById("sVendor").value.trim();
+  const dose    = parseFloat(document.getElementById("sDose").value);
+  const vialSize= parseFloat(document.getElementById("sVialSize").value);
+  const frequency = parseInt(document.getElementById("sFrequency").value);
+  const startDate = document.getElementById("sStartDate").value;
+
+  if (!peptide || !dose || !vialSize || !startDate) {
+    showToast("Fill in dose, vial size, and start date", "error");
+    return;
+  }
+
+  const item = {
+    id: editingStackId || ("stack_" + Date.now()),
+    peptide, vendor, dose, vialSize, frequency, startDate,
+    lastRemindedDate: editingStackId ? (activeStack.find(i=>i.id===editingStackId)?.lastRemindedDate || null) : null
+  };
+
+  if (editingStackId) {
+    activeStack = activeStack.map(i => i.id === editingStackId ? item : i);
+  } else {
+    activeStack.push(item);
+  }
+
+  await db.collection("users").doc(currentUser.uid).set({ activeStack }, { merge: true });
+  closeStackForm();
+  renderActiveStack();
+  showToast("✓ Stack updated");
+}
+
+async function deleteStackItem(id) {
+  activeStack = activeStack.filter(i => i.id !== id);
+  await db.collection("users").doc(currentUser.uid).set({ activeStack }, { merge: true });
+  renderActiveStack();
+}
+
+function renderActiveStack() {
+  const c = document.getElementById("activeStackList");
+  if (!c) return;
+  if (!activeStack.length) {
+    c.innerHTML = `<div style="text-align:center;padding:18px;color:var(--muted);font-size:.85rem;">Nothing logged yet — add what you're currently taking below.</div>`;
+    return;
+  }
+
+  c.innerHTML = activeStack.map(item => {
+    const { daysSupply, runOut, daysLeft } = calcStackRunOut(item);
+    const pct = Math.max(0, Math.min(100, 100 - (daysLeft / daysSupply * 100)));
+    let color = "#4de87a", urgency = "";
+    if (daysLeft <= 3) { color = "#ff5c5c"; urgency = "⚠️ "; }
+    else if (daysLeft <= 7) { color = "#f5c842"; urgency = "⏰ "; }
+
+    const runOutStr = runOut.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+    return `
+    <div style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 16px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+        <div>
+          <div style="font-weight:800;font-size:.95rem;color:var(--text);">${item.peptide}</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:2px;">${item.dose}mg · ${freqLabel(item.frequency)}${item.vendor ? " · " + item.vendor : ""}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-weight:900;font-size:.95rem;color:${color};">${urgency}${daysLeft > 0 ? daysLeft + "d left" : "Out now"}</div>
+          <div style="font-size:.68rem;color:var(--muted);">Runs out ${runOutStr}</div>
+        </div>
+      </div>
+      <div style="height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin-top:10px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;"></div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:10px;">
+        <button onclick="editStackItem('${item.id}')" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:.72rem;font-weight:700;padding:6px;border-radius:7px;cursor:pointer;">Edit</button>
+        <button onclick="deleteStackItem('${item.id}')" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:.72rem;font-weight:700;padding:6px;border-radius:7px;cursor:pointer;">Remove</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// Check all active stack items for reorder reminders — fires on page load
+function checkActiveStackReminders() {
+  if (!activeStack.length) return;
+  const today = new Date().toISOString().slice(0,10);
+
+  activeStack.forEach(item => {
+    const { daysLeft } = calcStackRunOut(item);
+    if (daysLeft <= 5 && item.lastRemindedDate !== today) {
+      // Browser notification
+      if (Notification.permission === "granted") {
+        new Notification("PepsTracker 📦 Reorder Reminder", {
+          body: `${item.peptide} runs out in ${daysLeft > 0 ? daysLeft + " day" + (daysLeft!==1?"s":"") : "less than a day"} — time to reorder!`,
+          icon: "/favicon.png",
+          badge: "/favicon.png",
+          tag: "peps-reorder-" + item.id
+        });
+      }
+      // Email reminder (EmailJS — requires EMAILJS_PUBLIC_KEY / SERVICE_ID / TEMPLATE_ID configured)
+      sendReorderEmail(item, daysLeft);
+
+      item.lastRemindedDate = today;
+    }
+  });
+
+  // Persist lastRemindedDate updates
+  if (currentUser) {
+    db.collection("users").doc(currentUser.uid).set({ activeStack }, { merge: true });
+  }
+}
+
+function sendReorderEmail(item, daysLeft) {
+  // Requires EmailJS account — see EMAILJS SETUP note in code comments
+  if (typeof emailjs === "undefined" || !window.EMAILJS_CONFIGURED) return;
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    to_email: currentUser.email,
+    peptide_name: item.peptide,
+    days_left: daysLeft,
+    compare_url: "https://pepstracker.com/?peptide=" + encodeURIComponent(item.peptide)
+  }).catch(e => console.error("Reorder email failed:", e));
 }
 
 function checkReminderDue(data) {
