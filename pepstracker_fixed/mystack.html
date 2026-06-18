@@ -244,23 +244,56 @@ function render() {
   });
 }
 
+function buildCartUrl(item) {
+  // WooCommerce add-to-cart shortcut: visiting ANY page on the site with
+  // ?add-to-cart={id} adds that exact product straight to the cart — no manual click.
+  if (!item.cartId) return null;
+  try {
+    const base = new URL(item.vendorUrl);
+    return `${base.origin}/?add-to-cart=${item.cartId}`;
+  } catch { return null; }
+}
+
 function buyNowAllTabs() {
   const stack = loadStack();
   const items = stack.items || [];
   if (!items.length) return;
 
-  const uniqueEntries = [...new Map(items.map(i => [i.vendorId, {url: i.vendorUrl, name: i.vendorName}])).values()];
-  const blocked = [];
+  // Cart-able items: each gets its OWN tab, even multiple from the same vendor —
+  // every visit appends to that vendor's session cart, so 3 Nura items = 3 tabs,
+  // all landing in the same cart.
+  const cartable = items.filter(i => i.cartId);
+  // Non-mapped items: dedupe by vendor, open their product page so the user adds manually.
+  const manual = [...new Map(
+    items.filter(i => !i.cartId).map(i => [i.vendorId, {url: i.vendorUrl, name: i.vendorName}])
+  ).values()];
 
-  uniqueEntries.forEach(({url, name}) => {
+  const blocked = [];
+  let opened = 0;
+
+  cartable.forEach(item => {
+    const url = buildCartUrl(item);
+    if (!url) return;
+    const win = window.open(url, "_blank");
+    if (!win || win.closed || typeof win.closed === "undefined") {
+      blocked.push({url, name: `${item.peptide} (${item.vendorName})`});
+    } else opened++;
+  });
+
+  manual.forEach(({url, name}) => {
     const win = window.open(url, "_blank");
     if (!win || win.closed || typeof win.closed === "undefined") {
       blocked.push({url, name});
-    }
+    } else opened++;
   });
 
+  const cartableCount = cartable.length;
+  const manualCount = manual.length;
+
   if (blocked.length === 0) {
-    if (window.ptToast) ptToast(`Opened ${uniqueEntries.length} vendor tab${uniqueEntries.length!==1?'s':''}`);
+    let msg = `Opened ${opened} tab${opened!==1?'s':''}`;
+    if (cartableCount > 0) msg += ` — ${cartableCount} added straight to cart`;
+    if (window.ptToast) ptToast(msg);
   } else {
     showBlockedTabsBanner(blocked);
   }
