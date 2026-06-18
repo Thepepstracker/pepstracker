@@ -2277,7 +2277,7 @@ function renderResults() {
     .map(v => {
       const d = Array.isArray(priceMap[v.id]) ? priceMap[v.id][0] : priceMap[v.id];
       const sizes = Array.isArray(priceMap[v.id]) ? priceMap[v.id] : [priceMap[v.id]];
-      return { vendor:v, price:d.price, mg:d.mg, listing:d.listing, oos:d.oos===true, sizes, bogo:d.bogo===true, originalPrice:d.originalPrice||d.price };
+      return { vendor:v, price:d.price, mg:d.mg, listing:d.listing, oos:d.oos===true, sizes, bogo:d.bogo===true, originalPrice:d.originalPrice||d.price, cartId:d.cartId||null, productUrl:d.url };
     });
 
   const inStock = rows.filter(r => !r.oos);
@@ -2344,7 +2344,7 @@ function renderResults() {
       <div style="grid-column:1/-1;display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap;">
         <button class="btn-save-peptide" data-key="${r.vendor.id}::${currentPeptide}" onclick="toggleSaveListing('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)}, '${r.vendor.code}')">☆</button>
         <button class="btn-alert" data-alert-key="${r.vendor.id}::${currentPeptide}" onclick="openAlertModal('${r.vendor.id}', currentPeptide, '${r.vendor.name}', ${afterDisc.toFixed(2)})">🔔 Alert</button>
-        <button class="btn-add-stack" data-peptide="${currentPeptide}" data-vendor="${r.vendor.id}" onclick="addToStack('${r.vendor.id}',currentPeptide,'${r.vendor.name}','${r.vendor.url}','${r.vendor.code||''}',${r.vendor.discount||0},${afterDisc.toFixed(2)},${r.mg},'${r.listing}',this)">+ Stack</button>
+        <button class="btn-add-stack" data-peptide="${currentPeptide}" data-vendor="${r.vendor.id}" onclick="addToStack('${r.vendor.id}',currentPeptide,'${r.vendor.name}','${r.productUrl||r.vendor.url}','${r.vendor.code||''}',${r.vendor.discount||0},${afterDisc.toFixed(2)},${r.mg},'${r.listing}',this,${r.cartId||'null'})">+ Stack</button>
       </div>
     </div>`;
   }).join('');
