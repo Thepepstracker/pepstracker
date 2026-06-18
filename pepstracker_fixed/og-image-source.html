@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fira+Code:wght@500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:#0a0c11; --card:#161b25; --border:#2a3347;
+    --blue:#3b9eff; --green:#4de87a; --gold:#f5c842;
+    --text:#f3f6fb; --muted:#8294b3;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    width:1200px; height:630px; overflow:hidden;
+    background:var(--bg);
+    font-family:'Plus Jakarta Sans', sans-serif;
+    position:relative;
+  }
+  /* layered glow背景 */
+  .bg-grid {
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(59,158,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,158,255,.05) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 900px 500px at 50% 40%, black 0%, transparent 75%);
+  }
+  .glow-blue {
+    position:absolute; top:-220px; left:-160px; width:760px; height:760px;
+    background:radial-gradient(circle, rgba(59,158,255,.30) 0%, transparent 70%);
+  }
+  .glow-green {
+    position:absolute; bottom:-260px; right:-180px; width:820px; height:820px;
+    background:radial-gradient(circle, rgba(77,232,122,.22) 0%, transparent 70%);
+  }
+  .frame {
+    position:absolute; inset:18px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:28px;
+  }
+  .top-line {
+    position:absolute; top:0; left:64px; right:64px; height:3px;
+    background:linear-gradient(90deg, var(--blue), var(--green));
+    border-radius:0 0 4px 4px;
+  }
+  .content {
+    position:relative; z-index:2;
+    height:100%; width:100%;
+    display:flex; flex-direction:column;
+    justify-content:center;
+    padding: 0 76px;
+  }
+  .eyebrow {
+    display:inline-flex; align-items:center; gap:8px;
+    color:var(--green); font-size:15px; font-weight:700;
+    letter-spacing:.12em; text-transform:uppercase;
+    margin-bottom:22px;
+  }
+  .eyebrow .dot {
+    width:8px; height:8px; border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 12px var(--green);
+  }
+  .logo {
+    font-size:64px; font-weight:800; letter-spacing:-0.02em;
+    margin-bottom:14px; line-height:1;
+  }
+  .logo .peps { color:var(--blue); }
+  .logo .tracker {
+    background:linear-gradient(90deg, var(--green), #6df0a3);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .tagline {
+    font-size:25px; font-weight:500; color:var(--muted);
+    margin-bottom:42px; max-width:780px; line-height:1.4;
+  }
+  .tagline b { color:var(--text); font-weight:700; }
+  .stats-row {
+    display:flex; gap:0;
+    background:rgba(255,255,255,.025);
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:18px;
+    overflow:hidden;
+  }
+  .stat {
+    flex:1; padding:24px 8px; text-align:center;
+    border-right:1px solid rgba(255,255,255,.07);
+  }
+  .stat:last-child { border-right:none; }
+  .stat .num {
+    font-family:'Fira Code', monospace; font-weight:700;
+    font-size:40px; line-height:1;
+  }
+  .stat .num.blue { color:var(--blue); }
+  .stat .num.green { color:var(--green); }
+  .stat .label {
+    font-size:14px; color:var(--muted); font-weight:600;
+    text-transform:uppercase; letter-spacing:.08em; margin-top:8px;
+  }
+  .domain-tag {
+    position:absolute; bottom:42px; right:76px; z-index:2;
+    font-family:'Fira Code', monospace; font-size:18px; font-weight:600;
+    color:var(--muted);
+  }
+</style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="glow-blue"></div>
+  <div class="glow-green"></div>
+  <div class="frame"></div>
+  <div class="top-line"></div>
+
+  <div class="content">
+    <div class="eyebrow"><span class="dot"></span> LIVE PRICES · UPDATED DAILY</div>
+    <div class="logo"><span class="peps">Peps</span><span class="tracker">Tracker</span></div>
+    <div class="tagline">Compare <b>87+ peptide compounds</b> across <b>21 vendors</b> — sorted by cost-per-mg, every discount code already applied.</div>
+
+    <div class="stats-row">
+      <div class="stat"><div class="num blue">21</div><div class="label">Vendors</div></div>
+      <div class="stat"><div class="num green">87+</div><div class="label">Compounds</div></div>
+      <div class="stat"><div class="num blue">Daily</div><div class="label">Price Updates</div></div>
+      <div class="stat"><div class="num green">Free</div><div class="label">Always</div></div>
+    </div>
+  </div>
+
+  <div class="domain-tag">pepstracker.com</div>
+</body>
+</html>
