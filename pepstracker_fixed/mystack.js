@@ -27,22 +27,30 @@
   };
 
   // ── Add to stack ──────────────────────────────────────────
-  window.addToStack = function(vendorId, peptide, vendorName, vendorUrl, code, discount, price, mg, listing) {
+  window.addToStack = function(vendorId, peptide, vendorName, vendorUrl, code, discount, price, mg, listing, btnEl) {
     const stack = loadStack();
     const existing = stack.items.findIndex(i => i.peptide === peptide);
     const item = { peptide, vendorId, vendorName, vendorUrl, code, discount,
                    price: parseFloat(price), mg: parseFloat(mg), listing,
                    addedAt: Date.now() };
 
+    const wasSwitch = existing >= 0 && stack.items[existing].vendorId !== vendorId;
+
     if (existing >= 0) {
-      stack.items[existing] = item; // update with new best price
-      if (window.ptToast) ptToast('✓ ' + peptide + ' updated in stack');
+      stack.items[existing] = item; // update with new best price / switch vendor
+      if (window.ptToast) ptToast(wasSwitch ? '✓ Switched ' + peptide + ' to ' + vendorName : '✓ ' + peptide + ' updated in stack');
     } else {
       stack.items.push(item);
       if (window.ptToast) ptToast('✓ ' + peptide + ' added to MyStack');
     }
     saveStack(stack);
     updateStackBadge();
+
+    // Pop animation on the exact button clicked
+    if (btnEl) {
+      btnEl.classList.add('stack-pop');
+      setTimeout(() => btnEl.classList.remove('stack-pop'), 350);
+    }
   };
 
   // ── Remove from stack ─────────────────────────────────────
@@ -64,9 +72,19 @@
     // Update add-to-stack buttons active state
     document.querySelectorAll('.btn-add-stack').forEach(btn => {
       const pep = btn.dataset.peptide;
-      const inStack = stack.items.some(i => i.peptide === pep);
+      const vendor = btn.dataset.vendor;
+      // Only THIS exact vendor's card should show "In Stack" — matching peptide alone
+      // would falsely light up every vendor card for the same compound.
+      const inStack = stack.items.some(i => i.peptide === pep && i.vendorId === vendor);
+      const peptideInStackElsewhere = !inStack && stack.items.some(i => i.peptide === pep);
       btn.classList.toggle('in-stack', inStack);
-      btn.textContent = inStack ? '✓ In Stack' : '+ Stack';
+      if (inStack) {
+        btn.textContent = '✓ In Stack';
+      } else if (peptideInStackElsewhere) {
+        btn.textContent = '⇄ Switch Here';
+      } else {
+        btn.textContent = '+ Stack';
+      }
     });
   };
 
