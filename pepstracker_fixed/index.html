@@ -2330,7 +2330,7 @@ function renderResults() {
     <div class="result-card ${isBest?'best':''} animate-in" style="animation-delay:${i*45}ms">
       <div class="rank ${rank===0?'first':''}">${rank===0?'🥇':'#'+(rank+1)}</div>
       <div>
-        <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><img class="vendor-favicon" src="https://www.google.com/s2/favicons?domain=${r.vendor.domain}&sz=64" width="28" height="28" style="width:28px;height:28px;object-fit:contain;" alt="" onerror="this.style.display='none'" />${r.vendor.name}${isBogo?'<span class="bogo-badge">🎁 BOGO</span>':''}${isBest?'<span class="best-badge">Best Value</span>':''}</div>
+        <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><img class="vendor-favicon" src="https://www.google.com/s2/favicons?domain=${r.vendor.domain}&sz=64" width="28" height="28" style="width:28px;height:28px;object-fit:contain;" alt="" onerror="this.style.display='none'" />${r.vendor.name}${isBogo?'<span class="bogo-badge">🎁 BOGO</span>':''}${isBest?'<span class="best-badge">Best Value</span>':''}</div>${r.vendor.promo?`<div style="font-size:.68rem;font-weight:700;color:#f5c842;margin:2px 0 0 36px;letter-spacing:.01em;">${r.vendor.promo}</div>`:""}
         <div class="vendor-listing">Listed as: <em>${r.listing}</em> &nbsp;·&nbsp; <a href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-size:.7rem;font-weight:600;text-decoration:none;">See all sizes →</a></div>
       </div>
       <div class="price-block">
