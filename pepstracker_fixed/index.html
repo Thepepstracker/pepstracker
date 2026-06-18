@@ -483,7 +483,11 @@
 .btn-add-stack:hover{background:rgba(77,232,122,.15);border-color:rgba(77,232,122,.4);transform:translateY(-1px)}
 .btn-add-stack.in-stack{background:rgba(77,232,122,.15);border-color:rgba(77,232,122,.5)}
 .btn-add-stack:active{transform:scale(.96)}
-    </style>
+    
+.btn-add-stack.stack-pop{animation:stackPop .35s ease;}
+@keyframes stackPop{0%{transform:scale(1);}40%{transform:scale(1.18);}100%{transform:scale(1);}}
+.btn-add-stack.switch-here{background:rgba(245,200,66,.08);border-color:rgba(245,200,66,.3);color:#f5c842;}
+</style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -2663,7 +2667,7 @@ function addShareBtn(peptide) {
   </div>
 
   <script src="/advisor-widget.js" defer></script>
-  <script src="/mystack.js?v=2"></script>
+  <script src="/mystack.js?v=3"></script>
   <script src="/polished.js" defer></script>
   <script src="/premium.js" defer>
 // ── Price Alert System ────────────────────────────────────────────
