@@ -324,15 +324,18 @@ function render() {
         </div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Weight</label>
-          <input type="number" id="weight" placeholder="e.g. 185" value="${profile.weight}" onchange="profile.weight=this.value" />
-          <div class="field-hint">
-            <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:.78rem;color:var(--muted);text-transform:none;letter-spacing:0;">
-              <input type="checkbox" ${profile.weightUnit==='kg'?'checked':''} onchange="profile.weightUnit=this.checked?'kg':'lbs';document.getElementById('wunit').textContent=this.checked?'kg':'lbs'" style="accent-color:var(--blue);width:14px;height:14px;" />
-              <span id="wunit">${profile.weightUnit==='kg'?'kg':'lbs'}</span>
+        <div class="field">
+            <label style="display:flex;align-items:center;justify-content:space-between;">
+              Weight
+              <span style="display:inline-flex;border:1px solid rgba(59,158,255,.3);border-radius:20px;overflow:hidden;font-size:.72rem;font-weight:800;">
+                <button type="button" id="btn-lbs" onclick="setWeightUnit('lbs')"
+                  style="padding:3px 12px;border:none;cursor:pointer;transition:all .15s;background:${profile.weightUnit==='lbs'?'var(--blue)':'transparent'};color:${profile.weightUnit==='lbs'?'#fff':'var(--muted)'};">lbs</button>
+                <button type="button" id="btn-kg" onclick="setWeightUnit('kg')"
+                  style="padding:3px 12px;border:none;cursor:pointer;transition:all .15s;background:${profile.weightUnit==='kg'?'var(--blue)':'transparent'};color:${profile.weightUnit==='kg'?'#fff':'var(--muted)'};">kg</button>
+              </span>
             </label>
+            <input type="number" id="weight" placeholder="${profile.weightUnit==='lbs'?'e.g. 185':'e.g. 84'}" value="${profile.weight}" onchange="profile.weight=this.value" />
           </div>
-        </div>
         <div class="field"><label>Activity Level</label>
           <select onchange="profile.activity=this.value">
             <option value="" ${!profile.activity?'selected':''}>Select…</option>
