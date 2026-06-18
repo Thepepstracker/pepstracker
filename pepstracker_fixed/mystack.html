@@ -100,7 +100,11 @@
       .sc-right{text-align:left;width:100%}
       .sc-btns{justify-content:flex-start}
     }
-  </style>
+  
+.buy-now-btn{width:100%;background:linear-gradient(135deg,#4de87a,#2bc55f);color:#06160c;font-weight:900;font-size:.95rem;padding:14px;border:none;border-radius:12px;cursor:pointer;margin-bottom:16px;box-shadow:0 4px 18px rgba(77,232,122,.3);transition:all .15s ease;}
+.buy-now-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(77,232,122,.45);}
+.buy-now-btn:active{transform:scale(.98);}
+</style>
 </head>
 <body>
 <header>
@@ -139,6 +143,7 @@
     <div class="shop-section">
       <div class="shop-title">🛒 Ready to order?</div>
       <div class="shop-sub">Your stack split by vendor — discount codes pre-applied.</div>
+      <button class="buy-now-btn" onclick="buyNowAllTabs()">⚡ Buy Now — Open All Vendor Tabs</button>
       <div id="vGroups"></div>
     </div>
   </div>
@@ -237,6 +242,17 @@ function render() {
       <a class="vg-shop" href="${g.url}" target="_blank" rel="noopener">Shop ${g.name} →</a>`;
     vg.appendChild(d);
   });
+}
+
+function buyNowAllTabs() {
+  const stack = loadStack();
+  const items = stack.items || [];
+  if (!items.length) return;
+
+  const uniqueUrls = [...new Map(items.map(i => [i.vendorId, i.vendorUrl])).values()];
+  uniqueUrls.forEach(url => window.open(url, "_blank"));
+
+  if (window.ptToast) ptToast(`Opening ${uniqueUrls.length} vendor tab${uniqueUrls.length!==1?'s':''}...`);
 }
 
 renderGoals();
