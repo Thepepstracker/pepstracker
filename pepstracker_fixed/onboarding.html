@@ -583,6 +583,21 @@ async function saveProfile() {
 }
 
 render();
+
+// ── Weight unit toggle ────────────────────────────────────────────────────
+function setWeightUnit(unit) {
+  profile.weightUnit = unit;
+  const btnLbs = document.getElementById('btn-lbs');
+  const btnKg  = document.getElementById('btn-kg');
+  if (btnLbs) {
+    btnLbs.style.background = unit==='lbs' ? 'var(--blue)' : 'transparent';
+    btnLbs.style.color      = unit==='lbs' ? '#fff' : 'var(--muted,#999)';
+    btnKg.style.background  = unit==='kg'  ? 'var(--blue)' : 'transparent';
+    btnKg.style.color       = unit==='kg'  ? '#fff' : 'var(--muted,#999)';
+  }
+  const weightInput = document.getElementById('weight');
+  if (weightInput) weightInput.placeholder = unit==='lbs' ? 'e.g. 185' : 'e.g. 84';
+}
 </script>
   <script src="/polished.js" defer></script>
   <script src="/premium.js" defer></script>
