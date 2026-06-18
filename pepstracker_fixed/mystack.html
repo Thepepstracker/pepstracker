@@ -249,10 +249,43 @@ function buyNowAllTabs() {
   const items = stack.items || [];
   if (!items.length) return;
 
-  const uniqueUrls = [...new Map(items.map(i => [i.vendorId, i.vendorUrl])).values()];
-  uniqueUrls.forEach(url => window.open(url, "_blank"));
+  const uniqueEntries = [...new Map(items.map(i => [i.vendorId, {url: i.vendorUrl, name: i.vendorName}])).values()];
+  const blocked = [];
 
-  if (window.ptToast) ptToast(`Opening ${uniqueUrls.length} vendor tab${uniqueUrls.length!==1?'s':''}...`);
+  uniqueEntries.forEach(({url, name}) => {
+    const win = window.open(url, "_blank");
+    if (!win || win.closed || typeof win.closed === "undefined") {
+      blocked.push({url, name});
+    }
+  });
+
+  if (blocked.length === 0) {
+    if (window.ptToast) ptToast(`Opened ${uniqueEntries.length} vendor tab${uniqueEntries.length!==1?'s':''}`);
+  } else {
+    showBlockedTabsBanner(blocked);
+  }
+}
+
+function showBlockedTabsBanner(blocked) {
+  let banner = document.getElementById("blockedTabsBanner");
+  if (banner) banner.remove();
+
+  banner = document.createElement("div");
+  banner.id = "blockedTabsBanner";
+  banner.style = "background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.3);border-radius:12px;padding:14px 16px;margin-bottom:16px;";
+  banner.innerHTML = `
+    <div style="font-weight:800;font-size:.85rem;color:#f5c842;margin-bottom:8px;">
+      ⚠️ Your browser blocked ${blocked.length} tab${blocked.length!==1?'s':''}
+    </div>
+    <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;">
+      Click each link below to open manually, or allow pop-ups for pepstracker.com (click the blocked-popup icon in your address bar) so this works in one click next time.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      ${blocked.map(b => `<a href="${b.url}" target="_blank" rel="noopener" style="color:#3b9eff;font-size:.82rem;font-weight:700;text-decoration:none;">→ Shop ${b.name}</a>`).join('')}
+    </div>`;
+
+  const shopSection = document.getElementById("shopSection");
+  shopSection.insertBefore(banner, shopSection.firstChild);
 }
 
 renderGoals();
