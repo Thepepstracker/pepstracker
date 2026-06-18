@@ -27,13 +27,14 @@
   };
 
   // ── Add to stack ──────────────────────────────────────────
-  window.addToStack = function(vendorId, peptide, vendorName, vendorUrl, code, discount, price, mg, listing, btnEl) {
+  window.addToStack = function(vendorId, peptide, vendorName, vendorUrl, code, discount, price, mg, listing, btnEl, cartId) {
     const stack = loadStack();
     // Key on vendor + peptide together — each vendor's listing is its own
     // independent stack entry. Want Semaglutide from 5 different vendors? Go for it.
     const existing = stack.items.findIndex(i => i.peptide === peptide && i.vendorId === vendorId);
     const item = { peptide, vendorId, vendorName, vendorUrl, code, discount,
                    price: parseFloat(price), mg: parseFloat(mg), listing,
+                   cartId: cartId || null,
                    addedAt: Date.now() };
 
     if (existing >= 0) {
