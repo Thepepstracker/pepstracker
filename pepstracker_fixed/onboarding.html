@@ -313,9 +313,9 @@ function render() {
       <div class="step-title">Body Stats</div>
       <div class="step-sub">Used to calculate personalized dosage ranges. All data is private and saved only to your account.</div>
       <div class="field-row">
-        <div class="field"><label>Age</label><input type="number" id="age" placeholder="e.g. 35" value="${profile.age}" min="18" max="100" onchange="profile.age=this.value" /></div>
+        <div class="field"><label>Age</label><input type="number" id="age" placeholder="e.g. 35" value="${profile.age}" min="18" max="100" onchange="profile.age=this.value;checkStep1()" /></div>
         <div class="field"><label>Biological Sex</label>
-          <select id="sex" onchange="profile.sex=this.value">
+          <select id="sex" onchange="profile.sex=this.value;checkStep1()">
             <option value="" ${!profile.sex?'selected':''}>Select…</option>
             <option value="male" ${profile.sex==='male'?'selected':''}>Male</option>
             <option value="female" ${profile.sex==='female'?'selected':''}>Female</option>
@@ -334,10 +334,10 @@ function render() {
                   style="padding:3px 12px;border:none;cursor:pointer;transition:all .15s;background:${profile.weightUnit==='kg'?'var(--blue)':'transparent'};color:${profile.weightUnit==='kg'?'#fff':'var(--muted)'};">kg</button>
               </span>
             </label>
-            <input type="number" id="weight" placeholder="${profile.weightUnit==='lbs'?'e.g. 185':'e.g. 84'}" value="${profile.weight}" onchange="profile.weight=this.value" />
+            <input type="number" id="weight" placeholder="${profile.weightUnit==='lbs'?'e.g. 185':'e.g. 84'}" value="${profile.weight}" onchange="profile.weight=this.value;checkStep1()" />
           </div>
         <div class="field"><label>Activity Level</label>
-          <select onchange="profile.activity=this.value">
+          <select onchange="profile.activity=this.value;checkStep1()">
             <option value="" ${!profile.activity?'selected':''}>Select…</option>
             <option value="sedentary" ${profile.activity==='sedentary'?'selected':''}>Sedentary</option>
             <option value="light" ${profile.activity==='light'?'selected':''}>Lightly active</option>
@@ -349,7 +349,7 @@ function render() {
       </div>
       <div class="btns">
         <button class="btn-back" onclick="prevStep()">← Back</button>
-        <button class="btn-next" onclick="nextStep()" ${!profile.age||!profile.sex||!profile.weight?'disabled':''}>Next →</button>
+        <button class="btn-next" id="nextBtn" onclick="nextStep()" ${!profile.age||!profile.sex||!profile.weight?'disabled':''}>Next →</button>
       </div>
     </div>`;
   }
@@ -597,7 +597,15 @@ function setWeightUnit(unit) {
   }
   const weightInput = document.getElementById('weight');
   if (weightInput) weightInput.placeholder = unit==='lbs' ? 'e.g. 185' : 'e.g. 84';
+  checkStep1();
 }
+// ── Fix: Step 1's Next button disabled state was computed once at render
+// and never updated as fields were filled in. This re-checks it live. ──
+function checkStep1() {
+  const btn = document.getElementById('nextBtn');
+  if (btn) btn.disabled = !profile.age || !profile.sex || !profile.weight;
+}
+
 </script>
   <script src="/polished.js" defer></script>
   <script src="/premium.js" defer></script>
