@@ -466,6 +466,64 @@ SKIP_VENDORS = {"atomik", "labsourced", "retaone"}
 
 PREMIUM_VENDORS = set()
 
+# Normal sanity check rejects price drops below 20% of the previous price as
+# likely scraper errors. When a vendor's own homepage currently shows a promo
+# banner (see scan_vendor_banner below), allow much steeper drops through
+# instead of silently discarding a real sale price.
+SALE_MIN_RATIO = 0.05
+
+# ── Promo / sale banner detection ────────────────────────────────────────
+# Homepages of vendors we already auto-scrape daily (excludes SKIP_VENDORS,
+# which we deliberately don't touch at all — Turnstile/robots.txt/unreliable).
+VENDOR_HOMEPAGES = {
+    "ascension":  "https://ascensionpeptides.com/",
+    "lapeptides": "https://lapeptides.net/",
+    "glacier":    "https://glacieraminos.shop/",
+    "milehigh":   "https://milehighcompounds.is/",
+    "ezpeptides": "https://ezpeptides.com/",
+    "amp":        "https://ameanopeptides.com/",
+    "ion":        "https://ionpeptide.com/",
+    "nura":       "https://nurapeptide.com/",
+    "puratek":    "https://puratekpeptides.com/",
+}
+
+PROMO_PATTERNS = [
+    r'\b\d{1,3}\s?%\s?off\b',
+    r'\buse code[:\s]+[A-Z0-9\-]{3,20}\b',
+    r'\bcoupon code[:\s]+[A-Z0-9\-]{3,20}\b',
+    r'\bpromo code[:\s]+[A-Z0-9\-]{3,20}\b',
+    r'\bblack friday\b',
+    r'\bcyber monday\b',
+    r'\bflash sale\b',
+    r'\bholiday sale\b',
+    r'\bsite[\s-]?wide\b[^.]{0,20}\b(?:sale|off|discount)\b',
+    r'\bbogo\b',
+    r'\bbuy one get one\b',
+]
+
+def scan_vendor_banner(vendor_id, base_url):
+    """Fetch a vendor's homepage and pull out any sale/promo banner text."""
+    try:
+        if vendor_id in CLOUDFLARE_VENDORS:
+            html = playwright_get(base_url, vendor_id=vendor_id)
+        else:
+            resp = scraper_get(base_url, render_js=False)
+            html = resp.text if resp.status_code == 200 else None
+        if not html:
+            return []
+        text = re.sub(r'<[^>]+>', ' ', html)
+        text = re.sub(r'\s+', ' ', text)
+        hits = set()
+        for pattern in PROMO_PATTERNS:
+            for m in re.finditer(pattern, text, re.IGNORECASE):
+                snippet = m.group(0).strip()
+                if snippet:
+                    hits.add(snippet[:60])
+        return sorted(hits)
+    except Exception as e:
+        log.warning(f"  Banner scan error for {vendor_id}: {e}")
+        return []
+
 def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
     params = {
         "api_key": SCRAPERAPI_KEY,
@@ -1006,8 +1064,11 @@ def github_push_file(content, sha, message):
 def parse_prices_block(html):
     result = {}
     pep_re = re.compile(r'"([^"]+)":\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}', re.DOTALL)
+    # Vendor entries are either a single object `vid:{...}` (legacy) or an
+    # array of size variants `vid:[{...},{...}]` (current format) — the
+    # optional "[?" matches both, taking the first variant as representative.
     vendor_re = re.compile(
-        r'(\w+):\s*(?:null|\{[^}]*price\s*:\s*([\d.]+)[^}]*mg\s*:\s*([\d.]+)[^}]*\})',
+        r'(\w+):\s*(?:null|\[?\{[^{}]*price\s*:\s*([\d.]+)[^{}]*mg\s*:\s*([\d.]+)[^{}]*\})',
         re.DOTALL
     )
     for m in pep_re.finditer(html):
@@ -1030,8 +1091,11 @@ def patch_prices(html, updates, out_of_stock_items):
     Bulletproof line-by-line price patcher.
     Finds vendor lines like:
         ascension:{price:65.00,mg:5,listing:"Semaglutide 5mg"},
-    and replaces just the price value. Never touches mg or listing.
-    Also handles oos flag adding/removing.
+        ascension:[{price:65.00,mg:5,listing:"...",url:"..."}],
+    and replaces just the price value (of the first/only variant, for the
+    array format). Never touches mg, listing, url, or any other field —
+    those are carried through untouched as an opaque blob. Also handles the
+    oos flag, regardless of where it appears among the other fields.
     """
     patched = 0
     lines = html.split('\n')
@@ -1043,14 +1107,18 @@ def patch_prices(html, updates, out_of_stock_items):
     # We track which peptide block we're currently inside
     current_peptide = None
     peptide_detect = re.compile(r'^\s*"([^"]+)":\s*\{')
-    # Matches a vendor price line: vid:{price:XX.XX,mg:YY,...}
+    # Single-object format: vid:{price:XX.XX,<...other fields...>}
     vendor_line = re.compile(
-        r'^(\s*)(\w+):\{price:([\d.]+)(,mg:[\d.]+,listing:"[^"]*")((?:,oos:true)?)\}(,?)\s*$'
+        r'^(\s*)(\w+):\{price:([\d.]+)(?:,(.*?))?\}(,?)\s*$'
     )
-    # Also matches array format: vid:[{price:XX.XX,mg:YY,...},...]
+    # Array format: vid:[{price:XX.XX,<...other fields...>}<,more variants>]
+    # Only the first variant's price is ever read or written.
     vendor_line_array = re.compile(
-        r'^(\s*)(\w+):\[\{price:([\d.]+)(,mg:[\d.]+,listing:"[^"]*")((?:,oos:true)?)\}(.*?)\](,?)\s*$'
+        r'^(\s*)(\w+):\[\{price:([\d.]+)(?:,(.*?))?\}(.*)\](,?)\s*$'
     )
+
+    def strip_oos(fields):
+        return ",".join(f for f in fields.split(",") if f and f != "oos:true")
 
     new_lines = []
     for line in lines:
@@ -1069,14 +1137,14 @@ def patch_prices(html, updates, out_of_stock_items):
         is_array = vm_arr is not None and vm is None
 
         if matched:
-            indent    = matched.group(1)
-            vid       = matched.group(2)
-            price_val = matched.group(3)
-            mg_list   = matched.group(4)   # e.g. ,mg:10,listing:"BPC-157 10mg"
-            oos_part  = matched.group(5)
-            rest      = matched.group(6) if is_array else ""   # remaining array items
-            trailing  = matched.group(7) if is_array else matched.group(6)
-            is_oos    = (current_peptide, vid) in oos_set
+            indent      = matched.group(1)
+            vid         = matched.group(2)
+            price_val   = matched.group(3)
+            rest_fields = strip_oos(matched.group(4) or "")   # mg, listing, url, etc. — oos handled separately
+            rest_of_array = matched.group(5) if is_array else ""   # remaining array items, untouched
+            trailing    = matched.group(6) if is_array else matched.group(5)
+            is_oos      = (current_peptide, vid) in oos_set
+            rest_str    = f",{rest_fields}" if rest_fields else ""
 
             # Check if we have a price update for this vendor
             new_price = updates.get(current_peptide, {}).get(vid)
@@ -1085,18 +1153,18 @@ def patch_prices(html, updates, out_of_stock_items):
                 price_str = f"{new_price:.2f}"
                 oos_flag = ",oos:true" if is_oos else ""
                 if is_array:
-                    new_line = f'{indent}{vid}:[{{price:{price_str}{mg_list}{oos_flag}}}{rest}]{trailing}'
+                    new_line = f'{indent}{vid}:[{{price:{price_str}{rest_str}{oos_flag}}}{rest_of_array}]{trailing}'
                 else:
-                    new_line = f'{indent}{vid}:{{price:{price_str}{mg_list}{oos_flag}}}{trailing}'
+                    new_line = f'{indent}{vid}:{{price:{price_str}{rest_str}{oos_flag}}}{trailing}'
                 new_lines.append(new_line)
                 patched += 1
                 log.info(f"  PATCHED {current_peptide}/{vid}: ${price_val} → ${price_str}{chr(32)}[array={is_array}]{chr(32)}[OOS={is_oos}]")
             elif is_oos:
                 oos_flag = ",oos:true"
                 if is_array:
-                    new_line = f'{indent}{vid}:[{{price:{price_val}{mg_list}{oos_flag}}}{rest}]{trailing}'
+                    new_line = f'{indent}{vid}:[{{price:{price_val}{rest_str}{oos_flag}}}{rest_of_array}]{trailing}'
                 else:
-                    new_line = f'{indent}{vid}:{{price:{price_val}{mg_list}{oos_flag}}}{trailing}'
+                    new_line = f'{indent}{vid}:{{price:{price_val}{rest_str}{oos_flag}}}{trailing}'
                 if new_line.rstrip() != line.rstrip():
                     log.info(f"  Marked OOS: {current_peptide}/{vid}")
                 new_lines.append(new_line)
@@ -1214,6 +1282,15 @@ def main():
     log.info(f"Scraping {len(ACTIVE_PEPTIDES)} active peptides")
     log.info(f"⏭ Skipping manual vendors (update via price-update.html): {', '.join(sorted(SKIP_VENDORS))}")
 
+    vendor_banners = {}
+    for vid, home in VENDOR_HOMEPAGES.items():
+        hits = scan_vendor_banner(vid, home)
+        if hits:
+            vendor_banners[vid] = hits
+            log.info(f"  Promo banner detected on {vid}: {', '.join(hits[:3])}")
+        time.sleep(1.0)
+    sale_vendors = set(vendor_banners.keys())
+
     updates = {}
     oos_items = []
 
@@ -1261,30 +1338,38 @@ def main():
                     "Epithalon", "GHK-Cu", "NAD+", "Klow Blend",
                     "Tesamorelin/Ipamorelin Blend", "BPC-157 + TB-500 Blend"
                 } else 4.0
-                if ratio > max_ratio or ratio < 0.20:
-                    log.warning(f"  SANITY FAIL {peptide}/{vid}: ${prev:.2f} → ${price:.2f} (ratio {ratio:.2f}x, max {max_ratio}x) — skipping")
+                # When this vendor's own homepage currently shows a promo
+                # banner, allow much steeper drops through instead of
+                # rejecting a real sale price.
+                min_ratio = SALE_MIN_RATIO if vid in sale_vendors else 0.20
+                if ratio > max_ratio or ratio < min_ratio:
+                    log.warning(f"  SANITY FAIL {peptide}/{vid}: ${prev:.2f} → ${price:.2f} (ratio {ratio:.2f}x, max {max_ratio}x, min {min_ratio}x) — skipping")
                     run_stats["sanity_failed"].append((vid, peptide, prev, price))
                 else:
                     updates.setdefault(peptide, {})[vid] = price
                     log.info(f"  CHANGE {peptide}/{vid}: ${prev:.2f} → ${price:.2f}")
             time.sleep(1.0)
 
-    if not updates and not oos_items:
+    if not updates and not oos_items and not vendor_banners:
         log.info("No changes — skipping commit")
         return
 
-    new_html, count = patch_prices(html, updates, oos_items)
-    now = datetime.now(timezone.utc)
-    # Update SCRAPE_DATE in the HTML so the site shows the real last-updated date
-    scrape_date_str = now.strftime("%B %-d, %Y")  # e.g. "May 26, 2026"
-    new_html = re.sub(
-        r'const SCRAPE_DATE = "[^"]*";',
-        f'const SCRAPE_DATE = "{scrape_date_str}";',
-        new_html
-    )
-    now_str = now.strftime("%Y-%m-%d %H:%M UTC")
-    github_push_file(new_html, sha, f"🤖 Daily price update: {count} changes, {len(oos_items)} OOS ({now_str})")
-    log.info(f"=== Done: {count} prices updated, {len(oos_items)} marked OOS ===")
+    count = 0
+    if updates or oos_items:
+        new_html, count = patch_prices(html, updates, oos_items)
+        now = datetime.now(timezone.utc)
+        # Update SCRAPE_DATE in the HTML so the site shows the real last-updated date
+        scrape_date_str = now.strftime("%B %-d, %Y")  # e.g. "May 26, 2026"
+        new_html = re.sub(
+            r'const SCRAPE_DATE = "[^"]*";',
+            f'const SCRAPE_DATE = "{scrape_date_str}";',
+            new_html
+        )
+        now_str = now.strftime("%Y-%m-%d %H:%M UTC")
+        github_push_file(new_html, sha, f"🤖 Daily price update: {count} changes, {len(oos_items)} OOS ({now_str})")
+        log.info(f"=== Done: {count} prices updated, {len(oos_items)} marked OOS ===")
+    else:
+        log.info("No price/stock changes to commit — generating report only (promo banner detected)")
 
     # ── Generate diagnostics report ──────────────────────────
     now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -1293,6 +1378,15 @@ def main():
         f"**Run:** {now_str}",
         f"**Result:** {count} prices updated, {len(oos_items)} OOS",
         "",
+    ]
+
+    if vendor_banners:
+        report_lines += ["## 🎉 Promo/Sale Banners Detected", ""]
+        for vid, hits in vendor_banners.items():
+            report_lines.append(f"- **{vid}**: {', '.join(hits)}")
+        report_lines.append("")
+
+    report_lines += [
         "## ✅ Successful Fetches",
         f"Total: {len(run_stats['successes'])}",
     ]
