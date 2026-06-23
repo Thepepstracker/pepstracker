@@ -29,7 +29,7 @@ PRODUCT_URLS = {
   "ascension": {
     "Semaglutide":                    {"url":"https://ascensionpeptides.com/product/s-5/","mg":5},
     "Tirzepatide":                    {"url":"https://ascensionpeptides.com/product/t-10/","mg":10},
-    "Retatrutide":                    {"url":"https://ascensionpeptides.com/product/t-10/","mg":10},
+    "Retatrutide":                    {"url":"https://ascensionpeptides.com/product/r-10/","mg":10},
     "BPC-157":                        {"url":"https://ascensionpeptides.com/product/bpc-157-5mg/","mg":5},
     "TB-500":                         {"url":"https://ascensionpeptides.com/product/tb-500-5mg/","mg":5},
     "BPC-157 + TB-500 Blend":         {"url":"https://ascensionpeptides.com/product/wolverine-stack/","mg":20},
@@ -726,27 +726,15 @@ def is_out_of_stock(html):
 
     html_lower = main_html.lower()
 
-    # Step 2: Check STRONG definitive OOS signals first — these always mean OOS
-    # regardless of any add-to-cart buttons in related products
-    strong_oos = [
-        '"availability":"http://schema.org/OutOfStock"',
-        'availability":"OutOfStock"',
-        '"stock_status":"outofstock"',
-        'stock_status":"outofstock"',
-        '"availability": "OutOfStock"',
-        'sold_out":true',
-        '"sold_out": true',
-        # Ascension-specific: uses email notification form instead of standard OOS
-        'email me when this item is back in stock',
-        'notify me when available',
-        'email me when available',
-        'back in stock notification',
-    ]
-    if any(s.lower() in html_lower for s in strong_oos):
-        return True
-
-    # Step 3: If there's a main product add-to-cart button, it's in stock
-    # But only count it if it's clearly the MAIN product button (not related)
+    # Step 2: A working add-to-cart button for the main product is the most
+    # reliable signal it's purchasable — check it FIRST. Generic "email me when
+    # back in stock" / "notify me" text frequently belongs to an unrelated OOS
+    # item in a related-products carousel that slips past the truncation above
+    # (e.g. Ascension's own theme renders this for related items using markup
+    # that doesn't match the related/upsell patterns we strip). Trusting that
+    # text over a confirmed add-to-cart button caused real in-stock products
+    # (verified live: Ascension Retatrutide/r-10, Hydro AOD-9604, etc.) to be
+    # mislabeled OOS.
     has_main_atc = any(x in html_lower for x in [
         'name="add-to-cart"', 'value="add-to-cart"',
         '"add_to_cart"', 'add-to-cart-button',
@@ -755,7 +743,25 @@ def is_out_of_stock(html):
     if has_main_atc:
         return False
 
-    # Step 4: Weaker OOS signals - only if no main add-to-cart found
+    # Step 3: Check STRONG definitive OOS signals — only once we know there's
+    # no working add-to-cart button for the main product
+    strong_oos = [
+        '"availability":"http://schema.org/OutOfStock"',
+        'availability":"OutOfStock"',
+        '"stock_status":"outofstock"',
+        'stock_status":"outofstock"',
+        '"availability": "OutOfStock"',
+        'sold_out":true',
+        '"sold_out": true',
+        'email me when this item is back in stock',
+        'notify me when available',
+        'email me when available',
+        'back in stock notification',
+    ]
+    if any(s.lower() in html_lower for s in strong_oos):
+        return True
+
+    # Step 4: Weaker OOS signals
     weak_oos = [
         '>out of stock<',
         '>currently unavailable<',
@@ -765,11 +771,15 @@ def is_out_of_stock(html):
     return any(s.lower() in html_lower for s in weak_oos)
 
 def extract_main_product_price(html):
+    # Some themes (e.g. Ascension) render the currency symbol as an HTML
+    # entity instead of a literal "$", which every "\$" regex below would miss.
+    html = html.replace("&#36;", "$").replace("&#036;", "$").replace("&dollar;", "$")
+
     # Strip <del> tags (old/strikethrough prices) so we never grab them
-    html = re.sub(r'<del[^>]*>.*?</del>', '', html, flags=re.DOTALL|re.IGNORECASE)
+    html = re.sub(r'<del[^>]*>.*?</del>', '', html, flags=re.DOTALL|re.IGNORECASE)
 
     # Check for <ins> sale price first (WooCommerce sale format)
-    ins_match = re.search(r'<ins[^>]*>.*?(\d+\.\d{2}).*?</ins>', html, re.DOTALL|re.IGNORECASE)
+    ins_match = re.search(r'<ins[^>]*>.*?(\d+\.\d{2}).*?</ins>', html, re.DOTALL|re.IGNORECASE)
     if ins_match:
         p = parse_price(ins_match.group(1))
         if p: return p
