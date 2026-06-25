@@ -222,6 +222,7 @@
     </div>
 
     <button class="btn-calc" onclick="calculate()" style="margin-top:20px;">Calculate TDEE →</button>
+  <p id="tdee-error" style="color:#e5484d;font-size:.85rem;margin-top:8px;display:none;"></p>
   </div>
 
   <!-- RESULTS -->
@@ -323,7 +324,7 @@ function calculate() {
 
   const activityMult = parseFloat(document.querySelector('input[name="activity"]:checked').value);
 
-  if (!age || !weightKg || !heightCm) { alert('Please fill in all fields.'); return; }
+  if (!age || !weightKg || !heightCm) { const errEl = document.getElementById('tdee-error'); errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return; }
 
   // Mifflin-St Jeor BMR
   let bmr;
@@ -350,6 +351,7 @@ function calculate() {
   document.getElementById('rCarbs').textContent   = carbsG;
   document.getElementById('rFat').textContent     = fatG;
 
+  document.getElementById('tdee-error').style.display='none';
   document.getElementById('resultCard').classList.add('show');
   document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
