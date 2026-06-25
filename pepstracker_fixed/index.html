@@ -491,17 +491,6 @@
 .btn-add-stack.stack-pop{animation:stackPop .35s ease;}
 @keyframes stackPop{0%{transform:scale(1);}40%{transform:scale(1.18);}100%{transform:scale(1);}}
 .btn-add-stack.switch-here{background:rgba(245,200,66,.08);border-color:rgba(245,200,66,.3);color:#f5c842;}
-#nura-flash{position:relative;background:#07070f;border-bottom:1px solid rgba(0,230,200,.25);padding:11px 48px 11px 16px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;z-index:999;}
-.nura-flash-pct{font-size:1.45rem;font-weight:900;color:#00e6c8;letter-spacing:-.02em;}
-.nura-flash-div{width:1px;height:26px;background:rgba(0,230,200,.25);}
-.nura-flash-brand{font-size:.65rem;font-weight:700;letter-spacing:.15em;color:#8090a0;text-transform:uppercase;}
-.nura-flash-msg{font-size:.78rem;font-weight:700;color:#e8ece8;letter-spacing:.05em;text-transform:uppercase;}
-.nura-flash-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(0,230,200,.1);border:1px solid rgba(0,230,200,.3);border-radius:6px;padding:3px 10px;font-size:.76rem;color:#c8d8d4;}
-.nura-flash-code{font-weight:900;color:#00e6c8;letter-spacing:.1em;}
-.nura-flash-eof{font-size:.65rem;color:rgba(0,230,200,.45);letter-spacing:.1em;text-transform:uppercase;}
-.nura-flash-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(0,230,200,.4);cursor:pointer;font-size:.9rem;padding:4px 8px;line-height:1;}
-.nura-flash-x:hover{color:#00e6c8;}
-@media(max-width:600px){.nura-flash-div,.nura-flash-eof{display:none;}.nura-flash-pct{font-size:1.2rem;}}
 </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -513,8 +502,6 @@
   <link rel="stylesheet" href="/premium.css?v=6"/>
 </head>
 <body>
-
-<div id="nura-flash"><span class="nura-flash-pct">20% OFF</span><div class="nura-flash-div"></div><div style="display:flex;flex-direction:column;gap:1px;"><span class="nura-flash-brand">NURA PEPTIDES</span><span class="nura-flash-msg">SITEWIDE FLASH SALE — TONIGHT ONLY</span></div><div class="nura-flash-div"></div><div class="nura-flash-pill">CODE: <span class="nura-flash-code">PEPSTRACKER</span></div><span class="nura-flash-eof">ENDS MIDNIGHT</span><button class="nura-flash-x" onclick="document.getElementById('nura-flash').remove()" title="Dismiss">✕</button></div>
 
 <div class="modal-overlay" id="disclaimerModal">
   <div class="modal-box">
