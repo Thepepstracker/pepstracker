@@ -173,6 +173,7 @@
     </div>
 
     <button class="btn-calc" onclick="calculate()">Calculate BMI →</button>
+  <p id="bmi-error" style="color:#e5484d;font-size:.85rem;margin-top:8px;display:none;"></p>
   </div>
 
   <!-- RESULTS -->
@@ -255,13 +256,13 @@ function calculate() {
     const lbs  = parseFloat(document.getElementById('weightLbs').value);
     const ft   = parseFloat(document.getElementById('heightFt').value) || 0;
     const inch = parseFloat(document.getElementById('heightIn').value) || 0;
-    if (!lbs || (!ft && !inch)) { alert('Please fill in all fields.'); return; }
+    if (!lbs || (!ft && !inch)) { const errEl = document.getElementById('bmi-error'); errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return; }
     weightKg = lbs * 0.453592;
     heightM  = (ft * 12 + inch) * 0.0254;
   } else {
     const kg = parseFloat(document.getElementById('weightKg').value);
     const cm = parseFloat(document.getElementById('heightCm').value);
-    if (!kg || !cm) { alert('Please fill in all fields.'); return; }
+    if (!kg || !cm) { const errEl = document.getElementById('bmi-error'); errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return; }
     weightKg = kg;
     heightM  = cm / 100;
   }
@@ -318,6 +319,8 @@ function calculate() {
     if (c.catId === cat.catId) row.classList.add('highlight');
   });
 
+  document.getElementById('bmi-error').style.display='none';
+  if (!isFinite(bmi) || bmi <= 0) { const e=document.getElementById('bmi-error'); e.textContent='Invalid values — check your inputs.'; e.style.display='block'; return; }
   document.getElementById('resultCard').classList.add('show');
   document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
