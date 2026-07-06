@@ -24,348 +24,16 @@ GITHUB_REPO    = "Thepepstracker/pepstracker"
 GITHUB_FILE    = "pepstracker_fixed/index.html"
 GITHUB_API     = "https://api.github.com"
 
+VENDOR_DOMAIN = {'amp': 'ameanopeptides.com', 'apollo': 'apollopeptidesciences.com', 'ascension': 'ascensionpeptides.com', 'atomik': 'atomiklabz.com', 'certapeptides': 'certapeptides.com', 'ezpeptides': 'ezpeptides.com', 'flawless': 'flawlesscompounds.com', 'fusion': 'fusionpeptide.com', 'glacier': 'glacieraminos.shop', 'glowaminos': 'glowaminos.com', 'glp1lab': 'glp1researchlab.com', 'hydro': 'hydroresearchpeptides.com', 'innoamino': 'innoamino.com', 'ion': 'ionpeptide.com', 'labsourced': 'labsourced.com', 'lapeptides': 'lapeptides.net', 'milehigh': 'milehighcompounds.is', 'nura': 'nurapeptide.com', 'pinnacle': 'pinnaclepeptidelabs.com', 'puratek': 'puratekpeptides.com', 'retaone': 'retaonelabs.com', 's1labs': 'www.s1labs.us', 'solas': 'solasscience.shop', 'swisschems': 'swisschems.is', 'zclabs': 'zclabs.com'}
+
+
 # ── Full product URL catalog ───────────────────────────────
-PRODUCT_URLS = {
-  "ascension": {
-    "Semaglutide":                    {"url":"https://ascensionpeptides.com/product/s-5/","mg":5},
-    "Tirzepatide":                    {"url":"https://ascensionpeptides.com/product/t-10/","mg":10},
-    "Retatrutide":                    {"url":"https://ascensionpeptides.com/product/t-10/","mg":10},
-    "BPC-157":                        {"url":"https://ascensionpeptides.com/product/bpc-157-5mg/","mg":5},
-    "TB-500":                         {"url":"https://ascensionpeptides.com/product/tb-500-5mg/","mg":5},
-    "BPC-157 + TB-500 Blend":         {"url":"https://ascensionpeptides.com/product/wolverine-stack/","mg":20},
-    "Ipamorelin":                     {"url":"https://ascensionpeptides.com/product/ipamorelin-5mg/","mg":5},
-    "Epithalon":                      {"url":"https://ascensionpeptides.com/product/epithalon-10mg/","mg":10},
-    "Melanotan II":                   {"url":"https://ascensionpeptides.com/product/melanotan-ii-10mg/","mg":10},
-    "PT-141 (Bremelanotide)":         {"url":"https://ascensionpeptides.com/product/pt-141-10mg/","mg":10},
-    "GHK-Cu":                         {"url":"https://ascensionpeptides.com/product/ghk-cu-100mg/","mg":100},
-    "Klow Blend":                     {"url":"https://ascensionpeptides.com/product/klow-ghk-cu-bpc-157-thymosin-beta4-kpv/","mg":80},
-    "ARA-290":                        {"url":"https://ascensionpeptides.com/product/ara-290-10mg/","mg":10},
-    "MOTS-c":                         {"url":"https://ascensionpeptides.com/product/mots-c-10mg/","mg":10},
-    "NAD+":                           {"url":"https://ascensionpeptides.com/product/nad-500mg/","mg":500},
-    "KPV":                            {"url":"https://ascensionpeptides.com/product/kpv-10mg/","mg":10},
-    "Semax":                          {"url":"https://ascensionpeptides.com/product/semax-10mg/","mg":10},
-    "AOD-9604":                       {"url":"https://ascensionpeptides.com/product/aod-9604-5mg/","mg":5},
-    "Tesamorelin":                    {"url":"https://ascensionpeptides.com/product/tesamorelin-5mg/","mg":5},
-    "Selank":                         {"url":"https://ascensionpeptides.com/product/selank-10mg/","mg":10},
-    "Sermorelin":                     {"url":"https://ascensionpeptides.com/product/sermorelin-10mg/","mg":10},
-    "DSIP":                           {"url":"https://ascensionpeptides.com/product/dsip-10mg/","mg":10},
-    "Adamax":                         {"url":"https://ascensionpeptides.com/product/adamax-10mg/","mg":10},
-  },
-  "atomik": {
-    "Semaglutide":                    {"url":"https://atomiklabz.com/product/peptide-1-s-10mg/","mg":10},
-    "Tirzepatide":                    {"url":"https://atomiklabz.com/product/peptide-2-t-10mg/","mg":10},
-    "Retatrutide":                    {"url":"https://atomiklabz.com/product/peptide-3-r-10mg/","mg":10},
-    "BPC-157":                        {"url":"https://atomiklabz.com/product/bpc-157-5mg/","mg":5},
-    "TB-500":                         {"url":"https://atomiklabz.com/product/tb-500-10mg/","mg":10},
-    "BPC-157 + TB-500 Blend":         {"url":"https://atomiklabz.com/product/bpc-157-tb-500-blend-10mg-10mg/","mg":10},
-    "Ipamorelin":                     {"url":"https://atomiklabz.com/product/ipamorelin-10mg/","mg":10},
-    "CJC-1295 (with DAC)":            {"url":"https://atomiklabz.com/product/new-release-cjc-1295-with-dac-5mg/","mg":5},
-    "Epithalon":                      {"url":"https://atomiklabz.com/product/epithalon-10mg/","mg":10},
-    "Melanotan II":                   {"url":"https://atomiklabz.com/product/melanotan-ii-10mg/","mg":10},
-    "PT-141 (Bremelanotide)":         {"url":"https://atomiklabz.com/product/pt-141/","mg":10},
-    "GHK-Cu":                         {"url":"https://atomiklabz.com/product/ghk-cu-100mg/","mg":100},
-    "Bacteriostatic Water":           {"url":"https://atomiklabz.com/product/10ml-bacteriostatic-water/","mg":10},
-    "ARA-290":                        {"url":"https://atomiklabz.com/product/ara-290-16mg/","mg":16},
-    "Tesamorelin/Ipamorelin Blend":   {"url":"https://atomiklabz.com/product/tesamorelin-ipamorelin/","mg":12},
-    "MOTS-c":                         {"url":"https://atomiklabz.com/product/mots-c-10mg/","mg":10},
-    "NAD+":                           {"url":"https://atomiklabz.com/product/nad-700mg-new-adjusted-ph-lyophilized/","mg":700},
-    "KPV":                            {"url":"https://atomiklabz.com/product/kpv-10mg/","mg":10},
-    "Semax":                          {"url":"https://atomiklabz.com/product/semax-10mg/","mg":10},
-    "AOD-9604":                       {"url":"https://atomiklabz.com/product/aod-9604-5mg/","mg":5},
-    "Tesamorelin":                    {"url":"https://atomiklabz.com/product/tesamorelin-10mg/","mg":5},
-    "Selank":                         {"url":"https://atomiklabz.com/product/selank-12mg/","mg":12},
-    "Sermorelin":                     {"url":"https://atomiklabz.com/product/sermorelin-10mg/","mg":10},
-    "DSIP":                           {"url":"https://atomiklabz.com/product/dsip-5mg/","mg":5},
-    "Klow Blend":                     {"url":"https://atomiklabz.com/product/klow-cu/","mg":91},
-  },
-  "lapeptides": {
-    "Semaglutide":                    {"url":"https://lapeptides.net/product/g-1-s/","mg":5},
-    "Tirzepatide":                    {"url":"https://lapeptides.net/product/g-2/","mg":15},
-    "Retatrutide":                    {"url":"https://lapeptides.net/product/g-3/","mg":10},
-    "BPC-157":                        {"url":"https://lapeptides.net/product/bpc-157/","mg":10},
-    "TB-500":                         {"url":"https://lapeptides.net/product/tb500/","mg":10},
-    "BPC-157 + TB-500 Blend":         {"url":"https://lapeptides.net/product/bpc-tb500-blend/","mg":10},
-    "Ipamorelin":                     {"url":"https://lapeptides.net/product/ipamorelin/","mg":10},
-    "Epithalon":                      {"url":"https://lapeptides.net/product/epithalon/","mg":50},
-    "Melanotan II":                   {"url":"https://lapeptides.net/product/melanotan-2/","mg":10},
-    "PT-141 (Bremelanotide)":         {"url":"https://lapeptides.net/product/pt-141/","mg":10},
-    "GHK-Cu":                         {"url":"https://lapeptides.net/product/ghk-cu/","mg":100},
-    "Klow Blend":                     {"url":"https://lapeptides.net/product/klow/","mg":80},
-    "ARA-290":                        {"url":"https://lapeptides.net/product/ara-290/","mg":16},
-    "MOTS-c":                         {"url":"https://lapeptides.net/product/mots-c/","mg":10},
-    "NAD+":                           {"url":"https://lapeptides.net/product/nad/","mg":500},
-    "KPV":                            {"url":"https://lapeptides.net/product/kpv/","mg":10},
-    "Semax":                          {"url":"https://lapeptides.net/product/semax/","mg":10},
-    "AOD-9604":                       {"url":"https://lapeptides.net/product/aod-9604/","mg":10},
-    "Tesamorelin":                    {"url":"https://lapeptides.net/product/tesamorelin/","mg":10},
-    "Selank":                         {"url":"https://lapeptides.net/product/selank/","mg":10},
-    "Sermorelin":                     {"url":"https://lapeptides.net/product/sermorelin/","mg":10},
-    "DSIP":                           {"url":"https://lapeptides.net/product/dsip/","mg":5},
-    "Adamax":                         {"url":"https://lapeptides.net/product/adamax/","mg":10},
-    "SS-31":                          {"url":"https://lapeptides.net/product/ss-31/","mg":10},
-    "Glow Blend":                     {"url":"https://lapeptides.net/product/glow/","mg":70},
-    "Glutathione":                    {"url":"https://lapeptides.net/product/glutathione/","mg":600},
-  },
-  "glacier": {
-    "Semaglutide":                    {"url":"https://glacieraminos.shop/product/gla1-s/","mg":15},
-    "Tirzepatide":                    {"url":"https://glacieraminos.shop/product/gla2-trz/","mg":10},
-    "Retatrutide":                    {"url":"https://glacieraminos.shop/product/gla3-rt/","mg":10},
-    "BPC-157":                        {"url":"https://glacieraminos.shop/product/bpc-157/","mg":10},
-    "TB-500":                         {"url":"https://glacieraminos.shop/product/tb500/","mg":10},
-    "BPC-157 + TB-500 Blend":         {"url":"https://glacieraminos.shop/product/bpc-tb-500-wolverine/","mg":10},
-    "Ipamorelin":                     {"url":"https://glacieraminos.shop/product/ipamorelin-10mg/","mg":10},
-    "CJC-1295 (with DAC)":            {"url":"https://glacieraminos.shop/product/cjc-1295-w-dac-5mg/","mg":5},
-    "Epithalon":                      {"url":"https://glacieraminos.shop/product/epi10/","mg":10},
-    "Melanotan II":                   {"url":"https://glacieraminos.shop/product/mt-2/","mg":10},
-    "PT-141 (Bremelanotide)":         {"url":"https://glacieraminos.shop/product/pt-141/","mg":10},
-    "GHK-Cu":                         {"url":"https://glacieraminos.shop/product/ghk-cu/","mg":50},
-    "Bacteriostatic Water":           {"url":"https://glacieraminos.shop/product/reconstitution-solution-10ml/","mg":10},
-    "Bacteriostatic Water 30mL":      {"url":"https://glacieraminos.shop/product/water30/","mg":30},
-    "Buffered NAD+":                  {"url":"https://glacieraminos.shop/product/nad-500mg-buffered/","mg":500},
-    "Klow Blend":                     {"url":"https://glacieraminos.shop/product/klow-80/","mg":80},
-    "ARA-290":                        {"url":"https://glacieraminos.shop/product/ara-29010/","mg":10},
-    "Tesamorelin/Ipamorelin Blend":   {"url":"https://glacieraminos.shop/product/tesa-ipa-peptide-blend-10mg-3mg/","mg":10},
-    "MOTS-c":                         {"url":"https://glacieraminos.shop/product/mots-c/","mg":10},
-    "KPV":                            {"url":"https://glacieraminos.shop/product/kpv/","mg":10},
-    "Semax":                          {"url":"https://glacieraminos.shop/product/s3max-10/","mg":10},
-    "Tesamorelin":                    {"url":"https://glacieraminos.shop/product/tesamorelin/","mg":10},
-    "Selank":                         {"url":"https://glacieraminos.shop/product/selank-10/","mg":10},
-    "Sermorelin":                     {"url":"https://glacieraminos.shop/product/sermorelin/","mg":10},
-    "DSIP":                           {"url":"https://glacieraminos.shop/product/dsip/","mg":5},
-    "Adamax":                         {"url":"https://glacieraminos.shop/product/adamax-10mg/","mg":10},
-    "Lipo-C":                         {"url":"https://glacieraminos.shop/product/lipo-c/","mg":10},
-    "Glutathione":                    {"url":"https://glacieraminos.shop/product/glutathione-1500mg/","mg":1500},
-    "Glow Blend":                     {"url":"https://glacieraminos.shop/product/glow/","mg":70},
-  },
-  "milehigh": {
-    "Semaglutide":                    {"url":"https://milehighcompounds.is/product/mhc-1-sm/","mg":10},
-    "Tirzepatide":                    {"url":"https://milehighcompounds.is/product/mhc-2-trz/","mg":10},
-    "Retatrutide":                    {"url":"https://milehighcompounds.is/product/mhc-3-rt/","mg":10},
-    "BPC-157":                        {"url":"https://milehighcompounds.is/product/bpc-157/","mg":10},
-    "TB-500":                         {"url":"https://milehighcompounds.is/product/tb-500/","mg":10},
-    "BPC-157 + TB-500 Blend":         {"url":"https://milehighcompounds.is/product/bpc-157-tb-500-blend/","mg":20},
-    "Ipamorelin":                     {"url":"https://milehighcompounds.is/product/ipamorelin/","mg":10},
-    "CJC-1295 (with DAC)":            {"url":"https://milehighcompounds.is/product/cjc-1295-w-dac/","mg":5},
-    "Epithalon":                      {"url":"https://milehighcompounds.is/product/epithalon/","mg":50},
-    "Melanotan II":                   {"url":"https://milehighcompounds.is/product/mt-2/","mg":10},
-    "PT-141 (Bremelanotide)":         {"url":"https://milehighcompounds.is/product/pt-141/","mg":10},
-    "GHK-Cu":                         {"url":"https://milehighcompounds.is/product/ghk-cu/","mg":50},
-    "Klow Blend":                     {"url":"https://milehighcompounds.is/product/klow-80-blend/","mg":80},
-    "ARA-290":                        {"url":"https://milehighcompounds.is/product/ara-290/","mg":10},
-    "Tesamorelin/Ipamorelin Blend":   {"url":"https://milehighcompounds.is/product/tesa-ipa-blend/","mg":10},
-    "MOTS-c":                         {"url":"https://milehighcompounds.is/product/mots-c/","mg":10},
-    "NAD+":                           {"url":"https://milehighcompounds.is/product/nad500mg/","mg":500},
-    "KPV":                            {"url":"https://milehighcompounds.is/product/kpv/","mg":10},
-    "Semax":                          {"url":"https://milehighcompounds.is/product/semax/","mg":10},
-    "AOD-9604":                       {"url":"https://milehighcompounds.is/product/aod-9604/","mg":5},
-    "Tesamorelin":                    {"url":"https://milehighcompounds.is/product/tesamorlin/","mg":10},
-    "Selank":                         {"url":"https://milehighcompounds.is/product/selank/","mg":10},
-    "Sermorelin":                     {"url":"https://milehighcompounds.is/product/sermorelin/","mg":10},
-    "DSIP":                           {"url":"https://milehighcompounds.is/product/dsip/","mg":10},
-    "Adamax":                         {"url":"https://milehighcompounds.is/product/adamax/","mg":10},
-    "Lipo-C":                         {"url":"https://milehighcompounds.is/product/lipo-c/","mg":10},
-    "SS-31":                          {"url":"https://milehighcompounds.is/product/mtp-31/","mg":10},
-    "Glutathione":                    {"url":"https://milehighcompounds.is/product/glutathione/","mg":1500},
-    "Glow Blend":                     {"url":"https://milehighcompounds.is/product/glow-70-research-blend/","mg":70},
-  },
-  "ezpeptides": {
-    "Semaglutide":                    {"url":"https://ezpeptides.com/product/ezp-1p-10mg/","mg":10},
-    "Tirzepatide":                    {"url":"https://ezpeptides.com/product/ezp-2p-10mg/","mg":10},
-    "Retatrutide":                    {"url":"https://ezpeptides.com/product/ezp-3p-10mg-glp-3rt/","mg":10},
-    "BPC-157":                        {"url":"https://ezpeptides.com/product/bpc-157-10mg/","mg":10},
-    "TB-500":                         {"url":"https://ezpeptides.com/product/tb4-10mg/","mg":10},
-    "BPC-157 + TB-500 Blend":         {"url":"https://ezpeptides.com/product/bpc-157-tb4-blend-10mg-10mg/","mg":10},
-    "Ipamorelin":                     {"url":"https://ezpeptides.com/product/ipamorelin-10mg/","mg":10},
-    "Epithalon":                      {"url":"https://ezpeptides.com/product/epitalon-10mg/","mg":10},
-    "Melanotan II":                   {"url":"https://ezpeptides.com/product/melanotan-ii-10mg/","mg":10},
-    "PT-141 (Bremelanotide)":         {"url":"https://ezpeptides.com/product/pt-141-10mg/","mg":10},
-    "GHK-Cu":                         {"url":"https://ezpeptides.com/product/ghk-cu-50mg/","mg":50},
-    "Research Diluent Solution":      {"url":"https://ezpeptides.com/product/research-diluent-solution-10ml/","mg":10},
-    "Buffered NAD+":                  {"url":"https://ezpeptides.com/product/buffered-nad-500mg/","mg":500},
-    "Buffered NAD+ 250mg":            {"url":"https://ezpeptides.com/product/buffered-nad-250mg/","mg":250},
-    "Lipo-C":                         {"url":"https://ezpeptides.com/product/lipo-c-with-b12-10ml-research-grade-solution/","mg":10},
-    "Glow Blend":                     {"url":"https://ezpeptides.com/product/glow-blend-bpc-157-tb4-ghk-cu-10mg/","mg":70},
-    "LIPO-C with B12":                {"url":"https://ezpeptides.com/product/lipo-c-with-b12-10ml-research-grade-solution/","mg":10},
-    "GHK-Cu Lyophilized":             {"url":"https://ezpeptides.com/product/ghk-cu-50mg/","mg":50},
-    "Klow Blend":                     {"url":"https://ezpeptides.com/product/klow-blend-80mg/","mg":80},
-    "ARA-290":                        {"url":"https://ezpeptides.com/product/ara-290-10mg/","mg":10},
-    "Beauty Blend (GHK-Cu/KPV)":      {"url":"https://ezpeptides.com/product/beauty-blend-ghk-cu-kpv-blend-50mg-20mg/","mg":50},
-    "MOTS-c":                         {"url":"https://ezpeptides.com/product/mots-c-10mg/","mg":10},
-    "KPV":                            {"url":"https://ezpeptides.com/product/kpv-10mg/","mg":10},
-    "Semax":                          {"url":"https://ezpeptides.com/product/semax-10mg/","mg":10},
-    "AOD-9604":                       {"url":"https://ezpeptides.com/product/aod-9604-5mg/","mg":5},
-    "Tesamorelin":                    {"url":"https://ezpeptides.com/product/tesamorelin-10mg/","mg":10},
-    "Selank":                         {"url":"https://ezpeptides.com/product/selank-10mg/","mg":10},
-    "Sermorelin":                     {"url":"https://ezpeptides.com/product/sermorelin-5mg/","mg":5},
-    "DSIP":                           {"url":"https://ezpeptides.com/product/dsip-10mg/","mg":10},
-    "Adamax":                         {"url":"https://ezpeptides.com/product/adamax-10mg/","mg":10},
-  },
-  "amp": {
-    "Semaglutide":                    {"url":"https://ameanopeptides.com/product/amp-1p-5mg/","mg":5},
-    "Tirzepatide":                    {"url":"https://ameanopeptides.com/product/amp-2p-10mg/","mg":10},
-    "Retatrutide":                    {"url":"https://ameanopeptides.com/product/amp-3p-10mg/","mg":10},
-    "BPC-157":                        {"url":"https://ameanopeptides.com/product/bpc-157-10mg/","mg":10},
-    "TB-500":                         {"url":"https://ameanopeptides.com/product/tb4-10mg-research-peptide/","mg":10},
-    "BPC-157 + TB-500 Blend":         {"url":"https://ameanopeptides.com/product/bpc-157-tb4-blend-10mg-10mg/","mg":10},
-    "Ipamorelin":                     {"url":"https://ameanopeptides.com/product/ipamorelin-10mg/","mg":10},
-    "Epithalon":                      {"url":"https://ameanopeptides.com/product/epitalon-10mg/","mg":10},
-    "Melanotan II":                   {"url":"https://ameanopeptides.com/product/melanotan-ii-10mg/","mg":10},
-    "PT-141 (Bremelanotide)":         {"url":"https://ameanopeptides.com/product/pt-141-10mg-research-peptide/","mg":10},
-    "GHK-Cu":                         {"url":"https://ameanopeptides.com/product/ghk-cu-100mg/","mg":100},
-    "Buffered NAD+ 250mg":            {"url":"https://ameanopeptides.com/product/nad-250mg-buffered/","mg":250},
-    "LIPO-C with B12":                {"url":"https://ameanopeptides.com/product/lipo-c-with-b12-10ml/","mg":10},
-    "Klow Blend":                     {"url":"https://ameanopeptides.com/product/klow-blend-80mg-research-peptide/","mg":80},
-    "Reta/Cagri Blend":               {"url":"https://ameanopeptides.com/product/reta-cagri-blend/","mg":12},
-    "Tesamorelin/Ipamorelin Blend":   {"url":"https://ameanopeptides.com/product/tesamorelin-ipamorelin-blend-10mg-3mg/","mg":10},
-    "MOTS-c":                         {"url":"https://ameanopeptides.com/product/mots-c-10mg/","mg":10},
-    "KPV":                            {"url":"https://ameanopeptides.com/product/kpv-10mg/","mg":10},
-    "AOD-9604":                       {"url":"https://ameanopeptides.com/product/aod-9604-5mg/","mg":5},
-    "Tesamorelin":                    {"url":"https://ameanopeptides.com/product/tesamorelin-10mg-research-peptide/","mg":10},
-    "Selank":                         {"url":"https://ameanopeptides.com/product/n-acetyl-selank-amidate-10mg-research-peptide/","mg":10},
-    "Sermorelin":                     {"url":"https://ameanopeptides.com/product/sermorelin-5mg/","mg":5},
-    "DSIP":                           {"url":"https://ameanopeptides.com/product/dsip-10mg/","mg":10},
-    "Adamax":                         {"url":"https://ameanopeptides.com/product/adamax-10mg/","mg":10},
-    "Lipo-C":                         {"url":"https://ameanopeptides.com/product/lipo-c-with-b12-10ml/","mg":10},
-    "Glow Blend":                     {"url":"https://ameanopeptides.com/product/glow-blend-10mg/","mg":70},
-  },
-  "labsourced": {
-    "Tirzepatide":                    {"url":"https://www.labsourced.com/products/tirzepatide-30mg","mg":30},
-    "Retatrutide":                    {"url":"https://www.labsourced.com/products/peptide-r-5mg","mg":5},
-    "BPC-157":                        {"url":"https://www.labsourced.com/products/bpc-157-10mg","mg":10},
-    "TB-500":                         {"url":"https://www.labsourced.com/products/tb-500-10mg","mg":10},
-    "BPC-157 + TB-500 Blend":         {"url":"https://www.labsourced.com/products/wolverine-10-10mg","mg":10},
-    "Ipamorelin":                     {"url":"https://www.labsourced.com/products/ipamorelin-10mg","mg":10},
-    "Epithalon":                      {"url":"https://www.labsourced.com/products/epithalon-10mg","mg":10},
-    "Melanotan II":                   {"url":"https://www.labsourced.com/products/mt2-10mg","mg":10},
-    "PT-141 (Bremelanotide)":         {"url":"https://www.labsourced.com/products/pt-141-10mg","mg":10},
-    "GHK-Cu":                         {"url":"https://www.labsourced.com/products/ghk-cu-50mg","mg":50},
-    "Klow Blend":                     {"url":"https://www.labsourced.com/products/klow-80mg","mg":80},
-    "MOTS-c":                         {"url":"https://www.labsourced.com/products/mots-c-10mg","mg":10},
-    "NAD+":                           {"url":"https://www.labsourced.com/products/nad-500mg","mg":500},
-    "KPV":                            {"url":"https://www.labsourced.com/products/kpv-10mg","mg":10},
-    "Semax":                          {"url":"https://www.labsourced.com/products/semax-10mg","mg":10},
-    "AOD-9604":                       {"url":"https://www.labsourced.com/products/aod-9604-5mg","mg":5},
-    "Tesamorelin":                    {"url":"https://www.labsourced.com/products/tesamorelin-10mg","mg":10},
-    "Sermorelin":                     {"url":"https://www.labsourced.com/products/sermorelin-10mg","mg":10},
-    "DSIP":                           {"url":"https://www.labsourced.com/products/dsip-5mg","mg":5},
-    "Glutathione":                    {"url":"https://www.labsourced.com/products/glutathione-1500mg","mg":1500},
-  },
-  "ion": {
-    "Semaglutide":                    {"url":"https://ionpeptide.com/product/glp-1s/","mg":5},
-    "Tirzepatide":                    {"url":"https://ionpeptide.com/product/glp-2t/","mg":10},
-    "Retatrutide":                    {"url":"https://ionpeptide.com/product/glp-3r/","mg":5},
-    "BPC-157":                        {"url":"https://ionpeptide.com/product/bpc-157-2/","mg":5},
-    "TB-500":                         {"url":"https://ionpeptide.com/product/tb-500/","mg":5},
-    "BPC-157 + TB-500 Blend":         {"url":"https://ionpeptide.com/product/bpc157tb500/","mg":10},
-    "Ipamorelin":                     {"url":"https://ionpeptide.com/product/ipamorelin/","mg":5},
-    "CJC-1295 (with DAC)":            {"url":"https://ionpeptide.com/product/cjc-1295-with-dac-5mg/","mg":5},
-    "Epithalon":                      {"url":"https://ionpeptide.com/product/epithalon/","mg":10},
-    "Melanotan II":                   {"url":"https://ionpeptide.com/product/melanotan-ii/","mg":10},
-    "PT-141 (Bremelanotide)":         {"url":"https://ionpeptide.com/product/pt-141/","mg":10},
-    "GHK-Cu":                         {"url":"https://ionpeptide.com/product/ghk-cu-2/","mg":50},
-    "LIPO-C with B12":                {"url":"https://ionpeptide.com/product/lipo-c-b12-methylated-10mg/","mg":10},
-    "Klow Blend":                     {"url":"https://ionpeptide.com/product/klow/","mg":80},
-    "ARA-290":                        {"url":"https://ionpeptide.com/product/ara-290/","mg":10},
-    "Tesamorelin/Ipamorelin Blend":   {"url":"https://ionpeptide.com/product/tesamorelin-ipamorelin-10mg/","mg":10},
-    "MOTS-c":                         {"url":"https://ionpeptide.com/product/mots-c/","mg":10},
-    "NAD+":                           {"url":"https://ionpeptide.com/product/nad/","mg":500},
-    "KPV":                            {"url":"https://ionpeptide.com/product/kpv-10/","mg":10},
-    "Semax":                          {"url":"https://ionpeptide.com/product/semax/","mg":10},
-    "AOD-9604":                       {"url":"https://ionpeptide.com/product/aod-9604-2/","mg":5},
-    "Tesamorelin":                    {"url":"https://ionpeptide.com/product/tesamorelin/","mg":5},
-    "Selank":                         {"url":"https://ionpeptide.com/product/selank-2/","mg":5},
-    "Sermorelin":                     {"url":"https://ionpeptide.com/product/sermorelin/","mg":5},
-    "DSIP":                           {"url":"https://ionpeptide.com/product/dsip/","mg":5},
-    "Adamax":                         {"url":"https://ionpeptide.com/product/adamax-10mg/","mg":10},
-    "Lipo-C":                         {"url":"https://ionpeptide.com/product/lipo-c-b12-methylated-10mg/","mg":10},
-    "SS-31":                          {"url":"https://ionpeptide.com/product/ss-31/","mg":10},
-    "Glutathione":                    {"url":"https://ionpeptide.com/product/glutathione/","mg":600},
-    "Glow Blend":                     {"url":"https://ionpeptide.com/product/glow/","mg":70},
-  },
-  "retaone": {
-    "Semaglutide":                    {"url":"https://retaonelabs.com/product/ro-1s-10mg/","mg":10},
-    "Tirzepatide":                    {"url":"https://retaonelabs.com/product/ro-2t-10mg/","mg":10},
-    "Retatrutide":                    {"url":"https://retaonelabs.com/product/ro-3r-10mg/","mg":10},
-    "BPC-157":                        {"url":"https://retaonelabs.com/product/bpc-157-10mg/","mg":10},
-    "BPC-157 + TB-500 Blend":         {"url":"https://retaonelabs.com/product/bpc-157-tb-500-blend-10mg-10mg/","mg":10},
-    "PT-141 (Bremelanotide)":         {"url":"https://retaonelabs.com/product/pt-141-10mg/","mg":10},
-    "GHK-Cu":                         {"url":"https://retaonelabs.com/product/ghk-cu-50mg/","mg":50},
-    "Research Diluent Solution":      {"url":"https://retaonelabs.com/product/research-diluent-solution-10ml/","mg":10},
-    "MOTS-c":                         {"url":"https://retaonelabs.com/product/mots-c/","mg":10},
-    "NAD+":                           {"url":"https://retaonelabs.com/product/nad-500mg/","mg":500},
-    "Tesamorelin":                    {"url":"https://retaonelabs.com/product/tesamorelin-10mg/","mg":10},
-  },
-  "nura": {
-    "Semaglutide":                    {"url":"https://nurapeptide.com/product/glp-1sg-10mg/","mg":10},
-    "Tirzepatide":                    {"url":"https://nurapeptide.com/product/glp-2t-10mg/","mg":10},
-    "Retatrutide":                    {"url":"https://nurapeptide.com/product/glp-3rt-12mg/","mg":12},
-    "BPC-157":                        {"url":"https://nurapeptide.com/product/bpc-157-10mg/","mg":10},
-    "TB-500":                         {"url":"https://nurapeptide.com/product/tb-500-10mg/","mg":10},
-    "BPC-157 + TB-500 Blend":         {"url":"https://nurapeptide.com/product/bpc-157-tb-500-5-5mg/","mg":5},
-    "Ipamorelin":                     {"url":"https://nurapeptide.com/product/ipamorelin-10mg/","mg":10},
-    "CJC-1295 (with DAC)":            {"url":"https://nurapeptide.com/product/cjc-1295-with-dac-5mg/","mg":5},
-    "Epithalon":                      {"url":"https://nurapeptide.com/product/epitalon-10mg/","mg":10},
-    "Melanotan II":                   {"url":"https://nurapeptide.com/product/melanotan-ii-10mg/","mg":10},
-    "PT-141 (Bremelanotide)":         {"url":"https://nurapeptide.com/product/pt-141-peptide-10mg/","mg":10},
-    "GHK-Cu":                         {"url":"https://nurapeptide.com/product/ghk-cu-100mg/","mg":100},
-    "Bacteriostatic Water":           {"url":"https://nurapeptide.com/product/bacteriostatic-water-10ml/","mg":10},
-    "Bacteriostatic Water 30mL":      {"url":"https://nurapeptide.com/product/bacteriostatic-water/","mg":30},
-    "Klow Blend":                     {"url":"https://nurapeptide.com/product/klow-bpc-157-ghk-cu-tb-500-kpv-blend/","mg":10},
-    "Tesamorelin/Ipamorelin Blend":   {"url":"https://nurapeptide.com/product/tesamorelin-ipamorelin-13-3-mg/","mg":13},
-    "MOTS-c":                         {"url":"https://nurapeptide.com/product/mots-c-10mg/","mg":10},
-    "NAD+":                           {"url":"https://nurapeptide.com/product/nad-500mg/","mg":500},
-    "KPV":                            {"url":"https://nurapeptide.com/product/kpv-10mg/","mg":10},
-    "Semax":                          {"url":"https://nurapeptide.com/product/semax-peptide-10mg/","mg":10},
-    "AOD-9604":                       {"url":"https://nurapeptide.com/product/aod-9604-5mg/","mg":5},
-    "Tesamorelin":                    {"url":"https://nurapeptide.com/product/tesamorelin-10mg/","mg":10},
-    "Selank":                         {"url":"https://nurapeptide.com/product/selank-peptide-10mg/","mg":10},
-    "Sermorelin":                     {"url":"https://nurapeptide.com/product/sermorelin-5mg/","mg":5},
-    "DSIP":                           {"url":"https://nurapeptide.com/product/dsip-5mg/","mg":5},
-    "Adamax":                         {"url":"https://nurapeptide.com/product/adamax-10mg/","mg":10},
-    "SS-31":                          {"url":"https://nurapeptide.com/product/ss-31-50mg/","mg":50},
-    "Glutathione":                    {"url":"https://nurapeptide.com/product/glutathione-peptide-1500mg/","mg":1500},
-    "Glow Blend":                     {"url":"https://nurapeptide.com/product/glow-bpc-157-ghk-cu-tb-500-blend/","mg":70},
-  },
-  "pinnacle": {
-    "Semaglutide":                     {"url":"https://pinnaclepeptidelabs.com/product/glp-1sg-peptide/","mg":5},
-    "Tirzepatide":                     {"url":"https://pinnaclepeptidelabs.com/product/glp-2tz-peptide-10mg/","mg":10},
-    "Retatrutide":                     {"url":"https://pinnaclepeptidelabs.com/product/glp-3rt-peptide-10-mg/","mg":10},
-    "BPC-157":                         {"url":"https://pinnaclepeptidelabs.com/product/bpc-157-10mg/","mg":10},
-    "TB-500":                          {"url":"https://pinnaclepeptidelabs.com/product/tb-500-peptide-5-mg/","mg":5},
-    "BPC-157 + TB-500 Blend":          {"url":"https://pinnaclepeptidelabs.com/product/wolverine-stack-bpc157-tb500/","mg":20},
-    "Ipamorelin":                      {"url":"https://pinnaclepeptidelabs.com/product/ipamorelin-peptide-10-mg/","mg":10},
-    "Sermorelin":                      {"url":"https://pinnaclepeptidelabs.com/product/sermorelin-peptide-5-mg/","mg":5},
-    "Tesamorelin":                     {"url":"https://pinnaclepeptidelabs.com/product/tesamorelin-10mg/","mg":10},
-    "Melanotan II":                    {"url":"https://pinnaclepeptidelabs.com/product/melanotan-ii-peptide-10-mg/","mg":10},
-    "GHK-Cu":                          {"url":"https://pinnaclepeptidelabs.com/product/ghk-cu/","mg":100},
-    "Epithalon":                       {"url":"https://pinnaclepeptidelabs.com/product/epithalon/","mg":10},
-    "MOTS-c":                          {"url":"https://pinnaclepeptidelabs.com/product/mots-c-peptide-10-mg/","mg":10},
-    "NAD+":                            {"url":"https://pinnaclepeptidelabs.com/product/nad-peptide-500-mg/","mg":500},
-    "Semax":                           {"url":"https://pinnaclepeptidelabs.com/product/semax-peptide-10-mg/","mg":10},
-    "Selank":                          {"url":"https://pinnaclepeptidelabs.com/product/selank-peptide-10-mg/","mg":10},
-    "DSIP":                            {"url":"https://pinnaclepeptidelabs.com/product/dsip/","mg":5},
-    "5-Amino-1MQ":                     {"url":"https://pinnaclepeptidelabs.com/product/5-amino-1mq-5mg/","mg":5},
-    "CJC-1295 (No DAC)":               {"url":"https://pinnaclepeptidelabs.com/product/cjc-1295-no-dac/","mg":10},
-    "CJC/Ipa Blend":                   {"url":"https://pinnaclepeptidelabs.com/product/cjc-1295-ipamorelin/","mg":10},
-    "IGF-1 LR3":                       {"url":"https://pinnaclepeptidelabs.com/product/igf-1-lr3-peptide-1-mg/","mg":1},
-    "Bacteriostatic Water":            {"url":"https://pinnaclepeptidelabs.com/product/bacteriostatic-water-10-ml/","mg":10},
-    "Thymosin Alpha-1":                {"url":"https://pinnaclepeptidelabs.com/product/thymosin-alpha-1/","mg":10},
-    "SLU-PP-332":                      {"url":"https://pinnaclepeptidelabs.com/product/slu-pp-332-peptide-5-mg/","mg":5},
-    "Hexarelin":                       {"url":"https://pinnaclepeptidelabs.com/product/hexarelin-5mg/","mg":5},
-    "Methylene Blue":                  {"url":"https://pinnaclepeptidelabs.com/product/methylene-blue-tablets-20-mg/","mg":2000},
-    "GHRP-2":                          {"url":"https://pinnaclepeptidelabs.com/product/ghrp-2/","mg":5},
-    "GHRP-6":                          {"url":"https://pinnaclepeptidelabs.com/product/ghrp-6/","mg":5},
-    "Glow Blend":                      {"url":"https://pinnaclepeptidelabs.com/product/glow-peptide/","mg":70},
-    "Glutathione":                     {"url":"https://pinnaclepeptidelabs.com/product/glutathione-600mg/","mg":600},
-    "SS-31":                           {"url":"https://pinnaclepeptidelabs.com/product/ss-31-10mg/","mg":10},
-    "ARA-290":                         {"url":"https://pinnaclepeptidelabs.com/product/ara-290-10mg/","mg":10},
-    "AOD-9604":                        {"url":"https://pinnaclepeptidelabs.com/product/aod-9604/","mg":5},
-    "Kisspeptin":                      {"url":"https://pinnaclepeptidelabs.com/product/kisspeptin-10-peptide-10-mg/","mg":10},
-  },
-}
+# NOTE (v7): product URLs are no longer hardcoded here. The scraper reads every
+# product URL directly from the live PRICES block in index.html, so it always
+# scrapes 100% of listed products and auto-covers vendors/products added later.
 
 # Vendors that need real browser (Cloudflare protected)
-CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "nura"}
+CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "nura", "puratek", "pinnacle"}
 
 # Vendors excluded from auto-scraping:
 # - atomik: Cloudflare Turnstile (human verification) — unbypassable
@@ -903,112 +571,241 @@ def github_push_file(content, sha, message):
     ).raise_for_status()
     log.info(f"Pushed: {message}")
 
-def parse_prices_block(html):
+import re, json
+
+def find_prices_block(html):
+    """Return (start_idx, end_idx) of the PRICES object literal {...}."""
+    k = html.find('const PRICES')
+    s = html.find('{', k)
+    d = 0
+    for i in range(s, len(html)):
+        c = html[i]
+        if c == '{': d += 1
+        elif c == '}':
+            d -= 1
+            if d == 0:
+                return s, i
+    raise ValueError("PRICES block not found")
+
+def _split_top_objects(arr_text):
+    """Given text inside [ ... ] of a vendor array, split into element {..} strings (brace-balanced)."""
+    els = []
+    d = 0; start = None
+    for i, c in enumerate(arr_text):
+        if c == '{':
+            if d == 0: start = i
+            d += 1
+        elif c == '}':
+            d -= 1
+            if d == 0:
+                els.append(arr_text[start:i+1])
+    return els
+
+def parse_all_listings(html):
+    """Parse the peptide-keyed section of PRICES into full listings.
+    Returns dict: peptide -> vid -> list of {idx, price, mg, url, listing, oos}."""
+    s, e = find_prices_block(html)
+    block = html[s:e+1]
+    # Walk depth-1 keys; peptide objects are those whose values contain vendor arrays with price:
     result = {}
-    pep_re = re.compile(r'"([^"]+)":\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}', re.DOTALL)
-    vendor_re = re.compile(
-        r'(\w+):\s*(?:null|\{[^}]*price\s*:\s*([\d.]+)[^}]*mg\s*:\s*([\d.]+)[^}]*\})',
-        re.DOTALL
-    )
-    for m in pep_re.finditer(html):
-        peptide = m.group(1)
-        block = m.group(2)
-        if 'price:' not in block:
-            continue
-        vendors = {}
-        for vm in vendor_re.finditer(block):
-            vid = vm.group(1)
-            if vm.group(2) is None:
-                continue
-            vendors[vid] = {"price": float(vm.group(2)), "mg": float(vm.group(3))}
-        if vendors:
-            result[peptide] = vendors
+    depth = 0; i = 1
+    n = len(block)
+    while i < n - 1:
+        c = block[i]
+        if c in '{[':
+            depth += 1; i += 1; continue
+        if c in '}]':
+            depth -= 1; i += 1; continue
+        if depth == 0 and c == '"':
+            m = re.match(r'"([^"]+)"\s*:\s*', block[i:])
+            if m:
+                key = m.group(1)
+                vpos = i + m.end()
+                if block[vpos] == '{':
+                    # capture this peptide object
+                    d2 = 0
+                    for x in range(vpos, n):
+                        if block[x] == '{': d2 += 1
+                        elif block[x] == '}':
+                            d2 -= 1
+                            if d2 == 0: objend = x; break
+                    objtext = block[vpos:objend+1]
+                    if 'price:' in objtext or '"price"' in objtext:
+                        result[key] = _parse_peptide_obj(objtext)
+                    i = objend + 1; continue
+        i += 1
     return result
 
-def patch_prices(html, updates, out_of_stock_items):
-    """
-    Bulletproof line-by-line price patcher.
-    Finds vendor lines like:
-        ascension:{price:65.00,mg:5,listing:"Semaglutide 5mg"},
-    and replaces just the price value. Never touches mg or listing.
-    Also handles oos flag adding/removing.
-    """
-    patched = 0
-    lines = html.split('\n')
+def _parse_peptide_obj(objtext):
+    """objtext = { vid:[{...},{...}], vid2:null, ... } -> {vid: [listings]}"""
+    out = {}
+    # find vendor keys at depth 1 inside objtext
+    inner = objtext
+    depth = 0; i = 1; n = len(inner)
+    while i < n - 1:
+        c = inner[i]
+        if c in '{[':
+            depth += 1; i += 1; continue
+        if c in '}]':
+            depth -= 1; i += 1; continue
+        if depth == 0:
+            m = re.match(r'([A-Za-z0-9_]+)\s*:\s*', inner[i:])
+            if m:
+                vid = m.group(1); vpos = i + m.end()
+                if inner[vpos] == '[':
+                    d2 = 0
+                    for x in range(vpos, n):
+                        if inner[x] == '[': d2 += 1
+                        elif inner[x] == ']':
+                            d2 -= 1
+                            if d2 == 0: arrend = x; break
+                    arrtext = inner[vpos+1:arrend]
+                    els = _split_top_objects(arrtext)
+                    listings = []
+                    for idx, el in enumerate(els):
+                        pm = re.search(r'"?price"?\s*:\s*([\d.]+)', el)
+                        mm = re.search(r'"?mg"?\s*:\s*([\d.]+)', el)
+                        um = re.search(r'"?url"?\s*:\s*"([^"]*)"', el)
+                        lm = re.search(r'"?listing"?\s*:\s*"([^"]*)"', el)
+                        oo = 'oos:true' in el.replace('"','')
+                        listings.append({
+                            'idx': idx,
+                            'price': float(pm.group(1)) if pm else None,
+                            'mg': float(mm.group(1)) if mm else None,
+                            'url': um.group(1) if um else None,
+                            'listing': lm.group(1) if lm else None,
+                            'oos': oo,
+                        })
+                    out[vid] = listings
+                    i = arrend + 1; continue
+                elif inner[vpos:vpos+4] == 'null':
+                    out[vid] = None
+                    i = vpos + 4; continue
+        i += 1
+    return out
 
-    # Build a fast lookup: {peptide: {vid: new_price}}
-    # and a set of oos items: {(peptide, vid)}
-    oos_set = set(out_of_stock_items)
+def parse_with_offsets(html):
+    """Like parse_all_listings but records absolute offsets for patching.
+    Returns dict peptide->vid->list of {idx, price, mg, url, listing, oos,
+      el_start, el_end (abs, el_end is index of closing '}'), price_span (abs a,b)}."""
+    s, e = find_prices_block(html)
+    block = html[s:e+1]
+    base = s
+    result = {}
+    depth = 0; i = 1; n = len(block)
+    while i < n - 1:
+        c = block[i]
+        if c in '{[':
+            depth += 1; i += 1; continue
+        if c in '}]':
+            depth -= 1; i += 1; continue
+        if depth == 0 and c == '"':
+            m = re.match(r'"([^"]+)"\s*:\s*', block[i:])
+            if m:
+                key = m.group(1); vpos = i + m.end()
+                if block[vpos] == '{':
+                    d2 = 0
+                    for x in range(vpos, n):
+                        if block[x] == '{': d2 += 1
+                        elif block[x] == '}':
+                            d2 -= 1
+                            if d2 == 0: objend = x; break
+                    objtext = block[vpos:objend+1]
+                    if 'price:' in objtext or '"price"' in objtext:
+                        result[key] = _parse_obj_offsets(block, vpos, objend, base)
+                    i = objend + 1; continue
+        i += 1
+    return result
 
-    # We track which peptide block we're currently inside
-    current_peptide = None
-    peptide_detect = re.compile(r'^\s*"([^"]+)":\s*\{')
-    # Matches a vendor price line: vid:{price:XX.XX,mg:YY,...}
-    vendor_line = re.compile(
-        r'^(\s*)(\w+):\{price:([\d.]+)(,mg:[\d.]+,listing:"[^"]*")((?:,oos:true)?)\}(,?)\s*$'
-    )
-    # Also matches array format: vid:[{price:XX.XX,mg:YY,...},...]
-    vendor_line_array = re.compile(
-        r'^(\s*)(\w+):\[\{price:([\d.]+)(,mg:[\d.]+,listing:"[^"]*")((?:,oos:true)?)\}(.*?)\](,?)\s*$'
-    )
+def _parse_obj_offsets(block, ostart, oend, base):
+    out = {}
+    depth = 0; i = ostart + 1; n = oend
+    while i < n:
+        c = block[i]
+        if c in '{[':
+            depth += 1; i += 1; continue
+        if c in '}]':
+            depth -= 1; i += 1; continue
+        if depth == 0:
+            m = re.match(r'([A-Za-z0-9_]+)\s*:\s*', block[i:])
+            if m:
+                vid = m.group(1); vpos = i + m.end()
+                if block[vpos] == '[':
+                    d2 = 0
+                    for x in range(vpos, n+1):
+                        if block[x] == '[': d2 += 1
+                        elif block[x] == ']':
+                            d2 -= 1
+                            if d2 == 0: arrend = x; break
+                    # split elements with absolute offsets
+                    listings = []
+                    d3 = 0; estart = None; idx = 0
+                    for x in range(vpos+1, arrend):
+                        ch = block[x]
+                        if ch == '{':
+                            if d3 == 0: estart = x
+                            d3 += 1
+                        elif ch == '}':
+                            d3 -= 1
+                            if d3 == 0:
+                                el = block[estart:x+1]
+                                pm = re.search(r'"?price"?\s*:\s*([\d.]+)', el)
+                                mm = re.search(r'"?mg"?\s*:\s*([\d.]+)', el)
+                                um = re.search(r'"?url"?\s*:\s*"([^"]*)"', el)
+                                lm = re.search(r'"?listing"?\s*:\s*"([^"]*)"', el)
+                                oo = 'oos:true' in el.replace('"','')
+                                listings.append({
+                                    'idx': idx,
+                                    'price': float(pm.group(1)) if pm else None,
+                                    'mg': float(mm.group(1)) if mm else None,
+                                    'url': um.group(1) if um else None,
+                                    'listing': lm.group(1) if lm else None,
+                                    'oos': oo,
+                                    'el_start': base+estart, 'el_end': base+x,
+                                    'price_span': (base+estart+pm.start(1), base+estart+pm.end(1)) if pm else None,
+                                })
+                                idx += 1
+                    out[vid] = listings
+                    i = arrend + 1; continue
+                elif block[vpos:vpos+4] == 'null':
+                    out[vid] = None; i = vpos + 4; continue
+        i += 1
+    return out
 
-    new_lines = []
-    for line in lines:
-        # Detect peptide block start
-        pm = peptide_detect.match(line)
-        if pm:
-            current_peptide = pm.group(1)
-
-        if current_peptide is None:
-            new_lines.append(line)
-            continue
-
-        vm = vendor_line.match(line)
-        vm_arr = vendor_line_array.match(line) if not vm else None
-        matched = vm or vm_arr
-        is_array = vm_arr is not None and vm is None
-
-        if matched:
-            indent    = matched.group(1)
-            vid       = matched.group(2)
-            price_val = matched.group(3)
-            mg_list   = matched.group(4)   # e.g. ,mg:10,listing:"BPC-157 10mg"
-            oos_part  = matched.group(5)
-            rest      = matched.group(6) if is_array else ""   # remaining array items
-            trailing  = matched.group(7) if is_array else matched.group(6)
-            is_oos    = (current_peptide, vid) in oos_set
-
-            # Check if we have a price update for this vendor
-            new_price = updates.get(current_peptide, {}).get(vid)
-
-            if new_price is not None:
-                price_str = f"{new_price:.2f}"
-                oos_flag = ",oos:true" if is_oos else ""
-                if is_array:
-                    new_line = f'{indent}{vid}:[{{price:{price_str}{mg_list}{oos_flag}}}{rest}]{trailing}'
-                else:
-                    new_line = f'{indent}{vid}:{{price:{price_str}{mg_list}{oos_flag}}}{trailing}'
-                new_lines.append(new_line)
-                patched += 1
-                log.info(f"  PATCHED {current_peptide}/{vid}: ${price_val} → ${price_str}{chr(32)}[array={is_array}]{chr(32)}[OOS={is_oos}]")
-            elif is_oos:
-                oos_flag = ",oos:true"
-                if is_array:
-                    new_line = f'{indent}{vid}:[{{price:{price_val}{mg_list}{oos_flag}}}{rest}]{trailing}'
-                else:
-                    new_line = f'{indent}{vid}:{{price:{price_val}{mg_list}{oos_flag}}}{trailing}'
-                if new_line.rstrip() != line.rstrip():
-                    log.info(f"  Marked OOS: {current_peptide}/{vid}")
-                new_lines.append(new_line)
-            else:
-                # Remove oos flag if no longer OOS
-                clean = line.replace(',oos:true', '')
-                new_lines.append(clean)
-        else:
-            new_lines.append(line)
-
-    log.info(f"Patched {patched} prices")
-    return '\n'.join(new_lines), patched
+def patch_all(html, price_updates, oos_map):
+    """price_updates: {(peptide,vid,idx): new_price_float}
+       oos_map: {(peptide,vid,idx): bool}  (True=set oos, False=clear oos)
+       Applies edits by absolute offset, right-to-left. Returns (new_html, n_price, n_oos)."""
+    data = parse_with_offsets(html)
+    edits = []  # (start, end, replacement)
+    n_price = 0; n_oos = 0
+    for pep, vm in data.items():
+        for vid, ls in vm.items():
+            if not ls: continue
+            for el in ls:
+                key = (pep, vid, el['idx'])
+                if key in price_updates and el['price_span']:
+                    a, b = el['price_span']
+                    newp = f"{price_updates[key]:.2f}"
+                    if html[a:b] != newp:
+                        edits.append((a, b, newp)); n_price += 1
+                if key in oos_map:
+                    want = oos_map[key]
+                    if want and not el['oos']:
+                        # insert ,oos:true right before closing '}'
+                        pos = el['el_end']
+                        edits.append((pos, pos, ',oos:true')); n_oos += 1
+                    elif (not want) and el['oos']:
+                        # remove ,oos:true within element
+                        eltext = html[el['el_start']:el['el_end']+1]
+                        newel = eltext.replace(',oos:true','')
+                        edits.append((el['el_start'], el['el_end']+1, newel)); n_oos += 1
+    # apply right-to-left
+    edits.sort(key=lambda x: x[0], reverse=True)
+    out = html
+    for a, b, rep in edits:
+        out = out[:a] + rep + out[b:]
+    return out, n_price, n_oos
 
 # ── Run Statistics Tracker ──────────────────────────────────
 run_stats = {
@@ -1023,224 +820,251 @@ run_stats = {
 }
 
 
+# ── v7: full-coverage, platform-aware scraping engine ───────────────────────
+# Work-list is derived directly from the live PRICES block (every listing),
+# so we scrape 100% of products and auto-cover any vendor/product added later.
+# WooCommerce vendors use the Store API in bulk (one catalog fetch per vendor);
+# everything else falls back to per-URL HTML parsing. A patched block is
+# re-parsed and validated before commit (fail-safe: a bad run does nothing).
+
+PRICE_CAPS = {
+    "Semaglutide": 300, "Tirzepatide": 400, "Retatrutide": 500, "Cagrilintide": 400,
+    "BPC-157": 400, "TB-500": 400, "BPC-157 + TB-500 Blend": 400,
+    "Ipamorelin": 300, "CJC-1295 (with DAC)": 300, "CJC-1295 (No DAC)": 300,
+    "CJC/Ipa Blend": 300, "Sermorelin": 300, "Tesamorelin": 400,
+    "Melanotan II": 200, "PT-141 (Bremelanotide)": 200, "GHK-Cu": 400,
+    "Epithalon": 400, "MOTS-c": 300, "NAD+": 400, "Semax": 200, "Selank": 200,
+    "DSIP": 200, "KPV": 200, "ARA-290": 300, "AOD-9604": 200, "Klow Blend": 400,
+    "Glow Blend": 400, "Glutathione": 400, "SS-31": 300, "IGF-1 LR3": 300,
+    "Thymosin Alpha-1": 400, "Kisspeptin": 300, "Methylene Blue": 300,
+    "SLU-PP-332": 500, "Hexarelin": 200, "GHRP-2": 200, "GHRP-6": 200,
+}
+DEFAULT_CAP = 800  # generous global ceiling; per-mg checks catch the rest
+
+# Vendors with no per-product URLs or no scrapable pages -> leave to manual updates
+NO_SCRAPE_VENDORS = {"certapeptides"}
+
+def _slug_from_url(url):
+    m = re.search(r'/product/([^/?#]+)', url)
+    if m: return m.group(1).lower()
+    m = re.search(r'/products/([^/?#]+)', url)   # shopify
+    if m: return m.group(1).lower()
+    m = re.search(r'/shop/([^/?#]+)', url)        # s1labs style
+    if m: return m.group(1).lower()
+    return None
+
+def _http_json(url, vendor_id, timeout=40):
+    """Fetch JSON, trying plain requests, then ScraperAPI (render off), then
+    ScraperAPI premium for Cloudflare vendors. Returns parsed JSON or None."""
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; PepsTrackerBot/1.0)"}
+    # 1) direct
+    try:
+        r = requests.get(url, headers=headers, timeout=timeout)
+        if r.status_code == 200 and r.text.strip().startswith(("[", "{")):
+            return r.json()
+    except Exception:
+        pass
+    # 2) ScraperAPI (and premium for CF vendors)
+    try:
+        premium = vendor_id in CLOUDFLARE_VENDORS
+        resp = scraper_get(url, render_js=False, premium=premium, timeout=timeout)
+        if resp.status_code == 200 and resp.text.strip().startswith(("[", "{")):
+            return resp.json()
+    except Exception:
+        pass
+    return None
+
+def woo_store_catalog(domain, vendor_id):
+    """Return {slug: {'price': float, 'in_stock': bool}} for a WooCommerce store
+    via the Store API. Paginated. None if the API is unavailable."""
+    base = f"https://{domain}/wp-json/wc/store/v1/products"
+    catalog = {}
+    for page in range(1, 8):  # up to 700 products
+        data = _http_json(f"{base}?per_page=100&page={page}", vendor_id)
+        if not isinstance(data, list) or not data:
+            break
+        for p in data:
+            slug = (p.get("slug") or "").lower()
+            prices = p.get("prices") or {}
+            raw = prices.get("price")
+            minor = prices.get("currency_minor_unit", 2)
+            if slug and raw is not None:
+                try:
+                    price = float(raw) / (10 ** int(minor))
+                except Exception:
+                    continue
+                catalog[slug] = {"price": price, "in_stock": bool(p.get("is_in_stock", True))}
+        if len(data) < 100:
+            break
+    return catalog or None
+
+def _sane(peptide, listing, new_price):
+    """Per-listing sanity: hard cap + per-mg ratio vs the listing's own price."""
+    if new_price is None or new_price <= 0:
+        return False
+    cap = PRICE_CAPS.get(peptide, DEFAULT_CAP)
+    if new_price > cap:
+        log.warning(f"  CAP FAIL {peptide}/{listing.get('listing')}: ${new_price:.2f} > ${cap}")
+        run_stats["price_capped"].append((listing.get('_vid'), peptide, new_price, cap))
+        return False
+    prev = listing.get("price")
+    if prev and prev > 0:
+        ratio = new_price / prev
+        if ratio > 5.0 or ratio < 0.20:
+            log.warning(f"  SANITY FAIL {peptide}/{listing.get('listing')}: ${prev:.2f} -> ${new_price:.2f} ({ratio:.2f}x)")
+            run_stats["sanity_failed"].append((listing.get('_vid'), peptide, prev, new_price))
+            return False
+    return True
+
 def main():
-    log.info("=== PepsTracker Scraper v6 (daily + OOS) Starting ===")
-
-    # Only scrape the 13 peptides shown in the dropdown — not the full 60-peptide catalog
-    # Glacier and MileHigh block ScraperAPI (always timeout) — skip them to save time + credits
-    ACTIVE_PEPTIDES = [
-        # GLP-1
-        "Semaglutide", "Tirzepatide", "Retatrutide",
-        # BPC / TB
-        "BPC-157", "TB-500", "BPC-157 + TB-500 Blend",
-        # Growth Hormone
-        "Ipamorelin", "CJC-1295 (with DAC)", "Sermorelin", "Tesamorelin",
-        # Skin / Tanning
-        "Melanotan II", "PT-141 (Bremelanotide)", "GHK-Cu",
-        # Longevity
-        "Epithalon", "MOTS-c", "NAD+",
-        # Cognitive
-        "Semax", "Selank", "DSIP", "Adamax",
-        # Immune
-        "KPV", "ARA-290",
-        # Fat Loss
-        "AOD-9604",
-        # Blends
-        "Klow Blend",
-        "Tesamorelin/Ipamorelin Blend",
-        # Immune / Metabolic
-        "Lipo-C",
-        # Mitochondrial
-        "SS-31",
-        # Antioxidant
-        "Glutathione",
-        # Skin / Blend
-        "Glow Blend",
-    ]
-    # SKIP_VENDORS defined at module level — atomik, labsourced, retaone
-
+    log.info("=== PepsTracker Scraper v7 (full-coverage, platform-aware) ===")
     html, sha = github_get_file()
-
-    existing = parse_prices_block(html)
-    if not existing:
+    listings = parse_all_listings(html)
+    if not listings:
         log.error("Could not parse PRICES block — aborting")
         return
-    log.info(f"Parsed {len(existing)} peptides from PRICES block")
-    log.info(f"Scraping {len(ACTIVE_PEPTIDES)} active peptides")
-    log.info(f"⏭ Skipping manual vendors (update via price-update.html): {', '.join(sorted(SKIP_VENDORS))}")
 
-    updates = {}
-    oos_items = []
-
-    for peptide in ACTIVE_PEPTIDES:
-        vendor_map = existing.get(peptide)
-        if not vendor_map:
-            log.warning(f"  {peptide} not found in PRICES block — skipping")
-            continue
-        for vid, info in vendor_map.items():
-            if vid in SKIP_VENDORS:
-                log.info(f"  Skipping {vid}/{peptide} (Cloudflare blocked)")
+    # invert to per-vendor work-list
+    per_vendor = {}
+    total = 0
+    for pep, vmap in listings.items():
+        for vid, arr in vmap.items():
+            if not arr:
                 continue
-            url_info = PRODUCT_URLS.get(vid, {}).get(peptide)
-            if not url_info:
-                continue
-            price, oos = fetch_price_from_url(vid, peptide, url_info["url"])
-            if oos:
-                oos_items.append((peptide, vid))
-                run_stats["oos"].append((vid, peptide))
-            elif price and abs(price - info["price"]) > 0.01:
-                # Sanity check 1: hard price caps per peptide type
-                # Prevents bundle/page errors from corrupting prices
-                PRICE_CAPS = {
-                    "Semaglutide": 150, "Tirzepatide": 200, "Retatrutide": 250,
-                    "BPC-157": 100, "TB-500": 120, "BPC-157 + TB-500 Blend": 180,
-                    "Ipamorelin": 100, "CJC-1295 (with DAC)": 100, "Sermorelin": 120,
-                    "Tesamorelin": 150, "Melanotan II": 80, "PT-141 (Bremelanotide)": 100,
-                    "GHK-Cu": 250, "Epithalon": 200, "MOTS-c": 150, "NAD+": 150,
-                    "Semax": 100, "Selank": 100, "DSIP": 80, "Adamax": 100, "KPV": 100,
-                    "ARA-290": 120, "AOD-9604": 80, "Klow Blend": 200,
-                    "Tesamorelin/Ipamorelin Blend": 200,
-                }
-                cap = PRICE_CAPS.get(peptide, 300)
-                if price > cap:
-                    log.warning(f"  PRICE CAP FAIL {peptide}/{vid}: ${price:.2f} exceeds max ${cap:.2f} — skipping")
-                    run_stats["price_capped"].append((vid, peptide, price, cap))
+            for el in arr:
+                if not el.get("url"):
                     continue
+                el["_vid"] = vid
+                per_vendor.setdefault(vid, []).append((pep, el))
+                total += 1
+    log.info(f"Parsed {len(listings)} peptides, {total} listings across {len(per_vendor)} vendors")
 
-                # Sanity check 2: reject prices > 4x or < 0.25x previous
-                prev = info["price"]
-                ratio = price / prev if prev > 0 else 999
-                # Allow larger swings for peptides sold in different mg sizes
-                # e.g. Epithalon: 10mg ($27) vs 50mg ($119) = 4.4x but both valid
-                max_ratio = 6.0 if peptide in {
-                    "Epithalon", "GHK-Cu", "NAD+", "Klow Blend",
-                    "Tesamorelin/Ipamorelin Blend", "BPC-157 + TB-500 Blend"
-                } else 4.0
-                if ratio > max_ratio or ratio < 0.20:
-                    log.warning(f"  SANITY FAIL {peptide}/{vid}: ${prev:.2f} → ${price:.2f} (ratio {ratio:.2f}x, max {max_ratio}x) — skipping")
-                    run_stats["sanity_failed"].append((vid, peptide, prev, price))
+    price_updates = {}   # (peptide, vid, idx) -> new_price
+    oos_map = {}         # (peptide, vid, idx) -> bool
+
+    for vid in sorted(per_vendor):
+        work = per_vendor[vid]
+        if vid in SKIP_VENDORS or vid in NO_SCRAPE_VENDORS:
+            log.info(f"⏭ {vid}: manual vendor ({len(work)} listings) — skipping")
+            continue
+
+        domain = VENDOR_DOMAIN.get(vid)
+        sample_url = work[0][1]["url"]
+        is_woo = "/product/" in sample_url and vid != "labsourced"
+
+        catalog = None
+        if is_woo and domain:
+            log.info(f"🛒 {vid}: fetching WooCommerce Store API catalog ({domain})")
+            catalog = woo_store_catalog(domain, vid)
+            if catalog:
+                log.info(f"   {vid}: {len(catalog)} products from Store API")
+            else:
+                log.info(f"   {vid}: Store API unavailable — falling back to per-URL HTML")
+
+        for pep, el in work:
+            idx = el["idx"]
+            new_price = None
+            oos = None
+            if catalog is not None:
+                slug = _slug_from_url(el["url"])
+                hit = catalog.get(slug) if slug else None
+                if hit:
+                    new_price = hit["price"]
+                    oos = not hit["in_stock"]
+                    run_stats["successes"].append((vid, pep, new_price, 0.0))
                 else:
-                    updates.setdefault(peptide, {})[vid] = price
-                    log.info(f"  CHANGE {peptide}/{vid}: ${prev:.2f} → ${price:.2f}")
-            time.sleep(1.0)
+                    run_stats["not_found"].append((vid, pep, 0.0))
+                    continue
+            else:
+                # per-URL HTML fallback (reuses proven fetch path)
+                price, is_oos = fetch_price_from_url(vid, pep, el["url"])
+                if is_oos:
+                    oos = True
+                elif price is not None:
+                    new_price = price
+                else:
+                    continue
+                time.sleep(0.8)
 
-    if not updates and not oos_items:
+            if oos:
+                oos_map[(pep, vid, idx)] = True
+                run_stats["oos"].append((vid, pep))
+                continue
+            else:
+                # clear a stale oos flag if the product is back
+                if el.get("oos"):
+                    oos_map[(pep, vid, idx)] = False
+
+            if new_price is not None and _sane(pep, el, new_price):
+                if abs(new_price - (el["price"] or 0)) > 0.01:
+                    price_updates[(pep, vid, idx)] = new_price
+                    log.info(f"  CHANGE {pep}/{vid}[{idx}]: ${el['price']} → ${new_price:.2f}")
+
+    if not price_updates and not any(oos_map.values()):
         log.info("No changes — skipping commit")
+        _write_report(0, 0)
         return
 
-    new_html, count = patch_prices(html, updates, oos_items)
-    now = datetime.now(timezone.utc)
-    # Update SCRAPE_DATE in the HTML so the site shows the real last-updated date
-    scrape_date_str = now.strftime("%B %-d, %Y")  # e.g. "May 26, 2026"
-    new_html = re.sub(
-        r'const SCRAPE_DATE = "[^"]*";',
-        f'const SCRAPE_DATE = "{scrape_date_str}";',
-        new_html
-    )
-    now_str = now.strftime("%Y-%m-%d %H:%M UTC")
-    github_push_file(new_html, sha, f"🤖 Daily price update: {count} changes, {len(oos_items)} OOS ({now_str})")
-    log.info(f"=== Done: {count} prices updated, {len(oos_items)} marked OOS ===")
+    new_html, n_price, n_oos = patch_all(html, price_updates, oos_map)
 
-    # ── Generate diagnostics report ──────────────────────────
-    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    report_lines = [
-        f"# PepsTracker Scraper Diagnostics",
-        f"**Run:** {now_str}",
-        f"**Result:** {count} prices updated, {len(oos_items)} OOS",
-        "",
-        "## ✅ Successful Fetches",
-        f"Total: {len(run_stats['successes'])}",
-    ]
-    for vid, pep, price, elapsed in sorted(run_stats["successes"], key=lambda x: x[3], reverse=True)[:10]:
-        report_lines.append(f"- {vid}/{pep}: ${price:.2f} ({elapsed:.1f}s)")
-
-    if run_stats["blocked_403"]:
-        report_lines += ["", "## 🚫 Cloudflare Blocked (403)"]
-        report_lines.append("**FIX: Add these to CLOUDFLARE_VENDORS in scraper.py**")
-        vendors_403 = {}
-        for vid, pep in run_stats["blocked_403"]:
-            vendors_403.setdefault(vid, []).append(pep)
-        for vid, peps in vendors_403.items():
-            report_lines.append(f"- **{vid}** ({len(peps)} products blocked): {', '.join(peps[:5])}")
-
-    if run_stats["timeouts"]:
-        report_lines += ["", "## ⏱ Timeouts"]
-        vendors_to = {}
-        for vid, pep, elapsed in run_stats["timeouts"]:
-            vendors_to.setdefault(vid, []).append(f"{pep} ({elapsed:.0f}s)")
-        for vid, items in vendors_to.items():
-            report_lines.append(f"- **{vid}**: {', '.join(items[:5])}")
-        slow_vendors = set(v for v, p, e in run_stats["timeouts"] if e > 45)
-        if slow_vendors:
-            report_lines.append(f"\n**Consistently slow vendors:** {', '.join(slow_vendors)}")
-
-    if run_stats["url_404"]:
-        report_lines += ["", "## ❌ 404 Not Found (URL needs updating)"]
-        for vid, pep in run_stats["url_404"]:
-            report_lines.append(f"- {vid}/{pep} — check URL in PRODUCT_URLS")
-
-    if run_stats["price_capped"]:
-        report_lines += ["", "## 🔒 Price Cap Failures"]
-        report_lines.append("These prices were blocked by caps — may need cap adjustment:")
-        for vid, pep, price, cap in run_stats["price_capped"]:
-            report_lines.append(f"- {vid}/{pep}: got ${price:.2f}, cap is ${cap:.2f}")
-
-    if run_stats["sanity_failed"]:
-        report_lines += ["", "## ⚠️ Sanity Check Failures"]
-        report_lines.append("Price changed too dramatically — investigate:")
-        for vid, pep, prev, new_p in run_stats["sanity_failed"]:
-            pct = ((new_p/prev)-1)*100 if prev else 0
-            report_lines.append(f"- {vid}/{pep}: ${prev:.2f} → ${new_p:.2f} ({pct:+.0f}%)")
-
-    if run_stats["not_found"]:
-        report_lines += ["", "## 🔍 Price Not Found"]
-        vendors_nf = {}
-        for item in run_stats["not_found"]:
-            vid, pep = item[0], item[1]
-            vendors_nf.setdefault(vid, []).append(pep)
-        for vid, peps in vendors_nf.items():
-            report_lines.append(f"- **{vid}** ({len(peps)}): {', '.join(peps[:8])}")
-
-    report_lines += [
-        "",
-        "## 📊 Summary",
-        f"| Metric | Count |",
-        f"|--------|-------|",
-        f"| ✅ Prices fetched | {len(run_stats['successes'])} |",
-        f"| 💰 Prices updated | {count} |",
-        f"| 🚫 Cloudflare 403 | {len(run_stats['blocked_403'])} |",
-        f"| ⏱ Timeouts | {len(run_stats['timeouts'])} |",
-        f"| ❌ 404 URLs | {len(run_stats['url_404'])} |",
-        f"| 🔒 Price capped | {len(run_stats['price_capped'])} |",
-        f"| ⚠️ Sanity failed | {len(run_stats['sanity_failed'])} |",
-        f"| 📦 OOS | {len(run_stats['oos'])} |",
-    ]
-
-    report = "\n".join(report_lines)
-    log.info("\n" + "="*60)
-    log.info("DIAGNOSTICS REPORT:")
-    log.info(report)
-    log.info("="*60)
-
-    # Push report to GitHub as SCRAPER_REPORT.md
+    # ── FAIL-SAFE VERIFICATION: patched block must re-parse to the same shape ──
     try:
-        report_file = "SCRAPER_REPORT.md"
-        url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{report_file}"
+        after = parse_all_listings(new_html)
+    except Exception as e:
+        log.error(f"ABORT: patched PRICES block failed to parse ({e}) — not committing")
+        return
+    before_n = sum(len(a) for vm in listings.values() for a in vm.values() if a)
+    after_n = sum(len(a) for vm in after.values() for a in vm.values() if a)
+    if after_n != before_n or len(after) != len(listings):
+        log.error(f"ABORT: listing count changed ({before_n}→{after_n}) — not committing")
+        return
+
+    now = datetime.now(timezone.utc)
+    scrape_date_str = now.strftime("%B %-d, %Y")
+    new_html = re.sub(r'const SCRAPE_DATE = "[^"]*";',
+                      f'const SCRAPE_DATE = "{scrape_date_str}";', new_html)
+    now_str = now.strftime("%Y-%m-%d %H:%M UTC")
+    github_push_file(new_html, sha, f"🤖 Daily price update: {n_price} prices, {n_oos} OOS ({now_str})")
+    log.info(f"=== Done: {n_price} prices updated, {n_oos} OOS flags ===")
+    _write_report(n_price, n_oos)
+
+def _write_report(n_price, n_oos):
+    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    lines = [
+        "# PepsTracker Scraper Diagnostics",
+        f"**Run:** {now_str}",
+        f"**Result:** {n_price} prices updated, {n_oos} OOS flags",
+        "",
+        f"## ✅ Fetched: {len(run_stats['successes'])}",
+        f"## 🔎 Not found (slug/url mismatch): {len(run_stats['not_found'])}",
+        f"## 🚫 OOS: {len(run_stats['oos'])}",
+        f"## 🧢 Price-capped: {len(run_stats['price_capped'])}",
+        f"## ⚖️ Sanity-failed: {len(run_stats['sanity_failed'])}",
+    ]
+    if run_stats["not_found"]:
+        by = {}
+        for vid, pep, _ in run_stats["not_found"]:
+            by.setdefault(vid, 0)
+            by[vid] += 1
+        lines.append("")
+        lines.append("### Not-found by vendor")
+        for vid, c in sorted(by.items(), key=lambda x: -x[1]):
+            lines.append(f"- {vid}: {c}")
+    report = "\n".join(lines)
+    try:
+        url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/SCRAPER_REPORT.md"
         resp = requests.get(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"})
         report_sha = resp.json().get("sha") if resp.status_code == 200 else None
-        payload = {
-            "message": f"📊 Scraper report {now_str}",
-            "content": base64.b64encode(report.encode()).decode(),
-            "branch": "main"
-        }
+        payload = {"message": f"📊 Scraper report {now_str}",
+                   "content": base64.b64encode(report.encode()).decode(), "branch": "main"}
         if report_sha:
             payload["sha"] = report_sha
-        requests.put(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}", "Content-Type": "application/json"}, json=payload)
+        requests.put(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}",
+                     "Content-Type": "application/json"}, json=payload)
         log.info("Pushed diagnostics report to SCRAPER_REPORT.md")
     except Exception as e:
         log.warning(f"Could not push report: {e}")
 
-    log.info(f"=== Run complete. Check SCRAPER_REPORT.md in GitHub for full diagnostics ===")
 
 # ── Vendor Discovery System ─────────────────────────────────
 # To add a new vendor, add it to this list and run the scraper once.
