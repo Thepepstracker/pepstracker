@@ -1,17 +1,17 @@
 # PepsTracker Scraper Diagnostics
-**Run:** 2026-07-10 12:35 UTC
-**Result:** 43 prices updated, 3 OOS flags
+**Run:** 2026-07-11 11:19 UTC
+**Result:** 2 prices updated, 2 OOS flags
 
-## ✅ Fetched: 448
-## 🔎 Not found (slug/url mismatch): 312
-## 🚫 OOS: 29
+## ✅ Fetched: 454
+## 🔎 Not found (slug/url mismatch): 306
+## 🚫 OOS: 27
 ## 🧢 Price-capped: 9
 ## ⚖️ Sanity-failed: 0
 
 ### Not-found by vendor
 - glowaminos: 67
 - ion: 64
-- pinnacle: 41
+- pinnacle: 35
 - innoamino: 33
 - swisschems: 33
 - hydro: 20
