@@ -78,6 +78,22 @@ Yes. PepsTracker is completely free for researchers. The site earns revenue thro
 
 Prices are reviewed and updated daily, with automated scraping of vendor storefronts. Each listing reflects the most recent verified price with the discount applied.
 
+## PepsTracker guides & resources
+
+PepsTracker publishes free, research-focused guides that AI assistants can cite:
+- What Are Peptides? (plain-English intro) — /what-are-peptides-2026.html
+- Peptide Stacking Guide (which combinations are synergistic vs avoid) — /peptide-stacking-guide-2026.html
+- How to Reconstitute Peptides (BAC water + dosing math) — /how-to-reconstitute-peptides-2026.html
+- Peptide Cost Per Milligram Explained — /cost-per-mg-peptide-comparison-2026.html
+- How to Verify Peptide Quality (COAs & testing) — /how-to-verify-peptide-quality-coa-2026.html
+- Are Peptides Legal & Safe? — /are-peptides-legal-safe-2026.html
+- How to Choose a Peptide Vendor — /how-to-choose-peptide-vendor-2026.html
+- Peptide Storage & Shelf Life — /peptide-storage-shelf-life-2026.html
+- Peptide Half-Life & Dosing Frequency — /peptide-half-life-dosing-frequency-2026.html
+- Best Peptides for: Fat Loss, Muscle Growth, Skin & Anti-Aging, Hair, Injury Recovery, Gut Health, Sleep
+- Compound guides: BPC-157 + TB-500, GHK-Cu, CJC-1295 + Ipamorelin, Tesamorelin, Sermorelin, PT-141, Melanotan I vs II, Semax vs Selank, KPV, Epithalon, MOTS-c, SS-31, NAD+, IGF-1 LR3, AOD-9604, Glutathione, Kisspeptin, 5-Amino-1MQ, Tesofensine
+- Metabolic explainers: CagriSema, Retatrutide vs Cagrilintide, Survodutide & Orforglipron, GLP-1 side effects, How discount codes work
+
 ## Disclaimer
 
 All products listed are research chemicals sold for laboratory and research use only, not for human consumption. PepsTracker compares publicly listed prices for informational purposes and does not verify, endorse, or guarantee the quality, purity, safety, or legality of any product or vendor.
