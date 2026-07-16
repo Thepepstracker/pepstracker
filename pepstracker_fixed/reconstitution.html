@@ -154,6 +154,7 @@
     </div>
 
     <button class="btn-calc" onclick="calculate()">Calculate →</button>
+  <p id="recon-error" style="color:#e5484d;font-size:.85rem;margin-top:8px;display:none;"></p>
   </div>
 
   <!-- RESULTS -->
@@ -206,8 +207,7 @@ function calculate() {
   const syringeU   = parseInt(document.getElementById('syringeType').value);
 
   if (!peptideMg || !bacWater || !doseAmount) {
-    alert('Please fill in all fields.');
-    return;
+    const errEl = document.getElementById('recon-error'); errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return;
   }
 
   // Convert everything to mcg
@@ -230,7 +230,7 @@ function calculate() {
   document.getElementById('rUnits').innerHTML = `${units.toFixed(1)}<span class="result-unit">units</span>`;
   document.getElementById('rMl').innerHTML     = `${volumeMl.toFixed(3)}<span class="result-unit">mL</span>`;
   document.getElementById('rConc').innerHTML   = `${concMcgPerMl.toFixed(1)}<span class="result-unit">mcg/mL</span>`;
-  document.getElementById('rDoses').textContent = `${dosesPerVial.toFixed(1)} doses`;
+  document.getElementById('rDoses').textContent = `${Math.floor(dosesPerVial)} doses`;
 
   // Syringe visual (capped at 100 units for display)
   const fillPct = Math.min((units / syringeU) * 100, 100);
@@ -246,6 +246,8 @@ function calculate() {
     info += `Note: Very small draw volumes can be hard to measure accurately. Consider adding less BAC water (try ${(bacWater / 2).toFixed(1)} mL) to increase the concentration.`;
   }
   document.getElementById('infoBox').innerHTML = info;
+  const errEl2 = document.getElementById('recon-error'); if(errEl2) { errEl2.style.display='none'; }
+  if (!isFinite(units) || !isFinite(volumeMl) || !isFinite(concMcgPerMl)) { const e=document.getElementById('recon-error'); e.textContent='Invalid values — check your inputs.'; e.style.display='block'; return; }
   document.getElementById('resultCard').classList.add('show');
   document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
