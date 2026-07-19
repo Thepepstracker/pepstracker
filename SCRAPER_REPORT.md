@@ -1,10 +1,10 @@
 # PepsTracker Scraper Diagnostics
-**Run:** 2026-07-16 12:07 UTC
-**Result:** 5 prices updated, 2 OOS flags
+**Run:** 2026-07-19 11:49 UTC
+**Result:** 11 prices updated, 6 OOS flags
 
-## ✅ Fetched: 542
+## ✅ Fetched: 551
 ## 🔎 Not found (slug/url mismatch): 306
-## 🚫 OOS: 30
+## 🚫 OOS: 22
 ## 🧢 Price-capped: 8
 ## ⚖️ Sanity-failed: 0
 
