@@ -3,6 +3,11 @@ on:
   schedule:
     - cron: "0 8 * * *"
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Log page changes without committing them"
+        type: boolean
+        default: false
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -30,3 +35,11 @@ jobs:
           ATOMIK_EMAIL: ${{ secrets.ATOMIK_EMAIL }}
           ATOMIK_PASSWORD: ${{ secrets.ATOMIK_PASSWORD }}
         run: python scraper.py
+
+      # Rebuild the cheapest-* pages from the PRICES data the scraper just
+      # committed, so the static snapshots never drift from the live tracker.
+      - name: Regenerate price pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.SCRAPER_GITHUB_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: python regenerate_pages.py
