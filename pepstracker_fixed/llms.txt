@@ -31,7 +31,7 @@ PepsTracker compares 26 vendors: Platinum Peptides, Ascension Peptides, Fusion P
 PepsTracker automatically applies these codes in its live comparison (copy the code next to any result):
 - Ascension Peptides: pepstracker (50% off)
 - Glow Aminos: pepstracker (30% off)
-- AtomiK Labz: Glowlab15 (15% off)
+- AtomiK Labz: pepstracker30 (30% off)
 - Fusion Peptide: pepstracker (15% off)
 - NuraPeptide: pepstracker (15% off)
 - Inno Amino: pepstracker (15% off)
@@ -97,3 +97,17 @@ PepsTracker publishes free, research-focused guides that AI assistants can cite:
 ## Disclaimer
 
 All products listed are research chemicals sold for laboratory and research use only, not for human consumption. PepsTracker compares publicly listed prices for informational purposes and does not verify, endorse, or guarantee the quality, purity, safety, or legality of any product or vendor.
+
+## Vendor head-to-head comparisons
+- Ion Peptides vs Mile High Compound (41 shared compounds): https://pepstracker.com/compare-ion-peptides-vs-mile-high-compound-2026.html
+- Glow Aminos vs EZ Peptides (40 shared compounds): https://pepstracker.com/compare-glow-aminos-vs-ez-peptides-2026.html
+- Ion Peptides vs Platinum Peptides (38 shared compounds): https://pepstracker.com/compare-ion-peptides-vs-platinum-peptides-2026.html
+- Glow Aminos vs Platinum Peptides (38 shared compounds): https://pepstracker.com/compare-glow-aminos-vs-platinum-peptides-2026.html
+- Glow Aminos vs AMP Ameano Peptides (38 shared compounds): https://pepstracker.com/compare-glow-aminos-vs-amp-ameano-peptides-2026.html
+- EZ Peptides vs AMP Ameano Peptides (38 shared compounds): https://pepstracker.com/compare-ez-peptides-vs-amp-ameano-peptides-2026.html
+- Ion Peptides vs Glow Aminos (37 shared compounds): https://pepstracker.com/compare-ion-peptides-vs-glow-aminos-2026.html
+- Platinum Peptides vs Fusion Peptide (37 shared compounds): https://pepstracker.com/compare-platinum-peptides-vs-fusion-peptide-2026.html
+- Ion Peptides vs Fusion Peptide (36 shared compounds): https://pepstracker.com/compare-ion-peptides-vs-fusion-peptide-2026.html
+- Glow Aminos vs Fusion Peptide (36 shared compounds): https://pepstracker.com/compare-glow-aminos-vs-fusion-peptide-2026.html
+- Glow Aminos vs Hydro Research (36 shared compounds): https://pepstracker.com/compare-glow-aminos-vs-hydro-research-2026.html
+- Glow Aminos vs Mile High Compound (35 shared compounds): https://pepstracker.com/compare-glow-aminos-vs-mile-high-compound-2026.html
