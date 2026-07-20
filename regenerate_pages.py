@@ -410,21 +410,8 @@ def update_page(name, html, prices, vendors, today):
     return new, " ".join(report)
 
 
-# ───────────────────────── main ─────────────────────────
-def main():
-    log.info("Reading %s (post-scrape state)", INDEX_FILE)
-    index_html, _ = gh_get(INDEX_FILE)
-
-    vendors = parse_vendors(index_html)
-    prices = parse_prices(index_html)
-    log.info("Parsed %d vendors, %d compounds", len(vendors), len(prices))
-
-    if len(vendors) < MIN_VENDORS or len(prices) < MIN_COMPOUNDS:
-        log.error("Parse looks broken (vendors=%d, compounds=%d) — aborting without writes.",
-                  len(vendors), len(prices))
-        raise SystemExit(1)
-
-    today = datetime.now(timezone.utc).strftime("%B %d, %Y")
+# ───────────────────────── cheapest-* pass ─────────────────────────
+def regen_cheapest(vendors, prices, today):
     pages = [n for n in gh_list(SITE_DIR) if n.startswith("cheapest-") and n.endswith(".html")]
     log.info("Found %d cheapest-* pages", len(pages))
 
@@ -451,8 +438,328 @@ def main():
             log.error("  FAIL %-46s %s", name, e)
             failed += 1
 
-    log.info("Done. updated=%d skipped=%d failed=%d%s",
-             changed, skipped, failed, " (dry run)" if DRY_RUN else "")
+    log.info("cheapest-*: updated=%d skipped=%d failed=%d", changed, skipped, failed)
+    return failed
+
+
+# ═════════════════════ compare-* pages ═════════════════════
+# These pages are 100% data-derived (no hand-written prose), so the whole
+# content block is rebuilt. Each page's own shell — everything before
+# <div class="page"> and from <footer> onward — is reused verbatim, so future
+# design changes to the shell survive regeneration.
+
+def esc(s):
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;")
+            .replace(">", "&gt;").replace('"', "&quot;"))
+
+
+def pair_rows(prices, vendors, a, b):
+    """Shared compounds with each side's best $/mg, cheapest-first."""
+    rows, a_sum, b_sum, aw, bw, tie = [], 0.0, 0.0, 0, 0, 0
+    for compound, cmap in prices.items():
+        ra = rank_vendors({a: cmap[a]}, vendors) if a in cmap else []
+        rb = rank_vendors({b: cmap[b]}, vendors) if b in cmap else []
+        if not ra or not rb:
+            continue
+        A, B = ra[0], rb[0]
+        rows.append((compound, A, B))
+        a_sum += A["permg"]
+        b_sum += B["permg"]
+        if A["permg"] < B["permg"]:
+            aw += 1
+        elif B["permg"] < A["permg"]:
+            bw += 1
+        else:
+            tie += 1
+    rows.sort(key=lambda r: min(r[1]["permg"], r[2]["permg"]))
+    n = len(rows)
+    return {"rows": rows, "n": n, "aw": aw, "bw": bw, "tie": tie,
+            "a_avg": a_sum / n if n else 0, "b_avg": b_sum / n if n else 0}
+
+
+def compare_table(rows, an, bn):
+    out = ["<table>",
+           f"    <tr><th>Peptide</th><th>{esc(an)}</th><th>{esc(bn)}</th><th>Cheaper</th></tr>"]
+    for compound, A, B in rows[:18]:
+        a_win = A["permg"] < B["permg"]
+        is_tie = A["permg"] == B["permg"]
+        gap = abs(A["permg"] - B["permg"])
+        pct = round(gap / max(A["permg"], B["permg"]) * 100) if max(A["permg"], B["permg"]) else 0
+        a_style = "color:var(--green);font-weight:800;" if a_win and not is_tie else ""
+        b_style = "color:var(--green);font-weight:800;" if (not a_win and not is_tie) else ""
+        if is_tie:
+            verdict = '<span style="color:#5a6a82;">Tie</span>'
+        else:
+            verdict = (f'<strong>{esc(an if a_win else bn)}</strong>'
+                       f'<br><span style="font-size:.72rem;color:var(--green);">{pct}% cheaper</span>')
+        out.append(
+            "<tr>"
+            f"<td><strong>{esc(compound)}</strong></td>"
+            f'<td style="{a_style}">{fmt_permg(A["permg"])}<br>'
+            f'<span style="font-size:.72rem;color:#5a6a82;">{fmt_money(A["disc"])} / {fmt_mg(A["mg"])}</span></td>'
+            f'<td style="{b_style}">{fmt_permg(B["permg"])}<br>'
+            f'<span style="font-size:.72rem;color:#5a6a82;">{fmt_money(B["disc"])} / {fmt_mg(B["mg"])}</span></td>'
+            f"<td>{verdict}</td>"
+            "</tr>")
+    out.append("</table>")
+    return "\n".join(out)
+
+
+def compare_faq(an, bn, st, a_cat, b_cat, a_code, b_code, a_disc, b_disc, cheaper_avg, gap_pct):
+    w_name = an if st["aw"] > st["bw"] else (bn if st["bw"] > st["aw"] else None)
+    l_name = bn if w_name == an else (an if w_name == bn else None)
+    w_wins, l_wins = max(st["aw"], st["bw"]), min(st["aw"], st["bw"])
+    decided = st["aw"] + st["bw"]
+    dpct = round(w_wins / decided * 100) if decided else 0
+    if w_name:
+        a1 = (f"{w_name} is cheaper on {w_wins} of the {st['n']} peptides both vendors stock, "
+              f"{l_name} on {l_wins}"
+              + (f", and {st['tie']} are priced identically at the two vendors" if st["tie"] else "")
+              + f". Across the compounds where they differ, that is {dpct}% in {w_name}'s favour. "
+              f"On average cost-per-milligram, {cheaper_avg} comes out roughly {gap_pct}% lower. "
+              "Neither wins everything, so check the specific compound you need.")
+    else:
+        a1 = ("They are remarkably even — each wins on the same number of shared compounds. "
+              "The right pick depends entirely on which specific peptide you are buying.")
+    return [
+        (f"Which is cheaper overall, {an} or {bn}?", a1),
+        (f"What discount codes do {an} and {bn} offer?",
+         f"{an} uses code {a_code} for {round(a_disc*100)}% off, and {bn} uses {b_code} for "
+         f"{round(b_disc*100)}% off. Every price in the comparison table already has these codes "
+         "applied, which is why the ranking can differ from list prices."),
+        (f"Do these two vendors carry the same peptides?",
+         f"They overlap on {st['n']} compounds. {an} lists roughly {a_cat} tracked compounds and "
+         f"{bn} lists about {b_cat}. If you need something outside the overlap, only one of them "
+         "will have it."),
+        ("Why compare cost per milligram instead of price?",
+         "Vial sizes differ between vendors, so sticker price is misleading. A larger vial at a "
+         "higher price is often cheaper per milligram. Every figure here is the discounted price "
+         "divided by milligrams, which is the only like-for-like comparison."),
+    ]
+
+
+def build_compare(name, old_html, prices, vendors, catalog, a_id, b_id, today_month):
+    va, vb = vendors[a_id], vendors[b_id]
+    an, bn = va["name"], vb["name"]
+    st = pair_rows(prices, vendors, a_id, b_id)
+    if st["n"] < 2:
+        return None, f"only {st['n']} shared compounds"
+
+    url = f"https://pepstracker.com/{name}"
+    w_name = an if st["aw"] > st["bw"] else (bn if st["bw"] > st["aw"] else None)
+    l_name = bn if w_name == an else (an if w_name == bn else None)
+    w_wins, l_wins = max(st["aw"], st["bw"]), min(st["aw"], st["bw"])
+    decided = st["aw"] + st["bw"]
+    dpct = round(w_wins / decided * 100) if decided else 0
+    cheaper_avg = an if st["a_avg"] < st["b_avg"] else bn
+    gap = abs(st["a_avg"] - st["b_avg"])
+    gap_pct = round(gap / max(st["a_avg"], st["b_avg"]) * 100) if max(st["a_avg"], st["b_avg"]) else 0
+    a_cat, b_cat = catalog.get(a_id, "—"), catalog.get(b_id, "—")
+
+    if w_name:
+        verdict = (f"<strong>{esc(w_name)}</strong> is cheaper on <strong>{w_wins}</strong> of the "
+                   f"{st['n']} shared peptides, {esc(l_name)} on <strong>{l_wins}</strong>"
+                   + (f", and <strong>{st['tie']}</strong> are priced identically" if st["tie"] else "")
+                   + (f" — that is {dpct}% of the {decided} compounds where the two actually differ."
+                      if decided else "."))
+    else:
+        verdict = (f"These two are <strong>dead even</strong> — each is cheaper on exactly "
+                   f"{w_wins} of the {st['n']} shared peptides"
+                   + (f", with {st['tie']} tied" if st["tie"] else "") + ".")
+
+    title = (f"{an} vs {bn} (2026) — Price Comparison Across {st['n']} Peptides | PepsTracker")
+    desc = (f"{an} vs {bn} compared on {st['n']} shared research peptides with discount codes "
+            "applied. " + (f"{w_name} is cheaper on {w_wins}, {l_name} on {l_wins}"
+                           + (f", and {st['tie']} are priced identically" if st["tie"] else "") + "."
+                           if w_name else "An even split across the shared range.") + " Updated 2026.")
+    faq = compare_faq(an, bn, st, a_cat, b_cat, va["code"], vb["code"],
+                      va["discount"], vb["discount"], cheaper_avg, gap_pct)
+
+    lds = [
+        {"@context": "https://schema.org", "@type": "Article",
+         "headline": f"{an} vs {bn} — 2026 Price Comparison", "description": desc,
+         "datePublished": "2026-07-19",
+         "dateModified": datetime.now(timezone.utc).strftime("%Y-%m-%d"), "url": url,
+         "author": {"@type": "Organization", "name": "PepsTracker", "url": "https://pepstracker.com/"},
+         "publisher": {"@type": "Organization", "name": "PepsTracker", "url": "https://pepstracker.com/"},
+         "mainEntityOfPage": {"@type": "WebPage", "@id": url}},
+        {"@context": "https://schema.org", "@type": "FAQPage",
+         "mainEntity": [{"@type": "Question", "name": q,
+                         "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]},
+        {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "PepsTracker", "item": "https://pepstracker.com/"},
+            {"@type": "ListItem", "position": 2, "name": "Vendor Comparisons",
+             "item": "https://pepstracker.com/vendors.html"},
+            {"@type": "ListItem", "position": 3, "name": f"{an} vs {bn}", "item": url}]},
+    ]
+
+    tie_note = (f" <strong>{st['tie']}</strong> of the {st['n']} shared compounds are priced "
+                "identically at both vendors, so for those it comes down to shipping speed and "
+                "stock rather than price.") if st["tie"] else ""
+
+    card = ('<div style="background:var(--card);border:1px solid var(--border);'
+            'border-radius:12px;padding:16px;">\n'
+            '      <div style="font-weight:800;margin-bottom:6px;">{name}</div>\n'
+            '      <div style="font-size:.82rem;color:#5a6a82;line-height:1.7;">Cheaper on '
+            '<strong style="color:var(--green);">{wins}</strong> compounds<br>Catalog: {cat} tracked'
+            '<br>Code: <code>{code}</code> ({pct}% off)</div>\n    </div>')
+
+    content = (
+        '<div class="page">\n'
+        '  <p style="font-size:.82rem;color:#5a6a82;margin-bottom:20px;">'
+        '<a href="/" style="color:var(--blue);text-decoration:none;">PepsTracker</a> › '
+        '<a href="/vendors.html" style="color:var(--blue);text-decoration:none;">Vendors</a> › '
+        f'{esc(an)} vs {esc(bn)}</p>\n'
+        '  <div style="margin-bottom:8px;"><span style="background:rgba(59,158,255,.12);'
+        'color:var(--blue);border:1px solid rgba(59,158,255,.25);padding:4px 12px;border-radius:20px;'
+        'font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">'
+        '⚖️ Vendor Comparison</span></div>\n'
+        f'  <h1>{esc(an)} vs {esc(bn)} — Which Is Cheaper in 2026?</h1>\n'
+        f'  <p style="color:#5a6a82;font-size:.82rem;margin-bottom:24px;">Updated {today_month} · '
+        f'{st["n"]} shared compounds · discount codes applied</p>\n'
+        '  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;'
+        'padding:20px;margin-bottom:26px;">\n'
+        '    <div style="font-size:.72rem;font-weight:800;text-transform:uppercase;'
+        'letter-spacing:.5px;color:var(--green);margin-bottom:8px;">🏆 The verdict</div>\n'
+        f'    <p style="margin:0 0 10px;">{verdict}</p>\n'
+        '    <p style="margin:0;color:#5a6a82;font-size:.9rem;">Averaged across every shared '
+        f'compound, <strong>{esc(cheaper_avg)}</strong> runs about <strong>{gap_pct}% lower</strong> '
+        "on cost per milligram. Both figures already include each vendor's discount code.</p>\n"
+        '  </div>\n'
+        '  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px;">\n    '
+        + card.format(name=esc(an), wins=st["aw"], cat=a_cat, code=esc(va["code"]),
+                      pct=round(va["discount"] * 100)) + "\n    "
+        + card.format(name=esc(bn), wins=st["bw"], cat=b_cat, code=esc(vb["code"]),
+                      pct=round(vb["discount"] * 100)) + "\n  </div>\n"
+        "  <h2>Head-to-head: cost per milligram</h2>\n"
+        "  <p>Every price below is the discounted price divided by milligrams, so vial sizes do not "
+        "distort the comparison. Sorted by cheapest available option.</p>\n  "
+        + compare_table(st["rows"], an, bn) + "\n"
+        "  <h2>How to read this</h2>\n"
+        f"  <p>Neither vendor wins across the board, which is the main takeaway. {esc(an)} is cheaper "
+        f"on {st['aw']} of the {st['n']} shared compounds and {esc(bn)} on {st['bw']}.{tie_note} If you "
+        "buy a single compound, the table above is the answer. If you are placing one larger order to "
+        "save on shipping, the vendor that wins your two or three highest-volume compounds usually "
+        "nets out ahead.</p>\n"
+        f"  <p>Catalog breadth matters too: {esc(an)} lists around {a_cat} compounds we track versus "
+        f"{b_cat} at {esc(bn)}. Outside the {st['n']} overlap, only one of them will stock what you "
+        "need.</p>\n"
+        "  <h2>Discount codes</h2>\n"
+        f'  <p><strong>{esc(an)}</strong> — code <code>{esc(va["code"])}</code> for '
+        f'{round(va["discount"]*100)}% off. <strong>{esc(bn)}</strong> — code '
+        f'<code>{esc(vb["code"])}</code> for {round(vb["discount"]*100)}% off. Codes are applied '
+        "before ranking on this page, which is why the order can differ from list prices. Always "
+        "confirm the code at checkout.</p>\n"
+        "  <h2>Frequently asked questions</h2>\n"
+        + "".join(f"  <h3>{esc(q)}</h3>\n  <p>{esc(a)}</p>\n" for q, a in faq)
+        + "  <h2>Compare live prices</h2>\n"
+        '  <p><a href="/" style="color:var(--blue);">Open the live tracker</a> to compare these two '
+        'against all 26 vendors in real time, or browse <a href="/vendors.html" '
+        'style="color:var(--blue);">every vendor we track</a>.</p>\n'
+        '  <p style="font-size:.8rem;color:#5a6a82;margin-top:26px;">PepsTracker is a price '
+        "comparison service. All products referenced are for research use only. We do not sell or "
+        "distribute any products. Affiliate links may generate a commission.</p>\n"
+        "</div>\n")
+
+    # splice: reuse this page's own shell
+    p = old_html.find('<div class="page">')
+    f = old_html.find("<footer")
+    if p < 0 or f < 0 or f <= p:
+        return None, "shell boundary not found"
+    new = old_html[:p] + content + old_html[f:]
+
+    report = []
+    new = replace_once(new, r"<title>[^<]*</title>", f"<title>{esc(title)}</title>", "title", report)
+    for label, pat in (("meta-desc", r'<meta name="description" content="[^"]*"\s*/?>'),
+                       ("og-desc", r'<meta property="og:description" content="[^"]*"\s*/?>'),
+                       ("tw-desc", r'<meta name="twitter:description" content="[^"]*"\s*/?>')):
+        attr = ('name="description"' if label == "meta-desc" else
+                'property="og:description"' if label == "og-desc" else 'name="twitter:description"')
+        new = replace_once(new, pat, f'<meta {attr} content="{esc(desc)}"/>', label, report)
+
+    blocks = list(re.finditer(r'<script type="application/ld\+json">[\s\S]*?</script>', new))
+    if len(blocks) != 3:
+        return None, f"expected 3 ld+json blocks, found {len(blocks)}"
+    for m, ld in zip(reversed(blocks), reversed(lds)):
+        tag = ('<script type="application/ld+json">'
+               + json.dumps(ld, ensure_ascii=False, separators=(",", ":")) + "</script>")
+        new = new[:m.start()] + tag + new[m.end():]
+    report.append("ok:schema(3)")
+
+    if new == old_html:
+        return None, "no change"
+    ok, why = safety_check(old_html, new)
+    if not ok:
+        return None, f"SAFETY FAIL: {why}"
+    return new, " ".join(report)
+
+
+def regen_compare(vendors, prices, today_month):
+    by_name = {v["name"]: vid for vid, v in vendors.items()}
+    catalog = {}
+    for cmap in prices.values():
+        for vid in cmap:
+            if vid in vendors:
+                catalog[vid] = catalog.get(vid, 0) + 1
+
+    pages = [n for n in gh_list(SITE_DIR) if n.startswith("compare-") and n.endswith(".html")]
+    log.info("Found %d compare-* pages", len(pages))
+    changed = skipped = failed = 0
+    for name in sorted(pages):
+        path = f"{SITE_DIR}/{name}"
+        try:
+            html, sha = gh_get(path)
+            m = re.search(r"<title>(.+?) vs (.+?) \(20\d\d\)", html)
+            if not m:
+                log.info("  skip %-56s unparseable title", name)
+                skipped += 1
+                continue
+            a_id, b_id = by_name.get(m.group(1).strip()), by_name.get(m.group(2).strip())
+            if not a_id or not b_id:
+                log.info("  skip %-56s vendor not in VENDORS", name)
+                skipped += 1
+                continue
+            new, note = build_compare(name, html, prices, vendors, catalog, a_id, b_id, today_month)
+            if new is None:
+                log.info("  skip %-56s %s", name, note)
+                if note.startswith("SAFETY FAIL"):
+                    failed += 1
+                else:
+                    skipped += 1
+                continue
+            if DRY_RUN:
+                log.info("  DRY  %-56s %s", name, note)
+            else:
+                gh_put(path, new, sha, f"Auto-refresh comparison: {name}")
+                log.info("  ok   %-56s %s", name, note)
+            changed += 1
+        except Exception as e:
+            log.error("  FAIL %-56s %s", name, e)
+            failed += 1
+    log.info("compare-*: updated=%d skipped=%d failed=%d", changed, skipped, failed)
+    return failed
+
+
+# ───────────────────────── main ─────────────────────────
+def main():
+    log.info("Reading %s (post-scrape state)", INDEX_FILE)
+    index_html, _ = gh_get(INDEX_FILE)
+    vendors = parse_vendors(index_html)
+    prices = parse_prices(index_html)
+    log.info("Parsed %d vendors, %d compounds", len(vendors), len(prices))
+
+    if len(vendors) < MIN_VENDORS or len(prices) < MIN_COMPOUNDS:
+        log.error("Parse looks broken (vendors=%d, compounds=%d) — aborting without writes.",
+                  len(vendors), len(prices))
+        raise SystemExit(1)
+
+    today = datetime.now(timezone.utc).strftime("%B %d, %Y")
+    today_month = datetime.now(timezone.utc).strftime("%B %Y")
+
+    failed = regen_cheapest(vendors, prices, today)
+    failed += regen_compare(vendors, prices, today_month)
+
+    log.info("Done%s. total failures=%d", " (dry run)" if DRY_RUN else "", failed)
     if failed:
         raise SystemExit(1)
 
