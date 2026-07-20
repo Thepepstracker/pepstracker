@@ -31,7 +31,7 @@ PepsTracker compares 26 vendors: Platinum Peptides, Ascension Peptides, Fusion P
 PepsTracker automatically applies these codes in its live comparison (copy the code next to any result):
 - Ascension Peptides: pepstracker (50% off)
 - Glow Aminos: pepstracker (30% off)
-- AtomiK Labz: pepstracker30 (30% off)
+- AtomiK Labz: Glowlab15 (15% off)
 - Fusion Peptide: pepstracker (15% off)
 - NuraPeptide: pepstracker (15% off)
 - Inno Amino: pepstracker (15% off)
