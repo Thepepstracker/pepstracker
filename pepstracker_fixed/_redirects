@@ -35,3 +35,46 @@
 # Vendor shortcuts
 /vendor/fusion        /vendors.html  301
 /vendor/ascension     /vendors.html  301
+
+
+# Fusion Peptide removed from tracker — retire its pages (forced 301)
+/compare-fusion-peptide-vs-ascension-peptides-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-ascension-peptides-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-atomik-labz-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-atomik-labz-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-ez-peptides-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-ez-peptides-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-glacier-aminos-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-glacier-aminos-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-hydro-research-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-hydro-research-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-inno-amino-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-inno-amino-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-la-peptides-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-la-peptides-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-labsourced-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-labsourced-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-mile-high-compound-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-mile-high-compound-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-nurapeptide-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-nurapeptide-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-pinnacle-peptide-labs-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-pinnacle-peptide-labs-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-puratek-peptides-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-puratek-peptides-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-reta-one-labs-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-reta-one-labs-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-s1-labs-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-s1-labs-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-solas-science-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-solas-science-2026  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-swisschems-2026.html  /vendor-comparisons.html  301!
+/compare-fusion-peptide-vs-swisschems-2026  /vendor-comparisons.html  301!
+/compare-glow-aminos-vs-fusion-peptide-2026.html  /vendor-comparisons.html  301!
+/compare-glow-aminos-vs-fusion-peptide-2026  /vendor-comparisons.html  301!
+/compare-ion-peptides-vs-fusion-peptide-2026.html  /vendor-comparisons.html  301!
+/compare-ion-peptides-vs-fusion-peptide-2026  /vendor-comparisons.html  301!
+/compare-platinum-peptides-vs-fusion-peptide-2026.html  /vendor-comparisons.html  301!
+/compare-platinum-peptides-vs-fusion-peptide-2026  /vendor-comparisons.html  301!
+/vendor-fusion.html  /vendors.html  301!
+/vendor-fusion  /vendors.html  301!
