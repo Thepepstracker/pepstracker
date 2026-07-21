@@ -654,7 +654,7 @@ def build_compare(name, old_html, prices, vendors, catalog, a_id, b_id, today_mo
         + "".join(f"  <h3>{esc(q)}</h3>\n  <p>{esc(a)}</p>\n" for q, a in faq)
         + "  <h2>Compare live prices</h2>\n"
         '  <p><a href="/" style="color:var(--blue);">Open the live tracker</a> to compare these two '
-        'against all 26 vendors in real time, or browse <a href="/vendors.html" '
+        f'against all {len(vendors)} vendors in real time, or browse <a href="/vendors.html" '
         'style="color:var(--blue);">every vendor we track</a>.</p>\n'
         '  <p style="font-size:.8rem;color:#5a6a82;margin-top:26px;">PepsTracker is a price '
         "comparison service. All products referenced are for research use only. We do not sell or "
