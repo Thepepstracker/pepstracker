@@ -1,11 +1,11 @@
 # PepsTracker Scraper Diagnostics
-**Run:** 2026-07-25 11:45 UTC
-**Result:** 28 prices updated, 3 OOS flags
+**Run:** 2026-07-26 11:44 UTC
+**Result:** 0 prices updated, 11 OOS flags
 
-## ✅ Fetched: 505
-## 🔎 Not found (slug/url mismatch): 308
-## 🚫 OOS: 18
-## 🧢 Price-capped: 7
+## ✅ Fetched: 507
+## 🔎 Not found (slug/url mismatch): 306
+## 🚫 OOS: 11
+## 🧢 Price-capped: 10
 ## ⚖️ Sanity-failed: 0
 
 ### Not-found by vendor
@@ -15,9 +15,9 @@
 - innoamino: 33
 - swisschems: 33
 - hydro: 20
-- s1labs: 13
 - flawless: 12
 - amp: 11
+- s1labs: 11
 - lapeptides: 6
 - nura: 5
 - glp1lab: 3
