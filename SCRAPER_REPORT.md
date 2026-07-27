@@ -1,9 +1,9 @@
 # PepsTracker Scraper Diagnostics
-**Run:** 2026-07-27 12:52 UTC
-**Result:** 5 prices updated, 1 OOS flags
+**Run:** 2026-07-27 17:26 UTC
+**Result:** 0 prices updated, 0 OOS flags
 
-## ✅ Fetched: 508
-## 🔎 Not found (slug/url mismatch): 305
+## ✅ Fetched: 507
+## 🔎 Not found (slug/url mismatch): 306
 ## 🚫 OOS: 10
 ## 🧢 Price-capped: 11
 ## ⚖️ Sanity-failed: 0
@@ -17,7 +17,7 @@
 - hydro: 20
 - flawless: 12
 - amp: 11
-- s1labs: 10
+- s1labs: 11
 - lapeptides: 6
 - nura: 5
 - glp1lab: 3
