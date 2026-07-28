@@ -741,6 +741,140 @@ def regen_compare(vendors, prices, today_month):
 
 
 # ───────────────────────── main ─────────────────────────
+# ───────────────────────── vendor spotlight pages ─────────────────────────
+
+# vendor-*.html files that are not vendor spotlights.
+VENDOR_PAGE_SKIP = {"vendor-apply.html", "vendor-comparisons.html"}
+
+# One catalog row. Cell open-tags are captured so inline styling survives.
+VENDOR_ROW_RE = re.compile(
+    r"<tr>\s*(?P<c1><td[^>]*>)(?P<name>[^<]+?)</td>"
+    r"\s*(?P<c2><td[^>]*>)\s*(?P<mg>[\d.]+)\s*mg\s*</td>"
+    r"\s*(?P<c3><td[^>]*>).*?</td>"
+    r"\s*(?P<c4><td[^>]*>).*?</td>\s*</tr>",
+    re.I | re.S,
+)
+
+
+def vendor_id_from_page(name, vendors):
+    """vendor-platinum.html -> platinum, only when it is a real vendor id."""
+    vid = name[len("vendor-"):-len(".html")]
+    return vid if vid in vendors else None
+
+
+def resolve_vendor_compound(label, prices):
+    """Map a page label to a PRICES key. Vendor pages use their own naming
+    (e.g. "Tirzepatide (GLP-2T)"), so fall back to the base name."""
+    if label in prices:
+        return label
+    low = label.strip().lower()
+    base = low.split(" (")[0].strip()
+    for k in prices:
+        if k.lower() == low:
+            return k
+    for k in prices:
+        if k.lower() == base:
+            return k
+    for k in prices:
+        if k.lower().split(" (")[0] == base:
+            return k
+    return None
+
+
+def pick_listing(entries, target_mg):
+    """Keep the vial size already shown when it still exists, else nearest."""
+    usable = [e for e in entries if e.get("mg") and e.get("price")]
+    if not usable:
+        return None
+    exact = [e for e in usable if abs(e["mg"] - target_mg) < 1e-9]
+    pool = exact or usable
+    return min(pool, key=lambda e: (abs(e["mg"] - target_mg), e["price"] / e["mg"]))
+
+
+def build_vendor_page(html, prices, vid):
+    """Refresh price and $/mg cells of the vendor catalog table, in place."""
+    target = None
+    for m in re.finditer(r"<table[^>]*>.*?</table>", html, re.S | re.I):
+        head = m.group(0)[:400]
+        if "Peptide" in head and "/mg" in head:
+            target = m
+            break
+    if target is None:
+        return None, "no catalog table found"
+
+    stats = {"updated": 0, "unmatched": 0}
+
+    def repl(rm):
+        label = rm.group("name").strip()
+        want_mg = float(rm.group("mg"))
+        key = resolve_vendor_compound(label, prices)
+        entries = (prices.get(key) or {}).get(vid) or [] if key else []
+        best = pick_listing(entries, want_mg)
+        if best is None:
+            stats["unmatched"] += 1
+            return rm.group(0)
+        stats["updated"] += 1
+        return (
+            f"<tr>{rm.group('c1')}{label}</td>"
+            f"{rm.group('c2')}{fmt_mg(best['mg'])}</td>"
+            f"{rm.group('c3')}{fmt_money(best['price'])}</td>"
+            f"{rm.group('c4')}{fmt_permg(best['price'] / best['mg'])}</td></tr>"
+        )
+
+    new_block = VENDOR_ROW_RE.sub(repl, target.group(0))
+    if stats["updated"] == 0:
+        return None, f"no rows resolved ({stats['unmatched']} unmatched)"
+
+    new_html = html[:target.start()] + new_block + html[target.end():]
+    note = f"{stats['updated']} rows refreshed"
+    if stats["unmatched"]:
+        note += f", {stats['unmatched']} left as-is (no live data)"
+    return new_html, note
+
+
+def regen_vendor(vendors, prices, today):
+    log.info("Regenerating vendor spotlight pages")
+    names = [
+        n for n in gh_list(SITE_DIR)
+        if n.startswith("vendor-") and n.endswith(".html") and n not in VENDOR_PAGE_SKIP
+    ]
+    changed = skipped = failed = 0
+    for name in sorted(names):
+        path = f"{SITE_DIR}/{name}"
+        try:
+            vid = vendor_id_from_page(name, vendors)
+            if not vid:
+                log.info("  skip %-34s not a known vendor id", name)
+                skipped += 1
+                continue
+            html, sha = gh_get(path)
+            new, note = build_vendor_page(html, prices, vid)
+            if new is None:
+                log.info("  skip %-34s %s", name, note)
+                skipped += 1
+                continue
+            if new == html:
+                log.info("  same %-34s already current", name)
+                skipped += 1
+                continue
+            ok, why = safety_check(html, new)
+            if not ok:
+                log.error("  FAIL %-34s SAFETY: %s", name, why)
+                failed += 1
+                continue
+            if DRY_RUN:
+                log.info("  DRY  %-34s %s", name, note)
+            else:
+                gh_put(path, new, sha, f"Auto-refresh vendor prices: {name}")
+                log.info("  ok   %-34s %s", name, note)
+            changed += 1
+        except Exception as e:
+            log.error("  FAIL %-34s %s", name, e)
+            failed += 1
+    log.info("Vendor pages: %d changed, %d skipped, %d failed", changed, skipped, failed)
+    return failed
+
+
 def main():
     log.info("Reading %s (post-scrape state)", INDEX_FILE)
     index_html, _ = gh_get(INDEX_FILE)
@@ -758,6 +892,7 @@ def main():
 
     failed = regen_cheapest(vendors, prices, today)
     failed += regen_compare(vendors, prices, today_month)
+    failed += regen_vendor(vendors, prices, today)
 
     log.info("Done%s. total failures=%d", " (dry run)" if DRY_RUN else "", failed)
     if failed:
