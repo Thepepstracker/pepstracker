@@ -33,7 +33,7 @@ VENDOR_DOMAIN = {'amp': 'ameanopeptides.com', 'apollo': 'apollopeptidesciences.c
 # scrapes 100% of listed products and auto-covers vendors/products added later.
 
 # Vendors that need real browser (Cloudflare protected)
-CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "nura", "puratek", "pinnacle"}
+CLOUDFLARE_VENDORS = {"glacier", "milehigh", "ezpeptides", "nura", "puratek", "pinnacle", "fusion"}
 
 # Vendors excluded from auto-scraping:
 # - atomik: Cloudflare Turnstile (human verification) — unbypassable
