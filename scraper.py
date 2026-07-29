@@ -453,7 +453,24 @@ def extract_main_product_price(html):
 
     return None
 
+# A single product URL often backs several vial-size listings (CertaPeptides
+# has 90 listings behind one URL). Fetching it once per run and reusing the
+# result removes ~25% of all network calls, which is what pushed the job past
+# its 2-hour timeout. Cache lives for one run only.
+_price_fetch_cache = {}
+
+
 def fetch_price_from_url(vendor_id, product, product_url):
+    key = (vendor_id, product_url)
+    if key in _price_fetch_cache:
+        log.info(f"  Cached {vendor_id}/{product} → reusing this run's fetch of {product_url}")
+        return _price_fetch_cache[key]
+    result = _fetch_price_uncached(vendor_id, product, product_url)
+    _price_fetch_cache[key] = result
+    return result
+
+
+def _fetch_price_uncached(vendor_id, product, product_url):
     """
     Returns (price, oos) where:
       - (float, False) = got a price, in stock
