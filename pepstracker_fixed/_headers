@@ -1,0 +1,31 @@
+# Keep non-content pages out of search results.
+# These are account, admin, and email-template pages with no search value.
+# Removed from sitemap.xml as well; noindex is what actually drops them
+# from the index, so they must stay crawlable (do not Disallow in robots.txt).
+
+/account.html
+  X-Robots-Tag: noindex, follow
+
+/admin-live.html
+  X-Robots-Tag: noindex, follow
+
+/price-update.html
+  X-Robots-Tag: noindex, follow
+
+/login.html
+  X-Robots-Tag: noindex, follow
+
+/signup.html
+  X-Robots-Tag: noindex, follow
+
+/email_welcome.html
+  X-Robots-Tag: noindex, follow
+
+/email_weekly_deals.html
+  X-Robots-Tag: noindex, follow
+
+/tracker.html
+  X-Robots-Tag: noindex, follow
+
+/onboarding.html
+  X-Robots-Tag: noindex, follow
