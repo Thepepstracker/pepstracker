@@ -11,7 +11,8 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 300  # 5h. Real work is ~2h; headroom for slow vendor sites.
+    # GitHub-hosted runners cap a single job at 6h, so 300 is within limits.
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
