@@ -34,3 +34,9 @@
 
 # Vendor shortcuts
 /vendor/ascension     /vendors.html  301
+
+# Duplicate dictionary pages consolidated (same compound, two URLs).
+# Forced (301!) because the source files still exist and Netlify would
+# otherwise serve them instead of redirecting.
+/peptides/cjc1295.html      /peptides/cjc1295dac.html   301!
+/peptides/melanotanii.html  /peptides/melanotan2.html   301!
