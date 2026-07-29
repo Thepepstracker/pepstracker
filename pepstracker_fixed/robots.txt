@@ -33,4 +33,6 @@ User-agent: Bytespider
 Allow: /
 
 Sitemap: https://pepstracker.com/sitemap.xml
-Sitemap: https://pepstracker.com/llms.txt
+# llms.txt is an AI fact index, not an XML sitemap, so it is not declared
+# with a Sitemap: directive (that expects XML and would log a parse error).
+# It stays crawlable and is linked from the site.
