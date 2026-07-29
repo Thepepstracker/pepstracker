@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://pepstracker.com/</loc><changefreq>daily</changefreq><priority>1.0</priority><lastmod>2026-06-10</lastmod></url>
-  <url><loc>https://pepstracker.com/account.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
-  <url><loc>https://pepstracker.com/admin-live.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/advertise.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/blog-best-peptide-vendors-2026.html</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/blog-bpc157-price-2026.html</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-06-10</lastmod></url>
@@ -59,17 +57,10 @@
   <url><loc>https://pepstracker.com/cheapest-tirzepatide-2026.html</loc><changefreq>weekly</changefreq><priority>0.8</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/dictionary.html</loc><changefreq>weekly</changefreq><priority>0.9</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/disclaimer.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
-  <url><loc>https://pepstracker.com/email_weekly_deals.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
-  <url><loc>https://pepstracker.com/email_welcome.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/live.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
-  <url><loc>https://pepstracker.com/login.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
-  <url><loc>https://pepstracker.com/onboarding.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
-  <url><loc>https://pepstracker.com/price-update.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/quiz.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/reconstitution.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
-  <url><loc>https://pepstracker.com/signup.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/tdee.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
-  <url><loc>https://pepstracker.com/tracker.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/vendor-amp.html</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/vendor-apply.html</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/vendor-ascension.html</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-06-10</lastmod></url>
