@@ -892,7 +892,12 @@ def main():
 
     failed = regen_cheapest(vendors, prices, today)
     failed += regen_compare(vendors, prices, today_month)
-    failed += regen_vendor(vendors, prices, today)
+    # DISABLED 2026-07-29. regen_vendor rewrote correct vendor-page prices with
+    # the wrong vial size's price (e.g. Fusion BPC-157 10mg went from $68.99 to
+    # $32.99, which is the 2mg price). Size cell kept the old value while the
+    # price cell took a different listing, so rows became internally wrong.
+    # Do not re-enable until the row rewrite is unit-tested against real pages.
+    # failed += regen_vendor(vendors, prices, today)
 
     log.info("Done%s. total failures=%d", " (dry run)" if DRY_RUN else "", failed)
     if failed:
