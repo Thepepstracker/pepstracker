@@ -35,6 +35,11 @@ RULES = [
     ("vendors-tracked stat", re.compile(r"(?<=\U0001F3EA )\d+(?= Vendors Tracked)")),
     ("track-all-daily",      re.compile(r"(?<=we track all )\d+(?= vendors daily)")),
     ("discount-code index",  re.compile(r"(?<=discount code for all )\d+(?= vendors)")),
+    ("guide boilerplate",     re.compile(r"(?<=how to compare prices across )\d+(?= vendors)")),
+    ("meta price comparison", re.compile(r"(?<=peptide price comparison across )\d+(?= vendors)")),
+    ("about: track pricing",  re.compile(r"(?<=We track pricing across )\d+(?= vendors)")),
+    ("faq: all of these",     re.compile(r"(?<=tracks prices for all of these across )\d+(?= vendors)")),
+    ("publicly listed",       re.compile(r"(?<=compares publicly listed prices across )\d+(?= vendors)")),
 ]
 
 
