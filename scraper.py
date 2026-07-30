@@ -891,9 +891,34 @@ def _http_json(url, vendor_id, timeout=40):
         pass
     return None
 
+def _mg_from_variation(text):
+    """'Strength: 10mg' -> 10.0, '5mg each' -> 5.0, '500mcg each' -> 0.5"""
+    if not text:
+        return None
+    m = re.search(r"([\d.]+)\s*(mcg|mg|g)\b", text, re.I)
+    if not m:
+        return None
+    try:
+        val = float(m.group(1))
+    except ValueError:
+        return None
+    unit = m.group(2).lower()
+    if unit == "mcg":
+        val /= 1000.0
+    elif unit == "g":
+        val *= 1000.0
+    return val
+
+
 def woo_store_catalog(domain, vendor_id):
-    """Return {slug: {'price': float, 'in_stock': bool}} for a WooCommerce store
-    via the Store API. Paginated. None if the API is unavailable."""
+    """Return {slug: {'price', 'in_stock', 'variants': {mg: {...}}}} for a
+    WooCommerce store via the Store API. Paginated. None if unavailable.
+
+    Variable products (multiple vial sizes behind one product page) expose only
+    the CHEAPEST variant in prices.price, so using it for every size understates
+    the large vials and makes them look like the best cost-per-mg on the site.
+    For those we fetch each variation and record its own price, keyed by mg.
+    """
     base = f"https://{domain}/wp-json/wc/store/v1/products"
     catalog = {}
     for page in range(1, 8):  # up to 700 products
@@ -905,18 +930,63 @@ def woo_store_catalog(domain, vendor_id):
             prices = p.get("prices") or {}
             raw = prices.get("price")
             minor = prices.get("currency_minor_unit", 2)
-            if slug and raw is not None:
-                try:
-                    price = float(raw) / (10 ** int(minor))
-                except Exception:
-                    continue
-                catalog[slug] = {"price": price, "in_stock": bool(p.get("is_in_stock", True))}
+            if not slug or raw is None:
+                continue
+            try:
+                price = float(raw) / (10 ** int(minor))
+            except Exception:
+                continue
+            entry = {
+                "price": price,
+                "in_stock": bool(p.get("is_in_stock", True)),
+                "variants": {},
+            }
+            variations = p.get("variations") or []
+            if variations:
+                for var in variations:
+                    vid_ = var.get("id")
+                    if not vid_:
+                        continue
+                    vd = _http_json(f"{base}/{vid_}", vendor_id)
+                    if not isinstance(vd, dict):
+                        continue
+                    vprices = vd.get("prices") or {}
+                    vraw = vprices.get("price")
+                    vminor = vprices.get("currency_minor_unit", 2)
+                    if vraw is None:
+                        continue
+                    try:
+                        vprice = float(vraw) / (10 ** int(vminor))
+                    except Exception:
+                        continue
+                    mg = _mg_from_variation(vd.get("variation"))
+                    if mg is None:
+                        attrs = var.get("attributes") or []
+                        for a in attrs:
+                            mg = _mg_from_variation(a.get("value"))
+                            if mg is not None:
+                                break
+                    if mg is None:
+                        continue
+                    entry["variants"][mg] = {
+                        "price": vprice,
+                        "in_stock": bool(vd.get("is_in_stock", True)),
+                    }
+                if entry["variants"]:
+                    log.info(f"   {vendor_id}/{slug}: {len(entry['variants'])} variant prices")
+            catalog[slug] = entry
         if len(data) < 100:
             break
     return catalog or None
 
-def _sane(peptide, listing, new_price):
-    """Per-listing sanity: hard cap + per-mg ratio vs the listing's own price."""
+
+def _sane(peptide, listing, new_price, authoritative=False):
+    """Per-listing sanity: hard cap + per-mg ratio vs the listing's own price.
+
+    authoritative=True means the price came from an exact variation match in the
+    vendor API, not a scraped guess. The ratio guard is skipped in that case so a
+    correction of a badly-wrong stored price cannot be rejected for being large.
+    The absolute cap still applies."""
     if new_price is None or new_price <= 0:
         return False
     cap = PRICE_CAPS.get(peptide, DEFAULT_CAP)
@@ -925,7 +995,7 @@ def _sane(peptide, listing, new_price):
         run_stats["price_capped"].append((listing.get('_vid'), peptide, new_price, cap))
         return False
     prev = listing.get("price")
-    if prev and prev > 0:
+    if prev and prev > 0 and not authoritative:
         ratio = new_price / prev
         if ratio > 5.0 or ratio < 0.20:
             log.warning(f"  SANITY FAIL {peptide}/{listing.get('listing')}: ${prev:.2f} -> ${new_price:.2f} ({ratio:.2f}x)")
@@ -982,12 +1052,36 @@ def main():
             idx = el["idx"]
             new_price = None
             oos = None
+            authoritative = False
             if catalog is not None:
                 slug = _slug_from_url(el["url"])
                 hit = catalog.get(slug) if slug else None
                 if hit:
-                    new_price = hit["price"]
-                    oos = not hit["in_stock"]
+                    variants = hit.get("variants") or {}
+                    mg = el.get("mg")
+                    match = None
+                    if variants and mg:
+                        for vmg, info in variants.items():
+                            if abs(vmg - mg) < 1e-6:
+                                match = info
+                                break
+                    if match:
+                        new_price = match["price"]
+                        oos = not match["in_stock"]
+                        authoritative = True
+                    elif variants:
+                        # Variable product, but no variation matches this vial
+                        # size. The parent price is the cheapest variant, so
+                        # using it here would understate a large vial. Skip.
+                        log.warning(
+                            f"  NO VARIANT {vid}/{pep} {mg}mg — sizes: "
+                            f"{sorted(variants)}"
+                        )
+                        run_stats["not_found"].append((vid, pep, 0.0))
+                        continue
+                    else:
+                        new_price = hit["price"]
+                        oos = not hit["in_stock"]
                     run_stats["successes"].append((vid, pep, new_price, 0.0))
                 else:
                     run_stats["not_found"].append((vid, pep, 0.0))
@@ -1012,7 +1106,7 @@ def main():
                 if el.get("oos"):
                     oos_map[(pep, vid, idx)] = False
 
-            if new_price is not None and _sane(pep, el, new_price):
+            if new_price is not None and _sane(pep, el, new_price, authoritative):
                 if abs(new_price - (el["price"] or 0)) > 0.01:
                     price_updates[(pep, vid, idx)] = new_price
                     log.info(f"  CHANGE {pep}/{vid}[{idx}]: ${el['price']} → ${new_price:.2f}")
