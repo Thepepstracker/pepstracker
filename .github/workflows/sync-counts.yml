@@ -1,0 +1,48 @@
+name: Sync site counts
+
+# Generated pages bake in "all N vendors" phrasing. This re-syncs those
+# site-wide phrases to the real VENDORS count in index.html.
+# Always run with dry_run first and read the log before applying.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Report changes without committing"
+        type: boolean
+        default: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Sync counts
+        env:
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: python sync_site_counts.py
+
+      - name: Show diff stat
+        if: ${{ !inputs.dry_run }}
+        run: git --no-pager diff --stat
+
+      - name: Commit
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+          else
+            git commit -m "Sync site-wide vendor counts to match index.html"
+            git push
+          fi
