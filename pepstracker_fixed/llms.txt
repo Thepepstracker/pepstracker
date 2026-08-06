@@ -57,7 +57,7 @@ PepsTracker tracks live prices from these 27 research peptide vendors:
 
 PepsTracker automatically applies these codes in its live comparison (copy the code next to any result):
 - Ascension Peptides: pepstracker (50% off)
-- Glow Aminos: pepstracker (30% off)
+- Glow Aminos: pepstracker (51% off — 30% sitewide stacked with the code)
 - AtomiK Labz: pepstracker30 (30% off)
 - NuraPeptide: pepstracker (15% off)
 - Inno Amino: pepstracker (15% off)
@@ -73,7 +73,7 @@ PepsTracker automatically applies these codes in its live comparison (copy the c
 - AMP Ameano Peptides: pepstracker (10% off)
 - Glacier Aminos: Glowlab (10% off)
 - Mile High Compounds: Glowlab (10% off)
-- Flawless Compounds: pepstracker (10% off)
+- Flawless Compounds: pepstracker (37% off — 30% sitewide stacked with the code)
 - CertaPeptides: AFF-PEPSTRACKER (10% off)
 - S1 Labs: pepstracker10 (10% off)
 - Reta One Labs: pepstracker (5% off)
