@@ -44,6 +44,15 @@ jobs:
           ATOMIK_PASSWORD: ${{ secrets.ATOMIK_PASSWORD }}
         run: python scraper.py
 
+      # Gate: if the scrape produced data that looks wrong (all vial sizes at
+      # one price, a bigger vial cheaper than a smaller one, listings under a
+      # vendor that is not in VENDORS) fail here so the bad numbers are not
+      # propagated into the ~380 generated static pages below.
+      # Note: scraper.py commits index.html itself, so a failure here means the
+      # raw data landed but nothing was built on top of it. Fix, then re-run.
+      - name: Audit prices
+        run: python audit_prices.py
+
       # Rebuild the cheapest-* pages from the PRICES data the scraper just
       # committed, so the static snapshots never drift from the live tracker.
       - name: Regenerate price pages
