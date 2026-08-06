@@ -8,6 +8,10 @@ on:
         description: "Log page changes without committing them"
         type: boolean
         default: false
+      regen_only:
+        description: "Skip the scraper; just rebuild generated pages from current data"
+        type: boolean
+        default: false
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -28,7 +32,7 @@ jobs:
       # Skipped on a dry run so "dry run" means no writes at all —
       # the scraper commits index.html, which is not dry.
       - name: Run scraper
-        if: ${{ !inputs.dry_run }}
+        if: ${{ !inputs.dry_run && !inputs.regen_only }}
         env:
           GITHUB_TOKEN: ${{ secrets.SCRAPER_GITHUB_TOKEN }}
           SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
