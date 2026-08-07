@@ -12,6 +12,10 @@ on:
         description: "Skip the scraper; just rebuild generated pages from current data"
         type: boolean
         default: false
+      history_rebuild:
+        description: "One-time: rebuild price-history.json from the full git history"
+        type: boolean
+        default: false
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -20,6 +24,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          # The rebuild walks every past commit of index.html so it needs the
+          # full log. Normal runs only append today and stay shallow.
+          fetch-depth: ${{ inputs.history_rebuild && 0 || 1 }}
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -52,6 +60,34 @@ jobs:
       # raw data landed but nothing was built on top of it. Fix, then re-run.
       - name: Audit prices
         run: python audit_prices.py
+
+      # Append one point per compound to price-history.json. Runs after the
+      # audit so a day whose data was wrong never enters the series.
+      # continue-on-error: the series is a nice-to-have; never let it block the
+      # scrape or the page rebuild.
+      - name: Record price history
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.SCRAPER_GITHUB_TOKEN }}
+        run: |
+          set -e
+          if [ "${{ inputs.history_rebuild }}" = "true" ]; then
+            python build_price_history.py --rebuild
+          else
+            python build_price_history.py
+          fi
+          if [ -z "$(git status --porcelain pepstracker_fixed/price-history.json)" ]; then
+            echo "no history change"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pepstracker_fixed/price-history.json
+          git commit -m "Record price history $(date -u +%Y-%m-%d)"
+          # scraper.py pushes via the API earlier in this job, so local HEAD is
+          # behind by then. Rebase before pushing.
+          git pull --rebase --autostash \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" main
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
 
       # Rebuild the cheapest-* pages from the PRICES data the scraper just
       # committed, so the static snapshots never drift from the live tracker.
