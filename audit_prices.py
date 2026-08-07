@@ -14,7 +14,8 @@ Checks
   E3 orphan vendor   listings under a vendor id that is not in VENDORS
   W1 duplicate       same vendor + compound + mg listed twice
   W2 incomplete      listing missing price or mg
-  W3 stray key       a vendor id sitting at the top level of PRICES
+  E4 no attribution a vendor's deep links drop the ref/coupon param that its
+                    own configured URL uses, so those clicks earn nothing
 
 E* are errors (exit 1). W* are reported but do not fail.
 Known-legitimate exceptions live in audit_allowlist.txt, one "vendor|compound"
@@ -104,6 +105,33 @@ def main():
                         "E2 non-monotonic  %-14s %-24s %gmg $%s -> %gmg $%s"
                         % (vid, comp, a["mg"], a["price"], b["mg"], b["price"])
                     )
+
+    # E4: affiliate attribution. Each vendor's configured `url` carries the
+    # param that identifies us (ref=, coupon=, sld=, aff=, rfsn=). If the
+    # per-product deep links drop it, every click through those rows is
+    # unattributed. Labsourced shipped 54 bare links this way.
+    vendor_url = {}
+    for blk in re.finditer(r"\{([^{}]*)\}", vm.group(1)):
+        t = blk.group(1)
+        i = re.search(r'id\s*:\s*"([^"]+)"', t)
+        u = re.search(r'url\s*:\s*"([^"]+)"', t)
+        if i and u:
+            vendor_url[i.group(1)] = u.group(1)
+    for vid, vurl in sorted(vendor_url.items()):
+        mo = re.search(r"[?&]([A-Za-z_]+)=", vurl)
+        if not mo:
+            continue                      # vendor has no query-param attribution
+        key = mo.group(1) + "="
+        bare = []
+        for comp, vs in data.items():
+            for l in ((vs or {}).get(vid) or []):
+                if l.get("url") and key not in l["url"]:
+                    bare.append(comp)
+        if bare:
+            errors.append(
+                "E4 no attribution %-14s %d links missing '%s' (e.g. %s)"
+                % (vid, len(bare), key, bare[0])
+            )
 
     # W4: duplicate vendor keys inside one compound. A JS object keeps only the
     # last value, so an earlier duplicate is silently dead data that the parser
