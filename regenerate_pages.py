@@ -380,6 +380,20 @@ def update_page(name, html, prices, vendors, today):
         f"<title>Cheapest {compound} 2026: {fmt_permg(best['permg'])} — {n} Vendors Compared | PepsTracker</title>",
         "title", report)
 
+    # 3b. <h1> and og:title. These were never rewritten, so the title said one
+    # thing ("24 Vendors, $1.68/mg") while the page heading and the social card
+    # said another ("12 Vendors, $2.46/mg") on 44 of 46 pages.
+    new = replace_once(
+        new, r"<h1[^>]*>Cheapest [^<]*</h1>",
+        f"<h1>Cheapest {compound} in 2026 — All {n} Vendors Compared</h1>",
+        "h1", report)
+
+    new = replace_once(
+        new, r'<meta property="og:title" content="[^"]*"\s*/?>',
+        (f'<meta property="og:title" content="Cheapest {compound} 2026: '
+         f'{fmt_permg(best["permg"])} — {n} Vendors | PepsTracker"/>'),
+        "og-title", report)
+
     # 4. meta description
     new = replace_once(
         new, r'<meta name="description" content="[^"]*"\s*/?>',
