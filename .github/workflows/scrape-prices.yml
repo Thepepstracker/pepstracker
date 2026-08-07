@@ -19,6 +19,10 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    # The price-history step pushes a commit. Without this the default
+    # GITHUB_TOKEN is read-only and the push is denied to github-actions[bot].
+    permissions:
+      contents: write
     timeout-minutes: 300  # 5h. Real work is ~2h; headroom for slow vendor sites.
     # GitHub-hosted runners cap a single job at 6h, so 300 is within limits.
     steps:
@@ -69,8 +73,6 @@ jobs:
       # scrape or the page rebuild.
       - name: Record price history
         continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.SCRAPER_GITHUB_TOKEN }}
         run: |
           set -e
           if [ "${{ inputs.history_rebuild }}" = "true" ]; then
@@ -89,9 +91,8 @@ jobs:
           git commit -m "Record price history $(date -u +%Y-%m-%d)"
           # scraper.py pushes via the API earlier in this job, so local HEAD is
           # behind by then. Rebase before pushing.
-          git pull --rebase --autostash \
-            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" main
-          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
+          git pull --rebase --autostash origin main
+          git push origin HEAD:main
 
       # Rebuild the cheapest-* pages from the PRICES data the scraper just
       # committed, so the static snapshots never drift from the live tracker.
