@@ -51,6 +51,72 @@ RULES = [
 GENERATED = ("cheapest-", "compare-")
 
 
+def compound_names(html):
+    """Top-level keys of the PRICES object, i.e. the compound names.
+
+    Deliberately does not import scraper.py: that pulls in `requests`, which
+    this script does not otherwise need and which is not installed in the
+    sync workflow. Keeping this file dependency-free is the point.
+    """
+    i = html.find("const PRICES")
+    if i < 0:
+        return []
+    start = html.find("{", i)
+    depth = 0
+    in_str = None
+    end = -1
+    k = start
+    while k < len(html):
+        ch = html[k]
+        if in_str:
+            if ch == "\\":
+                k += 2
+                continue
+            if ch == in_str:
+                in_str = None
+        elif ch in "\"'":
+            in_str = ch
+        elif ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                end = k
+                break
+        k += 1
+    if end < 0:
+        return []
+    body = html[start + 1:end]
+    names = []
+    depth = 0
+    in_str = None
+    k = 0
+    while k < len(body):
+        ch = body[k]
+        if in_str:
+            if ch == "\\":
+                k += 2
+                continue
+            if ch == in_str:
+                in_str = None
+            k += 1
+            continue
+        if ch in "\"'":
+            if depth == 0:
+                mo = re.match(r'"([^"]+)"\s*:', body[k:])
+                if mo:
+                    names.append(mo.group(1))
+                    k += mo.end()
+                    continue
+            in_str = ch
+        elif ch in "{[":
+            depth += 1
+        elif ch in "}]":
+            depth -= 1
+        k += 1
+    return names
+
+
 COMPOUND_RX = None
 
 
@@ -160,14 +226,8 @@ def main():
                 fh.write(out)
 
     # hand-written site-wide claims on non-generated pages
-    import importlib.util
-    for key in ("GITHUB_TOKEN", "SCRAPERAPI_KEY", "GITHUB_REPOSITORY"):
-        os.environ.setdefault(key, "sync")
-    spec = importlib.util.spec_from_file_location("scr", os.path.join(ROOT, "scraper.py"))
-    scr = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(scr)
     with open(INDEX, encoding="utf-8") as fh:
-        compounds = list(scr.parse_all_listings(fh.read()).keys())
+        compounds = compound_names(fh.read())
     global COMPOUND_RX
     COMPOUND_RX = build_compound_rx(compounds)
     prose = site_wide_sweep(SITE, target, compounds)
