@@ -1,11 +1,11 @@
 # PepsTracker Scraper Diagnostics
-**Run:** 2026-08-06 12:56 UTC
-**Result:** 9 prices updated, 2 OOS flags
+**Run:** 2026-08-07 11:21 UTC
+**Result:** 0 prices updated, 3 OOS flags
 
-## ✅ Fetched: 591
-## 🔎 Not found (slug/url mismatch): 286
-## 🚫 OOS: 12
-## 🧢 Price-capped: 13
+## ✅ Fetched: 589
+## 🔎 Not found (slug/url mismatch): 288
+## 🚫 OOS: 15
+## 🧢 Price-capped: 11
 ## ⚖️ Sanity-failed: 0
 
 ### Not-found by vendor
@@ -21,9 +21,9 @@
 - lapeptides: 6
 - fusion: 5
 - nura: 5
+- glacier: 4
 - glp1lab: 3
 - ascension: 2
-- glacier: 2
 - ezpeptides: 1
 - puratek: 1
 - strandbio: 1
