@@ -1,0 +1,5 @@
+# Known-legitimate audit findings. Format: vendorid|Compound
+# Reviewed 2026-07-30.
+
+pinnacle|SLU-PP-332              # 5mg vial and 250mcg tablets genuinely both $129.99
+fusion|BPC-157 + TB-500 Blend    # 0.5mg row is the topical gel (500mcg per pump), not a vial
