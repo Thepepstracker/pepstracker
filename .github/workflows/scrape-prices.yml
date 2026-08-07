@@ -27,7 +27,9 @@ jobs:
         with:
           # The rebuild walks every past commit of index.html so it needs the
           # full log. Normal runs only append today and stay shallow.
-          fetch-depth: ${{ inputs.history_rebuild && 0 || 1 }}
+          # NB: quote these. In GitHub expressions `x && 0 || 1` always
+          # yields 1, because 0 is falsy and short-circuits to the || branch.
+          fetch-depth: ${{ inputs.history_rebuild && '0' || '1' }}
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -72,6 +74,8 @@ jobs:
         run: |
           set -e
           if [ "${{ inputs.history_rebuild }}" = "true" ]; then
+            # belt and braces: the rebuild needs full history
+            git rev-parse --is-shallow-repository | grep -q true && git fetch --unshallow || true
             python build_price_history.py --rebuild
           else
             python build_price_history.py
