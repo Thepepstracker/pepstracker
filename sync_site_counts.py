@@ -28,6 +28,8 @@ DRY = os.environ.get("DRY_RUN") == "1"
 # Each rule is (label, regex). The regex must use lookbehind/lookahead so that
 # the ONLY thing captured is the number, and the surrounding text must be
 # specific enough that the number can only ever mean "total vendors tracked".
+STALE_TOTALS = {"22", "23", "24", "25", "26"}
+
 RULES = [
     ("compare-page CTA",     re.compile(r"(?<=against all )\d+(?= vendors in real time)")),
     ("cost-per-mg CTA",      re.compile(r"(?<=Compare all )\d+(?= vendors on live \$/mg)")),
@@ -41,6 +43,67 @@ RULES = [
     ("faq: all of these",     re.compile(r"(?<=tracks prices for all of these across )\d+(?= vendors)")),
     ("publicly listed",       re.compile(r"(?<=compares publicly listed prices across )\d+(?= vendors)")),
 ]
+
+
+# Pages that are regenerated from data (cheapest-*, compare-*) and the
+# per-compound dictionary pages carry legitimate per-compound vendor counts.
+# Never touch those; only hand-written site-wide claims are in scope.
+GENERATED = ("cheapest-", "compare-")
+
+
+COMPOUND_RX = None
+
+
+def build_compound_rx(compounds):
+    """Word-boundary matcher for compound names. Names shorter than 4 chars are
+    dropped: they are too collision-prone to use as a guard."""
+    names = sorted({c for c in compounds if len(c) >= 4}, key=len, reverse=True)
+    if not names:
+        return None
+    return re.compile(r"(?<![A-Za-z])(" + "|".join(re.escape(n) for n in names) + r")(?![A-Za-z])", re.I)
+
+
+def site_wide_sweep(site, target, compounds):
+    """Update hand-written 'N vendors' claims on non-generated pages.
+
+    These were written when the site total was different and nothing updates
+    them. They are identifiable because they all carry the same stale value.
+    A sentence that names a specific compound is skipped: a few compounds
+    genuinely have that many vendors, so those numbers may be correct.
+    """
+    rx = re.compile(r"\b(\d{1,3})(\s*\+?\s*(?:research\s+peptide\s+)?vendors?)\b", re.I)
+    changed = []
+    for path in sorted(glob.glob(os.path.join(site, "*.html"))):
+        base = os.path.basename(path)
+        if base.startswith(GENERATED):
+            continue
+        with open(path, encoding="utf-8") as fh:
+            src = fh.read()
+        hits = []
+
+        def repl(m):
+            n = m.group(1)
+            if n == target or n not in STALE_TOTALS:
+                return m.group(0)
+            lo = max(0, m.start() - 90)
+            ctx = m.string[lo:m.end() + 40]
+            # Word-boundary match. A plain substring test is wrong here: short
+            # compound names hide inside ordinary words ("PDA" in "updated"),
+            # which silently skipped legitimate site-wide claims.
+            if COMPOUND_RX and COMPOUND_RX.search(ctx):
+                return m.group(0)          # names a compound: may be per-compound
+            hits.append(n)
+            return target + m.group(2)
+
+        out = rx.sub(repl, src)
+        if out != src:
+            if re.sub(r"\d", "", out) != re.sub(r"\d", "", src):
+                sys.exit("FATAL: non-digit change in %s" % path)
+            changed.append((base, len(hits)))
+            if not DRY:
+                with open(path, "w", encoding="utf-8") as fh:
+                    fh.write(out)
+    return changed
 
 
 def vendor_count():
@@ -95,6 +158,24 @@ def main():
         if not DRY:
             with open(path, "w", encoding="utf-8") as fh:
                 fh.write(out)
+
+    # hand-written site-wide claims on non-generated pages
+    import importlib.util
+    for key in ("GITHUB_TOKEN", "SCRAPERAPI_KEY", "GITHUB_REPOSITORY"):
+        os.environ.setdefault(key, "sync")
+    spec = importlib.util.spec_from_file_location("scr", os.path.join(ROOT, "scraper.py"))
+    scr = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(scr)
+    with open(INDEX, encoding="utf-8") as fh:
+        compounds = list(scr.parse_all_listings(fh.read()).keys())
+    global COMPOUND_RX
+    COMPOUND_RX = build_compound_rx(compounds)
+    prose = site_wide_sweep(SITE, target, compounds)
+    for base, cnt in prose:
+        print("%s: %d site-wide vendor claim(s) -> %s" % (base, cnt, target))
+    print("")
+    print("hand-written pages updated: %d (%d claims)"
+          % (len(prose), sum(c for _b, c in prose)))
 
     print("")
     print("vendor count read from index.html: %d" % n)
