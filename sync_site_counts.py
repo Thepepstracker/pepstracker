@@ -47,6 +47,11 @@ RULES = [
     ("vendor directory head", re.compile(r"(?<=All )\d+(?= Peptide Vendors)")),
     ("vendor ranking head",   re.compile(r"(?<=Top )\d+(?= Peptide Vendors)")),
     ("vendor sources head",   re.compile(r"(?<=Top )\d+(?= Research Peptide Sources)")),
+    # "Top 22 Ranked" / "All 22 Ranked" -- the og:title, h1 and breadcrumb on
+    # best-peptide-vendors, which the two rules above did not reach because
+    # they anchor on the word "Vendors"/"Sources" that this phrasing omits.
+    ("ranked heading",        re.compile(r"(?<=Top )\d+(?= Ranked)")),
+    ("ranked heading alt",    re.compile(r"(?<=All )\d+(?= Ranked)")),
 ]
 
 
