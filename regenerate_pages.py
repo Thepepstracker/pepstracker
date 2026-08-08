@@ -204,6 +204,25 @@ def fmt_mg(n):
 
 
 # ───────────────────────── safe replace ─────────────────────────
+TITLE_LIMIT = 60   # Google truncates a result title around here
+
+
+def fit_title(variants, limit=TITLE_LIMIT):
+    """First variant that fits, else the shortest one.
+
+    Titles are built longest-first, each rung dropping the least valuable
+    part: the "| PepsTracker" suffix goes before the vendor pair or compound
+    name, because the brand is the one thing a searcher is not typing. The
+    final variant is the irreducible core and is used even if it is over
+    limit -- some vendor pairs simply have long names, and truncating them
+    mid-word is worse than a long title.
+    """
+    for v in variants:
+        if len(v) <= limit:
+            return v
+    return variants[-1]
+
+
 def replace_once(text, pattern, new_text, label, report):
     """Replace only if the anchor matches exactly once. Uses a lambda so the
     replacement is treated literally (no backreference expansion)."""
@@ -375,9 +394,17 @@ def update_page(name, html, prices, vendors, today):
         build_product_ld(compound, rows, url), "product-ld", report)
 
     # 3. <title>
+    permg = fmt_permg(best["permg"])
+    title = fit_title([
+        f"Cheapest {compound} 2026: {permg} — {n} Vendors Compared | PepsTracker",
+        f"Cheapest {compound} 2026: {permg} — {n} Vendors | PepsTracker",
+        f"Cheapest {compound} 2026: {permg} — {n} Vendors",
+        f"Cheapest {compound} 2026: {permg}",
+        f"Cheapest {compound} 2026",
+    ])
     new = replace_once(
         new, r"<title>Cheapest [^<]*</title>",
-        f"<title>Cheapest {compound} 2026: {fmt_permg(best['permg'])} — {n} Vendors Compared | PepsTracker</title>",
+        f"<title>{title}</title>",
         "title", report)
 
     # 3b. <h1> and og:title. These were never rewritten, so the title said one
@@ -605,7 +632,14 @@ def build_compare(name, old_html, prices, vendors, catalog, a_id, b_id, today_mo
                    f"{w_wins} of the {st['n']} shared peptides"
                    + (f", with {st['tie']} tied" if st["tie"] else "") + ".")
 
-    title = (f"{an} vs {bn} (2026) — Price Comparison Across {st['n']} Peptides | PepsTracker")
+    title = fit_title([
+        f"{an} vs {bn} (2026) — Price Comparison Across {st['n']} Peptides | PepsTracker",
+        f"{an} vs {bn} 2026 — {st['n']} Peptides Compared | PepsTracker",
+        f"{an} vs {bn} 2026 — {st['n']} Peptides Compared",
+        f"{an} vs {bn} — {st['n']} Peptides Compared",
+        f"{an} vs {bn} — Price Comparison 2026",
+        f"{an} vs {bn} 2026",
+    ])
     desc = (f"{an} vs {bn} compared on {st['n']} shared research peptides with discount codes "
             "applied. " + (f"{w_name} is cheaper on {w_wins}, {l_name} on {l_wins}"
                            + (f", and {st['tie']} are priced identically" if st["tie"] else "") + "."
