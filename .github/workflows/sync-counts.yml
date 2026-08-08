@@ -25,10 +25,29 @@ jobs:
         with:
           python-version: "3.11"
 
+      # sync_dictionary.py imports regenerate_pages.py, which imports requests.
+      - name: Install deps
+        run: pip install requests
+
+      # Restores punctuation that was destroyed by a bad-codec read (U+FFFD).
+      # Runs FIRST: regenerate_pages.py matches on "·", so corrupted pages are
+      # invisible to it until this repair lands.
+      - name: Repair encoding damage
+        env:
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: python repair_encoding.py
+
       - name: Sync counts
         env:
           DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
         run: python sync_site_counts.py
+
+      # Rewrites peptides/*.html: vendor counts (from the same rank_vendors the
+      # price pages use), compound names, and meta descriptions.
+      - name: Sync dictionary pages
+        env:
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: python sync_dictionary.py
 
       - name: Show diff stat
         if: ${{ !inputs.dry_run }}
@@ -43,6 +62,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "nothing to commit"
           else
-            git commit -m "Sync site-wide vendor counts to match index.html"
+            git commit -m "Sync site-wide and dictionary-page vendor counts to match index.html"
             git push
           fi
