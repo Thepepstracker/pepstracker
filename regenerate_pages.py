@@ -410,11 +410,35 @@ def update_page(name, html, prices, vendors, today):
          f'discount codes applied."/>'),
         "og-desc", report)
 
-    # 6. last-updated line
+    # 6. Freshness stamps.
+    #
+    # Two different claims, which were previously conflated:
+    #   - the visible line says when we last CHECKED prices. The scrape runs
+    #     daily, so this is true every day even when nothing moved. It was
+    #     labelled "Last updated", which claimed a change that did not happen.
+    #   - schema.org dateModified says when the page last CHANGED. Google reads
+    #     this one. Every cheapest-* page had it frozen at 2026-06-09 while the
+    #     visible line said today, so the pages looked two months stale to
+    #     search engines and fresh to humans.
+    #
+    # So: decide whether the *content* changed before touching either stamp.
+    content_changed = (new != html)
+
+    # The pattern accepts the old "Last updated" wording so existing pages
+    # migrate to "Last checked" on the next run, and is stable thereafter.
     new = replace_once(
-        new, r"Last updated:\s*<strong[^>]*>[^<]*</strong>\s*·\s*\d+\s*vendors tracked",
-        f'Last updated: <strong style="color:var(--text);">{today}</strong> · {n} vendors tracked',
-        "last-updated", report)
+        new,
+        r"Last (?:updated|checked):\s*<strong[^>]*>[^<]*</strong>\s*·\s*\d+\s*vendors tracked",
+        f'Last checked: <strong style="color:var(--text);">{today}</strong> · {n} vendors tracked',
+        "last-checked", report)
+
+    if content_changed:
+        today_iso = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        dm = re.search(r'"dateModified":"(\d{4}-\d{2}-\d{2})"', new)
+        if dm and dm.group(1) != today_iso:
+            new = new.replace(f'"dateModified":"{dm.group(1)}"',
+                              f'"dateModified":"{today_iso}"', 1)
+            report.append("ok:dateModified")
 
     if new == html:
         return None, "no change"
@@ -589,11 +613,20 @@ def build_compare(name, old_html, prices, vendors, catalog, a_id, b_id, today_mo
     faq = compare_faq(an, bn, st, a_cat, b_cat, va["code"], vb["code"],
                       va["discount"], vb["discount"], cheaper_avg, gap_pct)
 
+    # Build with the page's EXISTING dateModified so an unchanged page compares
+    # byte-equal to itself. Stamping now() here instead would make every page
+    # differ every day, defeating the "no change" check below: all 190 compare
+    # pages would be rewritten daily, advertising a freshness that did not
+    # happen. Google expects dateModified to track substantive edits.
+    # If a real change is found, the date is stamped forward further down.
+    _pm = re.search(r'"dateModified":"(\d{4}-\d{2}-\d{2})"', old_html)
+    prev_mod = _pm.group(1) if _pm else datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
     lds = [
         {"@context": "https://schema.org", "@type": "Article",
          "headline": f"{an} vs {bn} — 2026 Price Comparison", "description": desc,
          "datePublished": "2026-07-19",
-         "dateModified": datetime.now(timezone.utc).strftime("%Y-%m-%d"), "url": url,
+         "dateModified": prev_mod, "url": url,
          "author": {"@type": "Organization", "name": "PepsTracker", "url": "https://pepstracker.com/"},
          "publisher": {"@type": "Organization", "name": "PepsTracker", "url": "https://pepstracker.com/"},
          "mainEntityOfPage": {"@type": "WebPage", "@id": url}},
@@ -702,6 +735,14 @@ def build_compare(name, old_html, prices, vendors, catalog, a_id, b_id, today_mo
 
     if new == old_html:
         return None, "no change"
+
+    # A real change was found, so the modification date is now truthful.
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if today != prev_mod:
+        new = new.replace(f'"dateModified":"{prev_mod}"',
+                          f'"dateModified":"{today}"', 1)
+        report.append("ok:dateModified")
+
     ok, why = safety_check(old_html, new)
     if not ok:
         return None, f"SAFETY FAIL: {why}"
