@@ -72,6 +72,9 @@ def trim_to_sentence(text, budget):
 
 # ---- the three rewritable regions -------------------------------------------
 RX_DESC = re.compile(r'(<meta name="description" content=")([^"]*)(")')
+RX_TITLE = re.compile(r'(<title>)([^<]*)(</title>)')
+TITLE_LIMIT = 60        # Google truncates a result title around here
+BRAND_SUFFIX = re.compile(r'\s*\|\s*PepsTracker\s*$')
 RX_BODY = re.compile(
     r'(<p>Real-time prices across )(\d+ vendors?)( with discount codes already applied\.</p>)')
 RX_DIV = re.compile(
@@ -128,6 +131,57 @@ def rebuild_desc(old, name, n):
     return (blurb + claim) if blurb else None
 
 
+# Blog posts written about one compound. Their vendor counts are per-compound,
+# not site-wide, so sync_site_counts.py deliberately leaves them alone -- and
+# nothing else owned them, so blog-cheapest-semaglutide sat at "25 Vendors
+# Compared" in six places and "11 research peptide vendors" in two others while
+# Semaglutide actually had 21.
+#
+# Only the per-compound phrasings below are rewritten. Site-wide sentences on
+# the same pages ("across all 27 vendors we monitor", "23 of the 27 vendors on
+# PepsTracker publish COAs") do not match any of them and stay untouched.
+BLOG_COMPOUND = {
+    "blog-cheapest-semaglutide-2026.html": "Semaglutide",
+    "blog-bpc157-price-2026.html": "BPC-157",
+}
+
+BLOG_CLAIMS = [
+    re.compile(r"(?<=— )(\d+)(?= Vendors Compared)"),
+    re.compile(r"(?<=Comparison Across )(\d+)(?= Vendors)"),
+    re.compile(r"(?<=all )(\d+)(?= vendors compared by)"),
+    re.compile(r"(?<=checked all )(\d+)(?= vendors after discounts)"),
+    re.compile(r"(?<=among all )(\d+)(?= vendors that carry it)"),
+    re.compile(r"(?<=prices across )(\d+)(?= research peptide vendors)"),
+    re.compile(r"(?<=prices across )(\d+)(?= vendors after discount)"),
+]
+
+
+def sync_compound_blogs(rg, prices, vendors, apply_changes):
+    out = []
+    for base, compound in sorted(BLOG_COMPOUND.items()):
+        path = os.path.join(SITE, base)
+        if not os.path.exists(path) or compound not in prices:
+            continue
+        src = open(path, encoding="utf-8", errors="replace").read()
+        n = str(len(rg.rank_vendors(prices[compound], vendors)))
+        text = src
+        hits = 0
+        for rx in BLOG_CLAIMS:
+            text, k = rx.subn(n, text)
+            hits += k
+        if text == src:
+            continue
+        # Only digits may move, and every per-compound claim must now agree.
+        assert re.sub(r"\d", "", text) == re.sub(r"\d", "", src), \
+            f"{base}: non-digit change"
+        for rx in BLOG_CLAIMS:
+            assert set(rx.findall(text)) <= {n}, f"{base}: {rx.pattern} disagrees"
+        if apply_changes:
+            open(path, "w", encoding="utf-8").write(text)
+        out.append((base, compound, n, hits))
+    return out
+
+
 def main(apply_changes):
     rg = load_regen()
     html = open(os.path.join(SITE, "index.html"), encoding="utf-8").read()
@@ -135,7 +189,7 @@ def main(apply_changes):
     vendors = rg.parse_vendors(html)
 
     changed = skipped = 0
-    fixes = {"desc": 0, "body": 0, "div": 0}
+    fixes = {"desc": 0, "body": 0, "div": 0, "title": 0}
     unresolved = []
 
     for path in sorted(glob.glob(os.path.join(SITE, "peptides", "*.html"))):
@@ -179,6 +233,18 @@ def main(apply_changes):
                 fixes["desc"] += 1
                 local.append("desc")
 
+        # Over-length title: drop the brand suffix rather than the compound
+        # name. Google truncates past ~60 chars, so an over-long title loses
+        # its tail anyway -- better to lose "| PepsTracker" deliberately than
+        # to have the dictionary label cut mid-word.
+        tm = RX_TITLE.search(out)
+        if tm and len(tm.group(2)) > TITLE_LIMIT:
+            short = BRAND_SUFFIX.sub("", tm.group(2)).strip()
+            if short and short != tm.group(2):
+                out = out[:tm.start(2)] + short + out[tm.end(2):]
+                fixes["title"] = fixes.get("title", 0) + 1
+                local.append("title")
+
         want = plural(n, "vendor")
         new, k = RX_BODY.subn(lambda mm: mm.group(1) + want + mm.group(3), out)
         if k and new != out:
@@ -213,8 +279,12 @@ def main(apply_changes):
         else:
             print(f"  {base:28s} n={n:<3} {'+'.join(local)}")
 
+    blogs = sync_compound_blogs(rg, prices, vendors, apply_changes)
+    for base, compound, n, hits in blogs:
+        print(f"  {base:36s} {compound} -> {n} vendors ({hits} claims)")
+
     print(f"\n{'APPLIED' if apply_changes else 'DRY RUN'}: "
-          f"{changed} pages changed, {skipped} skipped")
+          f"{changed + len(blogs)} pages changed, {skipped} skipped")
     print(f"  descriptions rebuilt : {fixes['desc']}")
     print(f"  body counts fixed    : {fixes['body']}")
     print(f"  footer counts fixed  : {fixes['div']}")
