@@ -42,7 +42,32 @@ RULES = [
     ("about: track pricing",  re.compile(r"(?<=We track pricing across )\d+(?= vendors)")),
     ("faq: all of these",     re.compile(r"(?<=tracks prices for all of these across )\d+(?= vendors)")),
     ("publicly listed",       re.compile(r"(?<=compares publicly listed prices across )\d+(?= vendors)")),
+    # Directory and ranking headings. "Sources" and "Peptide Vendors" never
+    # appear in a per-compound context, so these are safe on their own.
+    ("vendor directory head", re.compile(r"(?<=All )\d+(?= Peptide Vendors)")),
+    ("vendor ranking head",   re.compile(r"(?<=Top )\d+(?= Peptide Vendors)")),
+    ("vendor sources head",   re.compile(r"(?<=Top )\d+(?= Research Peptide Sources)")),
 ]
+
+
+# ---------------------------------------------------------------------------
+# Site-wide override for the compound guard.
+#
+# The guard below skips any "N vendors" claim with a compound name nearby,
+# because a compound may genuinely have that many vendors. That is right for
+# "the lowest cost per mg for BPC-157 among all 24 vendors that carry it"
+# (BPC-157 really does have 24) but wrong for
+# "PepsTracker normalizes Epithalon prices to cost-per-milligram across 25
+# vendors", which is a claim about our coverage that merely happens to name a
+# compound. The proof is that every guide page carries the identical number
+# regardless of which compound it covers.
+#
+# Only these two shapes bypass the guard. Anything else stays protected.
+SITEWIDE_PREFIX = re.compile(
+    r"PepsTracker\s+(?:normalizes|compares|tracks)\b[^.<>]{0,130}$", re.I)
+SITEWIDE_SUFFIX = re.compile(
+    r"^\s*\+?\s*(?:research\s+peptide\s+)?vendors?\s+"
+    r"(?:we\s+(?:track|monitor)|at\s+PepsTracker|on\s+PepsTracker)\b", re.I)
 
 
 # Pages that are regenerated from data (cheapest-*, compare-*) and the
@@ -153,10 +178,16 @@ def site_wide_sweep(site, target, compounds):
                 return m.group(0)
             lo = max(0, m.start() - 90)
             ctx = m.string[lo:m.end() + 40]
+            # An explicit statement about PepsTracker's own coverage is
+            # site-wide even when a compound is named in the same sentence.
+            before = m.string[max(0, m.start() - 140):m.start()]
+            tail = m.group(2) + m.string[m.end():m.end() + 40]
+            sitewide = bool(SITEWIDE_PREFIX.search(before)
+                            or SITEWIDE_SUFFIX.match(tail))
             # Word-boundary match. A plain substring test is wrong here: short
             # compound names hide inside ordinary words ("PDA" in "updated"),
             # which silently skipped legitimate site-wide claims.
-            if COMPOUND_RX and COMPOUND_RX.search(ctx):
+            if COMPOUND_RX and COMPOUND_RX.search(ctx) and not sitewide:
                 return m.group(0)          # names a compound: may be per-compound
             hits.append(n)
             return target + m.group(2)
