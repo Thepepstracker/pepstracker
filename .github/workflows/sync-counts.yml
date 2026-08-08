@@ -49,6 +49,13 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
         run: python sync_dictionary.py
 
+      # Runs LAST: it rebuilds the sitemap from whatever the steps above left
+      # on disk, so it must see their noindex/canonical/title edits.
+      - name: SEO hygiene
+        env:
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: python seo_hygiene.py
+
       - name: Show diff stat
         if: ${{ !inputs.dry_run }}
         run: git --no-pager diff --stat
