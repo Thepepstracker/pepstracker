@@ -52,6 +52,28 @@ RULES = [
     # they anchor on the word "Vendors"/"Sources" that this phrasing omits.
     ("ranked heading",        re.compile(r"(?<=Top )\d+(?= Ranked)")),
     ("ranked heading alt",    re.compile(r"(?<=All )\d+(?= Ranked)")),
+    # An adjective between the number and "vendors" hides the claim from the
+    # sweep's base pattern, which requires the two to be adjacent. "PepsTracker
+    # tracks all N major vendors daily" is site-wide by its own wording, so the
+    # per-compound values some pages carried there ("tracks all 5 major
+    # vendors") were simply false.
+    ("tracks-all-major",      re.compile(r"(?<=all )\d+(?= major vendors)")),
+    ("all-tracked-vendors",   re.compile(r"(?<=all )\d+(?= tracked vendors)")),
+    ("across-tracked",        re.compile(r"(?<=across )\d+(?= tracked vendors)")),
+    # Guide and hub meta/schema descriptions. Each lead-in below belongs to a
+    # page covering several compounds, so the number is site coverage. None of
+    # them match blog-bpc157-price's per-compound wording ("all 24 vendors
+    # compared by $/mg", "checked all 24 vendors after discounts", "among all
+    # 24 vendors that carry it"), which stays correct at 24.
+    ("guide: mechanism+price", re.compile(r"(?<=and price across )\d+(?= vendors)")),
+    ("guide: blend prices",    re.compile(r"(?<=blend prices across )\d+(?= vendors)")),
+    ("guide: compared both",   re.compile(r"(?<=compared both across )\d+(?= vendors)")),
+    ("guide: price comparison",re.compile(r"(?<=price comparison across )\d+(?= vendors)")),
+    ("guide: vs semaglutide",  re.compile(r"(?<=vs Semaglutide across )\d+(?= vendors)")),
+    ("guide: and more",        re.compile(r"(?<=and more across )\d+(?= vendors)")),
+    ("hub: link list",         re.compile(r"(?<=</a> across )\d+(?= vendors)")),
+    ("b12: checked all",       re.compile(r"(?<=checked all )\d+(?= vendors on PepsTracker)")),
+    ("b12: verified across",   re.compile(r"(?<=verified across )\d+(?= vendors)")),
 ]
 
 
