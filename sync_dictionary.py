@@ -182,6 +182,53 @@ def sync_compound_blogs(rg, prices, vendors, apply_changes):
     return out
 
 
+# Hand-written prose on the cheapest-* pages describing that page's own table.
+# The regenerator owns the title, h1 and table but not these sentences, so they
+# froze at whatever the counts were when the pages were written. Every one of
+# the 45 pages contradicted itself: cheapest-bpc-157 said "24 vendors compared"
+# in the heading and "compares all 12 vendors we track" in the body.
+#
+# These describe the table on the page, so the right number is that compound's
+# vendor count, not the site total.
+CHEAPEST_PROSE = [
+    re.compile(r"(?<=Compare all )\d+(?= vendors sorted by cost-per-mg)"),
+    re.compile(r"(?<=compares all )\d+(?= vendors we track)"),
+    re.compile(r"(?<=across all )\d+(?= vendors with discount codes already applied)"),
+    re.compile(r"(?<=across the )\d+(?= vendors we track)"),
+    re.compile(r"(?<=current data across )\d+(?= vendors,)"),
+]
+
+
+def sync_cheapest_prose(rg, prices, vendors, apply_changes):
+    out = []
+    for path in sorted(glob.glob(os.path.join(SITE, "cheapest-*.html"))):
+        base = os.path.basename(path)
+        src = open(path, encoding="utf-8", errors="replace").read()
+        mo = re.search(r"<h1[^>]*>([^<]+)</h1>", src)
+        if not mo:
+            continue
+        name = re.sub(r"^Cheapest\s+|\s+in \d{4}.*$", "", mo.group(1)).strip()
+        key = rg.resolve_compound(name, prices)
+        if not key:
+            continue
+        n = str(len(rg.rank_vendors(prices[key], vendors)))
+        text = src
+        hits = 0
+        for rx in CHEAPEST_PROSE:
+            text, k = rx.subn(n, text)
+            hits += k
+        if text == src:
+            continue
+        assert re.sub(r"\d", "", text) == re.sub(r"\d", "", src), \
+            "%s: non-digit change" % base
+        for rx in CHEAPEST_PROSE:
+            assert set(rx.findall(text)) <= {n}, "%s: disagreement" % base
+        if apply_changes:
+            open(path, "w", encoding="utf-8").write(text)
+        out.append((base, key, n, hits))
+    return out
+
+
 def main(apply_changes):
     rg = load_regen()
     html = open(os.path.join(SITE, "index.html"), encoding="utf-8").read()
@@ -279,12 +326,17 @@ def main(apply_changes):
         else:
             print(f"  {base:28s} n={n:<3} {'+'.join(local)}")
 
+    prose = sync_cheapest_prose(rg, prices, vendors, apply_changes)
+    if prose:
+        print("  cheapest-* prose synced on %d pages (%d claims)"
+              % (len(prose), sum(h for _, _, _, h in prose)))
+
     blogs = sync_compound_blogs(rg, prices, vendors, apply_changes)
     for base, compound, n, hits in blogs:
         print(f"  {base:36s} {compound} -> {n} vendors ({hits} claims)")
 
     print(f"\n{'APPLIED' if apply_changes else 'DRY RUN'}: "
-          f"{changed + len(blogs)} pages changed, {skipped} skipped")
+          f"{changed + len(blogs) + len(prose)} pages changed, {skipped} skipped")
     print(f"  descriptions rebuilt : {fixes['desc']}")
     print(f"  body counts fixed    : {fixes['body']}")
     print(f"  footer counts fixed  : {fixes['div']}")
