@@ -60,6 +60,9 @@ RULES = [
     ("tracks-all-major",      re.compile(r"(?<=all )\d+(?= major vendors)")),
     ("all-tracked-vendors",   re.compile(r"(?<=all )\d+(?= tracked vendors)")),
     ("across-tracked",        re.compile(r"(?<=across )\d+(?= tracked vendors)")),
+    ("from-trusted",          re.compile(r"(?<=from )\d+(?= trusted vendors)")),
+    ("all-trusted",           re.compile(r"(?<=across all )\d+(?= trusted vendors)")),
+    ("stat card vendors",     re.compile(r"\b\d+(?= vendors<br>)")),
     # Guide and hub meta/schema descriptions. Each lead-in below belongs to a
     # page covering several compounds, so the number is site coverage. None of
     # them match blog-bpc157-price's per-compound wording ("all 24 vendors
@@ -75,6 +78,46 @@ RULES = [
     ("b12: checked all",       re.compile(r"(?<=checked all )\d+(?= vendors on PepsTracker)")),
     ("b12: verified across",   re.compile(r"(?<=verified across )\d+(?= vendors)")),
 ]
+
+
+# ---------------------------------------------------------------------------
+# Compound-count claims.
+#
+# "N+ compounds" is NOT reliably site-wide: vendor cards legitimately say
+# "Platinum stocks 40+ compounds", "60+ compounds including hard-to-find",
+# "Every vendor pair that shares 10+ compounds". A blanket rule would rewrite
+# all of those to the site total and make them false.
+#
+# So every rule below is anchored to text that can only be a claim about our
+# whole catalogue -- almost always sitting next to "27 vendors" or
+# "PepsTracker tracks/compares". The "+" is kept, so "82+ compounds" stays
+# true as the catalogue grows and the digit-only invariant still holds.
+COMPOUND_RULES = [
+    ("cmp: compares",     re.compile(r"(?<=PepsTracker compares )\d+(?=\+ compounds across)")),
+    ("cmp: for all",      re.compile(r"(?<=for all )\d+(?=\+ compounds and)")),
+    ("cmp: vendors and",  re.compile(r"(?<=vendors and )\d+(?=\+ compounds daily)")),
+    ("cmp: vendors for",  re.compile(r"(?<=vendors for )\d+(?=\+ compounds)")),
+    ("cmp: vendors comma",re.compile(r"(?<=vendors, )\d+(?=\+ compounds)")),
+    ("cmp: vendors dot",  re.compile(r"(?<=vendors \u00b7 )\d+(?=\+ compounds)")),
+    ("cmp: and sorted",   re.compile(r"(?<=and )\d+(?=\+ compounds \u2014 sorted)")),
+    ("cmp: trusted",      re.compile(r"(?<=trusted vendors across )\d+(?=\+ compounds)")),
+    ("cmp: stat card",    re.compile(r"(?<=<br>)\d+(?=\+ compounds)")),
+    ("cmp: daily across", re.compile(r"(?<=vendors daily across )\d+(?=\+ compounds)")),
+    ("cmp: across daily", re.compile(r"(?<=vendors across )\d+(?=\+ compounds daily)")),
+    ("pep: tracked",      re.compile(r"(?<=\u00b7 )\d+(?=\+ peptides tracked)")),
+    ("pep: across daily", re.compile(r"(?<=vendors across )\d+(?=\+ peptides daily)")),
+    ("pep: compare for",  re.compile(r"(?<=Compare prices for )\d+(?=\+ peptides)")),
+]
+
+
+def compound_count():
+    """Number of top-level keys in the PRICES object."""
+    with open(INDEX, encoding="utf-8") as fh:
+        names = compound_names(fh.read())
+    n = len(set(names))
+    if not 20 <= n <= 500:
+        sys.exit("FATAL: implausible compound count %d; refusing to run" % n)
+    return n
 
 
 # ---------------------------------------------------------------------------
@@ -246,23 +289,30 @@ def vendor_count():
 def main():
     n = vendor_count()
     target = str(n)
-    files = sorted(glob.glob(os.path.join(SITE, "**", "*.html"), recursive=True))
+    # .js is included because advisor-widget.js renders its own
+    # "N vendors / N+ compounds" stat card, which drifted the same way the
+    # pages did. The rules are anchored and the digit-only invariant still
+    # guards every write, so widening the glob is safe.
+    files = sorted(glob.glob(os.path.join(SITE, "**", "*.html"), recursive=True) +
+                   glob.glob(os.path.join(SITE, "**", "*.js"), recursive=True))
     changed_files = 0
     changed_nums = 0
-    per_rule = dict((label, 0) for label, _ in RULES)
+    cn = str(compound_count())
+    per_rule = dict((label, 0) for label, _ in RULES + COMPOUND_RULES)
 
     for path in files:
         with open(path, encoding="utf-8") as fh:
             src = fh.read()
         out = src
         edits = []
-        for label, rx in RULES:
-            def repl(m, label=label):
+        for label, rx, want in ([(l, r, target) for l, r in RULES] +
+                                [(l, r, cn) for l, r in COMPOUND_RULES]):
+            def repl(m, label=label, want=want):
                 old = m.group(0)
-                if old == target:
+                if old == want:
                     return old
-                edits.append((label, old))
-                return target
+                edits.append((label, old, want))
+                return want
             out = rx.sub(repl, out)
         if out == src:
             continue
@@ -274,10 +324,10 @@ def main():
 
         changed_files += 1
         changed_nums += len(edits)
-        for label, _old in edits:
+        for label, _old, _want in edits:
             per_rule[label] += 1
         rel = os.path.relpath(path, ROOT)
-        detail = ", ".join("%s %s->%s" % (l, o, target) for l, o in edits)
+        detail = ", ".join("%s %s->%s" % (l, o, w) for l, o, w in edits)
         print("%s: %s" % (rel, detail))
         if not DRY:
             with open(path, "w", encoding="utf-8") as fh:
