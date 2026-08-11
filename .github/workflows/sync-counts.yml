@@ -49,6 +49,12 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
         run: python sync_dictionary.py
 
+      # "You are here" nav highlight on hand-written pages.
+      - name: Nav active state
+        env:
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: python nav_active.py
+
       # One logo everywhere. Runs before the sitemap step only so the report
       # order reads sensibly; it touches nothing the other steps depend on.
       - name: Normalise logo
