@@ -63,6 +63,8 @@ RULES = [
     ("from-trusted",          re.compile(r"(?<=from )\d+(?= trusted vendors)")),
     ("all-trusted",           re.compile(r"(?<=across all )\d+(?= trusted vendors)")),
     ("stat card vendors",     re.compile(r"\b\d+(?= vendors<br>)")),
+    # Homepage hero stat bar: static markup, stale at 25 since two vendors ago.
+    ("hero stat vendors",     re.compile(r'(?<=<div class="stat-num">)\d+(?=</div><div class="stat-label">Vendors</div>)')),
     # Guide and hub meta/schema descriptions. Each lead-in below belongs to a
     # page covering several compounds, so the number is site coverage. None of
     # them match blog-bpc157-price's per-compound wording ("all 24 vendors
@@ -107,6 +109,8 @@ COMPOUND_RULES = [
     ("pep: tracked",      re.compile(r"(?<=\u00b7 )\d+(?=\+ peptides tracked)")),
     ("pep: across daily", re.compile(r"(?<=vendors across )\d+(?=\+ peptides daily)")),
     ("pep: compare for",  re.compile(r"(?<=Compare prices for )\d+(?=\+ peptides)")),
+    # Homepage hero stat bar, compound half.
+    ("hero stat peptides",re.compile(r'(?<=<div class="stat-num">)\d+(?=</div><div class="stat-label">Peptides</div>)')),
 ]
 
 
