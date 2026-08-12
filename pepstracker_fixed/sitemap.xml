@@ -378,6 +378,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://pepstracker.com/peptide-price-comparison-tool.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://pepstracker.com/peptide-price-guide.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
