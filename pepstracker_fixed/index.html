@@ -912,7 +912,7 @@ const VENDORS = [
   { id:"platinum",   name:"Platinum Peptides",     domain:"platinumpeptides.com",   url:"https://www.platinumpeptides.com/?sld=pepstracker",  code:"pepstracker15", discount:0.15 },
   { id:"fusion",     name:"Fusion Peptide",        domain:"fusionpeptide.com",      url:"https://fusionpeptide.com/?ref=pepstracker",         code:"pepstracker", discount:0.15 },
     { id:"strandbio", name:"Strand Bio", domain:"getstrandbio.com", url:"https://getstrandbio.com/partners/pepstracker", code:"PEPSTRACKER", discount:0.15 },
-  { id:"glowlab", name:"Glow Lab Protocols", domain:"glowlabprotocols.com", url:"https://glowlabprotocols.com/shop/", code:"GLOW31", discount:0.31 }
+  { id:"glowlab", elite:true, name:"Glow Lab Protocols", domain:"glowlabprotocols.com", url:"https://glowlabprotocols.com/shop/", code:"GLOW31", discount:0.31 }
 ];
 const vMap = {};
 VENDORS.forEach(v => vMap[v.id] = v);
@@ -2420,6 +2420,9 @@ function renderResults() {
 
   const inStock = rows.filter(r => !r.oos);
   inStock.sort((a,b) => (a.price*(1-a.vendor.discount)) - (b.price*(1-b.vendor.discount)));
+  // Sponsored placement: paid pin to the top. Always labeled; the Best Value
+  // badge stays on the true cheapest row so price truth is intact.
+  inStock.sort((a,b) => (b.vendor.elite?1:0) - (a.vendor.elite?1:0));
   const outOfStock = rows.filter(r => r.oos);
   rows = [...inStock, ...outOfStock];
   const compoundHasBulk = Object.values(priceMap).some(v => Array.isArray(v) && v.some(e => e.bulk));
@@ -2427,7 +2430,10 @@ function renderResults() {
   const bestAfterDisc = inStock.length > 0 ? Math.min(...inStock.map(r => r.bogo ? r.price : r.price*(1-r.vendor.discount))) : null;
 
   const bulkToggleHtml = compoundHasBulk ? '<div class="bulk-toggle-wrap"><span class="bulk-toggle-label">📦 Bulk Packs:</span><button class="bulk-toggle-btn' + (!window._showBulk ? ' active' : '') + '" onclick="window._showBulk=false;renderResults()">Single Vial</button><button class="bulk-toggle-btn' + (window._showBulk ? ' active' : '') + '" onclick="window._showBulk=true;renderResults()">📦 Bulk Pack</button></div>' : '';
-  const html = bulkToggleHtml + rows.map((r, i) => {
+  const eliteNote = inStock.some(r => r.vendor.elite)
+    ? '<div style="font-size:.68rem;color:#7a8ba8;margin:2px 0 8px;">Sponsored placement is a paid position and is always labeled. Every other row is ranked purely by discounted $/mg.</div>'
+    : '';
+  const html = eliteNote + bulkToggleHtml + rows.map((r, i) => {
     const afterDisc = r.bogo ? r.price : r.price * (1 - r.vendor.discount);
     const isBest = bestAfterDisc !== null && !r.oos && Math.abs(afterDisc - bestAfterDisc) < 0.01;
     const isBogo = r.bogo === true;
@@ -2460,9 +2466,9 @@ function renderResults() {
     const rank = inStock.indexOf(r);
     return `
     <div class="result-card ${isBest?'best':''} animate-in" style="animation-delay:${i*45}ms">
-      <div class="rank ${rank===0?'first':''}">${rank===0?'🥇':'#'+(rank+1)}</div>
+      <div class="rank ${rank===0?'first':''}">${rank===0?(r.vendor.elite?'\ud83d\udc51':'🥇'):'#'+(rank+1)}</div>
       <div>
-        <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><img class="vendor-favicon" src="https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${r.vendor.domain}&size=64" width="28" height="28" style="width:28px;height:28px;object-fit:contain;" alt="" onerror="this.style.display='none'" />${r.vendor.name}${isBogo?'<span class="bogo-badge">🎁 BOGO</span>':''}${isBest?'<span class="best-badge">Best Value</span>':''}</div>${r.vendor.promo?`<div style="font-size:.68rem;font-weight:700;color:#f5c842;margin:2px 0 0 36px;letter-spacing:.01em;">${r.vendor.promo}</div>`:""}
+        <div class="vendor-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><img class="vendor-favicon" src="https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${r.vendor.domain}&size=64" width="28" height="28" style="width:28px;height:28px;object-fit:contain;" alt="" onerror="this.style.display='none'" />${r.vendor.name}${isBogo?'<span class="bogo-badge">🎁 BOGO</span>':''}${r.vendor.elite?'<span class="best-badge" style="background:linear-gradient(90deg,#f5c842,#e8a13b);color:#141b26;">Sponsored</span>':''}${isBest?'<span class="best-badge">Best Value</span>':''}</div>${r.vendor.promo?`<div style="font-size:.68rem;font-weight:700;color:#f5c842;margin:2px 0 0 36px;letter-spacing:.01em;">${r.vendor.promo}</div>`:""}
         <div class="vendor-listing">Listed as: <em>${r.listing}</em> &nbsp;·&nbsp; <a href="${getShopUrl(r.vendor.id, currentPeptide)}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-size:.7rem;font-weight:600;text-decoration:none;">See all sizes →</a></div>
       </div>
       <div class="price-block">
