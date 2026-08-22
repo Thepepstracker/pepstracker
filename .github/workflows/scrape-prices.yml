@@ -101,3 +101,35 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SCRAPER_GITHUB_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: python regenerate_pages.py
+
+      # Daily self-heal: the same content-integrity passes as the manual
+      # "Sync site counts" workflow, so hand-written counts, prose price
+      # claims, dated headers, logos and the sitemap can never drift more
+      # than one day from the data. Skipped entirely on a dry run.
+      - name: Content sync (counts, claims, logo, sitemap)
+        if: ${{ !inputs.dry_run }}
+        env:
+          DRY_RUN: "0"
+        run: |
+          # scraper.py and regenerate_pages.py commit via the API, so the
+          # local checkout is behind by now. Sync against today's data.
+          git pull --rebase --autostash origin main
+          python repair_encoding.py
+          python sync_site_counts.py
+          python sync_dictionary.py
+          python nav_active.py
+          python fix_logo.py
+          python seo_hygiene.py
+
+      - name: Commit content sync
+        if: ${{ !inputs.dry_run }}
+        run: |
+          if [ -z "$(git status --porcelain pepstracker_fixed)" ]; then
+            echo "content already in sync"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pepstracker_fixed
+          git commit -m "Daily content sync: counts, price claims, sitemap"
+          git pull --rebase --autostash origin main
+          git push origin HEAD:main
