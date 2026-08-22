@@ -278,6 +278,17 @@ def sync_price_claims(rg, prices, vendors, apply_changes):
              lambda m: "available from %s after discount codes" % fmt(vals["Semaglutide"])),
         ])
 
+    # premium.js injects the hero proof chips with hardcoded prices; keep them honest.
+    if vals.get("Semaglutide") and vals.get("Tirzepatide") and vals.get("BPC-157"):
+        fix("premium.js", [
+            (r"Semaglutide from \$[\d.]+/mg",
+             lambda m: "Semaglutide from %s" % fmt(vals["Semaglutide"])),
+            (r"Tirzepatide from \$[\d.]+/mg",
+             lambda m: "Tirzepatide from %s" % fmt(vals["Tirzepatide"])),
+            (r"BPC-157 from \$[\d.]+/mg",
+             lambda m: "BPC-157 from %s" % fmt(vals["BPC-157"])),
+        ])
+
     ib = _permg(rg, prices, vendors, "BPC-157", "ion")
     it = _permg(rg, prices, vendors, "TB-500", "ion")
     if ib and it:
