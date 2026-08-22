@@ -229,6 +229,85 @@ def sync_cheapest_prose(rg, prices, vendors, apply_changes):
     return out
 
 
+# Prose price claims. Prices move daily, so any hand-written "$X/mg" claim is
+# a lie in waiting. Each site is anchored to its exact sentence; values come
+# from the same rank_vendors data the tracker itself renders. All replacements
+# use callables so "$" in prices is never parsed as a regex backreference.
+def _permg(rg, prices, vendors, comp, vid=None):
+    vs = prices.get(comp) or {}
+    if vid:
+        ls = vs.get(vid) or []
+        d = vendors[vid]["discount"]
+        vals = [l["price"]*(1-d)/l["mg"] for l in ls if l.get("price") and l.get("mg")]
+        return min(vals) if vals else None
+    r = rg.rank_vendors(vs, vendors)
+    return min(x["permg"] for x in r) if r else None
+
+
+def sync_price_claims(rg, prices, vendors, apply_changes):
+    import datetime
+    month = datetime.datetime.utcnow().strftime("%B %Y")
+    fmt = rg.fmt_permg
+    out = []
+
+    def fix(base, transforms):
+        path = os.path.join(SITE, base)
+        if not os.path.exists(path):
+            return
+        src = open(path, encoding="utf-8", errors="replace").read()
+        text = src
+        hits = 0
+        for rx, fn in transforms:
+            text, k = re.subn(rx, fn, text)
+            hits += k
+        if text == src:
+            return
+        if apply_changes:
+            open(path, "w", encoding="utf-8").write(text)
+        out.append((base, hits))
+
+    seq = ["Semaglutide", "Tirzepatide", "BPC-157", "TB-500", "Ipamorelin", "GHK-Cu", "NAD+"]
+    vals = {c: _permg(rg, prices, vendors, c) for c in seq}
+    if all(vals.values()):
+        sentence = ("Current cheapest research peptide prices (%s): " % month +
+                    ", ".join("%s from %s" % (c, fmt(vals[c])) for c in seq) + ".")
+        fix("index.html", [
+            (r"Current cheapest research peptide prices \([A-Za-z]+ 20\d\d\):[^<]*?NAD\+ from \$[\d.]+/mg\.",
+             lambda m: sentence),
+            (r"available from \$[\d.]+/mg after discount codes",
+             lambda m: "available from %s after discount codes" % fmt(vals["Semaglutide"])),
+        ])
+
+    ib = _permg(rg, prices, vendors, "BPC-157", "ion")
+    it = _permg(rg, prices, vendors, "TB-500", "ion")
+    if ib and it:
+        fix("best-peptide-vendors-2026.html", [
+            (r"BPC-157 from \$[\d.]+/mg and TB-500 from \$[\d.]+/mg",
+             lambda m: "BPC-157 from %s and TB-500 from %s" % (fmt(ib), fmt(it))),
+        ])
+
+    for vid in vendors:
+        base = "vendor-%s.html" % vid
+        path = os.path.join(SITE, base)
+        if not os.path.exists(path):
+            continue
+        src = open(path, encoding="utf-8", errors="replace").read()
+        def repl(m, vid=vid):
+            comp = rg.resolve_compound(m.group(1).strip(), prices)
+            v = _permg(rg, prices, vendors, comp, vid) if comp else None
+            return "%s from %s" % (m.group(1), fmt(v)) if v else m.group(0)
+        text, k = re.subn(r"([A-Z][A-Za-z0-9\-+ ]{2,24}?) from \$[\d.]+/mg", repl, src)
+        if k and text != src:
+            if apply_changes:
+                open(path, "w", encoding="utf-8").write(text)
+            out.append((base, k))
+
+    fix("blog.html", [(r"Updated [A-Za-z]+ 20\d\d", lambda m: "Updated %s" % month)])
+    fix("cheapest-vitamin-b12.html",
+        [(r"Updated [A-Za-z]+ 20\d\d(?= — prices verified)", lambda m: "Updated %s" % month)])
+    return out
+
+
 def main(apply_changes):
     rg = load_regen()
     html = open(os.path.join(SITE, "index.html"), encoding="utf-8").read()
@@ -331,12 +410,16 @@ def main(apply_changes):
         print("  cheapest-* prose synced on %d pages (%d claims)"
               % (len(prose), sum(h for _, _, _, h in prose)))
 
+    claims = sync_price_claims(rg, prices, vendors, apply_changes)
+    for base, hits in claims:
+        print("  price-claims %-36s %d updated" % (base, hits))
+
     blogs = sync_compound_blogs(rg, prices, vendors, apply_changes)
     for base, compound, n, hits in blogs:
         print(f"  {base:36s} {compound} -> {n} vendors ({hits} claims)")
 
     print(f"\n{'APPLIED' if apply_changes else 'DRY RUN'}: "
-          f"{changed + len(blogs) + len(prose)} pages changed, {skipped} skipped")
+          f"{changed + len(blogs) + len(prose) + len(claims)} pages changed, {skipped} skipped")
     print(f"  descriptions rebuilt : {fixes['desc']}")
     print(f"  body counts fixed    : {fixes['body']}")
     print(f"  footer counts fixed  : {fixes['div']}")
