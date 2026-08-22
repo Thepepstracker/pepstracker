@@ -80,9 +80,9 @@
       var proof = document.createElement('div');
       proof.className = 'hero-proof';
       proof.innerHTML =
-        '<span class="proof-chip">Semaglutide from $2.90/mg</span>' +
+        '<span class="proof-chip">Semaglutide from $1.85/mg</span>' +
         '<span class="proof-chip">Tirzepatide from $1.50/mg</span>' +
-        '<span class="proof-chip">BPC-157 from $2.90/mg</span>';
+        '<span class="proof-chip">BPC-157 from $1.68/mg</span>';
       var heroP = hero.querySelector('p');
       if (heroP) heroP.insertAdjacentElement('afterend', proof);
     }
