@@ -1,1 +1,26 @@
-(function(){if(sessionStorage.getItem('gpGlowLabDismissed')==='1')return;var bar=document.createElement('div');bar.id='gp-glowlab-banner';bar.style.cssText='position:relative;width:100%;background:linear-gradient(90deg,#0d0f14,#1a1206);border-bottom:2px solid #f5c842;padding:10px 16px;font-family:"Plus Jakarta Sans",sans-serif;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;z-index:9999;font-size:14px;color:#e8edf5;';bar.innerHTML='<span style="font-weight:700;">Glow Lab Protocols -- <span style="color:#f5c842;">31% Off Sitewide</span> with code <span style="font-family:Fira Code,monospace;background:#1c2230;padding:2px 8px;border-radius:4px;color:#f5c842;">GLOW31</span></span><button id="gp-gl-copy" style="background:#f5c842;color:#0d0f14;border:none;padding:6px 14px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;">Copy Code</button><a href="https://glowlabprotocols.com/shop/" target="_blank" rel="noopener" style="background:#3b9eff;color:#fff;padding:6px 16px;border-radius:6px;font-weight:700;text-decoration:none;font-size:13px;">Shop Now -&gt;</a><button id="gp-gl-close" aria-label="Dismiss" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#7a8ba8;font-size:18px;cursor:pointer;line-height:1;">x</button>';document.body.insertBefore(bar,document.body.firstChild);document.getElementById('gp-gl-copy').addEventListener('click',function(){var btn=this;navigator.clipboard.writeText('GLOW31').then(function(){btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy Code';},1800);});});document.getElementById('gp-gl-close').addEventListener('click',function(){bar.remove();sessionStorage.setItem('gpGlowLabDismissed','1');});})();
+// Glow Lab Protocols sponsored banner - Pep of the Week image edition.
+// Replaces the old text strip (31% off / GLOW31 copy bar). Same dismiss key,
+// same tracked link. Image lives in-repo; alt text carries the offer for SEO/a11y.
+(function(){
+  if(sessionStorage.getItem('gpGlowLabDismissed')==='1')return;
+  var b=document.createElement('div');
+  b.id='gp-glowlab-banner';
+  b.style.cssText='position:relative;z-index:9999;background:#0b0f14;padding:10px 14px;text-align:center;';
+  var a=document.createElement('a');
+  a.href='https://glowlabprotocols.com/shop/';
+  a.target='_blank';a.rel='sponsored noopener';
+  a.style.cssText='display:inline-block;max-width:1200px;width:100%;';
+  var img=document.createElement('img');
+  img.src='/glp-pep-of-the-week.webp';
+  img.alt='Pep of the Week: GHK-Cu 100mg for $25 at Glow Lab Protocols - home of the $25 NAD+ 500mg';
+  img.style.cssText='width:100%;height:auto;display:block;border-radius:10px;';
+  img.loading='eager';img.decoding='async';
+  a.appendChild(img);b.appendChild(a);
+  var x=document.createElement('button');
+  x.id='gp-gl-close';x.setAttribute('aria-label','Dismiss banner');
+  x.textContent='\u00d7';
+  x.style.cssText='position:absolute;top:14px;right:18px;background:rgba(0,0,0,.45);color:#fff;border:none;border-radius:50%;width:26px;height:26px;line-height:1;font-size:16px;cursor:pointer;';
+  x.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();sessionStorage.setItem('gpGlowLabDismissed','1');b.remove();});
+  b.appendChild(x);
+  document.body.insertBefore(b,document.body.firstChild);
+})();
