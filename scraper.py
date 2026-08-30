@@ -1026,10 +1026,21 @@ def main():
                 total += 1
     log.info(f"Parsed {len(listings)} peptides, {total} listings across {len(per_vendor)} vendors")
 
+    # Runs have been dying at the job timeout with nothing pushed. Give the
+    # scrape a soft deadline: stop fetching in time to push whatever we have
+    # and let the page-regeneration steps run. Override with SOFT_DEADLINE_MIN.
+    import time as _t
+    _run_start = _t.time()
+    _soft_deadline_min = float(os.getenv("SOFT_DEADLINE_MIN", "240"))
+
+
     price_updates = {}   # (peptide, vid, idx) -> new_price
     oos_map = {}         # (peptide, vid, idx) -> bool
 
     for vid in sorted(per_vendor):
+        if (_t.time() - _run_start) / 60 > _soft_deadline_min:
+            log.warning(f"Soft deadline of {_soft_deadline_min:.0f} min reached - pushing partial results; remaining vendors keep previous prices")
+            break
         work = per_vendor[vid]
         if vid in SKIP_VENDORS or vid in NO_SCRAPE_VENDORS:
             log.info(f"⏭ {vid}: manual vendor ({len(work)} listings) — skipping")
