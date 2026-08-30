@@ -23,7 +23,7 @@ jobs:
     # GITHUB_TOKEN is read-only and the push is denied to github-actions[bot].
     permissions:
       contents: write
-    timeout-minutes: 300  # 5h. Real work is ~2h; headroom for slow vendor sites.
+    timeout-minutes: 350  # 5h. Real work is ~2h; headroom for slow vendor sites.
     # GitHub-hosted runners cap a single job at 6h, so 300 is within limits.
     steps:
       - name: Checkout repo
