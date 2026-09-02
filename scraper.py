@@ -61,8 +61,22 @@ def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
 # Login state cache — stores cookies per vendor so we only log in once per session
 _login_cookies = {}
 
+# --- Run time budget: clock starts at import so every phase counts. ---
+import time as _bt
+import os as _bos
+RUN_START_TS = _bt.time()
+SOFT_DEADLINE_MIN = float(_bos.getenv("SOFT_DEADLINE_MIN", "150"))
+
+def past_soft_deadline():
+    """True once the run has used its fetch budget - callers stop fetching
+    and return the do-not-update sentinel so we push what we have."""
+    return (_bt.time() - RUN_START_TS) / 60.0 > SOFT_DEADLINE_MIN
+
+
 def playwright_get(url, vendor_id="unknown"):
     """Use real headless Chrome — logs in to gated vendors first, caches cookies."""
+    if past_soft_deadline():
+        return None
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
@@ -477,6 +491,8 @@ def _fetch_price_uncached(vendor_id, product, product_url):
       - (None, True)   = confirmed out of stock
       - (None, False)  = couldn't reach site (timeout/error) — do NOT update anything
     """
+    if past_soft_deadline():
+        return None, False  # over time budget - keep previous price
     import time as _time
     t_start = _time.time()
     log.info(f"  Fetching {vendor_id}/{product} → {product_url}")
@@ -516,6 +532,9 @@ def _fetch_price_uncached(vendor_id, product, product_url):
                         log.info(f"  Using ScraperAPI premium for {vendor_id}...")
                     resp = scraper_get(product_url, render_js=use_js or use_premium, premium=use_premium)
                     if resp.status_code != 200:
+                        if resp.status_code == 404:
+                            log.warning(f"  404 Not Found - dead URL, skipping retries for {vendor_id}/{product}")
+                            return None, False
                         reason = {
                             403: "🚫 403 Forbidden — likely Cloudflare block, add to CLOUDFLARE_VENDORS",
                             404: "❌ 404 Not Found — URL may be wrong or product removed",
@@ -573,7 +592,7 @@ def _fetch_price_uncached(vendor_id, product, product_url):
 
 def github_get_file():
     url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{GITHUB_FILE}"
-    resp = requests.get(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"})
+    resp = requests.get(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"}, timeout=60)
     resp.raise_for_status()
     data = resp.json()
     return base64.b64decode(data["content"]).decode("utf-8"), data["sha"]
@@ -1030,8 +1049,8 @@ def main():
     # scrape a soft deadline: stop fetching in time to push whatever we have
     # and let the page-regeneration steps run. Override with SOFT_DEADLINE_MIN.
     import time as _t
-    _run_start = _t.time()
-    _soft_deadline_min = float(os.getenv("SOFT_DEADLINE_MIN", "240"))
+    _run_start = RUN_START_TS
+    _soft_deadline_min = SOFT_DEADLINE_MIN
 
 
     price_updates = {}   # (peptide, vid, idx) -> new_price
@@ -1175,7 +1194,7 @@ def _write_report(n_price, n_oos):
     report = "\n".join(lines)
     try:
         url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/SCRAPER_REPORT.md"
-        resp = requests.get(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"})
+        resp = requests.get(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"}, timeout=60)
         report_sha = resp.json().get("sha") if resp.status_code == 200 else None
         payload = {"message": f"📊 Scraper report {now_str}",
                    "content": base64.b64encode(report.encode()).decode(), "branch": "main"}
