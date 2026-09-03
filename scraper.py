@@ -1180,7 +1180,12 @@ def main():
         _write_report(0, 0)
         return
 
-    new_html, n_price, n_oos = patch_all(html, price_updates, oos_map)
+    try:
+        with wall_cap(900):
+            new_html, n_price, n_oos = patch_all(html, price_updates, oos_map)
+    except Exception as e:
+        log.error(f"ABORT: patch_all failed or hung ({e}) - not committing")
+        return
 
     # ── FAIL-SAFE VERIFICATION: patched block must re-parse to the same shape ──
     try:
