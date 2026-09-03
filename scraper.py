@@ -56,7 +56,8 @@ def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
         params["country_code"] = "us"
     if render_js and wait_ms:
         params["wait"] = str(wait_ms)
-    return requests.get("https://api.scraperapi.com/", params=params, timeout=timeout)
+    with wall_cap(240):
+        return requests.get("https://api.scraperapi.com/", params=params, timeout=timeout)
 
 # Login state cache — stores cookies per vendor so we only log in once per session
 _login_cookies = {}
@@ -72,8 +73,39 @@ def past_soft_deadline():
     and return the do-not-update sentinel so we push what we have."""
     return (_bt.time() - RUN_START_TS) / 60.0 > SOFT_DEADLINE_MIN
 
+# Wall-clock cap per network call. A requests read-timeout only bounds the gap
+# between chunks, and a stuck Playwright driver blocks forever - an OS alarm is
+# the only true ceiling. The alarm raises inside the blocked call; every caller
+# already catches Exception and treats it as "could not reach, keep old price".
+import signal as _bsig
+
+def _wall_alarm(signum, frame):
+    raise TimeoutError("wall-clock cap for this call exceeded")
+
+_bsig.signal(_bsig.SIGALRM, _wall_alarm)
+
+class wall_cap:
+    def __init__(self, seconds):
+        self.seconds = int(seconds)
+    def __enter__(self):
+        _bsig.alarm(self.seconds)
+    def __exit__(self, *exc):
+        _bsig.alarm(0)
+        return False
+
+
 
 def playwright_get(url, vendor_id="unknown"):
+    if past_soft_deadline():
+        return None
+    try:
+        with wall_cap(300):
+            return _playwright_get_inner(url, vendor_id=vendor_id)
+    except Exception as _e:
+        log.warning(f"  playwright wall-cap hit for {vendor_id}: {_e}")
+        return None
+
+def _playwright_get_inner(url, vendor_id="unknown"):
     """Use real headless Chrome — logs in to gated vendors first, caches cookies."""
     if past_soft_deadline():
         return None
@@ -592,7 +624,8 @@ def _fetch_price_uncached(vendor_id, product, product_url):
 
 def github_get_file():
     url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{GITHUB_FILE}"
-    resp = requests.get(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"}, timeout=60)
+    with wall_cap(240):
+        resp = requests.get(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"}, timeout=60)
     resp.raise_for_status()
     data = resp.json()
     return base64.b64decode(data["content"]).decode("utf-8"), data["sha"]
@@ -895,7 +928,8 @@ def _http_json(url, vendor_id, timeout=40):
     headers = {"User-Agent": "Mozilla/5.0 (compatible; PepsTrackerBot/1.0)"}
     # 1) direct
     try:
-        r = requests.get(url, headers=headers, timeout=timeout)
+        with wall_cap(240):
+            r = requests.get(url, headers=headers, timeout=timeout)
         if r.status_code == 200 and r.text.strip().startswith(("[", "{")):
             return r.json()
     except Exception:
@@ -1194,7 +1228,8 @@ def _write_report(n_price, n_oos):
     report = "\n".join(lines)
     try:
         url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/SCRAPER_REPORT.md"
-        resp = requests.get(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"}, timeout=60)
+        with wall_cap(240):
+            resp = requests.get(url, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"}, timeout=60)
         report_sha = resp.json().get("sha") if resp.status_code == 200 else None
         payload = {"message": f"📊 Scraper report {now_str}",
                    "content": base64.b64encode(report.encode()).decode(), "branch": "main"}
