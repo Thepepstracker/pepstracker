@@ -61,6 +61,7 @@ def scraper_get(url, render_js=False, timeout=60, premium=False, wait_ms=0):
 
 # Login state cache — stores cookies per vendor so we only log in once per session
 _login_cookies = {}
+import threading
 
 # --- Run time budget: clock starts at import so every phase counts. ---
 import time as _bt
@@ -88,8 +89,10 @@ class wall_cap:
     def __init__(self, seconds):
         self.seconds = int(seconds)
     def __enter__(self):
+        if threading.current_thread() is not threading.main_thread(): return self
         _bsig.alarm(self.seconds)
     def __exit__(self, *exc):
+        if threading.current_thread() is not threading.main_thread(): return False
         _bsig.alarm(0)
         return False
 
@@ -706,6 +709,7 @@ def parse_all_listings(html):
     return result
 
 def _parse_peptide_obj(objtext):
+    arrend = None
     """objtext = { vid:[{...},{...}], vid2:null, ... } -> {vid: [listings]}"""
     out = {}
     # find vendor keys at depth 1 inside objtext
@@ -728,6 +732,8 @@ def _parse_peptide_obj(objtext):
                         elif inner[x] == ']':
                             d2 -= 1
                             if d2 == 0: arrend = x; break
+                    if arrend is None:
+                        raise ValueError("PRICES parse: array end not found")
                     arrtext = inner[vpos+1:arrend]
                     els = _split_top_objects(arrtext)
                     listings = []
@@ -746,6 +752,8 @@ def _parse_peptide_obj(objtext):
                             'oos': oo,
                         })
                     out[vid] = listings
+                    if arrend is None:
+                        raise ValueError("PRICES parse: array end not found")
                     i = arrend + 1; continue
                 elif inner[vpos:vpos+4] == 'null':
                     out[vid] = None
@@ -787,6 +795,7 @@ def parse_with_offsets(html):
     return result
 
 def _parse_obj_offsets(block, ostart, oend, base):
+    arrend = None
     out = {}
     depth = 0; i = ostart + 1; n = oend
     while i < n:
@@ -809,6 +818,8 @@ def _parse_obj_offsets(block, ostart, oend, base):
                     # split elements with absolute offsets
                     listings = []
                     d3 = 0; estart = None; idx = 0
+                    if arrend is None:
+                        raise ValueError("PRICES parse: array end not found")
                     for x in range(vpos+1, arrend):
                         ch = block[x]
                         if ch == '{':
@@ -835,6 +846,8 @@ def _parse_obj_offsets(block, ostart, oend, base):
                                 })
                                 idx += 1
                     out[vid] = listings
+                    if arrend is None:
+                        raise ValueError("PRICES parse: array end not found")
                     i = arrend + 1; continue
                 elif block[vpos:vpos+4] == 'null':
                     out[vid] = None; i = vpos + 4; continue
@@ -963,7 +976,7 @@ def _mg_from_variation(text):
     return val
 
 
-def woo_store_catalog(domain, vendor_id):
+def _woo_store_catalog_inner(domain, vendor_id):
     """Return {slug: {'price', 'in_stock', 'variants': {mg: {...}}}} for a
     WooCommerce store via the Store API. Paginated. None if unavailable.
 
@@ -1032,6 +1045,23 @@ def woo_store_catalog(domain, vendor_id):
             break
     return catalog or None
 
+
+def woo_store_catalog(*_a, **_k):
+    """Thread-bounded catalog fetch: any hang or infinite pagination is cut at 300s."""
+    _res = {}
+    def _run():
+        try:
+            _res["v"] = _woo_store_catalog_inner(*_a, **_k)
+        except Exception as _e:
+            log.warning("woo_store_catalog error: %s" % _e)
+            _res["v"] = None
+    _t = threading.Thread(target=_run, daemon=True)
+    _t.start()
+    _t.join(300)
+    if _t.is_alive():
+        log.warning("woo_store_catalog TIMEOUT after 300s -- abandoning catalog, will fall back")
+        return None
+    return _res.get("v")
 
 def _sane(peptide, listing, new_price, authoritative=False):
     """Per-listing sanity: hard cap + per-mg ratio vs the listing's own price.
