@@ -884,6 +884,13 @@ def patch_all(html, price_updates, oos_map):
                         edits.append((el['el_start'], el['el_end']+1, newel)); n_oos += 1
     # apply right-to-left
     edits.sort(key=lambda x: x[0], reverse=True)
+    # Overlap guard: a price edit nested inside an element-level rewrite
+    # (oos flag change) corrupts the block when both are applied. Keep the
+    # outer rewrite; the inner price change re-applies cleanly on the next run.
+    _spans = [(e[0], e[1]) for e in edits]
+    edits = [e for e in edits if not any(
+        e[0] >= s0 and e[1] <= s1 and (e[0], e[1]) != (s0, s1)
+        for (s0, s1) in _spans)]
     out = html
     for a, b, rep in edits:
         out = out[:a] + rep + out[b:]
@@ -1218,11 +1225,33 @@ def main():
         return
 
     # ── FAIL-SAFE VERIFICATION: patched block must re-parse to the same shape ──
-    try:
-        after = parse_all_listings(new_html)
-    except Exception as e:
-        log.error(f"ABORT: patched PRICES block failed to parse ({e}) — not committing")
+    # Verification parse runs in a killable subprocess: a malformed patched
+    # block has made the parser spin forever, immune to SIGALRM (C-level loop).
+    import multiprocessing as _mp
+    def _verify_worker(_q, _html_arg):
+        try:
+            _r = parse_all_listings(_html_arg)
+            _q.put(("ok", {k: {vk: len(va) for vk, va in v.items()} for k, v in _r.items()}))
+        except Exception as _ex:
+            _q.put(("err", str(_ex)[:300]))
+    _q = _mp.Queue()
+    _p = _mp.Process(target=_verify_worker, args=(_q, new_html), daemon=True)
+    _p.start()
+    _p.join(180)
+    if _p.is_alive():
+        _p.terminate()
+        log.error("ABORT: verification parse hung >180s - patched block malformed; nothing pushed")
         return
+    try:
+        _tag, _payload = _q.get(timeout=10)
+    except Exception:
+        log.error("ABORT: verification subprocess returned nothing")
+        return
+    if _tag == "err":
+        log.error(f"ABORT: patched PRICES block failed to parse ({_payload})")
+        return
+    after = {k: {vk: [None] * n for vk, n in v.items()} for k, v in _payload.items()}
+
     before_n = sum(len(a) for vm in listings.values() for a in vm.values() if a)
     after_n = sum(len(a) for vm in after.values() for a in vm.values() if a)
     if after_n != before_n or len(after) != len(listings):
