@@ -1,7 +1,7 @@
 /* PepsTracker newsletter signup popup - shows once, 30-day re-ask on dismiss. */
 (function () {
   var LS_SUB = "ptNewsSub", LS_DIS = "ptNewsDismiss";
-  var ENDPOINT = "https://formsubmit.co/ajax/jonahszedertuba@gmail.com";
+  var ENDPOINT = "/";
   try {
     if (localStorage.getItem(LS_SUB)) return;
     var d = parseInt(localStorage.getItem(LS_DIS) || "0", 10);
@@ -54,10 +54,7 @@
       var input = box.querySelector("input[type=email]");
       var btn = box.querySelector("button.go");
       btn.disabled = true; btn.textContent = "...";
-      fetch(ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ email: input.value, _subject: "PepsTracker newsletter signup", _template: "table" })
+      fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"form-name=newsletter&email="+encodeURIComponent(email)})
       }).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
         .then(function () {
           try { localStorage.setItem(LS_SUB, "1"); } catch (e) {}
