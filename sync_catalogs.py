@@ -243,38 +243,37 @@ def main():
     if "--apply" not in sys.argv:
         return
     out = html
-    for comp, vmap in additions.items():
+    def insert_one(cur, comp, vid, objs):
         esc = re.escape(comp)
-        for m in re.finditer('"' + esc + '"\\s*:\\s*\\{', out):
+        for m in re.finditer('"' + esc + '"\\s*:\\s*\\{', cur):
             brace = m.end() - 1
             depth, end = 0, -1
-            for j in range(brace, len(out)):
-                if out[j] == "{":
+            for j in range(brace, len(cur)):
+                if cur[j] == "{":
                     depth += 1
-                elif out[j] == "}":
+                elif cur[j] == "}":
                     depth -= 1
                     if depth == 0:
                         end = j
                         break
-            if end < 0 or "price:" not in out[brace:end]:
+            if end < 0 or "price:" not in cur[brace:end]:
                 continue
-            span = out[m.start():end]
-            ins_parts = []
-            for vid, ents in vmap.items():
-                objs = ",".join(
-                    "{price:%s,mg:%s,listing:%s,url:%s%s}" % (
-                        ("%g" % e["price"]), ("%g" % e["mg"]),
-                        json.dumps(e["listing"]), json.dumps(e["url"]),
-                        (",bulk:%d" % e["bulk"]) if e.get("bulk") else "")
-                    for e in ents)
-                vm2 = re.search(r"\b" + re.escape(vid) + r"\s*:\s*\[", span)
-                if vm2:
-                    arr_open = m.start() + vm2.end() - 1
-                    out = out[:arr_open + 1] + objs + "," + out[arr_open + 1:]
-                else:
-                    out = out[:end] + "," + vid + ":[" + objs + "]" + out[end:]
-                    end += len("," + vid + ":[" + objs + "]")
-            break
+            span = cur[m.start():end]
+            vm2 = re.search(r"\\b" + re.escape(vid) + r"\\s*:\\s*\\[", span)
+            if vm2:
+                arr_open = m.start() + vm2.end() - 1
+                return cur[:arr_open + 1] + objs + "," + cur[arr_open + 1:]
+            return cur[:end] + "," + vid + ":[" + objs + "]" + cur[end:]
+        return cur
+    for comp, vmap in additions.items():
+        for vid, ents in vmap.items():
+            objs = ",".join(
+                "{price:%s,mg:%s,listing:%s,url:%s%s}" % (
+                    ("%g" % e["price"]), ("%g" % e["mg"]),
+                    json.dumps(e["listing"]), json.dumps(e["url"]),
+                    (",bulk:%d" % e["bulk"]) if e.get("bulk") else "")
+                for e in ents)
+            out = insert_one(out, comp, vid, objs)
     # verify before writing
     check = scraper.parse_all_listings(out)
     n_before = sum(len(a) for vm in listings.values() for a in vm.values() if a)
