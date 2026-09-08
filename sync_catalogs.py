@@ -119,9 +119,11 @@ def parse_mg(name):
     """Return (mg_total, bulk_n) or (None, None). IU/1000; mL as-is; packs multiply."""
     n = name
     pack = 1
-    pm = re.search(r"(?:\u00d7|x)\s*(\d+)|\(?box of (\d+)\)?|(\d+)[- ]?pack", n, re.I)
+    pm = re.search(r"(?:\u00d7|(?<=[\d\s)(])x)\s*(\d+)|\(?box of (\d+)\)?|(\d+)[- ]?pack|\((\d+)\s*vials?\)", n, re.I)
     if pm:
-        pack = int(pm.group(1) or pm.group(2) or pm.group(3))
+        pack = int(pm.group(1) or pm.group(2) or pm.group(3) or pm.group(4))
+        if pack > 25:
+            return None, None
     iu = re.search(r"([\d,.]+)\s*iu", n, re.I)
     if iu:
         return float(iu.group(1).replace(",", "")) / 1000.0 * pack, (pack if pack > 1 else None)
