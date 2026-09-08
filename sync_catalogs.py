@@ -10,6 +10,10 @@ and cosmetic raws are excluded so $/mg stays meaningful.
 import json, re, sys, time
 import requests
 
+import os
+os.environ.setdefault("GITHUB_TOKEN", "unused-for-sync")
+os.environ.setdefault("SCRAPERAPI_KEY", "unused-for-sync")
+
 import scraper  # reuse the site parser (module guards main behind __name__)
 
 HTML_PATH = "pepstracker_fixed/index.html"
