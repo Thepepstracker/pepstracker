@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Peptide Price Index — Live Research Peptide Market Data | PepsTracker</title>
+<meta name="description" content="The only live price index of the US research peptide market: daily median $/mg across 28 vendors and 83 compounds, GLP-1 class index, biggest 30-day movers. Updated automatically every day."/>
+<link rel="canonical" href="https://pepstracker.com/price-index.html"/>
+<meta property="og:title" content="Peptide Price Index — Live Market Data | PepsTracker"/>
+<meta property="og:description" content="Daily research peptide market index across 28 vendors: GLP-1 prices, biggest movers, 60+ days of history."/>
+<meta property="og:url" content="https://pepstracker.com/price-index.html"/>
+<meta property="og:type" content="website"/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="stylesheet" href="/polished.css"/>
+<link rel="stylesheet" href="/premium.css"/>
+<style>
+    :root{--bg:#090c13;--card:#141b27;--border:#1e2a3d;--border2:#263347;--blue:#3b9eff;--green:#4de87a;--text:#e8edf5;--muted:#5a6a82;--gold:#f5c842;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    header{background:rgba(9,12,19,.95);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+    .hi{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
+    .logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+    .lt{font-size:1.25rem;font-weight:800;} .lt span:first-child{color:var(--blue);} .lt span:last-child{color:var(--green);}
+    .mb{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border2);border-radius:10px;color:var(--text);cursor:pointer;padding:8px 14px;font-size:.88rem;font-weight:600;}
+    .mb:hover{border-color:var(--blue);color:var(--blue);}
+    .mn{display:none;flex-direction:column;gap:4px;padding:10px;border-top:1px solid var(--border);background:rgba(9,12,19,.97);z-index:200;}
+    .mn.open{display:flex;} .mn a{color:#7a8ba8;text-decoration:none;font-size:.9rem;font-weight:600;padding:9px 12px;border-radius:8px;}
+    .mn a:hover{color:var(--text);background:rgba(255,255,255,.05);}
+    @media(min-width:769px){.mn{position:fixed;top:68px;right:16px;width:200px;border-radius:12px;border:1px solid var(--border2);box-shadow:0 12px 40px rgba(0,0,0,.6);}}
+    .ab{height:3px;background:linear-gradient(90deg,var(--blue),var(--green) 50%,var(--gold));}
+    .page{max-width:900px;margin:0 auto;padding:28px 16px 80px;}
+    h1{font-size:1.9rem;font-weight:900;letter-spacing:-.5px;line-height:1.2;margin-bottom:12px;}}
+    h2{font-size:1.2rem;font-weight:800;margin:0 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+    section{margin-bottom:36px;}
+    p{color:#7a8ba8;line-height:1.8;font-size:.93rem;margin-bottom:12px;}
+    table{width:100%;border-collapse:collapse;font-size:.87rem;}
+    th{text-align:left;padding:10px 12px;background:#0f1520;color:#5a6a82;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap;}
+    td{padding:11px 12px;border-bottom:1px solid rgba(30,42,61,.6);vertical-align:middle;}
+    tr:hover td{background:rgba(59,158,255,.03);}
+    footer{border-top:1px solid var(--border);padding:24px 16px;text-align:center;color:#5a6a82;font-size:.78rem;}
+    footer a{color:var(--blue);text-decoration:none;}
+  
+    @media(max-width:600px){
+      h1{font-size:1.35rem;}
+      .page{padding:20px 12px 60px;}
+      /* Table: horizontal scroll with sticky first col */
+      .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;}
+      table{font-size:.78rem;min-width:520px;}
+      th,td{padding:8px 8px;}
+      th{font-size:.6rem;}
+      /* Best value box: stack vertically */
+      [style*="display:flex"][style*="align-items:center"]{flex-direction:column;align-items:flex-start!important;gap:10px!important;}
+      /* CTA button full width */
+      a[style*="margin-left:auto"]{margin-left:0!important;width:100%!important;justify-content:center!important;}
+      /* Vendor breakdown cards */
+      [style*="vb-header"]{flex-wrap:wrap;}
+      /* Related links wrap */
+      [style*="display:flex;flex-wrap:wrap"]{gap:6px!important;}
+    }
+  </style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Dataset","name":"PepsTracker Peptide Price Index","description":"Daily best price per milligram for 83 research peptide compounds across 28 US vendors, with discount codes applied. Normalized market index computed daily.","url":"https://pepstracker.com/price-index.html","license":"https://pepstracker.com/about.html","creator":{"@type":"Organization","name":"PepsTracker","url":"https://pepstracker.com"},"distribution":[{"@type":"DataDownload","encodingFormat":"application/json","contentUrl":"https://pepstracker.com/price-history.json"}],"temporalCoverage":"2026-06-01/..","isAccessibleForFree":true}
+</script>
+</head>
+<body>
+<header>
+  <div class="hi">
+    <a class="logo" href="/">
+      <svg width="30" height="30" viewBox="0 0 200 200" fill="none"><defs><linearGradient id="ptl572026html1a" x1="20" y1="130" x2="180" y2="40" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1a7fe8"/><stop offset="50%" stop-color="#00e5cc"/><stop offset="100%" stop-color="#4de87a"/></linearGradient><linearGradient id="ptl572026html1b" x1="20" y1="150" x2="180" y2="150" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1a7fe8"/><stop offset="100%" stop-color="#4de87a"/></linearGradient></defs><path d="M20 140 Q100 195 180 120" fill="none" stroke="url(#ptl572026html1b)" stroke-width="10" stroke-linecap="round"/><line x1="20" y1="128" x2="82" y2="82" stroke="url(#ptl572026html1a)" stroke-width="10" stroke-linecap="round"/><line x1="82" y1="82" x2="128" y2="105" stroke="url(#ptl572026html1a)" stroke-width="10" stroke-linecap="round"/><line x1="128" y1="105" x2="168" y2="48" stroke="#4de87a" stroke-width="10" stroke-linecap="round"/><polygon points="178,38 152,46 168,64" fill="#4de87a"/><circle cx="20" cy="128" r="18" fill="#1a7fe8"/><circle cx="82" cy="82" r="18" fill="#00e5cc"/><circle cx="128" cy="105" r="18" fill="#4de87a"/></svg>
+      <div class="lt"><span>Peps</span><span>Tracker</span></div>
+    </a>
+    <button class="mb menu-btn">☰ Menu</button>
+  </div>
+  <div class="mn" id="mn" style="display:none;">
+    <a href="/">🏠 Price Tracker</a><a href="/vendors.html">🏪 Vendors</a>
+    <a href="/dictionary.html">📖 Dictionary</a><a href="/blog.html">📝 Blog</a><a href="/deals.html">🏷️Deals</a><a href="/price-index.html">📈Index</a><a href="/account.html">👤 Account</a>
+  </div>
+</header>
+<main class="pi-wrap">
+<div class="pi-hero">
+<h1>Peptide Price Index</h1>
+<p>The only live index of the US research peptide market — median best price per milligram, tracked daily across 28 vendors and normalized to 100 at tracking start.</p>
+<div class="pi-updated" id="pi-updated">Loading…</div>
+</div>
+<div class="pi-stats">
+<div class="pi-stat"><div class="pi-l"><span class="pi-dot" style="background:var(--blue,#3b9eff)"></span>All compounds</div><div class="pi-n" id="pi-all">–</div><div class="pi-c" id="pi-all-chg"></div></div>
+<div class="pi-stat"><div class="pi-l"><span class="pi-dot" style="background:var(--green,#4de87a)"></span>GLP-1 class</div><div class="pi-n" id="pi-glp">–</div><div class="pi-c" id="pi-glp-chg"></div></div>
+<div class="pi-stat"><div class="pi-l"><span class="pi-dot" style="background:var(--gold,#f5c842)"></span>Repair &amp; recovery</div><div class="pi-n" id="pi-heal">–</div><div class="pi-c" id="pi-heal-chg"></div></div>
+</div>
+<div class="pi-card"><div id="pi-chart"></div></div>
+<h2>Biggest price drops — 30 days</h2>
+<p class="pi-sub">Change in the best available $/mg across all tracked vendors. Falling prices are good news for buyers.</p>
+<table class="pi-table"><thead><tr><th>Compound</th><th>Best $/mg now</th><th>30-day change</th><th>Tracked range</th></tr></thead><tbody id="pi-fallers"></tbody></table>
+<h2>Biggest price increases — 30 days</h2>
+<table class="pi-table"><thead><tr><th>Compound</th><th>Best $/mg now</th><th>30-day change</th><th>Tracked range</th></tr></thead><tbody id="pi-risers"></tbody></table>
+<div class="pi-how"><b>Methodology.</b> PepsTracker scans the live catalogs of 28 US research peptide vendors every day and records the best available price per milligram for each of 83 compounds, with vendor discount codes applied. Each index normalizes every compound to 100 at the first day it was tracked, then takes the daily median across compounds — so the index measures how the market moves, not which compounds happen to be expensive. The GLP-1 class covers semaglutide, tirzepatide, retatrutide and cagrilintide; repair &amp; recovery covers BPC-157, TB-500, GHK-Cu and epithalon. Data updates automatically each day after the scan. This page may be cited freely with attribution to PepsTracker.</div>
+<p class="pi-sub">Looking for today's individual deals? See the <a href="/deals.html">live deals page</a>, or compare any compound's prices from the <a href="/">tracker</a>.</p>
+</main>
+<style>
+.pi-wrap{max-width:980px;margin:0 auto;padding:0 24px 60px}
+.pi-hero{text-align:center;padding:48px 0 24px}
+.pi-hero h1{font-size:clamp(30px,5vw,44px);font-weight:800;background:linear-gradient(90deg,var(--blue,#3b9eff),var(--green,#4de87a));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pi-hero p{color:var(--muted,#7a8ba8);max-width:680px;margin:12px auto 0;font-size:16px}
+.pi-updated{display:inline-block;margin-top:14px;background:var(--card,#1c2230);border:1px solid var(--border,#2a3347);border-radius:99px;padding:6px 16px;font-size:13px;color:var(--muted,#7a8ba8)}
+.pi-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:22px 0}
+.pi-stat{background:var(--card,#1c2230);border:1px solid var(--border,#2a3347);border-radius:12px;padding:16px 18px}
+.pi-l{font-size:12.5px;color:var(--muted,#7a8ba8);display:flex;align-items:center;gap:7px}
+.pi-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.pi-n{font-size:30px;font-weight:800;margin-top:4px}
+.pi-c{font-size:13px;color:var(--muted,#7a8ba8)}
+.pi-card{background:var(--card,#1c2230);border:1px solid var(--border,#2a3347);border-radius:12px;padding:18px;margin:8px 0 10px}
+.pi-wrap h2{font-size:21px;font-weight:800;margin:34px 0 8px}
+.pi-sub{color:var(--muted,#7a8ba8);font-size:14px;margin-bottom:12px}
+.pi-table{width:100%;border-collapse:collapse;margin:10px 0 6px;font-size:14.5px}
+.pi-table th,.pi-table td{border:1px solid var(--border,#2a3347);padding:8px 12px;text-align:left}
+.pi-table th{background:var(--card,#1c2230)}
+.pi-price{color:var(--green,#4de87a);font-weight:700}
+.pi-how{background:var(--surface,#161b25);border:1px solid var(--border,#2a3347);border-radius:12px;padding:20px 22px;margin-top:34px;font-size:14.5px;color:var(--muted,#7a8ba8);line-height:1.65}
+.pi-how b{color:var(--text,#e8edf5)}
+</style>
+<footer>
+  <p>PepsTracker — price comparison only. All products are for research use only. We do not sell or distribute any products. Affiliate links may generate a commission.</p>
+  <p style="margin-top:8px;"><a href="/">Price Tracker</a> · <a href="/vendors.html">Vendors</a> · <a href="/blog.html">Blog</a> · <a href="/disclaimer.html">Disclaimer</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></p>
+</footer>
+<script>
+(function(){
+  var btn = document.querySelector('.menu-btn');
+  var mn = document.getElementById('mn');
+  if(btn) btn.addEventListener('click', function(){
+    var open = mn.classList.toggle('open');
+    mn.style.display = open ? 'flex' : 'none';
+  });
+  document.addEventListener('click', function(e){
+    if(mn && mn.classList.contains('open') && !mn.contains(e.target) && (!btn || !btn.contains(e.target))){
+      mn.classList.remove('open');
+      mn.style.display = 'none';
+    }
+  });
+  mn.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      mn.classList.remove('open');
+      mn.style.display = 'none';
+    });
+  });
+})();
+</script>
+
+  <!-- Internal cross-links for SEO -->
+  <div class="related-cheapest-links" style="background:#141b27;border:1px solid #1e2a3d;border-radius:12px;padding:16px 18px;margin:24px 0;">
+    <div style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#5a6a82;margin-bottom:8px;">🔗 Also Compare</div>
+    <p style="font-size:.85rem;color:#7a8ba8;margin:0;"><a href="/cheapest-tb-500-2026.html" style="color:#3b9eff;text-decoration:none;">TB-500</a> · <a href="/cheapest-ghk-cu-2026.html" style="color:#3b9eff;text-decoration:none;">GHK-Cu</a> · <a href="/cheapest-bpc-157-tb-500-blend-2026.html" style="color:#3b9eff;text-decoration:none;">BPC+TB Blend</a> · <a href="/cheapest-ipamorelin-2026.html" style="color:#3b9eff;text-decoration:none;">Ipamorelin</a></p>
+  </div>
+  <script src="/polished.js" defer></script>
+  <script src="/premium.js" defer></script>
+
+  <script src="/advisor-widget.js" defer></script>
+
+  <script src="/fathers-day-banner.js" defer></script>
+
+<script>
+
+const GLP1 = ['Semaglutide','Tirzepatide','Retatrutide','Cagrilintide'];
+const HEAL = ['BPC-157','TB-500','GHK-Cu','Epithalon'];
+const fmtPct = x => (x>0?'+':'')+ (x*100).toFixed(1) + '%';
+const fmtMg = n => '$' + (n>=10?n.toFixed(2):n.toFixed(3));
+function median(a){const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2}
+function bigChart(elId, series, labels){
+  const w=900,h=260,padL=44,padB=26,padT=14;
+  const all=series.flatMap(s=>s.pts.map(p=>p.v));
+  const mn=Math.min(...all)*0.98, mx=Math.max(...all)*1.02, r=mx-mn||1;
+  const n=Math.max(...series.map(s=>s.pts.length));
+  const X=i=>padL+(i/(n-1))*(w-padL-10);
+  const Y=v=>padT+(1-(v-mn)/r)*(h-padT-padB);
+  let g='';
+  for(let t=0;t<5;t++){ const v=mn+r*t/4, y=Y(v);
+    g+='<line x1="'+padL+'" y1="'+y+'" x2="'+w+'" y2="'+y+'" stroke="var(--border,#2a3347)" stroke-width="1"/>'
+     + '<text x="'+(padL-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="var(--muted,#7a8ba8)">'+v.toFixed(0)+'</text>'; }
+  series.forEach(s=>{
+    const line=s.pts.map((p,i)=>X(i).toFixed(1)+','+Y(p.v).toFixed(1)).join(' ');
+    g+='<polyline points="'+line+'" fill="none" stroke="'+s.color+'" stroke-width="2.5" stroke-linejoin="round"/>';
+    const last=s.pts[s.pts.length-1];
+    g+='<circle cx="'+X(s.pts.length-1)+'" cy="'+Y(last.v)+'" r="4" fill="'+s.color+'"/>';
+  });
+  const step=Math.max(1,Math.floor(labels.length/6));
+  labels.forEach((l,i)=>{ if(i%step===0||i===labels.length-1) g+='<text x="'+X(i)+'" y="'+(h-6)+'" text-anchor="middle" font-size="10" fill="var(--muted,#7a8ba8)">'+l.slice(5)+'</text>'; });
+  document.getElementById(elId).innerHTML='<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;height:auto">'+g+'</svg>';
+}
+async function load(){
+ try{
+  const hist=await fetch('/price-history.json',{cache:'no-store'}).then(r=>r.json());
+  const S=hist.series||{};
+  document.getElementById('pi-updated').textContent='Data through '+new Date(hist.generated).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+' · '+hist.days+' days of history · '+Object.keys(S).length+' compounds';
+  // build per-compound daily map date->mg
+  const byComp={}, dateSet=new Set();
+  for(const [name,pts] of Object.entries(S)){
+    const m={}; pts.forEach(p=>{ if(p.mg>0){ m[p.d]=p.mg; dateSet.add(p.d); } });
+    if(Object.keys(m).length>=10) byComp[name]=m;
+  }
+  const dates=[...dateSet].sort();
+  // normalized index: each compound base-100 at its first date; daily average of available
+  function indexFor(names){
+    const bases={};
+    return dates.map(d=>{
+      const vals=[];
+      for(const n of names){ const m=byComp[n]; if(!m) continue; const v=m[d]; if(v==null) continue;
+        if(bases[n]==null) bases[n]=v; vals.push(100*v/bases[n]); }
+      return vals.length>=2?{d, v: median(vals)}:null;
+    }).filter(Boolean);
+  }
+  const allIdx=indexFor(Object.keys(byComp));
+  const glpIdx=indexFor(GLP1.filter(n=>byComp[n]));
+  const healIdx=indexFor(HEAL.filter(n=>byComp[n]));
+  bigChart('pi-chart',[
+    {pts:allIdx,color:'var(--blue,#3b9eff)'},
+    {pts:glpIdx,color:'var(--green,#4de87a)'},
+    {pts:healIdx,color:'var(--gold,#f5c842)'}
+  ], allIdx.map(p=>p.d));
+  const last=a=>a[a.length-1].v, first=a=>a[0].v;
+  const chg=(a,days)=>{ const cut=a.length>days?a[a.length-1-days].v:a[0].v; return (last(a)-cut)/cut; };
+  document.getElementById('pi-all').textContent=last(allIdx).toFixed(1);
+  document.getElementById('pi-all-chg').textContent=fmtPct(chg(allIdx,30))+' / 30d';
+  document.getElementById('pi-glp').textContent=last(glpIdx).toFixed(1);
+  document.getElementById('pi-glp-chg').textContent=fmtPct(chg(glpIdx,30))+' / 30d';
+  document.getElementById('pi-heal').textContent=last(healIdx).toFixed(1);
+  document.getElementById('pi-heal-chg').textContent=fmtPct(chg(healIdx,30))+' / 30d';
+  // movers table: 30d change per compound
+  const movers=[];
+  for(const [n,m] of Object.entries(byComp)){
+    const ds=Object.keys(m).sort(); if(ds.length<15) continue;
+    const now=m[ds[ds.length-1]];
+    const past=m[ds[Math.max(0,ds.length-31)]];
+    movers.push({n, now, pct:(now-past)/past, lo:Math.min(...Object.values(m)), hi:Math.max(...Object.values(m))});
+  }
+  movers.sort((a,b)=>a.pct-b.pct);
+  const row=m=>'<tr><td>'+m.n+'</td><td class="pi-price">'+fmtMg(m.now)+'/mg</td><td style="color:'+(m.pct<=0?'var(--green,#4de87a)':'var(--red,#ff5c5c)')+';font-weight:700">'+fmtPct(m.pct)+'</td><td>'+fmtMg(m.lo)+' – '+fmtMg(m.hi)+'</td></tr>';
+  document.getElementById('pi-fallers').innerHTML=movers.slice(0,8).map(row).join('');
+  document.getElementById('pi-risers').innerHTML=movers.slice(-8).reverse().map(row).join('');
+ }catch(e){ document.getElementById('pi-updated').textContent='Index data is loading slowly — refresh in a moment.'; }
+}
+load();
+</script>
+<script src="newsletter-popup.js" defer></script>
+</body>
+</html>
