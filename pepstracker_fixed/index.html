@@ -2770,7 +2770,7 @@ function addShareBtn(peptide) {
   var _orig = selectSizePill;
   selectSizePill = function(btn, vendorId, peptide, idx, discount){
     try{
-      if (typeof _showBulk !== 'undefined' && _showBulk) {
+      if (/\u00d7\s*\d/.test(btn.textContent||'')) {
         var arr = PRICES[peptide] && PRICES[peptide][vendorId];
         var entries = Array.isArray(arr) ? arr : [arr];
         var m = (btn.textContent||'').match(/([\d.]+)\s*mg\s*\u00d7\s*(\d+)/);
