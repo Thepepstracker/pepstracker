@@ -1,0 +1,36 @@
+name: Catalog Sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Write additions to index.html and commit (otherwise dry-run)"
+        type: boolean
+        default: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install requests
+      - name: Run catalog sync
+        run: |
+          if [ "${{ inputs.apply }}" = "true" ]; then
+            python sync_catalogs.py --apply
+          else
+            python sync_catalogs.py
+          fi
+      - name: Commit additions
+        if: ${{ inputs.apply }}
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add pepstracker_fixed/index.html
+          git diff --cached --quiet || git commit -m "Catalog sync: add untracked vendor listings"
+          git push
