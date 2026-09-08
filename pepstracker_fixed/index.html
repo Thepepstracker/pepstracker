@@ -2762,7 +2762,31 @@ function addShareBtn(peptide) {
   btn.innerHTML = '🔗 Share';
   btn.onclick = function() { shareResults(peptide); };
   h.appendChild(btn);
-}</script>
+}
+// bulk size pill idx fix: pills built from the filtered bulk array passed its
+// own indexes into the FULL listing array, so bulk sizes showed single-vial
+// prices. Resolve the real entry from the pill label instead.
+(function(){
+  var _orig = selectSizePill;
+  selectSizePill = function(btn, vendorId, peptide, idx, discount){
+    try{
+      if (typeof _showBulk !== 'undefined' && _showBulk) {
+        var arr = PRICES[peptide] && PRICES[peptide][vendorId];
+        var entries = Array.isArray(arr) ? arr : [arr];
+        var m = (btn.textContent||'').match(/([\d.]+)\s*mg\s*\u00d7\s*(\d+)/);
+        if (m && entries.length) {
+          var vial = parseFloat(m[1]), packN = parseInt(m[2]);
+          for (var i = 0; i < entries.length; i++) {
+            var e = entries[i];
+            if (e && e.bulk == packN && Math.abs(e.mg/packN - vial) < 0.01) { idx = i; break; }
+          }
+        }
+      }
+    }catch(err){}
+    return _orig(btn, vendorId, peptide, idx, discount);
+  };
+})();
+</script>
 <div class="toast" id="toast"></div>
 
 <!-- Price Alert Modal -->
