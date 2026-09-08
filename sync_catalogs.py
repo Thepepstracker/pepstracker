@@ -259,7 +259,7 @@ def main():
             if end < 0 or "price:" not in cur[brace:end]:
                 continue
             span = cur[m.start():end]
-            vm2 = re.search(r"\\b" + re.escape(vid) + r"\\s*:\\s*\\[", span)
+            vm2 = re.search(r"\b" + re.escape(vid) + r"\s*:\s*\[", span)
             if vm2:
                 arr_open = m.start() + vm2.end() - 1
                 return cur[:arr_open + 1] + objs + "," + cur[arr_open + 1:]
