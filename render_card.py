@@ -67,3 +67,19 @@ fig.text(0.985, 0.02, "pepstracker.com \u00b7 research use only", color="#5b6472
 plt.subplots_adjust(left=0.055, right=0.95, top=0.83, bottom=0.09)
 fig.savefig("pepstracker_fixed/price-index-card.png", facecolor=BG)
 print("wrote card: all=%.1f glp=%.1f days=%d" % (all_last, glp_last, len(dates)))
+
+
+# ---- homepage og-image (accurate stats) ----
+n_comp = len([1 for pts in S.values() if len(pts) >= 1])
+fig2 = plt.figure(figsize=(12, 6.3), dpi=100)
+fig2.patch.set_facecolor(BG)
+fig2.text(0.5, 0.62, "PepsTracker", color=GREEN, fontsize=64, fontweight="bold", ha="center")
+fig2.text(0.5, 0.47, "Compare research peptide prices across 28 US vendors", color=FG, fontsize=22, ha="center")
+fig2.text(0.5, 0.38, "Discount codes already applied \u00b7 Updated daily \u00b7 Free", color="#9aa4b5", fontsize=17, ha="center")
+stats = [("28", "vendors", BLUE), ("83", "compounds", GOLD), ("Daily", "updates", GREEN), ("Free", "always", BLUE)]
+for i, (big, small, col) in enumerate(stats):
+    x = 0.2 + i * 0.2
+    fig2.text(x, 0.2, big, color=col, fontsize=30, fontweight="bold", ha="center")
+    fig2.text(x, 0.12, small, color="#9aa4b5", fontsize=15, ha="center")
+fig2.savefig("pepstracker_fixed/og-image.png", facecolor=BG)
+print("wrote og-image")
