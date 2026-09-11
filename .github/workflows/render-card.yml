@@ -16,6 +16,6 @@ jobs:
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add pepstracker_fixed/price-index-card.png
+          git add pepstracker_fixed/price-index-card.png pepstracker_fixed/og-image.png
           git diff --cached --quiet || git commit -m 'Render price-index social card'
           git push
