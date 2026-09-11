@@ -2910,36 +2910,26 @@ function submitAlert(vendorId, peptide, vendorName, currentPrice) {
 <script src="newsletter-popup.js" defer></script>
 <form name="newsletter" data-netlify="true" hidden><input type="email" name="email"></form>
 <script>
-/* Premium layer: live ticker, compare sparkline, scroll reveal (2026-09-11) */
+/* Premium layer v2: live ticker, compare sparkline, scroll reveal */
 (function(){
 "use strict";
 var PH=null;
 function med(v){if(!v.length)return null;v=v.slice().sort(function(a,b){return a-b});var n=v.length;return n%2?v[(n-1)/2]:(v[n/2-1]+v[n/2])/2}
 function lastv(a){for(var i=a.length-1;i>=0;i--)if(a[i]!=null)return a[i];return null}
-function idxSeries(S,dates,f){var comps=[];for(var c in S){var pts=S[c];if(!pts||pts.length<10)continue;if(f&&f.indexOf(c)<0)continue;var b=pts[0].mg;if(!b)continue;var m={};pts.forEach(function(p){m[p.d]=p.mg/b*100});comps.push(m)}var last={},out=[];dates.forEach(function(d){var v=[];comps.forEach(function(m,i){if(d in m)last[i]=m[d];if(i in last)v.push(last[i])});out.push(med(v))});return out}
-function buildTicker(){var el=document.getElementById('pxTrack');if(!el||!PH)return;var S=PH.series;
-var dset={};for(var c in S)S[c].forEach(function(p){dset[p.d]=1});var dates=Object.keys(dset).sort();
-var GLP=['Semaglutide','Tirzepatide','Retatrutide','Cagrilintide'],HEAL=['BPC-157','TB-500','GHK-Cu','Epithalon'];
-var all=lastv(idxSeries(S,dates)),glp=lastv(idxSeries(S,dates,GLP)),heal=lastv(idxSeries(S,dates,HEAL));
-var movers=[];for(var c in S){var pts=S[c];if(!pts||pts.length<8)continue;var lp=pts[pts.length-1];var cut=new Date(lp.d);cut.setDate(cut.getDate()-7);var cs=cut.toISOString().slice(0,10);var prev=null;for(var i=pts.length-1;i>=0;i--){if(pts[i].d<=cs){prev=pts[i];break}}if(!prev||!prev.mg)continue;var ch=(lp.mg/prev.mg-1)*100;if(Math.abs(ch)>=0.05)movers.push([c,ch])}
-movers.sort(function(a,b){return Math.abs(b[1])-Math.abs(a[1])});
-var it=[];function add(h){it.push('<span class="px-it">'+h+'</span>')}
-if(all!=null)add('PEPS INDEX <b>'+all.toFixed(1)+'</b>');
-if(glp!=null)add('GLP-1 <b>'+glp.toFixed(1)+'</b>');
-if(heal!=null)add('HEALING <b>'+heal.toFixed(1)+'</b>');
-movers.slice(0,12).forEach(function(m){var dn=m[1]<0;add(m[0]+' <b class="'+(dn?'px-up':'px-dn')+'">'+(dn?'\u25bc':'\u25b2')+Math.abs(m[1]).toFixed(1)+'%</b> <span style="opacity:.55">7d</span>')});
-add('<b style="color:var(--blue-hi)">See the full Price Index \u2192</b>');
-var h=it.join('');el.innerHTML=h+h;}
-function addSpark(){try{var sel=document.getElementById('peptideSelect');if(!sel||!PH)return;var comp=sel.value;var pts=PH.series[comp];var hdr=document.querySelector('.results-header');if(!hdr)return;var old=document.querySelector('.spark-wrap');if(old)old.remove();if(!pts||pts.length<8)return;
-var vals=pts.slice(-90).map(function(p){return p.mg});var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);var rng=(mx-mn)||1;var W=220,Hh=44;
-var pl=vals.map(function(v,i){return (i/(vals.length-1)*W).toFixed(1)+','+((1-(v-mn)/rng)*(Hh-8)+4).toFixed(1)}).join(' ');
-var lx=W,ly=((1-(vals[vals.length-1]-mn)/rng)*(Hh-8)+4).toFixed(1);
-function chg(days){var lp=pts[pts.length-1];var cut=new Date(lp.d);cut.setDate(cut.getDate()-days);var cs=cut.toISOString().slice(0,10);for(var i=pts.length-1;i>=0;i--){if(pts[i].d<=cs)return (lp.mg/pts[i].mg-1)*100}return null}
-var c7=chg(7),c30=chg(30);
-function chip(v,l){if(v==null)return '';var a=Math.abs(v);var cls=v<-0.05?'up':(v>0.05?'dn':'');var arr=v<-0.05?'\u25bc':(v>0.05?'\u25b2':'\u00b7');return '<span class="chg-chip '+cls+'">'+arr+' '+a.toFixed(1)+'% '+l+'</span>'}catch(e){}}
-function reveal(){var els=[].slice.call(document.querySelectorAll('.stats-row,.serums-section,.results,.quick-pills'));els.forEach(function(e){e.classList.add('rvl')});if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('on')});return}var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('on');io.unobserve(x.target)}})},{threshold:.08});els.forEach(function(e){io.observe(e)})}
-fetch('/price-history.json').then(function(r){return r.json()}).then(function(j){PH=j;buildTicker();addSpark()}).catch(function(){var t=document.getElementById('pxTicker');if(t)t.style.display='none'});
-var rl=document.querySelector('.result-list');if(rl&&window.MutationObserver){var deb=null;new MutationObserver(function(){clearTimeout(deb);deb=setTimeout(addSpark,150)}).observe(rl,{childList:true,subtree:true})}
+function idxSeries(S,dates,f){var comps=[];for(var c in S){var pts=S[c];if(!pts||pts.length<10)continue;if(f&&f.indexOf(c)<0)continue;var bb=pts[0].mg;if(!bb)continue;var m={};pts.forEach(function(p){m[p.d]=p.mg/bb*100});comps.push(m)}var last={},out=[];dates.forEach(function(d){var v=[];comps.forEach(function(m,i){if(d in m)last[i]=m[d];if(i in last)v.push(last[i])});out.push(med(v))});return out}
+function buildTicker(){var el=document.getElementById("pxTrack");if(!el||!PH)return;var S=PH.series;var dset={};for(var c in S)S[c].forEach(function(p){dset[p.d]=1});var dates=Object.keys(dset).sort();var GLP=["Semaglutide","Tirzepatide","Retatrutide","Cagrilintide"],HEAL=["BPC-157","TB-500","GHK-Cu","Epithalon"];var all=lastv(idxSeries(S,dates)),glp=lastv(idxSeries(S,dates,GLP)),heal=lastv(idxSeries(S,dates,HEAL));var movers=[];for(var c2 in S){var pts=S[c2];if(!pts||pts.length<8)continue;var lp=pts[pts.length-1];var cut=new Date(lp.d);cut.setDate(cut.getDate()-7);var cs=cut.toISOString().slice(0,10);var prev=null;for(var i=pts.length-1;i>=0;i--){if(pts[i].d<=cs){prev=pts[i];break}}if(!prev||!prev.mg)continue;var ch=(lp.mg/prev.mg-1)*100;if(Math.abs(ch)>=0.05)movers.push([c2,ch])}movers.sort(function(a,b){return Math.abs(b[1])-Math.abs(a[1])});var it=[];function add(h){it.push("<span class=\"px-it\">"+h+"</span>")}
+if(all!=null)add("PEPS INDEX <b>"+all.toFixed(1)+"</b>");
+if(glp!=null)add("GLP-1 <b>"+glp.toFixed(1)+"</b>");
+if(heal!=null)add("HEALING <b>"+heal.toFixed(1)+"</b>");
+movers.slice(0,12).forEach(function(m){var dn=m[1]<0;add(m[0]+" <b class=\""+(dn?"px-up":"px-dn")+"\">"+(dn?"\u25bc":"\u25b2")+Math.abs(m[1]).toFixed(1)+"%</b> <span style=\"opacity:.55\">7d</span>")});
+add("<b style=\"color:var(--blue-hi)\">See the full Price Index \u2192</b>");
+var h=it.join("");el.innerHTML=h+h}
+function chg(pts,days){var lp=pts[pts.length-1];var cut=new Date(lp.d);cut.setDate(cut.getDate()-days);var cs=cut.toISOString().slice(0,10);for(var i=pts.length-1;i>=0;i--){if(pts[i].d<=cs)return (lp.mg/pts[i].mg-1)*100}return null}
+function chip(v,l){if(v==null)return "";var a=Math.abs(v);var cls=v<-0.05?"up":(v>0.05?"dn":"");var arr=v<-0.05?"\u25bc":(v>0.05?"\u25b2":"\u00b7");return "<span class=\"chg-chip "+cls+"\">"+arr+" "+a.toFixed(1)+"% "+l+"</span>"}
+function addSpark(){try{var sel=document.getElementById("peptideSelect");if(!sel||!PH)return;var comp=sel.value;var pts=PH.series[comp];var hdr=document.querySelector(".results-header");if(!hdr)return;var old=document.querySelector(".spark-wrap");if(old)old.remove();if(!pts||pts.length<8)return;var vals=pts.slice(-90).map(function(p){return p.mg});var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);var rng=(mx-mn)||1;var W=220,Hh=44;var pl=vals.map(function(v,i){return (i/(vals.length-1)*W).toFixed(1)+","+((1-(v-mn)/rng)*(Hh-8)+4).toFixed(1)}).join(" ");var ly=((1-(vals[vals.length-1]-mn)/rng)*(Hh-8)+4).toFixed(1);var c7=chg(pts,7),c30=chg(pts,30);var w=document.createElement("div");w.className="spark-wrap";w.innerHTML="<svg width=\""+W+"\" height=\""+Hh+"\" viewBox=\"0 0 "+W+" "+Hh+"\"><polyline fill=\"none\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" points=\""+pl+"\"/><circle cx=\""+W+"\" cy=\""+ly+"\" r=\"3\" fill=\"var(--green)\"/></svg>"+chip(c7,"7d")+chip(c30,"30d")+"<span class=\"chg-note\">best $/mg \u00b7 90-day trend</span>";hdr.parentNode.insertBefore(w,hdr.nextSibling)}catch(e){}}
+function reveal(){var els=[].slice.call(document.querySelectorAll(".stats-row,.serums-section,.quick-pills"));els.forEach(function(e){e.classList.add("rvl")});if(!("IntersectionObserver" in window)){els.forEach(function(e){e.classList.add("on")});return}var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.add("on");io.unobserve(x.target)}})},{threshold:.08});els.forEach(function(e){io.observe(e)})}
+fetch("/price-history.json").then(function(r){return r.json()}).then(function(j){PH=j;buildTicker();addSpark()}).catch(function(){var t=document.getElementById("pxTicker");if(t)t.style.display="none"});
+var rl=document.querySelector(".result-list");if(rl&&window.MutationObserver){var deb=null;new MutationObserver(function(){clearTimeout(deb);deb=setTimeout(addSpark,150);var _r=document.querySelector(".results");if(_r){_r.classList.remove("rvl");_r.classList.add("on")}}).observe(rl,{childList:true,subtree:true})}
 reveal();
 })();
 </script>
