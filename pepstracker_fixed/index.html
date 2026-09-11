@@ -2930,6 +2930,7 @@ function addSpark(){try{var sel=document.getElementById("peptideSelect");if(!sel
 function reveal(){var els=[].slice.call(document.querySelectorAll(".stats-row,.serums-section,.quick-pills"));els.forEach(function(e){e.classList.add("rvl")});if(!("IntersectionObserver" in window)){els.forEach(function(e){e.classList.add("on")});return}var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.add("on");io.unobserve(x.target)}})},{threshold:.08});els.forEach(function(e){io.observe(e)})}
 fetch("/price-history.json").then(function(r){return r.json()}).then(function(j){PH=j;buildTicker();addSpark()}).catch(function(){var t=document.getElementById("pxTicker");if(t)t.style.display="none"});
 var rl=document.querySelector(".result-list");if(rl&&window.MutationObserver){var deb=null;new MutationObserver(function(){clearTimeout(deb);deb=setTimeout(addSpark,150);var _r=document.querySelector(".results");if(_r){_r.classList.remove("rvl");_r.classList.add("on")}}).observe(rl,{childList:true,subtree:true})}
+var _sel=document.getElementById("peptideSelect");if(_sel)_sel.addEventListener("change",function(){setTimeout(addSpark,300)});document.addEventListener("click",function(ev){if(ev.target&&ev.target.closest&&ev.target.closest(".quick-pill"))setTimeout(addSpark,350)});
 reveal();
 })();
 </script>
