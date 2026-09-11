@@ -66,16 +66,46 @@ ALIASES = {
 def norm(s):
     return re.sub(r"[^a-z0-9]", "", s.lower())
 
+_USE_PROXY = os.environ.get("SYNC_USE_PROXY") == "1"
+_SA_KEY = os.environ.get("SCRAPERAPI_KEY", "")
+
+def _http_get(url, params):
+    """Direct GET; falls back to ScraperAPI for bot-blocked stores (CI only)."""
+    try:
+        r = requests.get(url, params=params, timeout=30,
+                         headers={"User-Agent": "Mozilla/5.0 (pepstracker sync)"})
+        if r.status_code == 200:
+            try:
+                r.json()
+                return r
+            except Exception:
+                pass
+    except Exception:
+        pass
+    if not (_USE_PROXY and _SA_KEY):
+        return None
+    try:
+        from urllib.parse import urlencode
+        r = requests.get("http://api.scraperapi.com",
+                         params={"api_key": _SA_KEY, "url": url + "?" + urlencode(params)},
+                         timeout=120)
+        if r.status_code == 200:
+            r.json()
+            return r
+    except Exception:
+        pass
+    return None
+
+
 def fetch_catalog(domain):
     """Return list of dicts {name, url, price, mg?} or None if unreachable."""
     out = []
     base = "https://" + domain
     try:
         for page in range(1, 6):
-            r = requests.get(base + "/wp-json/wc/store/v1/products",
-                             params={"per_page": 100, "page": page}, timeout=30,
-                             headers={"User-Agent": "Mozilla/5.0 (pepstracker sync)"})
-            if r.status_code != 200:
+            r = _http_get(base + "/wp-json/wc/store/v1/products",
+                          {"per_page": 100, "page": page})
+            if r is None:
                 break
             js = r.json()
             if not js:
@@ -99,9 +129,8 @@ def fetch_catalog(domain):
     except Exception:
         pass
     try:
-        r = requests.get(base + "/products.json", params={"limit": 250}, timeout=30,
-                         headers={"User-Agent": "Mozilla/5.0 (pepstracker sync)"})
-        if r.status_code == 200:
+        r = _http_get(base + "/products.json", {"limit": 250})
+        if r is not None:
             js = r.json()
             for p in js.get("products", []):
                 v0 = (p.get("variants") or [{}])[0]
