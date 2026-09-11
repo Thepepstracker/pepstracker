@@ -23,6 +23,9 @@ jobs:
       - name: Install dependencies
         run: pip install requests
       - name: Run catalog sync
+        env:
+          SYNC_USE_PROXY: "1"
+          SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
         run: |
           if [ "${{ inputs.apply }}" = "true" ]; then
             python sync_catalogs.py --apply
