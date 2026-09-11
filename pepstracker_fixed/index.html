@@ -500,7 +500,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/polished.css?v=2"/>
   <link rel="stylesheet" href="/premium.css?v=6"/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -2937,44 +2937,33 @@ function B(t){return '<span style="color:var(--blue)">'+t+'</span>'}
 function G(t){return '<span style="color:var(--green)">'+t+'</span>'}
 var now=new Date();var hr=now.getHours();var dow=now.getDay();
 var day=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dow];
-var hh=(hr%12===0?12:hr%12)+(hr<12?'am':'pm');
 var pools={
 m:['Fresh '+B('peptide prices')+',<br>checked '+G('this morning')+'.',
 '27 vendors '+B('price-checked')+'<br>before your '+G('coffee')+'.',
 'Start '+day+' with the '+B('real price')+'<br>of every '+G('peptide')+'.',
 'Today\u2019s '+B('peptide prices')+',<br>'+G('already compared')+'.',
-'Our scraper\u2019s been up since dawn.<br>The '+B('prices')+' are '+G('ready')+'.',
-B('83 compounds')+', 27 vendors,<br>'+G('zero tabs')+' for you.',
-'Someone changed '+B('prices')+' overnight.<br>We already know '+G('who')+'.',
-'Morning. The '+B('tracker')+' already<br>did the '+G('math')+'.'],
+'The morning\u2019s '+B('prices')+',<br>already '+G('in order')+'.',
+B('83 compounds')+', checked<br>by '+G('breakfast')+'.'],
 a:['The '+B('Live Price')+' of Every<br>'+G('Research Peptide')+'.',
 'Every '+B('peptide price')+', every vendor,<br>'+G('one place')+'.',
 'Find the best '+B('peptide price')+'<br>in '+G('one click')+'.',
-'Stop tab-hopping.<br>'+B('Peptide prices')+', '+G('compared')+'.',
-B('27 open tabs')+', or one.<br>Your '+G('call')+'.',
-'Vendors '+B('rename')+' products.<br>We keep the '+G('receipts')+'.',
-'Sticker prices lie.<br>'+B('$/mg')+' '+G('doesn\u2019t')+'.',
-'The July '+B('price war')+'?<br>We charted '+G('every shot')+'.'],
-e:['Evening price check? '+B('Done')+' \u2014<br>codes '+G('already applied')+'.',
-'Tonight\u2019s best '+B('peptide prices')+',<br>'+G('sorted')+'.',
-'The '+B('Live Price')+' of Every<br>'+G('Research Peptide')+'.',
+'The '+B('real price')+',<br>after every '+G('discount')+'.',
+'One page. Every vendor.<br>'+B('Today\u2019s')+' '+G('prices')+'.',
+'Compared '+B('daily')+'.<br>Ranked '+G('honestly')+'.'],
+e:['This evening\u2019s best '+B('peptide prices')+',<br>'+G('sorted')+'.',
 'Every code '+B('applied')+',<br>every price '+G('compared')+'.',
-'Prices moved today.<br>We '+B('wrote it all')+' '+G('down')+'.',
-'Your evening scroll,<br>with '+B('codes')+' '+G('pre-applied')+'.',
-'The '+B('cheapest vial')+' isn\u2019t hiding.<br>It\u2019s on '+G('this page')+'.',
-'Checked '+B('this morning')+'.<br>'+G('Sorted')+' for tonight.'],
-n:['Late-night research? '+B('Prices')+'<br>'+G('already compared')+'.',
-'The '+B('live price')+' of every peptide,<br>even at '+G('this hour')+'.',
-'While you were up, we '+B('tracked')+'<br>every '+G('price')+'.',
 'The '+B('Live Price')+' of Every<br>'+G('Research Peptide')+'.',
-'It\u2019s late. The '+B('prices')+' are still<br>right where we '+G('left them')+'.',
-'Insomnia? At least the<br>'+B('price data')+' is '+G('well-rested')+'.',
-'You\u2019re up late.<br>So is the '+B('Price')+' '+G('Index')+'.',
-'Comparing '+B('27 vendors')+' at '+hh+'?<br>'+G('Been there')+'.']};
+'The day\u2019s '+B('prices')+',<br>'+G('accounted for')+'.',
+'Tonight\u2019s lowest '+B('$/mg')+',<br>'+G('already found')+'.'],
+n:['The '+B('live price')+' of every peptide,<br>even at '+G('this hour')+'.',
+'Up late? The '+B('prices')+' are ready<br>'+G('when you are')+'.',
+'The '+B('Live Price')+' of Every<br>'+G('Research Peptide')+'.',
+'Every '+B('price')+' in its place,<br>whatever the '+G('hour')+'.',
+'Quiet hours.<br>'+B('Current')+' '+G('prices')+'.']};
 var pool=(hr>=5&&hr<11)?pools.m:((hr>=11&&hr<17)?pools.a:((hr>=17&&hr<22)?pools.e:pools.n));
 pool=pool.slice();
-if(dow===1)pool.push('New week. '+B('83 compounds')+',<br>freshly '+G('price-checked')+'.');
-if(dow===5)pool.push('It\u2019s Friday. The '+B('deals page')+'<br>is having a '+G('moment')+'.');
+if(dow===1)pool.push('A new week,<br>freshly '+B('price')+'-'+G('checked')+'.');
+if(dow===5)pool.push('It\u2019s Friday.<br>The '+B('deals')+' are '+G('current')+'.');
 h1.innerHTML=pool[Math.floor(Math.random()*pool.length)];
 }catch(e){}}
 heroRotate();
