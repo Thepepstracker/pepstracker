@@ -115,6 +115,7 @@ jobs:
           # local checkout is behind by now. Sync against today's data.
           git pull --rebase --autostash origin main
           python repair_encoding.py
+          python menu_sync.py
           python sync_site_counts.py
           python sync_dictionary.py
           python nav_active.py
