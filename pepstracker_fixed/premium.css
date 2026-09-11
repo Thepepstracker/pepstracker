@@ -936,3 +936,13 @@ h2, .results-title { font-weight: 700; letter-spacing: -0.02em; }
 .px-it { font-size: 12px; letter-spacing: .02em; }
 .chg-chip { font-weight: 600; font-size: 11.5px; }
 .stat-label, .chg-note { letter-spacing: .08em; text-transform: uppercase; font-size: 10.5px; }
+
+
+/* ===== Type v3: editorial serif headlines (2026-09-11) ===== */
+h1, h2, .results-title {
+  font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+}
+h1 { font-size: 1.12em; line-height: 1.12; }
+h1 span { font-style: italic; }
