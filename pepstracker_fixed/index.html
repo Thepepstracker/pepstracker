@@ -500,6 +500,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/polished.css?v=2"/>
   <link rel="stylesheet" href="/premium.css?v=6"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -577,15 +578,15 @@
     <a href="account.html" class="nav-account" onclick="toggleMenu()">👤 My Account</a>
   </div>
 </header>
-<a href="/price-index.html" class="pi-lowbar" style="display:block;text-align:center;background:linear-gradient(90deg,rgba(59,158,255,.12),rgba(77,232,122,.12));border-bottom:1px solid var(--border,#2a3347);color:var(--text,#e8edf5);font-size:13.5px;padding:8px 16px;text-decoration:none">📉 Peptide prices just hit their lowest point since we started tracking — GLP-1s down 40% since June. <b style="color:var(--green,#4de87a)">See the live Price Index →</b></a>
+<a href="/price-index.html" class="px-ticker" id="pxTicker" aria-label="Live peptide price index"><span class="px-track" id="pxTrack"><span class="px-it">Loading live peptide index…</span></span></a>
 
 <div style="height:3px;background:linear-gradient(90deg,#B22234,#3C3B6E 50%,#4de87a);"></div>
 
 <section class="hero">
   <div style="margin-bottom:18px;">
-    <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:5px 16px;font-size:12px;font-weight:500;">💊 Daily Price Updates</span>
+    <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#7a8ba8;border-radius:20px;padding:5px 16px;font-size:12px;font-weight:500;">Daily Price Updates</span>
   </div>
-  <h1><span style="color:#3b9eff;">Pin</span> the Best Peptide Prices<br><em style="font-style:normal;color:#4de87a;">in Just a Click.</em></h1>
+  <h1>The <span style="color:var(--blue)">Live Price</span> of Every<br><span style="color:var(--green)">Research Peptide</span>.</h1>
   <p>PepsTracker compares 83 compounds across 27 vendors with every discount code applied — so you always see the real price before you buy.</p>
 
   <!-- Stats -->
@@ -597,16 +598,16 @@
 
   <!-- Quick-pick pills -->
   <div class="quick-pills">
-    <span class="quick-pill hot" onclick="quickPick('Semaglutide')">🔥 Semaglutide</span>
-    <span class="quick-pill hot" onclick="quickPick('Tirzepatide')">🔥 Tirzepatide</span>
+    <span class="quick-pill hot" onclick="quickPick('Semaglutide')">Semaglutide</span>
+    <span class="quick-pill hot" onclick="quickPick('Tirzepatide')">Tirzepatide</span>
     <span class="quick-pill normal" onclick="quickPick('BPC-157')">BPC-157</span>
     <span class="quick-pill normal" onclick="quickPick('TB-500')">TB-500</span>
     <span class="quick-pill normal" onclick="quickPick('PT-141 (Bremelanotide)')">PT-141</span>
-    <span class="quick-pill hot" onclick="quickPick('Klow Blend')">🔥 Klow Blend</span>
+    <span class="quick-pill hot" onclick="quickPick('Klow Blend')">Klow Blend</span>
     <span class="quick-pill normal" onclick="quickPick('Lipo-C')">Lipo-C</span>
     <span class="quick-pill normal" onclick="quickPick('SS-31')">SS-31</span>
     <span class="quick-pill normal" onclick="quickPick('Glutathione')">Glutathione</span>
-    <span class="quick-pill hot" onclick="quickPick('Glow Blend')">✨ Glow Blend</span>
+    <span class="quick-pill hot" onclick="quickPick('Glow Blend')"> Glow Blend</span>
   </div>
 
   <!-- Search -->
@@ -892,7 +893,7 @@ const VENDORS = [
   { id:"atomik",     name:"AtomiK Labz",          domain:"atomiklabz.com",         url:"https://atomiklabz.com/aff/499/",           code:"pepstracker30",   discount:0.30 , promo:"\ud83c\udf81 Huge Sale: BOGO on Best Sellers (no code, permanent) + 30% off everything else with code pepstracker30"},
   { id:"lapeptides", name:"LA Peptides",          domain:"lapeptides.net",         url:"https://lapeptides.net/?ref=vqjaougw",           code:"pepstracker", discount:0.10 },
   { id:"glacier",    name:"Glacier Aminos",       domain:"glacieraminos.shop",     url:"https://glacieraminos.shop/?ref=sidbilvi",       code:"Glowlab",     discount:0.10 },
-  { id:"milehigh",    promo:"🔥 Sitewide Sale — prices reduced",   name:"Mile High Compound",   domain:"milehighcompounds.is",   url:"https://milehighcompounds.is/ref=glowlab10",     code:"Glowlab",     discount:0.10 },
+  { id:"milehigh",    promo:"Sitewide Sale — prices reduced",   name:"Mile High Compound",   domain:"milehighcompounds.is",   url:"https://milehighcompounds.is/ref=glowlab10",     code:"Glowlab",     discount:0.10 },
   { id:"ezpeptides", name:"EZ Peptides",          domain:"ezpeptides.com",         url:"https://ezpeptides.com/?ref=ypuicfhm",            code:"pepstracker",     discount:0.10 },
   { id:"amp",        name:"AMP Ameano Peptides",  domain:"ameanopeptides.com",     url:"https://ameanopeptides.com/?ref=qhbgnjke",       code:"pepstracker", discount:0.10 },
   { id:"labsourced", name:"Labsourced",           domain:"labsourced.com",         url:"https://labsourced.com/?ref=Glowlab",            code:"Glowlab",     discount:0.15 },
@@ -2908,6 +2909,43 @@ function submitAlert(vendorId, peptide, vendorName, currentPrice) {
   <script src="/fathers-day-banner.js" defer></script>
 <script src="newsletter-popup.js" defer></script>
 <form name="newsletter" data-netlify="true" hidden><input type="email" name="email"></form>
+<script>
+/* Premium layer: live ticker, compare sparkline, scroll reveal (2026-09-11) */
+(function(){
+"use strict";
+var PH=null;
+function med(v){if(!v.length)return null;v=v.slice().sort(function(a,b){return a-b});var n=v.length;return n%2?v[(n-1)/2]:(v[n/2-1]+v[n/2])/2}
+function lastv(a){for(var i=a.length-1;i>=0;i--)if(a[i]!=null)return a[i];return null}
+function idxSeries(S,dates,f){var comps=[];for(var c in S){var pts=S[c];if(!pts||pts.length<10)continue;if(f&&f.indexOf(c)<0)continue;var b=pts[0].mg;if(!b)continue;var m={};pts.forEach(function(p){m[p.d]=p.mg/b*100});comps.push(m)}var last={},out=[];dates.forEach(function(d){var v=[];comps.forEach(function(m,i){if(d in m)last[i]=m[d];if(i in last)v.push(last[i])});out.push(med(v))});return out}
+function buildTicker(){var el=document.getElementById('pxTrack');if(!el||!PH)return;var S=PH.series;
+var dset={};for(var c in S)S[c].forEach(function(p){dset[p.d]=1});var dates=Object.keys(dset).sort();
+var GLP=['Semaglutide','Tirzepatide','Retatrutide','Cagrilintide'],HEAL=['BPC-157','TB-500','GHK-Cu','Epithalon'];
+var all=lastv(idxSeries(S,dates)),glp=lastv(idxSeries(S,dates,GLP)),heal=lastv(idxSeries(S,dates,HEAL));
+var movers=[];for(var c in S){var pts=S[c];if(!pts||pts.length<8)continue;var lp=pts[pts.length-1];var cut=new Date(lp.d);cut.setDate(cut.getDate()-7);var cs=cut.toISOString().slice(0,10);var prev=null;for(var i=pts.length-1;i>=0;i--){if(pts[i].d<=cs){prev=pts[i];break}}if(!prev||!prev.mg)continue;var ch=(lp.mg/prev.mg-1)*100;if(Math.abs(ch)>=0.05)movers.push([c,ch])}
+movers.sort(function(a,b){return Math.abs(b[1])-Math.abs(a[1])});
+var it=[];function add(h){it.push('<span class="px-it">'+h+'</span>')}
+if(all!=null)add('PEPS INDEX <b>'+all.toFixed(1)+'</b>');
+if(glp!=null)add('GLP-1 <b>'+glp.toFixed(1)+'</b>');
+if(heal!=null)add('HEALING <b>'+heal.toFixed(1)+'</b>');
+movers.slice(0,12).forEach(function(m){var dn=m[1]<0;add(m[0]+' <b class="'+(dn?'px-up':'px-dn')+'">'+(dn?'\u25bc':'\u25b2')+Math.abs(m[1]).toFixed(1)+'%</b> <span style="opacity:.55">7d</span>')});
+add('<b style="color:var(--blue-hi)">See the full Price Index \u2192</b>');
+var h=it.join('');el.innerHTML=h+h;}
+function addSpark(){try{var sel=document.getElementById('peptideSelect');if(!sel||!PH)return;var comp=sel.value;var pts=PH.series[comp];var hdr=document.querySelector('.results-header');if(!hdr)return;var old=document.querySelector('.spark-wrap');if(old)old.remove();if(!pts||pts.length<8)return;
+var vals=pts.slice(-90).map(function(p){return p.mg});var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);var rng=(mx-mn)||1;var W=220,Hh=44;
+var pl=vals.map(function(v,i){return (i/(vals.length-1)*W).toFixed(1)+','+((1-(v-mn)/rng)*(Hh-8)+4).toFixed(1)}).join(' ');
+var lx=W,ly=((1-(vals[vals.length-1]-mn)/rng)*(Hh-8)+4).toFixed(1);
+function chg(days){var lp=pts[pts.length-1];var cut=new Date(lp.d);cut.setDate(cut.getDate()-days);var cs=cut.toISOString().slice(0,10);for(var i=pts.length-1;i>=0;i--){if(pts[i].d<=cs)return (lp.mg/pts[i].mg-1)*100}return null}
+var c7=chg(7),c30=chg(30);
+function chip(v,l){if(v==null)return '';var dn=v<0;return '<span class="chg-chip '+(dn?'up':'dn')+'">'+(dn?'\u25bc':'\u25b2')+Math.abs(v).toFixed(1)+'% '+l+'</span>'}
+var w=document.createElement('div');w.className='spark-wrap';
+w.innerHTML='<svg width="'+W+'" height="'+Hh+'" viewBox="0 0 '+W+' '+Hh+'"><polyline fill="none" stroke="var(--blue)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="'+pl+'"/><circle cx="'+lx+'" cy="'+ly+'" r="3" fill="var(--green)"/></svg>'+chip(c7,'7d')+chip(c30,'30d')+'<span class="chg-note">best \$/mg \u00b7 90-day trend</span>';
+hdr.parentNode.insertBefore(w,hdr.nextSibling);}catch(e){}}
+function reveal(){var els=[].slice.call(document.querySelectorAll('.stats-row,.serums-section,.results,.quick-pills'));els.forEach(function(e){e.classList.add('rvl')});if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('on')});return}var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('on');io.unobserve(x.target)}})},{threshold:.08});els.forEach(function(e){io.observe(e)})}
+fetch('/price-history.json').then(function(r){return r.json()}).then(function(j){PH=j;buildTicker();addSpark()}).catch(function(){var t=document.getElementById('pxTicker');if(t)t.style.display='none'});
+var rl=document.querySelector('.result-list');if(rl&&window.MutationObserver){var deb=null;new MutationObserver(function(){clearTimeout(deb);deb=setTimeout(addSpark,150)}).observe(rl,{childList:true,subtree:true})}
+reveal();
+})();
+</script>
 </body>
 </html>
 
