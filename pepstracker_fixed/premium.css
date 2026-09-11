@@ -938,11 +938,11 @@ h2, .results-title { font-weight: 700; letter-spacing: -0.02em; }
 .stat-label, .chg-note { letter-spacing: .08em; text-transform: uppercase; font-size: 10.5px; }
 
 
-/* ===== Type v3: editorial serif headlines (2026-09-11) ===== */
+/* ===== Type v4: upper-echelon grotesque (2026-09-11) ===== */
 h1, h2, .results-title {
-  font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif !important;
-  font-weight: 400 !important;
-  letter-spacing: 0 !important;
+  font-family: 'Geist', 'Inter Tight', -apple-system, 'Helvetica Neue', sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.035em !important;
 }
-h1 { font-size: 1.12em; line-height: 1.12; }
-h1 span { font-style: italic; }
+h1 { font-size: 1em; line-height: 1.08; }
+h1 span { font-style: normal; }
