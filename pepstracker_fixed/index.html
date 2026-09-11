@@ -2931,6 +2931,33 @@ function reveal(){var els=[].slice.call(document.querySelectorAll(".stats-row,.s
 fetch("/price-history.json").then(function(r){return r.json()}).then(function(j){PH=j;buildTicker();addSpark()}).catch(function(){var t=document.getElementById("pxTicker");if(t)t.style.display="none"});
 var rl=document.querySelector(".result-list");if(rl&&window.MutationObserver){var deb=null;new MutationObserver(function(){clearTimeout(deb);deb=setTimeout(addSpark,150);var _r=document.querySelector(".results");if(_r){_r.classList.remove("rvl");_r.classList.add("on")}}).observe(rl,{childList:true,subtree:true})}
 var _sel=document.getElementById("peptideSelect");if(_sel)_sel.addEventListener("change",function(){setTimeout(addSpark,300)});document.addEventListener("click",function(ev){if(ev.target&&ev.target.closest&&ev.target.closest(".quick-pill"))setTimeout(addSpark,350)});
+function heroRotate(){try{
+var h1=document.querySelector('h1');if(!h1)return;
+function B(t){return '<span style="color:var(--blue)">'+t+'</span>'}
+function G(t){return '<span style="color:var(--green)">'+t+'</span>'}
+var now=new Date();var hr=now.getHours();
+var day=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
+var pools={
+m:['Fresh '+B('peptide prices')+',<br>checked '+G('this morning')+'.',
+'27 vendors '+B('price-checked')+'<br>before your '+G('coffee')+'.',
+'Start '+day+' with the '+B('real price')+'<br>of every '+G('peptide')+'.',
+'Today\u2019s '+B('peptide prices')+',<br>'+G('already compared')+'.'],
+a:['The '+B('Live Price')+' of Every<br>'+G('Research Peptide')+'.',
+'Every '+B('peptide price')+', every vendor,<br>'+G('one place')+'.',
+'Find the best '+B('peptide price')+'<br>in '+G('one click')+'.',
+'Stop tab-hopping.<br>'+B('Peptide prices')+', '+G('compared')+'.'],
+e:['Evening price check? '+B('Done')+' \u2014<br>codes '+G('already applied')+'.',
+'Tonight\u2019s best '+B('peptide prices')+',<br>'+G('sorted')+'.',
+'The '+B('Live Price')+' of Every<br>'+G('Research Peptide')+'.',
+'Every code '+B('applied')+',<br>every price '+G('compared')+'.'],
+n:['Late-night research? '+B('Prices')+'<br>'+G('already compared')+'.',
+'The '+B('live price')+' of every peptide,<br>even at '+G('this hour')+'.',
+'While you were up, we '+B('tracked')+'<br>every '+G('price')+'.',
+'The '+B('Live Price')+' of Every<br>'+G('Research Peptide')+'.']};
+var pool=(hr>=5&&hr<11)?pools.m:((hr>=11&&hr<17)?pools.a:((hr>=17&&hr<22)?pools.e:pools.n));
+h1.innerHTML=pool[Math.floor(Math.random()*pool.length)];
+}catch(e){}}
+heroRotate();
 reveal();
 })();
 </script>
