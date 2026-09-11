@@ -3,3 +3,5 @@
 
 pinnacle|SLU-PP-332              # 5mg vial and 250mcg tablets genuinely both $129.99
 fusion|BPC-157 + TB-500 Blend    # 0.5mg row is the topical gel (500mcg per pump), not a vial
+
+glacier|Adamax # two real product lines (Class 1032 vs Class 984) at the same sizes; both verified live 2026-09-11
