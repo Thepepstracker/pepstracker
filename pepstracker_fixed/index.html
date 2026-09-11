@@ -2912,6 +2912,7 @@ function submitAlert(vendorId, peptide, vendorName, currentPrice) {
   <script src="/fathers-day-banner.js" defer></script>
 <script src="newsletter-popup.js" defer></script>
 <form name="newsletter" data-netlify="true" hidden><input type="email" name="email"></form>
+<form name="price-alert" data-netlify="true" hidden><input type="email" name="email"/><input name="compound"/><input name="vendor"/><input name="target_price"/></form>
 <script>
 /* Premium layer v2: live ticker, compare sparkline, scroll reveal */
 (function(){
@@ -2970,6 +2971,10 @@ if(dow===5)pool.push('It\u2019s Friday.<br>The '+B('deals')+' are '+G('current')
 h1.innerHTML=pool[Math.floor(Math.random()*pool.length)];
 }catch(e){}}
 heroRotate();
+if(typeof openAlertModal==='function'&&typeof confirmAlert==='function'){
+var _oam=openAlertModal;window.openAlertModal=function(vid,pep,vname,price){window._paCtx={vid:vid,pep:pep,vname:vname,price:price};return _oam.apply(this,arguments)};
+var _ca=confirmAlert;window.confirmAlert=function(){var em=(document.getElementById('alertEmailInput')||{value:''}).value.trim();var tp=(document.getElementById('alertPriceInput')||{value:''}).value;var r=_ca.apply(this,arguments);try{var open=document.querySelector('.alert-modal-overlay');var closed=!open||open.offsetParent===null;var c=window._paCtx||{};if(closed&&em.indexOf('@')>0){fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'form-name=price-alert&email='+encodeURIComponent(em)+'&compound='+encodeURIComponent(c.pep||'')+'&vendor='+encodeURIComponent(c.vname||c.vid||'')+'&target_price='+encodeURIComponent(tp||'')})}}catch(e){}return r}}
+
 reveal();
 })();
 </script>
