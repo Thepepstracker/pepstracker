@@ -220,6 +220,54 @@ def main():
             new += 1
         report.append("%-14s %s: %d live, %d new listings" % (vid, src, len(cat), new))
 
+    # ---- audit-grade prechecks (2026-09-11): never propose a listing the daily
+    # audit would reject. Skips same-size duplicates and non-monotonic prices
+    # against everything already tracked, unless vendor|Compound is allowlisted.
+    allow = set()
+    try:
+        for _ln in open("audit_allowlist.txt", encoding="utf-8"):
+            _ln = _ln.split("#")[0].strip()
+            if _ln:
+                allow.add(_ln)
+    except FileNotFoundError:
+        pass
+    skipped = []
+    for comp in list(additions):
+        for vid in list(additions[comp]):
+            if "%s|%s" % (vid, comp) in allow:
+                continue
+            existing = [x for x in (listings.get(comp, {}).get(vid) or [])
+                        if isinstance(x, dict)]
+            kept = []
+            for e in additions[comp][vid]:
+                combined = existing + kept
+                if any(abs(x.get("mg", 0) - e["mg"]) < 0.01
+                       and x.get("bulk", 0) == e.get("bulk", 0) for x in combined):
+                    skipped.append("DUP  %-12s %-22s %7.1fmg $%.2f" % (vid, comp[:22], e["mg"], e["price"]))
+                    continue
+                bad = False
+                for x in combined:
+                    if x.get("oos"):
+                        continue
+                    xm, xp = x.get("mg", 0), x.get("price", 0)
+                    if (e["mg"] >= xm and e["price"] < xp) or (xm >= e["mg"] and xp < e["price"]):
+                        bad = True
+                        break
+                if bad:
+                    skipped.append("MONO %-12s %-22s %7.1fmg $%.2f" % (vid, comp[:22], e["mg"], e["price"]))
+                    continue
+                kept.append(e)
+            if kept:
+                additions[comp][vid] = kept
+            else:
+                del additions[comp][vid]
+        if not additions[comp]:
+            del additions[comp]
+    if skipped:
+        print("PRECHECK: skipped %d listings that would fail the daily audit" % len(skipped))
+        for s in skipped[:120]:
+            print("  SKIP " + s)
+
     total = sum(len(v) for c in additions.values() for v in c.values())
     print("=" * 70)
     print("CATALOG SYNC %s - %d proposed additions" %
