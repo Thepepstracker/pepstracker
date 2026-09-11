@@ -2936,10 +2936,7 @@ var pl=vals.map(function(v,i){return (i/(vals.length-1)*W).toFixed(1)+','+((1-(v
 var lx=W,ly=((1-(vals[vals.length-1]-mn)/rng)*(Hh-8)+4).toFixed(1);
 function chg(days){var lp=pts[pts.length-1];var cut=new Date(lp.d);cut.setDate(cut.getDate()-days);var cs=cut.toISOString().slice(0,10);for(var i=pts.length-1;i>=0;i--){if(pts[i].d<=cs)return (lp.mg/pts[i].mg-1)*100}return null}
 var c7=chg(7),c30=chg(30);
-function chip(v,l){if(v==null)return '';var dn=v<0;return '<span class="chg-chip '+(dn?'up':'dn')+'">'+(dn?'\u25bc':'\u25b2')+Math.abs(v).toFixed(1)+'% '+l+'</span>'}
-var w=document.createElement('div');w.className='spark-wrap';
-w.innerHTML='<svg width="'+W+'" height="'+Hh+'" viewBox="0 0 '+W+' '+Hh+'"><polyline fill="none" stroke="var(--blue)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="'+pl+'"/><circle cx="'+lx+'" cy="'+ly+'" r="3" fill="var(--green)"/></svg>'+chip(c7,'7d')+chip(c30,'30d')+'<span class="chg-note">best \$/mg \u00b7 90-day trend</span>';
-hdr.parentNode.insertBefore(w,hdr.nextSibling);}catch(e){}}
+function chip(v,l){if(v==null)return '';var a=Math.abs(v);var cls=v<-0.05?'up':(v>0.05?'dn':'');var arr=v<-0.05?'\u25bc':(v>0.05?'\u25b2':'\u00b7');return '<span class="chg-chip '+cls+'">'+arr+' '+a.toFixed(1)+'% '+l+'</span>'}catch(e){}}
 function reveal(){var els=[].slice.call(document.querySelectorAll('.stats-row,.serums-section,.results,.quick-pills'));els.forEach(function(e){e.classList.add('rvl')});if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('on')});return}var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('on');io.unobserve(x.target)}})},{threshold:.08});els.forEach(function(e){io.observe(e)})}
 fetch('/price-history.json').then(function(r){return r.json()}).then(function(j){PH=j;buildTicker();addSpark()}).catch(function(){var t=document.getElementById('pxTicker');if(t)t.style.display='none'});
 var rl=document.querySelector('.result-list');if(rl&&window.MutationObserver){var deb=null;new MutationObserver(function(){clearTimeout(deb);deb=setTimeout(addSpark,150)}).observe(rl,{childList:true,subtree:true})}
