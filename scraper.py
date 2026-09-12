@@ -519,6 +519,78 @@ def fetch_price_from_url(vendor_id, product, product_url):
     return result
 
 
+GLOWLAB_CATALOG_URL = ("https://raw.githubusercontent.com/"
+                       "Thepepstracker/glowprotocls/main/catalog.json")
+
+# Our tracked glps.shop slug -> catalog.json product key. Derived by exact
+# name+price double-match on 2026-09-11 (plus three price-exact aliases for
+# Glow's coded names: GLP-2T=tirz-10, GLP-3R=reta, GLP-31=ss-31). Slugs not
+# in this map simply fall back to the normal page scrape.
+_GLOWLAB_SLUG_TO_KEY = {
+    "5-amino-1mq-50-mg": "5-amino-1mq",
+    "acetic-acid-0-6-10-ml": "acetic-acid",
+    "adamax-5-mg": "adamax",
+    "aicar-50-mg": "aicar",
+    "ara-290-10-mg": "ara-290",
+    "bac-water-30-ml": "bac-water",
+    "bpc-157-5-mg": "bpc-157",
+    "dsip-5-mg": "dsip",
+    "ghk-cu-100-mg": "ghk-cu",
+    "glutathione-750-mg": "glutathione",
+    "klow-blend-ghk-cu-bpc-157-tb-500-kpv": "klow-blend",
+    "kpv-10-mg": "kpv",
+    "mots-c-10-mg": "mots-c",
+    "nad-500-mg": "nad",
+    "pt-141-10-mg": "pt-141",
+    "selank-10-mg": "selank",
+    "tb-500-10-mg": "tb-500",
+    "thymosin-alpha-1-5-mg": "thymosin-alpha-1",
+    "tirzepatide-10-mg": "tirz-10",
+    "retatrutide-10-mg": "reta",
+    "ss-31-10-mg": "ss-31",
+}
+_glowlab_cat_cache = {"data": None}
+
+def _glowlab_repo_price(product_url):
+    """Effective glowlab price straight from the store's own catalog.json
+    (single source of truth in the glowprotocls repo). Hosting-agnostic:
+    keeps working through any migration. Returns None on any doubt so the
+    caller falls back to the normal page scrape."""
+    try:
+        if _glowlab_cat_cache["data"] is None:
+            r = requests.get(GLOWLAB_CATALOG_URL, timeout=30)
+            _glowlab_cat_cache["data"] = r.json() if r.status_code == 200 else {}
+        cat = _glowlab_cat_cache["data"] or {}
+        prods = cat.get("products") or {}
+        slug = _slug_from_url(product_url)
+        key = _GLOWLAB_SLUG_TO_KEY.get(slug or "")
+        p = prods.get(key) if key else None
+        if not isinstance(p, dict):
+            return None
+        reg = p.get("regular")
+        if not isinstance(reg, (int, float)) or reg <= 0:
+            return None
+        fixed = p.get("fixed")
+        if isinstance(fixed, (int, float)) and fixed > 0:
+            return round(float(fixed), 2)
+        pct = p.get("pct")
+        if not isinstance(pct, (int, float)):
+            sale = cat.get("sale") or {}
+            pct = sale.get("sitewide_pct") or 0
+            ends = sale.get("ends")
+            if ends:
+                try:
+                    from datetime import datetime, timezone
+                    if datetime.fromisoformat(str(ends).replace("Z", "+00:00")) < datetime.now(timezone.utc):
+                        pct = 0
+                except Exception:
+                    pass
+        return round(float(reg) * (1.0 - float(pct) / 100.0), 2)
+    except Exception as ex:
+        log.warning(f"  glowlab catalog.json read failed ({ex}); falling back to page scrape")
+        return None
+
+
 def _fetch_price_uncached(vendor_id, product, product_url):
     """
     Returns (price, oos) where:
@@ -528,6 +600,12 @@ def _fetch_price_uncached(vendor_id, product, product_url):
     """
     if past_soft_deadline():
         return None, False  # over time budget - keep previous price
+    if vendor_id == "glowlab":
+        _rp = _glowlab_repo_price(product_url)
+        if _rp is not None:
+            log.info(f"  glowlab/{product}: {_rp} USD from catalog.json (repo, migration-proof)")
+            return _rp, False
+        log.info("  glowlab: no catalog.json mapping -- using normal page scrape")
     import time as _time
     t_start = _time.time()
     log.info(f"  Fetching {vendor_id}/{product} → {product_url}")
