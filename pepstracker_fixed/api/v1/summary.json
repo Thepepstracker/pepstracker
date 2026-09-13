@@ -1,0 +1,12 @@
+{
+ "generated": "2026-09-13T20:17:33Z",
+ "source": "https://pepstracker.com",
+ "docs": "https://pepstracker.com/data",
+ "license": "Free to use with attribution to PepsTracker (pepstracker.com).",
+ "disclaimer": "Research compounds, research use only. Informational data; not an endorsement of any vendor or product.",
+ "vendors": 27,
+ "compounds": 98,
+ "listings": 1458,
+ "history_days": 70,
+ "history_start": "2026-06-01"
+}

@@ -1,0 +1,199 @@
+{
+ "generated": "2026-09-13T20:17:33Z",
+ "source": "https://pepstracker.com",
+ "docs": "https://pepstracker.com/data",
+ "license": "Free to use with attribution to PepsTracker (pepstracker.com).",
+ "disclaimer": "Research compounds, research use only. Informational data; not an endorsement of any vendor or product.",
+ "count": 27,
+ "vendors": [
+  {
+   "id": "ascension",
+   "name": "Ascension Peptides",
+   "domain": "ascensionpeptides.com",
+   "code": "pepstracker",
+   "discount": 0.5
+  },
+  {
+   "id": "atomik",
+   "name": "AtomiK Labz",
+   "domain": "atomiklabz.com",
+   "code": "pepstracker30",
+   "discount": 0.3
+  },
+  {
+   "id": "lapeptides",
+   "name": "LA Peptides",
+   "domain": "lapeptides.net",
+   "code": "pepstracker",
+   "discount": 0.1
+  },
+  {
+   "id": "glacier",
+   "name": "Glacier Aminos",
+   "domain": "glacieraminos.shop",
+   "code": "Glowlab",
+   "discount": 0.1
+  },
+  {
+   "id": "milehigh",
+   "name": "Mile High Compound",
+   "domain": "milehighcompounds.is",
+   "code": "Glowlab",
+   "discount": 0.1
+  },
+  {
+   "id": "ezpeptides",
+   "name": "EZ Peptides",
+   "domain": "ezpeptides.com",
+   "code": "pepstracker",
+   "discount": 0.1
+  },
+  {
+   "id": "amp",
+   "name": "AMP Ameano Peptides",
+   "domain": "ameanopeptides.com",
+   "code": "pepstracker",
+   "discount": 0.1
+  },
+  {
+   "id": "labsourced",
+   "name": "Labsourced",
+   "domain": "labsourced.com",
+   "code": "Glowlab",
+   "discount": 0.15
+  },
+  {
+   "id": "ion",
+   "name": "Ion Peptides",
+   "domain": "ionpeptide.com",
+   "code": "Glowlab",
+   "discount": 0.15
+  },
+  {
+   "id": "retaone",
+   "name": "Reta One Labs",
+   "domain": "retaonelabs.com",
+   "code": "pepstracker",
+   "discount": 0.05
+  },
+  {
+   "id": "puratek",
+   "name": "Puratek Peptides",
+   "domain": "puratekpeptides.com",
+   "code": "pepstracker",
+   "discount": null
+  },
+  {
+   "id": "nura",
+   "name": "NuraPeptide",
+   "domain": "nurapeptide.com",
+   "code": "pepstracker",
+   "discount": 0.15
+  },
+  {
+   "id": "glp1lab",
+   "name": "GLP-1 Research Lab",
+   "domain": "glp1researchlab.com",
+   "code": null,
+   "discount": null
+  },
+  {
+   "id": "apollo",
+   "name": "Apollo Peptide Sciences",
+   "domain": "apollopeptidesciences.com",
+   "code": null,
+   "discount": null
+  },
+  {
+   "id": "solas",
+   "name": "Solas Science",
+   "domain": "solasscience.shop",
+   "code": null,
+   "discount": null
+  },
+  {
+   "id": "swisschems",
+   "name": "SwissChems",
+   "domain": "swisschems.is",
+   "code": null,
+   "discount": null
+  },
+  {
+   "id": "hydro",
+   "name": "Hydro Research",
+   "domain": "hydroresearchpeptides.com",
+   "code": "PepsTracker15",
+   "discount": 0.15
+  },
+  {
+   "id": "glowaminos",
+   "name": "Glow Aminos",
+   "domain": "glowaminos.com",
+   "code": "pepstracker",
+   "discount": 0.51
+  },
+  {
+   "id": "flawless",
+   "name": "Flawless Compounds",
+   "domain": "flawlesscompounds.com",
+   "code": "pepstracker",
+   "discount": 0.37
+  },
+  {
+   "id": "certapeptides",
+   "name": "CertaPeptides",
+   "domain": "certapeptides.com",
+   "code": "AFF-PEPSTRACKER",
+   "discount": 0.1
+  },
+  {
+   "id": "pinnacle",
+   "name": "Pinnacle Peptide Labs",
+   "domain": "pinnaclepeptidelabs.com",
+   "code": "pepstracker",
+   "discount": 0.15
+  },
+  {
+   "id": "s1labs",
+   "name": "S1 Labs",
+   "domain": "s1labs.us",
+   "code": "pepstracker10",
+   "discount": 0.1
+  },
+  {
+   "id": "platinum",
+   "name": "Platinum Peptides",
+   "domain": "platinumpeptides.com",
+   "code": "pepstracker15",
+   "discount": 0.15
+  },
+  {
+   "id": "fusion",
+   "name": "Fusion Peptide",
+   "domain": "fusionpeptide.com",
+   "code": "pepstracker",
+   "discount": 0.15
+  },
+  {
+   "id": "strandbio",
+   "name": "Strand Bio",
+   "domain": "getstrandbio.com",
+   "code": "PEPSTRACKER",
+   "discount": 0.15
+  },
+  {
+   "id": "coreresearch",
+   "name": "Core Research Peptides",
+   "domain": "coreresearchpeptides.com",
+   "code": "PEPS20",
+   "discount": 0.2
+  },
+  {
+   "id": "glowlab",
+   "name": "Glow Lab Protocols",
+   "domain": "glowlabprotocols.com",
+   "code": "GLOW31",
+   "discount": 0.31
+  }
+ ]
+}
