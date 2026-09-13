@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Open Peptide Price Data &amp; Free API (Updated Daily)</title>
+<meta name="description" content="Free, machine-readable research peptide price data: current prices across 27 vendors, daily history since June, vendor scoreboard. JSON and CSV, no key required, attribution appreciated."/>
+<link rel="canonical" href="https://pepstracker.com/data.html"/>
+<meta property="og:title" content="Open Peptide Price Data &amp; Free API | PepsTracker"/>
+<meta property="og:description" content="Every number on PepsTracker, machine-readable and free. JSON + CSV endpoints, updated daily."/>
+<meta property="og:url" content="https://pepstracker.com/data.html"/>
+<meta property="og:type" content="website"/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="stylesheet" href="/polished.css"/>
+<link rel="stylesheet" href="/premium.css"/>
+<style>
+:root{--bg:#090c13;--card:#141b27;--border:#1e2a3d;--border2:#263347;--blue:#3b9eff;--green:#4de87a;--text:#e8edf5;--muted:#5a6a82;--gold:#f5c842;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+header{background:rgba(9,12,19,.95);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.hi{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.lt{font-size:1.25rem;font-weight:800;} .lt span:first-child{color:var(--blue);} .lt span:last-child{color:var(--green);}
+.mb{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border2);border-radius:10px;color:var(--text);cursor:pointer;padding:8px 14px;font-size:.88rem;font-weight:600;}
+.mb:hover{border-color:var(--blue);color:var(--blue);}
+.mn{display:none;flex-direction:column;gap:4px;padding:10px;border-top:1px solid var(--border);background:rgba(9,12,19,.97);z-index:200;}
+.mn.open{display:flex;} .mn a{color:#7a8ba8;text-decoration:none;font-size:.9rem;font-weight:600;padding:9px 12px;border-radius:8px;}
+.mn a:hover{color:var(--text);background:rgba(255,255,255,.05);}
+@media(min-width:769px){.mn{position:fixed;top:68px;right:16px;width:200px;border-radius:12px;border:1px solid var(--border2);box-shadow:0 12px 40px rgba(0,0,0,.6);}}
+.ab{height:3px;background:linear-gradient(90deg,var(--blue),var(--green) 50%,var(--gold));}
+.dl-wrap{max-width:1000px;margin:0 auto;padding:0 24px 60px}
+.dl-hero{padding:54px 0 26px;text-align:center}
+.dl-hero h1{font-size:clamp(30px,5vw,44px);font-weight:800;background:linear-gradient(90deg,var(--blue),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
+.dl-hero p{color:var(--muted);max-width:680px;margin:12px auto 0;font-size:16px}
+.od-stats{display:flex;justify-content:center;gap:26px;flex-wrap:wrap;margin:22px 0 6px;color:var(--muted);font-size:13px}
+.od-stats b{display:block;color:var(--gold);font-size:22px;font-weight:800;text-align:center}
+h2{font-size:22px;font-weight:800;margin:44px 0 14px}
+.od-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.od-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.od-card:hover{border-color:var(--blue)}
+.od-card .m{font-family:ui-monospace,monospace;font-size:13.5px;color:var(--green);word-break:break-all}
+.od-card .m .verb{color:var(--gold);font-weight:700;margin-right:6px}
+.od-card p{color:var(--muted);font-size:13.5px;line-height:1.6}
+.od-card a.open{align-self:flex-start;color:var(--blue);text-decoration:none;font-size:13px;font-weight:700}
+pre{background:#0b0f18;border:1px solid var(--border);border-radius:12px;padding:16px;font-size:13px;line-height:1.6;overflow-x:auto;color:#c9d6ea}
+pre .c{color:#5a6a82}
+.od-terms{background:#10161f;border:1px solid var(--border);border-radius:14px;padding:20px 22px;font-size:14px;color:var(--muted);margin-top:14px}
+.od-terms b{color:var(--text)}
+footer{border-top:1px solid var(--border);padding:24px 16px;text-align:center;color:#5a6a82;font-size:.78rem;margin-top:50px}
+footer a{color:var(--blue);text-decoration:none;}
+</style>
+</head>
+<body>
+<header>
+  <div class="hi">
+    <a class="logo" href="/">
+      <div class="lt"><span>Peps</span><span>Tracker</span></div>
+    </a>
+    <button class="mb menu-btn">&#9776; Menu</button>
+  </div>
+  <div class="mn" id="mn" style="display:none;"><a href="/">&#127968; Price Tracker</a><a href="/price-index">&#128200; Price Index</a><a href="/deals">&#127991;&#65039; Deals</a><a href="/vendors">&#127978; Vendors</a><a href="/dictionary">&#128214; Dictionary</a><a href="/blog">&#128221; Blog</a><a href="/quiz">&#129516; Quiz</a><a href="/tracker">&#128197; My Tracker</a><a href="/calculators">&#129518; Calculators</a><a href="/vendor-apply">&#128203; Vendor Apply</a><a href="/advertise">&#128227; Advertise</a><a href="/live">&#127908;&#65039; Book the Live</a><a href="/disclaimer">&#9888;&#65039; Disclaimer</a><a href="/account">&#128100; My Account</a></div>
+</header>
+<div class="ab"></div>
+<main class="dl-wrap">
+<div class="dl-hero">
+<h1>Open Data &amp; Free API</h1>
+<p>Every number on PepsTracker &mdash; live prices across 27 vendors, daily history since June, and vendor track records &mdash; published machine-readable, free, no API key. If you build with it, a link back is all we ask.</p>
+<div class="od-stats" id="odStats"></div>
+</div>
+
+<h2>Endpoints</h2>
+<div class="od-grid">
+  <div class="od-card"><div class="m"><span class="verb">GET</span>/api/v1/summary.json</div><p>Totals and freshness: vendor count, compound count, listing count, history depth, last generated time. Start here.</p><a class="open" href="/api/v1/summary.json">Open &rarr;</a></div>
+  <div class="od-card"><div class="m"><span class="verb">GET</span>/api/v1/prices.json</div><p>The full current book: every listing for every compound with price, vial size, pack size, computed $/mg and stock status, sorted cheapest-first.</p><a class="open" href="/api/v1/prices.json">Open &rarr;</a></div>
+  <div class="od-card"><div class="m"><span class="verb">GET</span>/api/v1/vendors.json</div><p>The 27 tracked vendors with domains and current working discount codes.</p><a class="open" href="/api/v1/vendors.json">Open &rarr;</a></div>
+  <div class="od-card"><div class="m"><span class="verb">GET</span>/api/v1/price-history.json</div><p>Daily best $/mg per compound since June 1 &mdash; the series behind every chart on this site.</p><a class="open" href="/api/v1/price-history.json">Open &rarr;</a></div>
+  <div class="od-card"><div class="m"><span class="verb">GET</span>/api/v1/price-history.csv</div><p>Same history as CSV &mdash; drops straight into Excel, Google Sheets (<span style="font-family:ui-monospace,monospace">IMPORTDATA</span>) or pandas.</p><a class="open" href="/api/v1/price-history.csv">Open &rarr;</a></div>
+  <div class="od-card"><div class="m"><span class="verb">GET</span>/api/v1/scoreboard.json</div><p>Per-vendor track record: coverage, stock rate, and how often each vendor holds the market's best price. See the <a href="/scoreboard" style="color:var(--blue);text-decoration:none">Vendor Scoreboard</a>.</p><a class="open" href="/api/v1/scoreboard.json">Open &rarr;</a></div>
+</div>
+
+<h2>Quick start</h2>
+<pre><span class="c">// Cheapest current listing for any compound</span>
+const r = await fetch('https://pepstracker.com/api/v1/prices.json');
+const data = await r.json();
+console.log(data.prices['Semaglutide'][0]);
+<span class="c">// -&gt; { vendor, listing, price_usd, usd_per_mg, in_stock, url, ... }</span></pre>
+<pre><span class="c"># Full price history into a spreadsheet cell (Google Sheets)</span>
+=IMPORTDATA("https://pepstracker.com/api/v1/price-history.csv")</pre>
+
+<h2>Terms</h2>
+<div class="od-terms">
+<b>Free.</b> No key, no signup, no rate card. CORS is open, so you can call it from a browser.
+<b>Attribution appreciated:</b> if you publish something built on this data, link to pepstracker.com.
+<b>Updated daily</b> after the morning price scan; the <span style="font-family:ui-monospace,monospace">generated</span> field on every endpoint tells you exactly when.
+<b>As-is:</b> data is informational only, provided without warranty, and is not an endorsement of any vendor or product. All products referenced are for research use only. See the <a href="/disclaimer" style="color:var(--blue)">full disclaimer</a>.
+</div>
+</main>
+<footer>
+  <p>PepsTracker &mdash; price comparison only. All products are for research use only. We do not sell or distribute any products. Affiliate links may generate a commission.</p>
+  <p style="margin-top:8px;"><a href="/">Price Tracker</a> &middot; <a href="/vendors.html">Vendors</a> &middot; <a href="/scoreboard.html">Scoreboard</a> &middot; <a href="/disclaimer.html">Disclaimer</a> &middot; <a href="/privacy.html">Privacy</a> &middot; <a href="/terms.html">Terms</a></p>
+</footer>
+<script>
+(function(){
+  var btn = document.querySelector('.menu-btn');
+  var mn = document.getElementById('mn');
+  if(btn) btn.addEventListener('click', function(){
+    var open = mn.classList.toggle('open');
+    mn.style.display = open ? 'flex' : 'none';
+  });
+  document.addEventListener('click', function(e){
+    if(mn && mn.classList.contains('open') && !mn.contains(e.target) && (!btn || !btn.contains(e.target))){
+      mn.classList.remove('open');
+      mn.style.display = 'none';
+    }
+  });
+})();
+(function(){
+  fetch('/api/v1/summary.json').then(function(r){return r.json()}).then(function(s){
+    var el = document.getElementById('odStats');
+    function cell(v, l){return '<span><b>'+v+'</b>'+l+'</span>'}
+    el.innerHTML = cell(s.vendors,'vendors')+cell(s.compounds,'compounds')+cell(s.listings,'listings')+cell(s.history_days,'days of history');
+  }).catch(function(){});
+})();
+</script>
+</body>
+</html>
