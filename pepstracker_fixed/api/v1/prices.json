@@ -1,11 +1,11 @@
 {
- "generated": "2026-09-13T20:17:33Z",
+ "generated": "2026-09-13T20:26:37Z",
  "source": "https://pepstracker.com",
  "docs": "https://pepstracker.com/data",
  "license": "Free to use with attribution to PepsTracker (pepstracker.com).",
  "disclaimer": "Research compounds, research use only. Informational data; not an endorsement of any vendor or product.",
  "note": "price_usd is the listed store price recorded by the daily scan; the on-site ranking additionally applies vendor discount codes (see vendors.json).",
- "compounds": 98,
+ "compounds": 86,
  "listings": 1458,
  "prices": {
   "AICAR": [
@@ -128,18 +128,6 @@
     "url": "https://fusionpeptide.com/product/cagrilintide-glp-1/?ref=pepstracker"
    }
   ],
-  "ascension": [],
-  "lapeptides": [],
-  "ezpeptides": [],
-  "ion": [],
-  "retaone": [],
-  "puratek": [],
-  "nura": [],
-  "amp": [],
-  "glacier": [],
-  "milehigh": [],
-  "atomik": [],
-  "certapeptides": [],
   "Bronchogen": [
    {
     "vendor": "amp",
