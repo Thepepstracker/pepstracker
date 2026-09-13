@@ -10,6 +10,9 @@ _src = open("pepstracker_fixed/index.html", encoding="utf-8").read()
 _seg = _src[_src.find("const VENDORS"):]
 _seg = _seg[:_seg.find("];")]
 NV = len(set(re.findall(r'id\s*:\s*"([^"]+)"', _seg)))
+_pseg = _src[_src.find("const PRICES"):]
+_pseg = _pseg[:_pseg.find("};") + 1]
+NC = len(set(re.findall(r'"([^"]+)"\s*:', _pseg)))
 GLP1 = ["Semaglutide", "Tirzepatide", "Retatrutide", "Cagrilintide"]
 HEAL = ["BPC-157", "TB-500", "GHK-Cu", "Epithalon"]
 
@@ -80,7 +83,7 @@ fig2.patch.set_facecolor(BG)
 fig2.text(0.5, 0.62, "PepsTracker", color=GREEN, fontsize=64, fontweight="bold", ha="center")
 fig2.text(0.5, 0.47, "Compare research peptide prices across %d US vendors" % NV, color=FG, fontsize=22, ha="center")
 fig2.text(0.5, 0.38, "Discount codes already applied \u00b7 Updated daily \u00b7 Free", color="#9aa4b5", fontsize=17, ha="center")
-stats = [(str(NV), "vendors", BLUE), ("83", "compounds", GOLD), ("Daily", "updates", GREEN), ("Free", "always", BLUE)]
+stats = [(str(NV), "vendors", BLUE), (str(NC), "compounds", GOLD), ("Daily", "updates", GREEN), ("Free", "always", BLUE)]
 for i, (big, small, col) in enumerate(stats):
     x = 0.2 + i * 0.2
     fig2.text(x, 0.2, big, color=col, fontsize=30, fontweight="bold", ha="center")
