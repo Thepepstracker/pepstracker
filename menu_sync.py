@@ -2,7 +2,7 @@
 
 Two menu systems exist: id=mobileNav (homepage/vendors, items carry
 onclick=toggleMenu()) and id=mn (article/compare pages, plain anchors).
-Both get the same 14 items. Runs in the daily workflow before nav_active.py
+Both get the same 16 items. Runs in the daily workflow before nav_active.py
 so active states are re-applied after.
 """
 import glob, os, re
@@ -13,6 +13,7 @@ ITEMS = [
     ("/price-index", "\U0001F4C8 Price Index"),
     ("/deals", "\U0001F3F7\uFE0F Deals"),
     ("/vendors", "\U0001F3EA Vendors"),
+    ("/scoreboard", "\U0001F3C6 Scoreboard"),
     ("/dictionary", "\U0001F4D6 Dictionary"),
     ("/blog", "\U0001F4DD Blog"),
     ("/quiz", "\U0001F9EC Quiz"),
@@ -21,6 +22,7 @@ ITEMS = [
     ("/vendor-apply", "\U0001F4CB Vendor Apply"),
     ("/advertise", "\U0001F4E3 Advertise"),
     ("/live", "\U0001F399\uFE0F Book the Live"),
+    ("/data", "\U0001F4CA Open Data"),
     ("/disclaimer", "\u26A0\uFE0F Disclaimer"),
     ("/account", "\U0001F464 My Account"),
 ]
