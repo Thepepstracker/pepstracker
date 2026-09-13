@@ -10,9 +10,8 @@ _src = open("pepstracker_fixed/index.html", encoding="utf-8").read()
 _seg = _src[_src.find("const VENDORS"):]
 _seg = _seg[:_seg.find("];")]
 NV = len(set(re.findall(r'id\s*:\s*"([^"]+)"', _seg)))
-_pseg = _src[_src.find("const PRICES"):]
-_pseg = _pseg[:_pseg.find("};") + 1]
-NC = len(set(re.findall(r'"([^"]+)"\s*:', _pseg)))
+from sync_site_counts import compound_names as _cnames
+NC = len(set(_cnames(_src)))
 GLP1 = ["Semaglutide", "Tirzepatide", "Retatrutide", "Cagrilintide"]
 HEAL = ["BPC-157", "TB-500", "GHK-Cu", "Epithalon"]
 
