@@ -1,0 +1,27 @@
+name: Build open data
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build API endpoints
+        run: python build_api.py
+      - name: Build vendor scoreboard
+        run: python build_scorecard.py
+      - name: Commit
+        run: |
+          git config user.name "pepstracker-bot"
+          git config user.email "bot@pepstracker.com"
+          git add pepstracker_fixed/api
+          git diff --cached --quiet || git commit -m "Open data: refresh api/v1 endpoints"
+          git push
