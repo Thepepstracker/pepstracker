@@ -111,6 +111,14 @@ COMPOUND_RULES = [
     ("pep: compare for",  re.compile(r"(?<=Compare prices for )\d+(?=\+ peptides)")),
     # Homepage hero stat bar, compound half.
     ("hero stat peptides",re.compile(r'(?<=<div class="stat-num">)\d+(?=</div><div class="stat-label">Peptides</div>)')),
+    # September 2026: hero subhead, About blocks, meta descriptions and the
+    # deals-page methodology carry the exact count with no "+", so the "+"
+    # anchored rules above never reached them and they froze at 83.
+    ("cmp: hero compares",  re.compile(r"(?<=compares )\d+(?= compounds across \d+ vendors)")),
+    ("cmp: each of",        re.compile(r"(?<=for each of )\d+(?= compounds)")),
+    ("cmp: and-dash exact", re.compile(r"(?<=and )\d+(?= compounds \u2014 sorted)")),
+    ("cmp: for-daily exact",re.compile(r"(?<=vendors for )\d+(?= compounds daily)")),
+    ("cmp: trusted exact",  re.compile(r"(?<=trusted vendors across )\d+(?= compounds)")),
 ]
 
 
