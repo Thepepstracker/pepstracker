@@ -117,6 +117,8 @@ jobs:
           python repair_encoding.py
           python menu_sync.py
           python sync_site_counts.py
+          python build_api.py
+          python build_scorecard.py
           python sync_dictionary.py
           python nav_active.py
           python fix_logo.py
