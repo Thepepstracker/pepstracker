@@ -175,7 +175,8 @@ def main():
                              "url": L.get("url")})
                 n_listings += 1
         rows.sort(key=lambda r: (r["usd_per_mg"] is None, r["usd_per_mg"]))
-        comp_out[comp] = rows
+        if rows:
+            comp_out[comp] = rows
     o = dict(meta)
     o["note"] = ("price_usd is the listed store price recorded by the daily scan; "
                  "the on-site ranking additionally applies vendor discount codes "
