@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Vendor Scoreboard &mdash; Peptide Vendor Track Records (Updated Daily)</title>
+<meta name="description" content="Which research peptide vendors actually hold the best prices? Track records computed from PepsTracker's own daily price data: coverage, stock rate, and 30-day best-price share for all 27 vendors."/>
+<link rel="canonical" href="https://pepstracker.com/scoreboard.html"/>
+<meta property="og:title" content="Vendor Scoreboard | PepsTracker"/>
+<meta property="og:description" content="Vendor track records computed from daily price data - coverage, stock rate, and who actually holds the best prices."/>
+<meta property="og:url" content="https://pepstracker.com/scoreboard.html"/>
+<meta property="og:type" content="website"/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="stylesheet" href="/polished.css"/>
+<link rel="stylesheet" href="/premium.css"/>
+<style>
+:root{--bg:#090c13;--card:#141b27;--border:#1e2a3d;--border2:#263347;--blue:#3b9eff;--green:#4de87a;--text:#e8edf5;--muted:#5a6a82;--gold:#f5c842;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+header{background:rgba(9,12,19,.95);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.hi{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.lt{font-size:1.25rem;font-weight:800;} .lt span:first-child{color:var(--blue);} .lt span:last-child{color:var(--green);}
+.mb{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border2);border-radius:10px;color:var(--text);cursor:pointer;padding:8px 14px;font-size:.88rem;font-weight:600;}
+.mb:hover{border-color:var(--blue);color:var(--blue);}
+.mn{display:none;flex-direction:column;gap:4px;padding:10px;border-top:1px solid var(--border);background:rgba(9,12,19,.97);z-index:200;}
+.mn.open{display:flex;} .mn a{color:#7a8ba8;text-decoration:none;font-size:.9rem;font-weight:600;padding:9px 12px;border-radius:8px;}
+.mn a:hover{color:var(--text);background:rgba(255,255,255,.05);}
+@media(min-width:769px){.mn{position:fixed;top:68px;right:16px;width:200px;border-radius:12px;border:1px solid var(--border2);box-shadow:0 12px 40px rgba(0,0,0,.6);}}
+.ab{height:3px;background:linear-gradient(90deg,var(--blue),var(--green) 50%,var(--gold));}
+.dl-wrap{max-width:1000px;margin:0 auto;padding:0 24px 60px}
+.dl-hero{padding:54px 0 22px;text-align:center}
+.dl-hero h1{font-size:clamp(30px,5vw,44px);font-weight:800;background:linear-gradient(90deg,var(--blue),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
+.dl-hero p{color:var(--muted);max-width:700px;margin:12px auto 0;font-size:16px}
+.sb-note{background:rgba(245,200,66,.07);border:1px solid rgba(245,200,66,.25);border-radius:12px;padding:12px 16px;font-size:13px;color:var(--muted);max-width:760px;margin:20px auto 0;text-align:center}
+.sb-note b{color:var(--gold)}
+.sb-updated{text-align:center;color:var(--muted);font-size:13px;margin:16px 0 26px}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;min-width:760px}
+th{text-align:left;padding:11px 12px;background:#0f1520;color:#5a6a82;font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap;}
+th.r,td.r{text-align:right}
+td{padding:11px 12px;border-bottom:1px solid rgba(30,42,61,.6);vertical-align:middle;}
+tr:hover td{background:rgba(59,158,255,.03);}
+td .vn{font-weight:700}
+td .dm{color:var(--muted);font-size:.76rem}
+.bar{position:relative;background:#0f1520;border-radius:6px;height:16px;min-width:110px;overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:6px}
+.bar b{position:relative;z-index:1;display:block;text-align:right;font-size:.72rem;font-weight:800;padding:0 6px;line-height:16px}
+.pill{display:inline-block;border-radius:8px;padding:1px 8px;font-weight:800;font-size:.78rem}
+.pill.g{background:rgba(77,232,122,.12);color:var(--green)}
+.pill.y{background:rgba(245,200,66,.12);color:var(--gold)}
+.pill.r{background:rgba(255,92,92,.12);color:#ff5c5c}
+footer{border-top:1px solid var(--border);padding:24px 16px;text-align:center;color:#5a6a82;font-size:.78rem;margin-top:50px}
+footer a{color:var(--blue);text-decoration:none;}
+</style>
+</head>
+<body>
+<header>
+  <div class="hi">
+    <a class="logo" href="/">
+      <div class="lt"><span>Peps</span><span>Tracker</span></div>
+    </a>
+    <button class="mb menu-btn">&#9776; Menu</button>
+  </div>
+  <div class="mn" id="mn" style="display:none;"><a href="/">&#127968; Price Tracker</a><a href="/price-index">&#128200; Price Index</a><a href="/deals">&#127991;&#65039; Deals</a><a href="/vendors">&#127978; Vendors</a><a href="/dictionary">&#128214; Dictionary</a><a href="/blog">&#128221; Blog</a><a href="/quiz">&#129516; Quiz</a><a href="/tracker">&#128197; My Tracker</a><a href="/calculators">&#129518; Calculators</a><a href="/vendor-apply">&#128203; Vendor Apply</a><a href="/advertise">&#128227; Advertise</a><a href="/live">&#127908;&#65039; Book the Live</a><a href="/disclaimer">&#9888;&#65039; Disclaimer</a><a href="/account">&#128100; My Account</a></div>
+</header>
+<div class="ab"></div>
+<main class="dl-wrap">
+<div class="dl-hero">
+<h1>Vendor Scoreboard</h1>
+<p>Track records, not testimonials. Everything below is computed from PepsTracker's own daily price records &mdash; how much of the market each vendor covers, how often their listings are in stock, and how often they actually hold the best price.</p>
+<div class="sb-note"><b>What this is not:</b> a rating of product quality, purity or safety. These are price-data metrics only, from our daily scans. We don't test products and don't take payment for placement.</div>
+<div class="sb-updated" id="sbUpdated">Loading&hellip;</div>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr>
+<th>Vendor</th><th>Tracked since</th><th class="r">Compounds</th><th class="r">Listings</th><th class="r">In stock</th><th class="r">Best price today</th><th>30-day best-price share</th>
+</tr></thead>
+<tbody id="sbBody"><tr><td colspan="7" style="text-align:center;color:var(--muted)">Loading scoreboard&hellip;</td></tr></tbody>
+</table>
+</div>
+<p style="color:var(--muted);font-size:13px;margin-top:14px">&ldquo;30-day best-price share&rdquo; = of every (compound &times; day) best-price record in the last 30 days, the share this vendor held. &ldquo;Best price today&rdquo; counts compounds where the vendor currently has the cheapest in-stock $/mg. Raw data: <a href="/api/v1/scoreboard.json" style="color:var(--blue)">scoreboard.json</a> &middot; docs on the <a href="/data" style="color:var(--blue)">Open Data</a> page.</p>
+</main>
+<footer>
+  <p>PepsTracker &mdash; price comparison only. All products are for research use only. We do not sell or distribute any products. Affiliate links may generate a commission.</p>
+  <p style="margin-top:8px;"><a href="/">Price Tracker</a> &middot; <a href="/vendors.html">Vendors</a> &middot; <a href="/data.html">Open Data</a> &middot; <a href="/disclaimer.html">Disclaimer</a> &middot; <a href="/privacy.html">Privacy</a> &middot; <a href="/terms.html">Terms</a></p>
+</footer>
+<script>
+(function(){
+  var btn = document.querySelector('.menu-btn');
+  var mn = document.getElementById('mn');
+  if(btn) btn.addEventListener('click', function(){
+    var open = mn.classList.toggle('open');
+    mn.style.display = open ? 'flex' : 'none';
+  });
+  document.addEventListener('click', function(e){
+    if(mn && mn.classList.contains('open') && !mn.contains(e.target) && (!btn || !btn.contains(e.target))){
+      mn.classList.remove('open');
+      mn.style.display = 'none';
+    }
+  });
+})();
+(function(){
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  fetch('/api/v1/scoreboard.json').then(function(r){return r.json()}).then(function(d){
+    var up = document.getElementById('sbUpdated');
+    up.textContent = 'Computed from ' + d.best_price_records_in_window + ' best-price records over the last ' + d.window_days + ' days · updated ' + String(d.generated).slice(0,10);
+    var maxShare = 0;
+    d.vendors.forEach(function(v){ if(v.best_30d_share > maxShare) maxShare = v.best_30d_share; });
+    var rows = d.vendors.map(function(v){
+      var stock = v.stock_rate == null ? null : Math.round(v.stock_rate * 100);
+      var cls = stock == null ? 'y' : (stock >= 90 ? 'g' : (stock >= 70 ? 'y' : 'r'));
+      var share = Math.round(v.best_30d_share * 1000) / 10;
+      var w = maxShare > 0 ? Math.round((v.best_30d_share / maxShare) * 100) : 0;
+      return '<tr>' +
+        '<td><span class="vn">' + esc(v.name) + '</span><br><span class="dm">' + esc(v.domain) + '</span></td>' +
+        '<td>' + esc(v.first_seen || '—') + '</td>' +
+        '<td class="r">' + v.compounds + '</td>' +
+        '<td class="r">' + v.listings + '</td>' +
+        '<td class="r">' + (stock == null ? '—' : '<span class="pill ' + cls + '">' + stock + '%</span>') + '</td>' +
+        '<td class="r">' + (v.best_price_now || 0) + '</td>' +
+        '<td><div class="bar"><i style="width:' + w + '%"></i><b>' + share + '%</b></div></td>' +
+      '</tr>';
+    });
+    document.getElementById('sbBody').innerHTML = rows.join('');
+  }).catch(function(){
+    document.getElementById('sbBody').innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted)">Scoreboard data is loading slowly - refresh in a moment.</td></tr>';
+  });
+})();
+</script>
+</body>
+</html>
