@@ -29,3 +29,12 @@
 
 /onboarding.html
   X-Robots-Tag: noindex, follow
+
+# Open-data endpoints are meant to be consumed cross-origin.
+/api/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=900
+
+/price-history.json
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=900
