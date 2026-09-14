@@ -342,6 +342,11 @@
   <url><loc>https://pepstracker.com/compare-swisschems-vs-platinum-peptides-2026.html</loc><changefreq>weekly</changefreq><priority>0.7</priority><lastmod>2026-07-19</lastmod></url>
   <url><loc>https://pepstracker.com/cost-per-mg-peptide-comparison-2026.html</loc><changefreq>weekly</changefreq><priority>0.8</priority><lastmod>2026-07-16</lastmod></url>
   <url>
+    <loc>https://pepstracker.com/data.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://pepstracker.com/deals.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -490,6 +495,11 @@
   <url><loc>https://pepstracker.com/quiz.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/reconstitution.html</loc><changefreq>monthly</changefreq><priority>0.6</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/retatrutide-vs-cagrilintide-2026.html</loc><changefreq>weekly</changefreq><priority>0.8</priority><lastmod>2026-07-16</lastmod></url>
+  <url>
+    <loc>https://pepstracker.com/scoreboard.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
   <url><loc>https://pepstracker.com/semaglutide-vs-tirzepatide-2026.html</loc><changefreq>weekly</changefreq><priority>0.9</priority><lastmod>2026-06-10</lastmod></url>
   <url><loc>https://pepstracker.com/semax-vs-selank-guide-2026.html</loc><changefreq>weekly</changefreq><priority>0.8</priority><lastmod>2026-07-16</lastmod></url>
   <url><loc>https://pepstracker.com/sermorelin-guide-2026.html</loc><changefreq>weekly</changefreq><priority>0.7</priority><lastmod>2026-07-16</lastmod></url>
