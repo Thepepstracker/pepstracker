@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install matplotlib pillow
+      - run: pip install matplotlib pillow requests
       - name: Apply the audited corrections
         run: python fix_data_20260914.py
       - name: Audit gate must still pass
