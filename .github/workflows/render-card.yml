@@ -11,11 +11,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install matplotlib
+      # Lato + Noto Sans Mono are the cover's type. Without them matplotlib
+      # silently falls back to DejaVu and the wordmark renders thin.
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-lato fonts-noto-mono
+      - run: pip install matplotlib pillow
       - run: python render_card.py
+      - run: python build_cover.py
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add pepstracker_fixed/price-index-card.png pepstracker_fixed/og-image.png
-          git diff --cached --quiet || git commit -m 'Render price-index social card'
+          git add pepstracker_fixed/price-index-card.png pepstracker_fixed/og-image.png pepstracker_fixed/fb-cover.png
+          git diff --cached --quiet || git commit -m 'Render social card + Facebook cover'
           git push
