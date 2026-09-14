@@ -11,9 +11,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      # Lato + Noto Sans Mono are the cover's type. Without them matplotlib
-      # silently falls back to DejaVu and the wordmark renders thin.
-      - run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-lato fonts-noto-mono
+      # Geist is the typeface the site itself loads. Pulling it from npm at
+      # build time keeps ~1.4MB of binary fonts out of the repo; build_cover.py
+      # falls back to system faces if this ever fails.
+      - name: Fetch Geist
+        run: |
+          npm pack geist@1.7.2 --silent
+          tar xzf geist-1.7.2.tgz
+          mkdir -p .fonts
+          cp -r package/dist/fonts/geist-sans .fonts/
+          cp -r package/dist/fonts/geist-mono .fonts/
+          ls .fonts/geist-sans/Geist-Black.ttf
       - run: pip install matplotlib pillow
       - run: python render_card.py
       - run: python build_cover.py
