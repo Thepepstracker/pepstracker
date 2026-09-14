@@ -159,17 +159,25 @@ def main():
                 mg = L.get("mg")
                 if not isinstance(price, (int, float)) or price <= 0:
                     continue
-                bulk = L.get("bulk")
-                total_mg = bulk if isinstance(bulk, (int, float)) and bulk else mg
+                # `mg` already holds the TOTAL milligrams of the purchase.
+                # `bulk`, where present, is the NUMBER OF VIALS in the pack -
+                # not a milligram figure. Dividing by it inflated $/mg by the
+                # vial count on every bulk listing (a 10x10mg pack came out 10x
+                # too expensive). The site always divided by `mg` and was
+                # right; only this builder was wrong.
+                vials = L.get("bulk")
+                vials = int(vials) if isinstance(vials, (int, float)) and vials >= 2 else None
                 upm = None
-                if isinstance(total_mg, (int, float)) and total_mg:
-                    upm = round(float(price) / float(total_mg), 4)
+                if isinstance(mg, (int, float)) and mg > 0:
+                    upm = round(float(price) / float(mg), 4)
                 rows.append({"vendor": vid,
                              "vendor_name": (vmap.get(vid) or {}).get("name"),
                              "listing": L.get("listing"),
                              "price_usd": price,
-                             "vial_mg": mg,
-                             "pack_total_mg": bulk if isinstance(bulk, (int, float)) else None,
+                             "total_mg": mg,
+                             "vials": vials,
+                             "mg_per_vial": (round(float(mg) / vials, 4)
+                                             if vials and isinstance(mg, (int, float)) else mg),
                              "usd_per_mg": upm,
                              "in_stock": not L.get("oos", False),
                              "url": L.get("url")})
@@ -180,7 +188,9 @@ def main():
     o = dict(meta)
     o["note"] = ("price_usd is the listed store price recorded by the daily scan; "
                  "the on-site ranking additionally applies vendor discount codes "
-                 "(see vendors.json).")
+                 "(see vendors.json). total_mg is the milligrams in the whole "
+                 "purchase and is what usd_per_mg divides by; for a multi-vial "
+                 "pack, vials gives the count and mg_per_vial the size of each.")
     o["compounds"] = len(comp_out)
     o["listings"] = n_listings
     o["prices"] = comp_out
