@@ -1,0 +1,29 @@
+name: Apply data fix
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install matplotlib pillow
+      - name: Apply the audited corrections
+        run: python fix_data_20260914.py
+      - name: Audit gate must still pass
+        run: python audit_prices.py
+      - name: Rebuild open data
+        run: |
+          python build_api.py
+          python build_scorecard.py
+      - name: Commit
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add pepstracker_fixed
+          git diff --cached --quiet || git commit -m 'Data audit 2026-09-14: correct verified listing errors'
+          git push
