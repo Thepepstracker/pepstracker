@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-14T15:40:40Z",
+ "generated": "2026-09-14T23:28:14Z",
  "note": "Track-record metrics computed from PepsTracker's own daily price records. Price-data metrics only - not a rating of product quality, purity or safety.",
  "window_days": 30,
  "best_price_records_in_window": 507,
@@ -21,7 +21,7 @@
    "domain": "atomiklabz.com",
    "compounds": 52,
    "listings": 123,
-   "best_price_now": 9,
+   "best_price_now": 10,
    "best_30d_share": 0.1578,
    "first_seen": "2026-06-01",
    "stock_rate": 1.0
@@ -32,7 +32,7 @@
    "domain": "ionpeptide.com",
    "compounds": 58,
    "listings": 90,
-   "best_price_now": 12,
+   "best_price_now": 10,
    "best_30d_share": 0.1026,
    "first_seen": "2026-06-01",
    "stock_rate": 0.989
@@ -75,7 +75,7 @@
    "name": "Fusion Peptide",
    "domain": "fusionpeptide.com",
    "compounds": 47,
-   "listings": 113,
+   "listings": 114,
    "best_price_now": 3,
    "best_30d_share": 0.0473,
    "first_seen": "2026-06-03",
@@ -107,9 +107,9 @@
    "id": "swisschems",
    "name": "SwissChems",
    "domain": "swisschems.is",
-   "compounds": 44,
-   "listings": 67,
-   "best_price_now": 9,
+   "compounds": 43,
+   "listings": 66,
+   "best_price_now": 6,
    "best_30d_share": 0.0316,
    "first_seen": "2026-06-12",
    "stock_rate": 1.0
@@ -153,7 +153,7 @@
    "domain": "glacieraminos.shop",
    "compounds": 45,
    "listings": 136,
-   "best_price_now": 4,
+   "best_price_now": 14,
    "best_30d_share": 0.0197,
    "first_seen": "2026-06-01",
    "stock_rate": 0.993
@@ -186,7 +186,7 @@
    "domain": "puratekpeptides.com",
    "compounds": 34,
    "listings": 43,
-   "best_price_now": 13,
+   "best_price_now": 8,
    "best_30d_share": 0.0158,
    "first_seen": "2026-06-02",
    "stock_rate": 0.977
@@ -197,7 +197,7 @@
    "domain": "ezpeptides.com",
    "compounds": 46,
    "listings": 64,
-   "best_price_now": 3,
+   "best_price_now": 2,
    "best_30d_share": 0.0118,
    "first_seen": "2026-06-01",
    "stock_rate": 0.969
