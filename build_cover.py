@@ -48,8 +48,8 @@ W, H = 1640, 624
 BG = "#04060b"
 INK = "#f2f6fb"
 BLUE = "#3b9eff"
-GREEN = "#4de87a"
-GREEN_WM = "#3ed36c"    # wordmark green, a step down so bloom cannot clip it
+GREEN = "#2fd977"
+GREEN_WM = "#35cf74"    # wordmark green, a step down so bloom cannot clip it
 TEAL = "#00e5cc"
 MUTED = "#8ea3bf"
 DIM = "#4e5e77"
@@ -174,12 +174,12 @@ def backdrop():
         img[:] += f[..., None] * np.array(to_rgb(color), np.float32) * strength
 
     # key light behind the wordmark, cool and wide
-    glow(0.50, 0.26, 0.58, 0.92, "#1a5ea8", 0.150)
-    glow(0.50, 0.21, 0.28, 0.40, "#2f8ae0", 0.055)
+    glow(0.50, 0.22, 0.62, 0.86, "#17518f", 0.125)
+    glow(0.50, 0.17, 0.26, 0.34, "#2f8ae0", 0.050)
     # the index line's own bloom rising off the floor
-    glow(0.28, 0.94, 0.70, 0.50, "#0b6b45", 0.115, power=2.4)
+    glow(0.34, 1.02, 0.95, 0.62, "#0a7a4c", 0.165, power=2.2)
     # a whisper of warmth far right so the frame is not one flat temperature
-    glow(0.97, 0.74, 0.32, 0.58, "#24406b", 0.055)
+    glow(0.99, 0.62, 0.30, 0.55, "#1d3a63", 0.060)
 
     # vignette
     d = np.sqrt((nx - .5) ** 2 * 1.25 + (ny - .5) ** 2)
@@ -324,15 +324,15 @@ def build():
 
     # ---- the index line ------------------------------------------------
     if len(idx) > 2:
-        band_r, band_t, band_b = 1046, 372, 624
+        band_r, band_t, band_b = W, 355, 624
         ax = fig.add_axes([0, 1 - band_b / H, band_r / W,
                            (band_b - band_t) / H], zorder=6)
         ax.axis("off")
         ax.patch.set_alpha(0)
-        ax.set_xlim(-0.8, len(idx) - 1 + 2.2)
+        ax.set_xlim(-0.5, len(idx) - 1 + 0.5)
         lo, hi = min(idx), max(idx)
         span = max(hi - lo, 1.0)
-        ylo, yhi = lo - span * 1.05, hi + span * .30
+        ylo, yhi = lo - span * 0.62, hi + span * .22
         ax.set_ylim(ylo, yhi)
         xs = np.arange(len(idx))
         ys = np.array(idx, float)
@@ -345,21 +345,28 @@ def build():
         im = ax.imshow(ramp, aspect="auto", origin="lower", zorder=2,
                        extent=[0, len(idx) - 1, ylo, yhi],
                        cmap=LinearSegmentedColormap.from_list("g", [
-                           (0.00, to_rgba(GREEN, .085)),
-                           (0.55, to_rgba(GREEN, .060)),
-                           (1.00, to_rgba(GREEN, 0.0))]))
+                           (0.00, to_rgba("#18c96b", .210)),
+                           (0.50, to_rgba("#16bd66", .150)),
+                           (0.74, to_rgba("#0f9a5a", .070)),
+                           (1.00, to_rgba("#0f9a5a", .000))]))
         im.set_clip_path(area.get_paths()[0], transform=ax.transData)
 
-        # wide haze, mid bloom, crisp core
-        for lwid, al in ((16, .042), (7.5, .075)):
-            ax.plot(xs, ys, color=GREEN, lw=lwid, alpha=al, zorder=3,
-                    solid_capstyle="round")
-        ax.plot(xs, ys, color="#79f39b", lw=2.4, solid_capstyle="round",
-                solid_joinstyle="round", zorder=4)
-        ax.plot([xs[-1]], [ys[-1]], "o", ms=7.5, mfc="#b6ffcd", mec=BG, mew=2.2,
-                zorder=5)
-        ax.plot([xs[-1]], [ys[-1]], "o", ms=20, mfc=GREEN, mec="none",
-                alpha=.16, zorder=4)
+        # Wide haze, mid bloom, crisp core - each fading away across the last
+        # quarter so the readout on the right sits on clean ground. A
+        # LineCollection is what allows per-segment alpha; a single plot()
+        # call can only take one alpha for the whole stroke.
+        from matplotlib.collections import LineCollection
+        pts = np.array([xs, ys]).T.reshape(-1, 1, 2)
+        segs = np.concatenate([pts[:-1], pts[1:]], axis=1)
+        xf = xs[:-1] / max(1.0, len(idx) - 1.0)
+        fade = np.clip((0.86 - xf) / 0.20, 0, 1) ** 1.2
+        for lwid, al, col in ((22, .035, GREEN), (10, .060, GREEN),
+                              (2.6, 1.00, "#7cf0a8")):
+            r, g, b = to_rgb(col)
+            ax.add_collection(LineCollection(
+                segs, linewidths=lwid, capstyle="round", joinstyle="round",
+                zorder=4 if al == 1.0 else 3,
+                colors=[(r, g, b, a * al) for a in fade]))
 
     # ---- top hairline (a chunky gradient bar reads cheap at this size) ---
     n = 512
@@ -375,36 +382,32 @@ def build():
 
     # ---- brand lockup ---------------------------------------------------
     cx = W / 2.0
-    wm = 84
-    w_peps = measure(fig, "Peps", "black", wm)
-    w_trac = measure(fig, "Tracker", "black", wm)
-    mark, gap = 96, 28
-    x0 = cx - (mark + gap + w_peps + w_trac) / 2.0
-    logo(fig, x0, 92, mark)
-    tx = x0 + mark + gap
-    text(fig, tx, 172, "Peps", "black", wm, INK)
-    text(fig, tx + w_peps, 172, "Tracker", "black", wm, GREEN_WM)
+    wm, track = 94, -2.2          # Geist Black wants tightening at display size
+    w_peps = measure(fig, "Peps", "black", wm, track)
+    w_trac = measure(fig, "Tracker", "black", wm, track)
+    # No mark here on purpose: on a Facebook page the profile picture is the
+    # logo and sits inches away, so repeating it crowds the wordmark for no
+    # gain. The wordmark carries the brand alone and gets the whole width.
+    tx = cx - (w_peps + w_trac) / 2.0
+    text(fig, tx, 176, "Peps", "black", wm, INK, spacing=track)
+    text(fig, tx + w_peps + track, 176, "Tracker", "black", wm, GREEN_WM,
+         spacing=track)
 
-    text(fig, cx, 222, "Research peptide prices, compared daily.",
-         "medium", 19, MUTED, ha="center", alpha=.84)
+    text(fig, cx, 220, "Research peptide prices, compared daily.",
+         "medium", 18, MUTED, ha="center", alpha=.80)
 
-    fading_rule(fig, cx - 300, cx + 300, 262, peak=.85)
+    fading_rule(fig, cx - 270, cx + 270, 258, peak=.75)
 
     # ---- proof line: monochrome and small, not four shouting colours ----
     cells = [(str(nv), "VENDORS"), (str(nc), "COMPOUNDS")]
     if nl:
         cells.append((f"{nl:,}", "LISTINGS"))
-    step = 268
+    step = 292
     start = cx - step * (len(cells) - 1) / 2.0
     for i, (val, lab) in enumerate(cells):
         x = start + i * step
-        text(fig, x, 318, val, "monosb", 30, INK, ha="center", alpha=.97)
-        text(fig, x, 346, lab, "semi", 10.5, DIM, ha="center", spacing=2.6)
-        if i:
-            xm = x - step / 2.0
-            fig.add_artist(Line2D([xm / W, xm / W], [1 - 336 / H, 1 - 300 / H],
-                                  transform=fig.transFigure, color=FAINT,
-                                  lw=1.0, alpha=.75, zorder=14))
+        text(fig, x, 312, val, "monosb", 26, INK, ha="center", alpha=.94)
+        text(fig, x, 338, lab, "semi", 10, DIM, ha="center", spacing=2.8)
 
     # ---- index readout, right (clear of both avatar zones) --------------
     rx = 1412
