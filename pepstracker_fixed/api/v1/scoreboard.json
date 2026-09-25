@@ -1,8 +1,8 @@
 {
- "generated": "2026-09-24T14:20:03Z",
+ "generated": "2026-09-25T14:37:42Z",
  "note": "Track-record metrics computed from PepsTracker's own daily price records. Price-data metrics only - not a rating of product quality, purity or safety.",
  "window_days": 30,
- "best_price_records_in_window": 1367,
+ "best_price_records_in_window": 1453,
  "vendors": [
   {
    "id": "atomik",
@@ -11,7 +11,7 @@
    "compounds": 52,
    "listings": 123,
    "best_price_now": 10,
-   "best_30d_share": 0.1975,
+   "best_30d_share": 0.1989,
    "first_seen": "2026-06-01",
    "stock_rate": 1.0
   },
@@ -22,7 +22,7 @@
    "compounds": 50,
    "listings": 67,
    "best_price_now": 1,
-   "best_30d_share": 0.1873,
+   "best_30d_share": 0.1865,
    "first_seen": "2026-06-16",
    "stock_rate": 1.0
   },
@@ -44,7 +44,7 @@
    "compounds": 37,
    "listings": 40,
    "best_price_now": 0,
-   "best_30d_share": 0.0775,
+   "best_30d_share": 0.0778,
    "first_seen": "2026-06-09",
    "stock_rate": 0.975
   },
@@ -88,7 +88,7 @@
    "compounds": 47,
    "listings": 114,
    "best_price_now": 3,
-   "best_30d_share": 0.0395,
+   "best_30d_share": 0.0392,
    "first_seen": "2026-06-03",
    "stock_rate": 0.991
   },
@@ -99,7 +99,7 @@
    "compounds": 47,
    "listings": 47,
    "best_price_now": 3,
-   "best_30d_share": 0.0366,
+   "best_30d_share": 0.0365,
    "first_seen": "2026-06-01",
    "stock_rate": 0.979
   },
@@ -132,7 +132,7 @@
    "compounds": 45,
    "listings": 136,
    "best_price_now": 14,
-   "best_30d_share": 0.0219,
+   "best_30d_share": 0.022,
    "first_seen": "2026-06-01",
    "stock_rate": 0.993
   },
@@ -143,7 +143,7 @@
    "compounds": 42,
    "listings": 54,
    "best_price_now": 1,
-   "best_30d_share": 0.0161,
+   "best_30d_share": 0.0158,
    "first_seen": "2026-06-01",
    "stock_rate": 1.0
   },
@@ -154,7 +154,7 @@
    "compounds": 46,
    "listings": 52,
    "best_price_now": 1,
-   "best_30d_share": 0.0146,
+   "best_30d_share": 0.0145,
    "first_seen": "2026-06-01",
    "stock_rate": 0.981
   },
@@ -165,7 +165,7 @@
    "compounds": 42,
    "listings": 64,
    "best_price_now": 2,
-   "best_30d_share": 0.0132,
+   "best_30d_share": 0.0131,
    "first_seen": "2026-06-12",
    "stock_rate": 1.0
   },
@@ -176,7 +176,7 @@
    "compounds": 34,
    "listings": 54,
    "best_price_now": 2,
-   "best_30d_share": 0.0132,
+   "best_30d_share": 0.0131,
    "first_seen": "2026-07-06",
    "stock_rate": 1.0
   },
@@ -187,7 +187,7 @@
    "compounds": 34,
    "listings": 43,
    "best_price_now": 8,
-   "best_30d_share": 0.0132,
+   "best_30d_share": 0.0131,
    "first_seen": "2026-06-02",
    "stock_rate": 0.977
   },
@@ -220,7 +220,7 @@
    "compounds": 45,
    "listings": 68,
    "best_price_now": 1,
-   "best_30d_share": 0.0095,
+   "best_30d_share": 0.0096,
    "first_seen": "2026-07-09",
    "stock_rate": 1.0
   },
