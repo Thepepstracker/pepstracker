@@ -77,6 +77,7 @@ compound,date,best_usd_per_mg,vendor
 5-Amino-1MQ,2026-10-01,0.0269,hydro
 5-Amino-1MQ,2026-10-02,0.0269,hydro
 5-Amino-1MQ,2026-10-03,0.0269,hydro
+5-Amino-1MQ,2026-10-04,0.0269,hydro
 AHK-Cu,2026-06-02,0.7905,ion
 AHK-Cu,2026-06-03,0.7905,ion
 AHK-Cu,2026-06-05,0.7905,ion
@@ -155,6 +156,7 @@ AHK-Cu,2026-09-30,0.3959,certapeptides
 AHK-Cu,2026-10-01,0.3959,certapeptides
 AHK-Cu,2026-10-02,0.3959,certapeptides
 AHK-Cu,2026-10-03,0.3959,certapeptides
+AHK-Cu,2026-10-04,0.3959,certapeptides
 AICAR,2026-07-13,1.0192,platinum
 AICAR,2026-07-14,1.003,platinum
 AICAR,2026-07-15,1.003,platinum
@@ -208,6 +210,7 @@ AICAR,2026-09-30,0.5658,glowlab
 AICAR,2026-10-01,0.5658,glowlab
 AICAR,2026-10-02,0.5658,glowlab
 AICAR,2026-10-03,0.5658,glowlab
+AICAR,2026-10-04,0.5658,glowlab
 AOD-9604,2026-06-01,4.4991,lapeptides
 AOD-9604,2026-06-02,4.4991,lapeptides
 AOD-9604,2026-06-03,4.4991,lapeptides
@@ -287,6 +290,7 @@ AOD-9604,2026-09-30,3.0,swisschems
 AOD-9604,2026-10-01,3.0,swisschems
 AOD-9604,2026-10-02,3.0,swisschems
 AOD-9604,2026-10-03,3.0,swisschems
+AOD-9604,2026-10-04,3.0,swisschems
 ARA-290,2026-06-01,3.9369,lapeptides
 ARA-290,2026-06-02,3.9369,lapeptides
 ARA-290,2026-06-03,3.9369,lapeptides
@@ -366,6 +370,7 @@ ARA-290,2026-09-30,1.3825,atomik
 ARA-290,2026-10-01,1.3825,atomik
 ARA-290,2026-10-02,1.3825,atomik
 ARA-290,2026-10-03,1.3825,atomik
+ARA-290,2026-10-04,1.3825,atomik
 Acetic Acid,2026-06-20,1.195,swisschems
 Acetic Acid,2026-06-21,1.195,swisschems
 Acetic Acid,2026-06-22,1.195,swisschems
@@ -431,6 +436,7 @@ Acetic Acid,2026-09-30,0.5513,glowlab
 Acetic Acid,2026-10-01,0.5513,glowlab
 Acetic Acid,2026-10-02,0.5513,glowlab
 Acetic Acid,2026-10-03,0.5513,glowlab
+Acetic Acid,2026-10-04,0.5513,glowlab
 Adamax,2026-06-01,4.165,labsourced
 Adamax,2026-06-02,4.165,labsourced
 Adamax,2026-06-03,4.165,labsourced
@@ -510,6 +516,7 @@ Adamax,2026-09-30,3.3744,glacier
 Adamax,2026-10-01,3.3744,glacier
 Adamax,2026-10-02,3.3744,glacier
 Adamax,2026-10-03,3.3744,glacier
+Adamax,2026-10-04,3.3744,glacier
 BPC-157,2026-06-01,2.465,ion
 BPC-157,2026-06-02,2.465,ion
 BPC-157,2026-06-03,2.465,ion
@@ -589,6 +596,7 @@ BPC-157,2026-09-30,1.683,platinum
 BPC-157,2026-10-01,1.683,platinum
 BPC-157,2026-10-02,1.683,platinum
 BPC-157,2026-10-03,1.683,platinum
+BPC-157,2026-10-04,1.683,platinum
 BPC-157 + TB-500 Blend,2026-06-01,4.08,ion
 BPC-157 + TB-500 Blend,2026-06-02,4.08,ion
 BPC-157 + TB-500 Blend,2026-06-03,3.6542,fusion
@@ -668,6 +676,7 @@ BPC-157 + TB-500 Blend,2026-09-30,2.25,ascension
 BPC-157 + TB-500 Blend,2026-10-01,2.25,ascension
 BPC-157 + TB-500 Blend,2026-10-02,2.25,ascension
 BPC-157 + TB-500 Blend,2026-10-03,2.25,ascension
+BPC-157 + TB-500 Blend,2026-10-04,2.25,ascension
 Bacteriostatic Water,2026-06-02,0.4236,ion
 Bacteriostatic Water,2026-06-03,0.3114,fusion
 Bacteriostatic Water,2026-06-05,0.1558,fusion
@@ -746,6 +755,7 @@ Bacteriostatic Water,2026-09-30,0.2298,glowlab
 Bacteriostatic Water,2026-10-01,0.2298,glowlab
 Bacteriostatic Water,2026-10-02,0.2298,glowlab
 Bacteriostatic Water,2026-10-03,0.2298,glowlab
+Bacteriostatic Water,2026-10-04,0.2298,glowlab
 Bronchogen,2026-09-12,5.22,amp
 Bronchogen,2026-09-13,5.22,amp
 Bronchogen,2026-09-14,5.22,amp
@@ -768,6 +778,7 @@ Bronchogen,2026-09-30,5.22,amp
 Bronchogen,2026-10-01,5.22,amp
 Bronchogen,2026-10-02,5.22,amp
 Bronchogen,2026-10-03,5.22,amp
+Bronchogen,2026-10-04,5.22,amp
 CJC-1295 (No DAC),2026-06-02,3.495,puratek
 CJC-1295 (No DAC),2026-06-03,3.495,puratek
 CJC-1295 (No DAC),2026-06-05,3.495,puratek
@@ -846,6 +857,7 @@ CJC-1295 (No DAC),2026-09-30,3.5,ascension
 CJC-1295 (No DAC),2026-10-01,3.5,ascension
 CJC-1295 (No DAC),2026-10-02,3.5,ascension
 CJC-1295 (No DAC),2026-10-03,3.5,ascension
+CJC-1295 (No DAC),2026-10-04,3.5,ascension
 CJC-1295 (with DAC),2026-06-01,7.65,atomik
 CJC-1295 (with DAC),2026-06-02,7.65,atomik
 CJC-1295 (with DAC),2026-06-03,7.3083,fusion
@@ -925,6 +937,7 @@ CJC-1295 (with DAC),2026-09-30,5.67,atomik
 CJC-1295 (with DAC),2026-10-01,5.67,atomik
 CJC-1295 (with DAC),2026-10-02,5.67,atomik
 CJC-1295 (with DAC),2026-10-03,5.67,atomik
+CJC-1295 (with DAC),2026-10-04,5.67,atomik
 CJC/Ipa Blend,2026-06-02,3.4975,puratek
 CJC/Ipa Blend,2026-06-03,3.4975,puratek
 CJC/Ipa Blend,2026-06-05,3.4975,puratek
@@ -1003,6 +1016,7 @@ CJC/Ipa Blend,2026-09-30,2.891,glowaminos
 CJC/Ipa Blend,2026-10-01,2.891,glowaminos
 CJC/Ipa Blend,2026-10-02,2.891,glowaminos
 CJC/Ipa Blend,2026-10-03,2.891,glowaminos
+CJC/Ipa Blend,2026-10-04,2.891,glowaminos
 Cagrilintide,2026-06-02,7.295,puratek
 Cagrilintide,2026-06-03,7.295,puratek
 Cagrilintide,2026-06-05,7.295,puratek
@@ -1081,6 +1095,7 @@ Cagrilintide,2026-09-30,5.25,ascension
 Cagrilintide,2026-10-01,5.25,ascension
 Cagrilintide,2026-10-02,5.25,ascension
 Cagrilintide,2026-10-03,5.25,ascension
+Cagrilintide,2026-10-04,5.25,ascension
 Cardiogen,2026-06-02,2.2496,milehigh
 Cardiogen,2026-06-03,2.2496,milehigh
 Cardiogen,2026-06-05,2.2496,milehigh
@@ -1159,6 +1174,7 @@ Cardiogen,2026-09-30,2.006,ion
 Cardiogen,2026-10-01,2.006,ion
 Cardiogen,2026-10-02,2.006,ion
 Cardiogen,2026-10-03,2.006,ion
+Cardiogen,2026-10-04,2.006,ion
 Cartalax,2026-06-02,5.22,ezpeptides
 Cartalax,2026-06-03,5.22,ezpeptides
 Cartalax,2026-06-05,5.22,ezpeptides
@@ -1237,6 +1253,7 @@ Cartalax,2026-09-30,2.275,atomik
 Cartalax,2026-10-01,2.275,atomik
 Cartalax,2026-10-02,2.275,atomik
 Cartalax,2026-10-03,2.275,atomik
+Cartalax,2026-10-04,2.275,atomik
 Cortagen,2026-09-12,2.1,atomik
 Cortagen,2026-09-13,2.1,atomik
 Cortagen,2026-09-14,2.1,atomik
@@ -1259,6 +1276,7 @@ Cortagen,2026-09-30,2.1,atomik
 Cortagen,2026-10-01,2.1,atomik
 Cortagen,2026-10-02,2.1,atomik
 Cortagen,2026-10-03,2.1,atomik
+Cortagen,2026-10-04,2.1,atomik
 Crystagen,2026-06-02,2.6995,lapeptides
 Crystagen,2026-06-03,2.6995,lapeptides
 Crystagen,2026-06-05,2.6995,lapeptides
@@ -1337,6 +1355,7 @@ Crystagen,2026-09-30,2.5075,ion
 Crystagen,2026-10-01,2.5075,ion
 Crystagen,2026-10-02,2.5075,ion
 Crystagen,2026-10-03,2.5075,ion
+Crystagen,2026-10-04,2.5075,ion
 DSIP,2026-06-01,4.4991,milehigh
 DSIP,2026-06-02,4.4991,milehigh
 DSIP,2026-06-03,4.1642,innoamino
@@ -1416,6 +1435,7 @@ DSIP,2026-09-30,2.6991,lapeptides
 DSIP,2026-10-01,2.6991,lapeptides
 DSIP,2026-10-02,2.6991,lapeptides
 DSIP,2026-10-03,2.6991,lapeptides
+DSIP,2026-10-04,2.6991,lapeptides
 Dihexa,2026-06-02,7.1991,lapeptides
 Dihexa,2026-06-03,7.1991,lapeptides
 Dihexa,2026-06-05,7.1991,lapeptides
@@ -1494,6 +1514,7 @@ Dihexa,2026-09-30,0.12,lapeptides
 Dihexa,2026-10-01,0.12,lapeptides
 Dihexa,2026-10-02,0.12,lapeptides
 Dihexa,2026-10-03,0.12,lapeptides
+Dihexa,2026-10-04,0.12,lapeptides
 Eloralintide,2026-09-07,11.815,ion
 Eloralintide,2026-09-08,11.815,ion
 Eloralintide,2026-09-11,11.815,ion
@@ -1519,6 +1540,7 @@ Eloralintide,2026-09-30,11.815,ion
 Eloralintide,2026-10-01,11.815,ion
 Eloralintide,2026-10-02,11.815,ion
 Eloralintide,2026-10-03,11.815,ion
+Eloralintide,2026-10-04,11.815,ion
 Epithalon,2026-06-01,1.4398,lapeptides
 Epithalon,2026-06-02,1.4398,lapeptides
 Epithalon,2026-06-03,1.4398,lapeptides
@@ -1598,6 +1620,7 @@ Epithalon,2026-09-30,1.1729,glowlab
 Epithalon,2026-10-01,1.1729,glowlab
 Epithalon,2026-10-02,1.1729,glowlab
 Epithalon,2026-10-03,1.1729,glowlab
+Epithalon,2026-10-04,1.1729,glowlab
 FGL,2026-09-12,5.1975,atomik
 FGL,2026-09-13,5.1975,atomik
 FGL,2026-09-14,5.1975,atomik
@@ -1620,6 +1643,7 @@ FGL,2026-09-30,5.1975,atomik
 FGL,2026-10-01,5.1975,atomik
 FGL,2026-10-02,5.1975,atomik
 FGL,2026-10-03,5.1975,atomik
+FGL,2026-10-04,5.1975,atomik
 FOXO4-DRI,2026-06-02,10.115,ion
 FOXO4-DRI,2026-06-03,10.115,ion
 FOXO4-DRI,2026-06-05,10.115,ion
@@ -1698,6 +1722,7 @@ FOXO4-DRI,2026-09-30,6.65,ascension
 FOXO4-DRI,2026-10-01,6.65,ascension
 FOXO4-DRI,2026-10-02,6.65,ascension
 FOXO4-DRI,2026-10-03,6.65,ascension
+FOXO4-DRI,2026-10-04,6.65,ascension
 Follistatin-344,2026-06-12,139.99,swisschems
 Follistatin-344,2026-06-15,139.99,swisschems
 Follistatin-344,2026-06-16,139.99,swisschems
@@ -1769,6 +1794,7 @@ Follistatin-344,2026-09-30,76.221,certapeptides
 Follistatin-344,2026-10-01,76.221,certapeptides
 Follistatin-344,2026-10-02,76.221,certapeptides
 Follistatin-344,2026-10-03,76.221,certapeptides
+Follistatin-344,2026-10-04,76.221,certapeptides
 GHK-Cu,2026-06-01,0.3599,lapeptides
 GHK-Cu,2026-06-02,0.3599,lapeptides
 GHK-Cu,2026-06-03,0.3599,lapeptides
@@ -1848,6 +1874,7 @@ GHK-Cu,2026-09-30,0.2401,glowaminos
 GHK-Cu,2026-10-01,0.2401,glowaminos
 GHK-Cu,2026-10-02,0.2401,glowaminos
 GHK-Cu,2026-10-03,0.2401,glowaminos
+GHK-Cu,2026-10-04,0.2401,glowaminos
 GHRP-2,2026-06-02,4.93,ion
 GHRP-2,2026-06-03,4.5892,fusion
 GHRP-2,2026-06-05,2.295,fusion
@@ -1926,6 +1953,7 @@ GHRP-2,2026-09-30,2.457,atomik
 GHRP-2,2026-10-01,2.457,atomik
 GHRP-2,2026-10-02,2.457,atomik
 GHRP-2,2026-10-03,2.457,atomik
+GHRP-2,2026-10-04,2.457,atomik
 GHRP-6,2026-06-02,4.93,ion
 GHRP-6,2026-06-03,4.5892,fusion
 GHRP-6,2026-06-05,2.295,fusion
@@ -2004,6 +2032,7 @@ GHRP-6,2026-09-30,2.457,atomik
 GHRP-6,2026-10-01,2.457,atomik
 GHRP-6,2026-10-02,2.457,atomik
 GHRP-6,2026-10-03,2.457,atomik
+GHRP-6,2026-10-04,2.457,atomik
 Glow Blend,2026-06-01,1.0807,ion
 Glow Blend,2026-06-02,1.0807,ion
 Glow Blend,2026-06-03,1.0807,ion
@@ -2083,6 +2112,7 @@ Glow Blend,2026-09-30,0.693,glowaminos
 Glow Blend,2026-10-01,0.693,glowaminos
 Glow Blend,2026-10-02,0.693,glowaminos
 Glow Blend,2026-10-03,0.693,glowaminos
+Glow Blend,2026-10-04,0.693,glowaminos
 Glutathione,2026-06-01,0.0312,ion
 Glutathione,2026-06-02,0.0312,ion
 Glutathione,2026-06-03,0.0312,ion
@@ -2162,6 +2192,7 @@ Glutathione,2026-09-30,0.0215,retaone
 Glutathione,2026-10-01,0.0215,retaone
 Glutathione,2026-10-02,0.0215,retaone
 Glutathione,2026-10-03,0.0215,retaone
+Glutathione,2026-10-04,0.0215,retaone
 Gonadorelin,2026-07-13,8.4915,platinum
 Gonadorelin,2026-07-14,8.33,platinum
 Gonadorelin,2026-07-15,8.33,platinum
@@ -2215,6 +2246,7 @@ Gonadorelin,2026-09-30,8.33,platinum
 Gonadorelin,2026-10-01,8.33,platinum
 Gonadorelin,2026-10-02,8.33,platinum
 Gonadorelin,2026-10-03,8.33,platinum
+Gonadorelin,2026-10-04,8.33,platinum
 HCG,2026-06-02,0.0076,labsourced
 HCG,2026-06-03,0.0076,labsourced
 HCG,2026-06-05,0.0076,labsourced
@@ -2293,6 +2325,7 @@ HCG,2026-09-30,5.798,swisschems
 HCG,2026-10-01,5.798,swisschems
 HCG,2026-10-02,5.798,swisschems
 HCG,2026-10-03,5.798,swisschems
+HCG,2026-10-04,5.798,swisschems
 HGH 176-191,2026-07-13,12.7415,platinum
 HGH 176-191,2026-07-14,12.58,platinum
 HGH 176-191,2026-07-15,12.58,platinum
@@ -2346,6 +2379,7 @@ HGH 176-191,2026-09-30,12.58,platinum
 HGH 176-191,2026-10-01,12.58,platinum
 HGH 176-191,2026-10-02,12.58,platinum
 HGH 176-191,2026-10-03,12.58,platinum
+HGH 176-191,2026-10-04,12.58,platinum
 Hexarelin,2026-06-02,10.03,labsourced
 Hexarelin,2026-06-03,10.03,labsourced
 Hexarelin,2026-06-05,10.03,labsourced
@@ -2424,6 +2458,7 @@ Hexarelin,2026-09-30,5.6,atomik
 Hexarelin,2026-10-01,5.6,atomik
 Hexarelin,2026-10-02,5.6,atomik
 Hexarelin,2026-10-03,5.6,atomik
+Hexarelin,2026-10-04,5.6,atomik
 Humanin,2026-06-02,10.115,labsourced
 Humanin,2026-06-03,10.115,labsourced
 Humanin,2026-06-05,10.115,labsourced
@@ -2502,6 +2537,7 @@ Humanin,2026-09-30,10.115,labsourced
 Humanin,2026-10-01,10.115,labsourced
 Humanin,2026-10-02,10.115,labsourced
 Humanin,2026-10-03,10.115,labsourced
+Humanin,2026-10-04,10.115,labsourced
 IGF-1 LR3,2026-06-02,74.95,puratek
 IGF-1 LR3,2026-06-03,58.6415,fusion
 IGF-1 LR3,2026-06-05,29.3165,fusion
@@ -2580,6 +2616,7 @@ IGF-1 LR3,2026-09-30,28.91,glowaminos
 IGF-1 LR3,2026-10-01,28.91,glowaminos
 IGF-1 LR3,2026-10-02,28.91,glowaminos
 IGF-1 LR3,2026-10-03,28.91,glowaminos
+IGF-1 LR3,2026-10-04,28.91,glowaminos
 Ipamorelin,2026-06-01,3.96,ezpeptides
 Ipamorelin,2026-06-02,3.795,puratek
 Ipamorelin,2026-06-03,3.795,puratek
@@ -2659,6 +2696,7 @@ Ipamorelin,2026-09-30,3.136,glowaminos
 Ipamorelin,2026-10-01,3.136,glowaminos
 Ipamorelin,2026-10-02,3.136,glowaminos
 Ipamorelin,2026-10-03,3.136,glowaminos
+Ipamorelin,2026-10-04,3.136,glowaminos
 KPV,2026-06-01,3.825,nura
 KPV,2026-06-02,3.495,puratek
 KPV,2026-06-03,3.495,puratek
@@ -2738,6 +2776,7 @@ KPV,2026-09-30,2.3453,glowlab
 KPV,2026-10-01,2.3453,glowlab
 KPV,2026-10-02,2.3453,glowlab
 KPV,2026-10-03,2.3453,glowlab
+KPV,2026-10-04,2.3453,glowlab
 Kisspeptin,2026-06-02,5.995,puratek
 Kisspeptin,2026-06-03,5.995,puratek
 Kisspeptin,2026-06-05,5.995,puratek
@@ -2816,6 +2855,7 @@ Kisspeptin,2026-09-30,2.401,glowaminos
 Kisspeptin,2026-10-01,2.401,glowaminos
 Kisspeptin,2026-10-02,2.401,glowaminos
 Kisspeptin,2026-10-03,2.401,glowaminos
+Kisspeptin,2026-10-04,2.401,glowaminos
 Klow Blend,2026-06-01,1.1025,ezpeptides
 Klow Blend,2026-06-02,1.1025,ezpeptides
 Klow Blend,2026-06-03,1.1025,ezpeptides
@@ -2895,6 +2935,7 @@ Klow Blend,2026-09-30,0.7503,glowlab
 Klow Blend,2026-10-01,0.7503,glowlab
 Klow Blend,2026-10-02,0.7503,glowlab
 Klow Blend,2026-10-03,0.7503,glowlab
+Klow Blend,2026-10-04,0.7503,glowlab
 LL-37,2026-06-02,3.5991,milehigh
 LL-37,2026-06-03,3.5991,milehigh
 LL-37,2026-06-05,3.5991,milehigh
@@ -2973,6 +3014,7 @@ LL-37,2026-09-30,3.5991,milehigh
 LL-37,2026-10-01,3.5991,milehigh
 LL-37,2026-10-02,3.5991,milehigh
 LL-37,2026-10-03,3.5991,milehigh
+LL-37,2026-10-04,3.5991,milehigh
 Lipo-C,2026-06-01,5.22,ezpeptides
 Lipo-C,2026-06-02,5.22,ezpeptides
 Lipo-C,2026-06-03,4.5892,fusion
@@ -3052,6 +3094,7 @@ Lipo-C,2026-09-30,3.315,platinum
 Lipo-C,2026-10-01,3.315,platinum
 Lipo-C,2026-10-02,3.315,platinum
 Lipo-C,2026-10-03,3.315,platinum
+Lipo-C,2026-10-04,3.315,platinum
 Liraglutide,2026-07-13,16.9915,platinum
 Liraglutide,2026-07-14,16.83,platinum
 Liraglutide,2026-07-15,16.83,platinum
@@ -3105,6 +3148,7 @@ Liraglutide,2026-09-30,16.83,platinum
 Liraglutide,2026-10-01,16.83,platinum
 Liraglutide,2026-10-02,16.83,platinum
 Liraglutide,2026-10-03,16.83,platinum
+Liraglutide,2026-10-04,16.83,platinum
 MOTS-c,2026-06-01,3.315,atomik
 MOTS-c,2026-06-02,3.315,atomik
 MOTS-c,2026-06-03,3.315,atomik
@@ -3184,6 +3228,7 @@ MOTS-c,2026-09-30,1.5592,atomik
 MOTS-c,2026-10-01,1.5592,atomik
 MOTS-c,2026-10-02,1.5592,atomik
 MOTS-c,2026-10-03,1.5592,atomik
+MOTS-c,2026-10-04,1.5592,atomik
 Mazdutide,2026-06-12,11.475,hydro
 Mazdutide,2026-06-15,11.475,hydro
 Mazdutide,2026-06-16,11.475,hydro
@@ -3255,6 +3300,7 @@ Mazdutide,2026-09-30,8.4933,glowaminos
 Mazdutide,2026-10-01,8.4933,glowaminos
 Mazdutide,2026-10-02,8.4933,glowaminos
 Mazdutide,2026-10-03,8.4933,glowaminos
+Mazdutide,2026-10-04,8.4933,glowaminos
 Melanotan I,2026-06-02,3.295,puratek
 Melanotan I,2026-06-03,3.295,puratek
 Melanotan I,2026-06-05,2.295,fusion
@@ -3333,6 +3379,7 @@ Melanotan I,2026-09-30,0.9227,atomik
 Melanotan I,2026-10-01,0.9227,atomik
 Melanotan I,2026-10-02,0.9227,atomik
 Melanotan I,2026-10-03,0.9227,atomik
+Melanotan I,2026-10-04,0.9227,atomik
 Melanotan II,2026-06-01,2.465,atomik
 Melanotan II,2026-06-02,2.465,atomik
 Melanotan II,2026-06-03,2.465,atomik
@@ -3412,6 +3459,7 @@ Melanotan II,2026-09-30,1.827,atomik
 Melanotan II,2026-10-01,1.827,atomik
 Melanotan II,2026-10-02,1.827,atomik
 Melanotan II,2026-10-03,1.827,atomik
+Melanotan II,2026-10-04,1.827,atomik
 Methylene Blue,2026-06-02,0.34,ion
 Methylene Blue,2026-06-03,0.34,ion
 Methylene Blue,2026-06-05,0.34,ion
@@ -3490,6 +3538,7 @@ Methylene Blue,2026-09-30,0.0319,pinnacle
 Methylene Blue,2026-10-01,0.0319,pinnacle
 Methylene Blue,2026-10-02,0.0319,pinnacle
 Methylene Blue,2026-10-03,0.0319,pinnacle
+Methylene Blue,2026-10-04,0.0319,pinnacle
 N-Acetyl Selank,2026-06-02,4.165,ion
 N-Acetyl Selank,2026-06-03,4.165,ion
 N-Acetyl Selank,2026-06-05,4.165,ion
@@ -3568,6 +3617,7 @@ N-Acetyl Selank,2026-09-30,4.165,ion
 N-Acetyl Selank,2026-10-01,4.165,ion
 N-Acetyl Selank,2026-10-02,4.165,ion
 N-Acetyl Selank,2026-10-03,4.165,ion
+N-Acetyl Selank,2026-10-04,4.165,ion
 N-Acetyl Semax,2026-06-02,2.805,ion
 N-Acetyl Semax,2026-06-03,2.805,ion
 N-Acetyl Semax,2026-06-05,2.805,ion
@@ -3646,6 +3696,7 @@ N-Acetyl Semax,2026-09-30,2.805,ion
 N-Acetyl Semax,2026-10-01,2.805,ion
 N-Acetyl Semax,2026-10-02,2.805,ion
 N-Acetyl Semax,2026-10-03,2.805,ion
+N-Acetyl Semax,2026-10-04,2.805,ion
 NAD+,2026-06-01,0.0748,ion
 NAD+,2026-06-02,0.0748,ion
 NAD+,2026-06-03,0.0748,ion
@@ -3725,6 +3776,7 @@ NAD+,2026-09-30,0.0381,atomik
 NAD+,2026-10-01,0.0381,atomik
 NAD+,2026-10-02,0.0381,atomik
 NAD+,2026-10-03,0.0381,atomik
+NAD+,2026-10-04,0.0381,atomik
 Orforglipron,2026-06-12,0.3684,swisschems
 Orforglipron,2026-06-15,0.3684,swisschems
 Orforglipron,2026-06-16,0.3539,glowaminos
@@ -3796,6 +3848,7 @@ Orforglipron,2026-09-30,0.2477,glowaminos
 Orforglipron,2026-10-01,0.2477,glowaminos
 Orforglipron,2026-10-02,0.2477,glowaminos
 Orforglipron,2026-10-03,0.2477,glowaminos
+Orforglipron,2026-10-04,0.2477,glowaminos
 Ovagen,2026-06-02,2.6995,lapeptides
 Ovagen,2026-06-03,2.6995,lapeptides
 Ovagen,2026-06-05,2.6995,lapeptides
@@ -3874,6 +3927,7 @@ Ovagen,2026-09-30,2.275,atomik
 Ovagen,2026-10-01,2.275,atomik
 Ovagen,2026-10-02,2.275,atomik
 Ovagen,2026-10-03,2.275,atomik
+Ovagen,2026-10-04,2.275,atomik
 Oxytocin,2026-06-02,5.015,ion
 Oxytocin,2026-06-03,5.015,ion
 Oxytocin,2026-06-05,5.015,ion
@@ -3952,6 +4006,7 @@ Oxytocin,2026-09-30,3.136,glowaminos
 Oxytocin,2026-10-01,3.136,glowaminos
 Oxytocin,2026-10-02,3.136,glowaminos
 Oxytocin,2026-10-03,3.136,glowaminos
+Oxytocin,2026-10-04,3.136,glowaminos
 PDA,2026-06-02,3.96,ezpeptides
 PDA,2026-06-03,3.96,ezpeptides
 PDA,2026-06-05,3.96,ezpeptides
@@ -4030,6 +4085,7 @@ PDA,2026-09-30,3.96,ezpeptides
 PDA,2026-10-01,3.96,ezpeptides
 PDA,2026-10-02,3.96,ezpeptides
 PDA,2026-10-03,3.96,ezpeptides
+PDA,2026-10-04,3.96,ezpeptides
 PE-22-28,2026-06-02,4.165,labsourced
 PE-22-28,2026-06-03,4.165,labsourced
 PE-22-28,2026-06-05,4.165,labsourced
@@ -4108,6 +4164,7 @@ PE-22-28,2026-09-30,2.9691,certapeptides
 PE-22-28,2026-10-01,2.9691,certapeptides
 PE-22-28,2026-10-02,2.9691,certapeptides
 PE-22-28,2026-10-03,2.9691,certapeptides
+PE-22-28,2026-10-04,2.9691,certapeptides
 PEG-MGF,2026-06-02,16.575,ion
 PEG-MGF,2026-06-03,16.575,ion
 PEG-MGF,2026-06-05,16.575,ion
@@ -4186,6 +4243,7 @@ PEG-MGF,2026-09-30,14.455,glowaminos
 PEG-MGF,2026-10-01,14.455,glowaminos
 PEG-MGF,2026-10-02,14.455,glowaminos
 PEG-MGF,2026-10-03,14.455,glowaminos
+PEG-MGF,2026-10-04,14.455,glowaminos
 PNC-27,2026-06-02,10.03,labsourced
 PNC-27,2026-06-03,10.03,labsourced
 PNC-27,2026-06-05,10.03,labsourced
@@ -4264,6 +4322,7 @@ PNC-27,2026-09-30,6.93,atomik
 PNC-27,2026-10-01,6.93,atomik
 PNC-27,2026-10-02,6.93,atomik
 PNC-27,2026-10-03,6.93,atomik
+PNC-27,2026-10-04,6.93,atomik
 PT-141 (Bremelanotide),2026-06-01,3.145,atomik
 PT-141 (Bremelanotide),2026-06-02,3.145,atomik
 PT-141 (Bremelanotide),2026-06-03,3.145,atomik
@@ -4343,6 +4402,7 @@ PT-141 (Bremelanotide),2026-09-30,2.156,glowaminos
 PT-141 (Bremelanotide),2026-10-01,2.156,glowaminos
 PT-141 (Bremelanotide),2026-10-02,2.156,glowaminos
 PT-141 (Bremelanotide),2026-10-03,2.156,glowaminos
+PT-141 (Bremelanotide),2026-10-04,2.156,glowaminos
 Pancragen,2026-06-02,2.6995,lapeptides
 Pancragen,2026-06-03,2.6995,lapeptides
 Pancragen,2026-06-05,2.6995,lapeptides
@@ -4421,6 +4481,7 @@ Pancragen,2026-09-30,2.3117,fusion
 Pancragen,2026-10-01,2.3117,fusion
 Pancragen,2026-10-02,2.3117,fusion
 Pancragen,2026-10-03,2.3117,fusion
+Pancragen,2026-10-04,2.3117,fusion
 Pinealon,2026-06-02,1.9125,ion
 Pinealon,2026-06-03,1.9125,ion
 Pinealon,2026-06-05,1.9125,ion
@@ -4499,6 +4560,7 @@ Pinealon,2026-09-30,1.9125,ion
 Pinealon,2026-10-01,1.9125,ion
 Pinealon,2026-10-02,1.9125,ion
 Pinealon,2026-10-03,1.9125,ion
+Pinealon,2026-10-04,1.9125,ion
 Retacagri Blend,2026-06-02,5.0621,glacier
 Retacagri Blend,2026-06-03,5.0621,glacier
 Retacagri Blend,2026-06-05,5.0621,glacier
@@ -4577,6 +4639,7 @@ Retacagri Blend,2026-09-30,4.8746,glacier
 Retacagri Blend,2026-10-01,4.8746,glacier
 Retacagri Blend,2026-10-02,4.8746,glacier
 Retacagri Blend,2026-10-03,4.8746,glacier
+Retacagri Blend,2026-10-04,4.8746,glacier
 Retatrutide,2026-06-01,3.9149,glacier
 Retatrutide,2026-06-02,3.9149,glacier
 Retatrutide,2026-06-03,3.9149,glacier
@@ -4656,6 +4719,7 @@ Retatrutide,2026-09-30,2.1152,glowaminos
 Retatrutide,2026-10-01,2.1152,glowaminos
 Retatrutide,2026-10-02,2.1152,glowaminos
 Retatrutide,2026-10-03,2.1152,glowaminos
+Retatrutide,2026-10-04,2.1152,glowaminos
 SLU-PP-332,2026-06-02,4.2217,ion
 SLU-PP-332,2026-06-03,4.2217,ion
 SLU-PP-332,2026-06-05,2.295,fusion
@@ -4734,6 +4798,7 @@ SLU-PP-332,2026-09-30,0.0328,swisschems
 SLU-PP-332,2026-10-01,0.0328,swisschems
 SLU-PP-332,2026-10-02,0.0328,swisschems
 SLU-PP-332,2026-10-03,0.0328,swisschems
+SLU-PP-332,2026-10-04,0.0328,swisschems
 SS-31,2026-06-01,2.295,nura
 SS-31,2026-06-02,2.295,nura
 SS-31,2026-06-03,2.295,nura
@@ -4813,6 +4878,7 @@ SS-31,2026-09-30,2.363,ion
 SS-31,2026-10-01,2.363,ion
 SS-31,2026-10-02,2.363,ion
 SS-31,2026-10-03,2.363,ion
+SS-31,2026-10-04,2.363,ion
 Selank,2026-06-01,2.975,atomik
 Selank,2026-06-02,2.975,atomik
 Selank,2026-06-03,2.975,atomik
@@ -4892,6 +4958,7 @@ Selank,2026-09-30,2.205,atomik
 Selank,2026-10-01,2.205,atomik
 Selank,2026-10-02,2.205,atomik
 Selank,2026-10-03,2.205,atomik
+Selank,2026-10-04,2.205,atomik
 Sema/Cagri Blend,2026-07-13,11.0457,platinum
 Sema/Cagri Blend,2026-07-14,10.965,platinum
 Sema/Cagri Blend,2026-07-15,10.965,platinum
@@ -4945,6 +5012,7 @@ Sema/Cagri Blend,2026-09-30,8.49,glp1lab
 Sema/Cagri Blend,2026-10-01,8.49,glp1lab
 Sema/Cagri Blend,2026-10-02,8.49,glp1lab
 Sema/Cagri Blend,2026-10-03,8.49,glp1lab
+Sema/Cagri Blend,2026-10-04,8.49,glp1lab
 Semaglutide,2026-06-01,4.32,ezpeptides
 Semaglutide,2026-06-02,2.755,retaone
 Semaglutide,2026-06-03,2.755,retaone
@@ -5024,6 +5092,7 @@ Semaglutide,2026-09-30,1.8525,retaone
 Semaglutide,2026-10-01,1.8525,retaone
 Semaglutide,2026-10-02,1.8525,retaone
 Semaglutide,2026-10-03,1.8525,retaone
+Semaglutide,2026-10-04,1.8525,retaone
 Semax,2026-06-01,2.7965,ion
 Semax,2026-06-02,2.7965,ion
 Semax,2026-06-03,2.7965,ion
@@ -5103,6 +5172,7 @@ Semax,2026-09-30,1.89,atomik
 Semax,2026-10-01,1.89,atomik
 Semax,2026-10-02,1.89,atomik
 Semax,2026-10-03,1.89,atomik
+Semax,2026-10-04,1.89,atomik
 Semax/Selank Blend,2026-06-02,3.6895,glacier
 Semax/Selank Blend,2026-06-03,3.6895,glacier
 Semax/Selank Blend,2026-06-05,3.6895,glacier
@@ -5181,6 +5251,7 @@ Semax/Selank Blend,2026-09-30,1.9796,certapeptides
 Semax/Selank Blend,2026-10-01,1.9796,certapeptides
 Semax/Selank Blend,2026-10-02,1.9796,certapeptides
 Semax/Selank Blend,2026-10-03,1.9796,certapeptides
+Semax/Selank Blend,2026-10-04,1.9796,certapeptides
 Sermorelin,2026-06-01,5.44,atomik
 Sermorelin,2026-06-02,5.44,atomik
 Sermorelin,2026-06-03,5.44,atomik
@@ -5260,6 +5331,7 @@ Sermorelin,2026-09-30,3.6,ascension
 Sermorelin,2026-10-01,3.6,ascension
 Sermorelin,2026-10-02,3.6,ascension
 Sermorelin,2026-10-03,3.6,ascension
+Sermorelin,2026-10-04,3.6,ascension
 Snap-8,2026-06-02,3.1491,lapeptides
 Snap-8,2026-06-03,3.1491,lapeptides
 Snap-8,2026-06-05,2.295,fusion
@@ -5338,6 +5410,7 @@ Snap-8,2026-09-30,1.911,glowaminos
 Snap-8,2026-10-01,1.911,glowaminos
 Snap-8,2026-10-02,1.911,glowaminos
 Snap-8,2026-10-03,1.911,glowaminos
+Snap-8,2026-10-04,1.911,glowaminos
 Survodutide,2026-06-18,7.02,ezpeptides
 Survodutide,2026-06-19,7.02,ezpeptides
 Survodutide,2026-06-20,7.02,ezpeptides
@@ -5405,6 +5478,7 @@ Survodutide,2026-09-30,6.86,glowaminos
 Survodutide,2026-10-01,6.86,glowaminos
 Survodutide,2026-10-02,6.86,glowaminos
 Survodutide,2026-10-03,6.86,glowaminos
+Survodutide,2026-10-04,6.86,glowaminos
 TB-500,2026-06-01,2.465,ion
 TB-500,2026-06-02,2.465,ion
 TB-500,2026-06-03,2.465,ion
@@ -5484,6 +5558,7 @@ TB-500,2026-09-30,2.465,ion
 TB-500,2026-10-01,2.465,ion
 TB-500,2026-10-02,2.465,ion
 TB-500,2026-10-03,2.465,ion
+TB-500,2026-10-04,2.465,ion
 Tesamorelin,2026-06-01,4.675,atomik
 Tesamorelin,2026-06-02,4.675,atomik
 Tesamorelin,2026-06-03,4.675,atomik
@@ -5563,6 +5638,7 @@ Tesamorelin,2026-09-30,3.381,glowaminos
 Tesamorelin,2026-10-01,3.381,glowaminos
 Tesamorelin,2026-10-02,3.381,glowaminos
 Tesamorelin,2026-10-03,3.381,glowaminos
+Tesamorelin,2026-10-04,3.381,glowaminos
 Tesamorelin/Ipamorelin Blend,2026-06-01,3.2038,nura
 Tesamorelin/Ipamorelin Blend,2026-06-02,3.2038,nura
 Tesamorelin/Ipamorelin Blend,2026-06-03,3.2038,nura
@@ -5642,6 +5718,7 @@ Tesamorelin/Ipamorelin Blend,2026-09-30,3.9667,atomik
 Tesamorelin/Ipamorelin Blend,2026-10-01,3.9667,atomik
 Tesamorelin/Ipamorelin Blend,2026-10-02,3.9667,atomik
 Tesamorelin/Ipamorelin Blend,2026-10-03,3.9667,atomik
+Tesamorelin/Ipamorelin Blend,2026-10-04,3.9667,atomik
 Tesofensine,2026-06-02,10.7991,milehigh
 Tesofensine,2026-06-03,4.5892,fusion
 Tesofensine,2026-06-05,2.295,fusion
@@ -5720,6 +5797,7 @@ Tesofensine,2026-09-30,2.9918,fusion
 Tesofensine,2026-10-01,2.9918,fusion
 Tesofensine,2026-10-02,2.9918,fusion
 Tesofensine,2026-10-03,2.9918,fusion
+Tesofensine,2026-10-04,2.9918,fusion
 Testagen,2026-06-02,2.6995,lapeptides
 Testagen,2026-06-03,2.6995,lapeptides
 Testagen,2026-06-05,2.6995,lapeptides
@@ -5798,6 +5876,7 @@ Testagen,2026-09-30,2.275,atomik
 Testagen,2026-10-01,2.275,atomik
 Testagen,2026-10-02,2.275,atomik
 Testagen,2026-10-03,2.275,atomik
+Testagen,2026-10-04,2.275,atomik
 Thymalin,2026-06-02,5.015,ion
 Thymalin,2026-06-03,4.5892,fusion
 Thymalin,2026-06-05,2.295,fusion
@@ -5876,6 +5955,7 @@ Thymalin,2026-09-30,2.6101,fusion
 Thymalin,2026-10-01,2.6101,fusion
 Thymalin,2026-10-02,2.6101,fusion
 Thymalin,2026-10-03,2.6101,fusion
+Thymalin,2026-10-04,2.6101,fusion
 Thymosin Alpha-1,2026-06-02,5.22,ezpeptides
 Thymosin Alpha-1,2026-06-03,5.22,ezpeptides
 Thymosin Alpha-1,2026-06-05,3.4417,fusion
@@ -5954,6 +6034,7 @@ Thymosin Alpha-1,2026-09-30,3.55,ascension
 Thymosin Alpha-1,2026-10-01,3.55,ascension
 Thymosin Alpha-1,2026-10-02,3.55,ascension
 Thymosin Alpha-1,2026-10-03,3.55,ascension
+Thymosin Alpha-1,2026-10-04,3.55,ascension
 Tirzepatide,2026-06-01,2.28,ezpeptides
 Tirzepatide,2026-06-02,2.28,ezpeptides
 Tirzepatide,2026-06-03,2.28,ezpeptides
@@ -6033,6 +6114,7 @@ Tirzepatide,2026-09-30,1.4992,puratek
 Tirzepatide,2026-10-01,1.4992,puratek
 Tirzepatide,2026-10-02,1.4992,puratek
 Tirzepatide,2026-10-03,1.4992,puratek
+Tirzepatide,2026-10-04,1.4992,puratek
 VIP,2026-06-02,3.145,puratek
 VIP,2026-06-03,3.145,puratek
 VIP,2026-06-05,2.0825,fusion
@@ -6111,6 +6193,7 @@ VIP,2026-09-30,4.0,ascension
 VIP,2026-10-01,4.0,ascension
 VIP,2026-10-02,4.0,ascension
 VIP,2026-10-03,4.0,ascension
+VIP,2026-10-04,4.0,ascension
 Vesugen,2026-06-02,2.6995,lapeptides
 Vesugen,2026-06-03,2.6995,lapeptides
 Vesugen,2026-06-05,2.6995,lapeptides
@@ -6189,6 +6272,7 @@ Vesugen,2026-09-30,5.3991,lapeptides
 Vesugen,2026-10-01,5.3991,lapeptides
 Vesugen,2026-10-02,5.3991,lapeptides
 Vesugen,2026-10-03,5.3991,lapeptides
+Vesugen,2026-10-04,5.3991,lapeptides
 Vilon,2026-06-02,2.6995,lapeptides
 Vilon,2026-06-03,2.6995,lapeptides
 Vilon,2026-06-05,2.6995,lapeptides
@@ -6267,6 +6351,7 @@ Vilon,2026-09-30,2.1,atomik
 Vilon,2026-10-01,2.1,atomik
 Vilon,2026-10-02,2.1,atomik
 Vilon,2026-10-03,2.1,atomik
+Vilon,2026-10-04,2.1,atomik
 Vitamin B12,2026-06-10,2.465,ion
 Vitamin B12,2026-06-11,2.465,ion
 Vitamin B12,2026-06-12,2.125,hydro
@@ -6340,3 +6425,4 @@ Vitamin B12,2026-09-30,2.975,ion
 Vitamin B12,2026-10-01,2.975,ion
 Vitamin B12,2026-10-02,2.975,ion
 Vitamin B12,2026-10-03,2.975,ion
+Vitamin B12,2026-10-04,2.975,ion
