@@ -1,8 +1,8 @@
 {
- "generated": "2026-10-09T16:07:10Z",
+ "generated": "2026-10-10T16:11:46Z",
  "note": "Track-record metrics computed from PepsTracker's own daily price records. Price-data metrics only - not a rating of product quality, purity or safety.",
  "window_days": 30,
- "best_price_records_in_window": 2491,
+ "best_price_records_in_window": 2577,
  "vendors": [
   {
    "id": "atomik",
@@ -55,7 +55,7 @@
    "compounds": 25,
    "listings": 31,
    "best_price_now": 4,
-   "best_30d_share": 0.0699,
+   "best_30d_share": 0.0698,
    "first_seen": "2026-08-02",
    "stock_rate": 0.968
   },
@@ -110,7 +110,7 @@
    "compounds": 47,
    "listings": 114,
    "best_price_now": 3,
-   "best_30d_share": 0.0333,
+   "best_30d_share": 0.0334,
    "first_seen": "2026-06-03",
    "stock_rate": 0.991
   },
@@ -220,7 +220,7 @@
    "compounds": 45,
    "listings": 68,
    "best_price_now": 1,
-   "best_30d_share": 0.0112,
+   "best_30d_share": 0.0113,
    "first_seen": "2026-07-09",
    "stock_rate": 1.0
   },
