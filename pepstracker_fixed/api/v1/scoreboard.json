@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-14T14:37:28Z",
+ "generated": "2026-10-15T14:28:32Z",
  "note": "Track-record metrics computed from PepsTracker's own daily price records. Price-data metrics only - not a rating of product quality, purity or safety.",
  "window_days": 30,
  "best_price_records_in_window": 2666,
@@ -22,7 +22,7 @@
    "compounds": 50,
    "listings": 67,
    "best_price_now": 1,
-   "best_30d_share": 0.1748,
+   "best_30d_share": 0.1744,
    "first_seen": "2026-06-16",
    "stock_rate": 1.0
   },
@@ -82,6 +82,17 @@
    "stock_rate": 1.0
   },
   {
+   "id": "fusion",
+   "name": "Fusion Peptide",
+   "domain": "fusionpeptide.com",
+   "compounds": 47,
+   "listings": 114,
+   "best_price_now": 3,
+   "best_30d_share": 0.0349,
+   "first_seen": "2026-06-03",
+   "stock_rate": 0.991
+  },
+  {
    "id": "lapeptides",
    "name": "LA Peptides",
    "domain": "lapeptides.net",
@@ -102,17 +113,6 @@
    "best_30d_share": 0.0349,
    "first_seen": "2026-06-12",
    "stock_rate": 1.0
-  },
-  {
-   "id": "fusion",
-   "name": "Fusion Peptide",
-   "domain": "fusionpeptide.com",
-   "compounds": 47,
-   "listings": 114,
-   "best_price_now": 3,
-   "best_30d_share": 0.0345,
-   "first_seen": "2026-06-03",
-   "stock_rate": 0.991
   },
   {
    "id": "glacier",
