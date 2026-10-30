@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-29T16:24:09Z",
+ "generated": "2026-10-30T16:04:51Z",
  "note": "Track-record metrics computed from PepsTracker's own daily price records. Price-data metrics only - not a rating of product quality, purity or safety.",
  "window_days": 30,
  "best_price_records_in_window": 2666,
