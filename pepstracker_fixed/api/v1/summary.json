@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-15T16:44:51Z",
+ "generated": "2026-11-16T19:33:31Z",
  "source": "https://pepstracker.com",
  "docs": "https://pepstracker.com/data",
  "license": "Free to use with attribution to PepsTracker (pepstracker.com).",
@@ -7,6 +7,6 @@
  "vendors": 27,
  "compounds": 86,
  "listings": 1458,
- "history_days": 133,
+ "history_days": 134,
  "history_start": "2026-06-01"
 }
